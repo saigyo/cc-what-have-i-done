@@ -31,6 +31,52 @@ func TestDiffHTMLMarksLines(t *testing.T) {
 	}
 }
 
+func TestStripANSI(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"\x1b[1mOpus 4.8\x1b[22m", "Opus 4.8"},   // SGR bold on/off
+		{"\x1b[0;31mred\x1b[0m text", "red text"}, // colour codes
+		{"plain text", "plain text"},              // fast path, unchanged
+		{"array[1m] index", "array[1m] index"},    // literal, no ESC → kept
+		{"\x1b]0;title\x07done", "done"},          // OSC + BEL
+		{"a\x1b[Kb", "ab"},                        // erase-line CSI
+	}
+	for _, c := range cases {
+		if got := StripANSI(c.in); got != c.want {
+			t.Errorf("StripANSI(%q) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
+
+func TestRenderStripsANSIFromReport(t *testing.T) {
+	s := model.Session{
+		ID:    "x",
+		Title: "T",
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: "set model to \x1b[1mOpus\x1b[22m now"}}},
+			{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+				Name: "Bash", Summary: "echo hi", Result: &model.ToolResult{Content: "\x1b[32mgreen\x1b[0m output"},
+			}}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	html, _ := os.ReadFile(filepath.Join(dir, "index.html"))
+	body := string(html)
+	if strings.ContainsRune(body, 0x1b) {
+		t.Error("report still contains a raw ESC byte")
+	}
+	for _, want := range []string{"set model to Opus now", "green output"} {
+		if !strings.Contains(body, want) {
+			t.Errorf("report missing cleaned text %q", want)
+		}
+	}
+	if strings.Contains(body, "[1m") || strings.Contains(body, "[22m") || strings.Contains(body, "[32m") {
+		t.Error("report still shows leaked ANSI parameter text")
+	}
+}
+
 func sampleSession() model.Session {
 	return model.Session{
 		ID:          "abcd1234",
