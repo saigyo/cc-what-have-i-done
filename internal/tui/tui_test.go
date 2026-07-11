@@ -134,6 +134,57 @@ func TestFocusIdxOpensSessionList(t *testing.T) {
 	}
 }
 
+func TestOptionsOutputDirInput(t *testing.T) {
+	m := newModel(testGroups())
+	m = send(m, key("enter"), key("enter")) // open projA, select first session → options
+	if m.screen != screenOptions {
+		t.Fatalf("screen = %v, want options", m.screen)
+	}
+	// Move down to the output-directory row.
+	m = send(m, key("down"), key("down"), key("down"))
+	if m.optCursor != optOutDir {
+		t.Fatalf("optCursor = %d, want optOutDir (%d)", m.optCursor, optOutDir)
+	}
+	// Enter editing, type a path, finish with enter.
+	m = send(m, key("enter"))
+	if !m.editing {
+		t.Fatal("expected editing mode after enter on output-dir row")
+	}
+	for _, ch := range []string{"o", "u", "t", "/", "r", "u", "n"} {
+		m = send(m, key(ch))
+	}
+	m = send(m, key("enter"))
+	if m.editing {
+		t.Fatal("still editing after enter")
+	}
+	if m.outDir != "out/run" {
+		t.Fatalf("outDir = %q, want out/run", m.outDir)
+	}
+	// Confirm from Generate; the selection carries the override.
+	m = send(m, key("down"))
+	if m.optCursor != optGenerate {
+		t.Fatalf("optCursor = %d, want optGenerate (%d)", m.optCursor, optGenerate)
+	}
+	m = send(m, key("enter"))
+	if m.sel.OutDir != "out/run" {
+		t.Fatalf("sel.OutDir = %q, want out/run", m.sel.OutDir)
+	}
+}
+
+func TestEditingModeTakesLiteralKeys(t *testing.T) {
+	m := newModel(testGroups())
+	m = send(m, key("enter"), key("enter")) // → options
+	m = send(m, key("down"), key("down"), key("down"), key("enter"))
+	// 'q' would normally quit; while editing it must be a literal character.
+	m = send(m, key("q"), key("a"))
+	if m.sel.Canceled {
+		t.Fatal("'q' quit while editing; should be literal input")
+	}
+	if m.outDir != "qa" {
+		t.Fatalf("outDir = %q, want qa", m.outDir)
+	}
+}
+
 func TestClampScroll(t *testing.T) {
 	// cursor below window scrolls down
 	if got := clampScroll(12, 0, 10, 30); got != 3 {

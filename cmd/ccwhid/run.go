@@ -126,9 +126,9 @@ func ensureOutDir(dir string, force bool) error {
 	return nil
 }
 
-// openInBrowser opens path (a file or dir) in the default browser.
-func openInBrowser(path string) error {
-	index := filepath.Join(path, "index.html")
+// openInBrowser opens the report's index.html inside dir in the default browser.
+func openInBrowser(dir string) error {
+	index := filepath.Join(dir, "index.html")
 	abs, err := filepath.Abs(index)
 	if err != nil {
 		return err
