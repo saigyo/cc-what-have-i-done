@@ -53,14 +53,25 @@ func latestSession(opts *options, root string) (discovery.SessionInfo, bool, err
 		}
 		groups = groups[idx : idx+1]
 	}
-	for _, g := range groups {
-		for _, s := range g.Sessions {
-			if !s.IsAgent {
-				return s, false, nil
+	// Pick the newest interactive session by modification time. Group order
+	// alone is insufficient: groups are sorted by their newest session
+	// *including* agent transcripts, so a recent agent run in one project
+	// could otherwise mask a newer human session in another.
+	bestGI, bestSI := -1, -1
+	for gi := range groups {
+		for si := range groups[gi].Sessions {
+			if groups[gi].Sessions[si].IsAgent {
+				continue
+			}
+			if bestGI < 0 || groups[gi].Sessions[si].ModTime.After(groups[bestGI].Sessions[bestSI].ModTime) {
+				bestGI, bestSI = gi, si
 			}
 		}
 	}
-	return discovery.SessionInfo{}, false, fmt.Errorf("no sessions found")
+	if bestGI < 0 {
+		return discovery.SessionInfo{}, false, fmt.Errorf("no sessions found")
+	}
+	return groups[bestGI].Sessions[bestSI], false, nil
 }
 
 // generate parses, redacts, and renders a session, returning the output dir.
