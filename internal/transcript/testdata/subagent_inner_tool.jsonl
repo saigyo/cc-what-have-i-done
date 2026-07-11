@@ -1,0 +1,5 @@
+{"type":"user","uuid":"u1","message":{"role":"user","content":"do research"},"timestamp":"2026-07-11T10:00:00Z"}
+{"type":"assistant","uuid":"a1","parentUuid":"u1","message":{"role":"assistant","content":[{"type":"tool_use","id":"task1","name":"Task","input":{"description":"research topic","prompt":"go find things"}}]},"timestamp":"2026-07-11T10:00:01Z"}
+{"type":"assistant","uuid":"s2","isSidechain":true,"parentUuid":"a1","message":{"role":"assistant","content":[{"type":"tool_use","id":"inner1","name":"Bash","input":{"command":"ls"}}]},"timestamp":"2026-07-11T10:00:02Z"}
+{"type":"user","uuid":"s3","isSidechain":true,"parentUuid":"s2","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"inner1","content":"file.txt"}]},"timestamp":"2026-07-11T10:00:03Z"}
+{"type":"user","uuid":"u2","parentUuid":"a1","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"task1","content":"done"}]},"timestamp":"2026-07-11T10:00:04Z"}

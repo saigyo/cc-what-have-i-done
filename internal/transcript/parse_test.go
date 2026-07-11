@@ -79,3 +79,28 @@ func TestParseExcludeSubagents(t *testing.T) {
 		t.Errorf("expected no subagents, got %d", len(task.Subagents))
 	}
 }
+
+func TestParseSubagentInnerToolResult(t *testing.T) {
+	s, err := ParseFile("testdata/subagent_inner_tool.jsonl", Options{IncludeSubagents: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	task := s.Turns[1].Blocks[0].Tool
+	if len(task.Subagents) != 1 {
+		t.Fatalf("got %d subagents, want 1", len(task.Subagents))
+	}
+	var inner *model.ToolCall
+	for _, tn := range task.Subagents[0].Turns {
+		for _, bl := range tn.Blocks {
+			if bl.Tool != nil && bl.Tool.Name == "Bash" {
+				inner = bl.Tool
+			}
+		}
+	}
+	if inner == nil {
+		t.Fatal("inner Bash tool not found in subagent turns")
+	}
+	if inner.Result == nil || inner.Result.Content != "file.txt" {
+		t.Errorf("inner tool result = %+v, want content 'file.txt'", inner.Result)
+	}
+}
