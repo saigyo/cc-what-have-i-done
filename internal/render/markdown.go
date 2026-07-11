@@ -17,9 +17,10 @@ import (
 
 var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
 
-// Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted
-// transcript content (the user's own session), so we do not strip HTML, but we
-// do escape code via goldmark's default renderer.
+// Markdown renders CommonMark+GFM to HTML. goldmark runs with its default
+// Unsafe=false setting, so any raw HTML embedded in the transcript text is
+// stripped (replaced with an HTML comment) rather than passed through — the
+// rendered Body is therefore safe to emit as template.HTML.
 func Markdown(src string) template.HTML {
 	var buf bytes.Buffer
 	if err := md.Convert([]byte(src), &buf); err != nil {

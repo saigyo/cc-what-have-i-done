@@ -3,7 +3,9 @@ package discovery
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 func TestEncodeDecodeRoundTrip(t *testing.T) {
@@ -40,6 +42,14 @@ func writeSession(t *testing.T, dir, id string, lines ...string) {
 	}
 	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestTruncateRuneSafe(t *testing.T) {
+	s := strings.Repeat("ä", 80)
+	got := truncate(s, 60)
+	if !utf8.ValidString(got) {
+		t.Errorf("truncate produced invalid UTF-8: %q", got)
 	}
 }
 
