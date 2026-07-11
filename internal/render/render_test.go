@@ -1,0 +1,66 @@
+package render
+
+import (
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/saigyo/cc-what-have-i-done/internal/model"
+)
+
+func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+	out := string(Markdown("# Title\n\n```go\nfmt.Println(\"hi\")\n```"))
+	if !strings.Contains(out, "<h1") {
+		t.Errorf("expected <h1> in %q", out)
+	}
+	if !strings.Contains(out, "Println") {
+		t.Errorf("expected highlighted code in output")
+	}
+}
+
+func TestDiffHTMLMarksLines(t *testing.T) {
+	out := string(DiffHTML(&model.Diff{Path: "x.txt", OldText: "a", NewText: "b"}))
+	if !strings.Contains(out, "diff-del") || !strings.Contains(out, "diff-add") {
+		t.Errorf("diff HTML missing add/del classes: %q", out)
+	}
+}
+
+func sampleSession() model.Session {
+	return model.Session{
+		ID:          "abcd1234",
+		ProjectPath: "/tmp/proj",
+		Title:       "Sample",
+		StartedAt:   time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+		EndedAt:     time.Date(2026, 7, 11, 10, 1, 0, 0, time.UTC),
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: "do it"}}},
+			{Kind: model.TurnAssistant, Blocks: []model.Block{
+				{Type: model.BlockText, Text: "on it"},
+				{Type: model.BlockToolUse, Tool: &model.ToolCall{
+					Name: "Bash", Summary: "ls", Result: &model.ToolResult{Content: "file.txt"},
+				}},
+			}},
+		},
+	}
+}
+
+func TestSiteWritesFiles(t *testing.T) {
+	dir := t.TempDir()
+	if err := Site(sampleSession(), dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"index.html", "assets/styles.css", "assets/app.js"} {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Errorf("missing %s: %v", name, err)
+		}
+	}
+	html, _ := os.ReadFile(filepath.Join(dir, "index.html"))
+	s := string(html)
+	for _, want := range []string{"Sample", "do it", "on it", "Bash", "assets/styles.css", "assets/app.js"} {
+		if !strings.Contains(s, want) {
+			t.Errorf("index.html missing %q", want)
+		}
+	}
+}

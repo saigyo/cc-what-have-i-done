@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Title }} · ccwhid</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      {{ range .Prompts }}<li><a href="#turn-{{ .Index }}">{{ .Preview }}</a></li>{{ end }}
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>{{ .Title }}</h1>
+      <div class="meta">
+        <span>{{ .Session.ProjectPath }}</span>
+        {{ if .Session.GitBranch }}<span>⎇ {{ .Session.GitBranch }}</span>{{ end }}
+        <span>{{ .StartedAt }}</span>
+        <span>{{ .TurnCount }} turns</span>
+      </div>
+    </section>
+    {{ range .Turns }}
+    <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}" data-search="{{ .SearchText }}">
+      <div class="turn-role">{{ .RoleLabel }}</div>
+      <div class="turn-body">{{ .Body }}</div>
+    </article>
+    {{ end }}
+  </main>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
