@@ -37,15 +37,10 @@ checksum:
   name_template: checksums.txt
 
 changelog:
-  sort: asc
-  use: github
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
-      - "^ci:"
-      - "^chore:"
-      - "^Merge "
+  # Delegate to GitHub's native release-notes generator so each release lists
+  # the pull requests merged since the previous tag, with contributors and a
+  # full-changelog link. Categorisation is configured in .github/release.yml.
+  use: github-native
 
 release:
   draft: false

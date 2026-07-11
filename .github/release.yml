@@ -1,0 +1,15 @@
+# Configures GitHub's automatic release notes (used by the GoReleaser
+# github-native changelog). PRs are grouped by label; the "*" catch-all
+# ensures every merged PR is listed even when it carries no matching label.
+changelog:
+  categories:
+    - title: 🚀 Features
+      labels: ["enhancement", "feature"]
+    - title: 🐛 Fixes
+      labels: ["bug", "fix"]
+    - title: 📦 Dependencies
+      labels: ["dependencies"]
+    - title: 🔧 Maintenance
+      labels: ["chore", "ci", "docs", "test", "refactor"]
+    - title: Other Changes
+      labels: ["*"]
