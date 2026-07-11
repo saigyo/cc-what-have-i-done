@@ -138,7 +138,7 @@ func renderTool(tc *model.ToolCall) string {
 	b.WriteString(`<details class="tool"><summary class="tool-head">`)
 	b.WriteString(`<span class="tool-name">` + html.EscapeString(tc.Name) + `</span>`)
 	if tc.Summary != "" {
-		b.WriteString(`<span class="tool-summary">` + html.EscapeString(tc.Summary) + `</span>`)
+		b.WriteString(`<span class="tool-summary">` + html.EscapeString(StripANSI(tc.Summary)) + `</span>`)
 	}
 	b.WriteString(`</summary><div class="tool-body">`)
 	if tc.Diff != nil {
@@ -151,7 +151,7 @@ func renderTool(tc *model.ToolCall) string {
 		if tc.Result.IsError {
 			cls += " tool-result-error"
 		}
-		b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(tc.Result.Content) + `</pre>`)
+		b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
 	}
 	for _, sub := range tc.Subagents {
 		b.WriteString(`<details class="subagent"><summary>subagent: ` + html.EscapeString(sub.Description) + `</summary>`)
@@ -176,7 +176,8 @@ func turnPlainText(t model.Turn) string {
 			parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
 		}
 	}
-	return strings.Join(parts, " ")
+	// Strip ANSI so previews and the search index carry clean text.
+	return StripANSI(strings.Join(parts, " "))
 }
 
 func preview(s string, n int) string {

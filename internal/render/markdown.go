@@ -32,6 +32,7 @@ var md = goldmark.New(goldmark.WithExtensions(
 // stripped (replaced with an HTML comment) rather than passed through — the
 // rendered Body is therefore safe to emit as template.HTML.
 func Markdown(src string) template.HTML {
+	src = StripANSI(src)
 	var buf bytes.Buffer
 	if err := md.Convert([]byte(src), &buf); err != nil {
 		return template.HTML("<pre>" + html.EscapeString(src) + "</pre>")
@@ -43,15 +44,16 @@ func Markdown(src string) template.HTML {
 func DiffHTML(d *model.Diff) template.HTML {
 	var b strings.Builder
 	b.WriteString(`<div class="diff">`)
-	if d.OldText != "" {
-		for _, line := range strings.Split(d.OldText, "\n") {
+	oldText, newText := StripANSI(d.OldText), StripANSI(d.NewText)
+	if oldText != "" {
+		for _, line := range strings.Split(oldText, "\n") {
 			b.WriteString(`<div class="diff-del">- `)
 			b.WriteString(html.EscapeString(line))
 			b.WriteString("</div>")
 		}
 	}
-	if d.NewText != "" {
-		for _, line := range strings.Split(d.NewText, "\n") {
+	if newText != "" {
+		for _, line := range strings.Split(newText, "\n") {
 			b.WriteString(`<div class="diff-add">+ `)
 			b.WriteString(html.EscapeString(line))
 			b.WriteString("</div>")
