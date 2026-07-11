@@ -1,0 +1,26 @@
+# Binaries
+/ccwhid
+/cc-what-have-i-done
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries / coverage
+*.test
+*.out
+coverage.txt
+
+# Go workspace
+go.work
+go.work.sum
+
+# Generated reports (default output dir)
+/ccwhid-report/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
