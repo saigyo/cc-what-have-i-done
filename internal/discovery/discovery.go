@@ -40,6 +40,13 @@ func EncodeProjectDir(cwd string) string {
 }
 
 // DecodeProjectDir maps a projects dir name back to an absolute path.
+//
+// This is best-effort and lossy: the encoding used for ~/.claude/projects
+// directory names replaces every "/" with "-", so a decode cannot distinguish
+// an original path separator from a literal "-" inside a path segment (e.g.
+// "cc-what-have-i-done" decodes to "cc/what/have/i/done"). Callers that need
+// the true path should prefer the "cwd" field recorded in transcript records
+// and only fall back to this function when no such record is available.
 func DecodeProjectDir(name string) string {
 	return strings.ReplaceAll(name, "-", "/")
 }
@@ -59,6 +66,7 @@ type scanLine struct {
 	AiTitle     string          `json:"aiTitle"`
 	IsSidechain bool            `json:"isSidechain"`
 	Timestamp   string          `json:"timestamp"`
+	Cwd         string          `json:"cwd"`
 	Message     json.RawMessage `json:"message"`
 }
 
@@ -85,6 +93,7 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
 
 	sc := bufio.NewScanner(f)
 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+	cwdSet := false
 	for sc.Scan() {
 		var l scanLine
 		if err := json.Unmarshal(sc.Bytes(), &l); err != nil {
@@ -102,6 +111,10 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
 			}
 			if l.Type == "user" && info.FirstPrompt == "" {
 				info.FirstPrompt = firstPromptText(l.Message)
+			}
+			if !cwdSet && l.Cwd != "" {
+				info.ProjectPath = l.Cwd
+				cwdSet = true
 			}
 		}
 	}
@@ -183,7 +196,7 @@ func Scan(root string) ([]ProjectGroup, error) {
 		})
 		groups = append(groups, ProjectGroup{
 			ProjectDir:  e.Name(),
-			ProjectPath: DecodeProjectDir(e.Name()),
+			ProjectPath: sessions[0].ProjectPath,
 			Sessions:    sessions,
 		})
 	}
