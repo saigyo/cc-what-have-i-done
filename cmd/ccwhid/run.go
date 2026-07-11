@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/discovery"
 	"github.com/saigyo/cc-what-have-i-done/internal/redact"
@@ -39,26 +38,29 @@ func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, er
 	}
 }
 
+// latestSession returns the most recent interactive (non-agent) session,
+// optionally scoped to a project. Agent-spawned transcripts are skipped so
+// --latest targets the user's own sessions.
 func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
 	groups, err := discovery.Scan(root)
 	if err != nil {
 		return discovery.SessionInfo{}, false, err
 	}
-	for _, g := range groups {
-		if opts.project != "" && !matchProject(g, opts.project) {
-			continue
+	if opts.project != "" {
+		idx, err := discovery.FindProject(groups, opts.project)
+		if err != nil {
+			return discovery.SessionInfo{}, false, err
 		}
-		if len(g.Sessions) > 0 {
-			return g.Sessions[0], false, nil
+		groups = groups[idx : idx+1]
+	}
+	for _, g := range groups {
+		for _, s := range g.Sessions {
+			if !s.IsAgent {
+				return s, false, nil
+			}
 		}
 	}
 	return discovery.SessionInfo{}, false, fmt.Errorf("no sessions found")
-}
-
-func matchProject(g discovery.ProjectGroup, want string) bool {
-	return g.ProjectPath == want ||
-		strings.EqualFold(filepath.Base(g.ProjectPath), want) ||
-		strings.Contains(g.ProjectPath, want)
 }
 
 // generate parses, redacts, and renders a session, returning the output dir.

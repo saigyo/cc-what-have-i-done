@@ -63,7 +63,14 @@ func run(cmd *cobra.Command, opts *options) error {
 		if err != nil {
 			return err
 		}
-		sel, err := tui.Run(groups)
+		focusIdx := -1
+		if opts.project != "" {
+			focusIdx, err = discovery.FindProject(groups, opts.project)
+			if err != nil {
+				return err
+			}
+		}
+		sel, err := tui.Run(groups, focusIdx)
 		if err != nil {
 			return err
 		}
