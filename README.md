@@ -10,12 +10,12 @@ report into your repo as a documentation artifact.
 ## Preview
 
 A full example — ccwhid rendering the very session that built it — is committed
-at [`docs/session-report/`](docs/session-report/); clone the repo and open
-`index.html` in a browser.
+at [`docs/session-report/index.html`](docs/session-report/index.html); clone the
+repo and open it in a browser.
 
 | Report overview | Tool calls & diffs |
 |:---:|:---:|
-| [![ccwhid report overview](docs/images/report-top.png)](docs/session-report/) | [![tool calls and diffs](docs/images/report-tool.png)](docs/session-report/) |
+| [![ccwhid report overview](docs/images/report-top.png)](docs/session-report/index.html) | [![tool calls and diffs](docs/images/report-tool.png)](docs/session-report/index.html) |
 
 The report is one self-contained page: a jump-to-prompt sidebar, a live turn
 filter, expand/collapse-all, and a light/dark toggle — all client-side, no

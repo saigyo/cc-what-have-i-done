@@ -110,8 +110,18 @@ func ensureOutDir(dir string, force bool) error {
 		}
 		return err
 	}
-	if len(entries) > 0 && !force {
+	if len(entries) == 0 {
+		return nil
+	}
+	if !force {
 		return fmt.Errorf("output directory %q is not empty (use --force to overwrite)", dir)
+	}
+	// --force: clear existing entries so the report reflects only this run and
+	// no stale files (e.g. renamed assets) are left behind.
+	for _, e := range entries {
+		if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
+			return err
+		}
 	}
 	return nil
 }

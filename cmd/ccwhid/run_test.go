@@ -71,6 +71,47 @@ func TestLatestSessionNoInteractiveErrors(t *testing.T) {
 	}
 }
 
+func TestEnsureOutDir(t *testing.T) {
+	// Non-existent dir is created.
+	base := t.TempDir()
+	fresh := filepath.Join(base, "new")
+	if err := ensureOutDir(fresh, false); err != nil {
+		t.Fatalf("fresh dir: %v", err)
+	}
+	if fi, err := os.Stat(fresh); err != nil || !fi.IsDir() {
+		t.Fatalf("expected created dir, got %v %v", fi, err)
+	}
+
+	// Non-empty dir without --force errors.
+	nonEmpty := t.TempDir()
+	stale := filepath.Join(nonEmpty, "stale.txt")
+	if err := os.WriteFile(stale, []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := ensureOutDir(nonEmpty, false); err == nil {
+		t.Error("expected error for non-empty dir without force")
+	}
+
+	// Non-empty dir with --force clears stale content (incl. nested).
+	nested := filepath.Join(nonEmpty, "assets")
+	if err := os.MkdirAll(nested, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(nested, "old.css"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := ensureOutDir(nonEmpty, true); err != nil {
+		t.Fatalf("force clear: %v", err)
+	}
+	entries, err := os.ReadDir(nonEmpty)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 0 {
+		t.Errorf("force did not clear dir, %d entries remain", len(entries))
+	}
+}
+
 func TestResolveOutDirDefault(t *testing.T) {
 	opts := &options{}
 	si := discovery.SessionInfo{ID: "abcd1234-5678-90ef-0000-000000000000"}
