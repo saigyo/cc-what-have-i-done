@@ -119,3 +119,12 @@ func TestScanUsesTranscriptCwd(t *testing.T) {
 		t.Errorf("session ProjectPath = %q, want the true cwd", groups[0].Sessions[0].ProjectPath)
 	}
 }
+
+func TestDisplayLabel(t *testing.T) {
+	if got := (SessionInfo{Title: "T"}).DisplayLabel(); got != "T" {
+		t.Errorf("DisplayLabel = %q", got)
+	}
+	if got := (SessionInfo{ID: "id"}).DisplayLabel(); got != "id" {
+		t.Errorf("DisplayLabel fallback = %q", got)
+	}
+}

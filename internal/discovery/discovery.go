@@ -207,6 +207,17 @@ func Scan(root string) ([]ProjectGroup, error) {
 	return groups, nil
 }
 
+// DisplayLabel returns a human-friendly one-line label for a session.
+func (s SessionInfo) DisplayLabel() string {
+	if s.Title != "" {
+		return s.Title
+	}
+	if s.FirstPrompt != "" {
+		return s.FirstPrompt
+	}
+	return s.ID
+}
+
 // FindSession resolves a session id or unambiguous prefix across all projects.
 func FindSession(root, idOrPrefix string) (SessionInfo, error) {
 	groups, err := Scan(root)
