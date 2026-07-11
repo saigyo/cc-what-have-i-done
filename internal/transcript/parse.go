@@ -129,17 +129,21 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		}
 		s.Turns = append(s.Turns, *turn)
 
-		// After appending, register any Task tool call as the new sidechain
-		// owner and seed its first subagent slot.
-		for i := range turn.Blocks {
-			b := &s.Turns[len(s.Turns)-1].Blocks[i]
-			if b.Tool != nil {
-				toolIndex[b.Tool.ID] = b.Tool
-				if b.Tool.Name == "Task" && opts.IncludeSubagents {
-					b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{
-						Description: taskDescription(b.Tool),
+		// Seed a subagent slot for each Task tool call and make it the current
+		// sidechain owner. Tool-use ids are already registered in buildTurn.
+		// Note: sidechain records are attributed to the nearest preceding Task
+		// by file order. Sequential Task calls attribute correctly; multiple
+		// Task calls dispatched in parallel from one assistant message cannot be
+		// disambiguated from the raw records and will all attach to the last
+		// one — a known v1 limitation.
+		if opts.IncludeSubagents {
+			for i := range turn.Blocks {
+				tool := turn.Blocks[i].Tool
+				if tool != nil && tool.Name == "Task" {
+					tool.Subagents = append(tool.Subagents, model.Subagent{
+						Description: taskDescription(tool),
 					})
-					lastTask = b.Tool
+					lastTask = tool
 					sidechainOwner = lastTask
 				}
 			}
@@ -172,7 +176,11 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
 			}
 		case "tool_use":
-			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})
+			tc := buildToolCall(b)
+			// Register the tool call so a later tool_result (in this turn's
+			// chain OR inside a sidechain) can be matched back to it by id.
+			toolIndex[tc.ID] = tc
+			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
 		case "tool_result":
 			if tc := toolIndex[b.ToolUseID]; tc != nil {
 				tc.Result = &model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
