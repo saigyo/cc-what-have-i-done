@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
@@ -43,6 +44,17 @@ func sampleSession() model.Session {
 				}},
 			}},
 		},
+	}
+}
+
+func TestPreviewRuneSafe(t *testing.T) {
+	s := strings.Repeat("ä", 80) // 80 two-byte runes, exceeds n=60
+	got := preview(s, 60)
+	if !utf8.ValidString(got) {
+		t.Errorf("preview produced invalid UTF-8: %q", got)
+	}
+	if []rune(got)[len([]rune(got))-1] != '…' {
+		t.Errorf("preview should end with ellipsis, got %q", got)
 	}
 }
 
