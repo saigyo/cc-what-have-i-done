@@ -7,6 +7,20 @@ report into your repo as a documentation artifact.
 > **Status:** under active development. See
 > [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plan.
 
+## Preview
+
+A full example — ccwhid rendering the very session that built it — is committed
+at [`docs/session-report/`](docs/session-report/); clone the repo and open
+`index.html` in a browser.
+
+| Report overview | Tool calls & diffs |
+|:---:|:---:|
+| [![ccwhid report overview](docs/images/report-top.png)](docs/session-report/) | [![tool calls and diffs](docs/images/report-tool.png)](docs/session-report/) |
+
+The report is one self-contained page: a jump-to-prompt sidebar, a live turn
+filter, expand/collapse-all, and a light/dark toggle — all client-side, no
+server.
+
 ## Install
 
 ```bash
@@ -46,6 +60,13 @@ Run `ccwhid` with no selector to open the interactive browser:
   with a `⟲`.
 
 `--project <name>` opens the browser directly on that project's session list.
+
+![ccwhid project list](docs/images/tui-projects.png)
+
+*Pick a project, then a session. Agent transcripts are hidden until you press
+`a`, then marked with `⟲`:*
+
+![ccwhid session list](docs/images/tui-sessions.png)
 
 ### Flags
 
