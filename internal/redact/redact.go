@@ -48,6 +48,11 @@ func (r *Redactor) String(s string) string {
 // Session redacts every user-visible text field of a Session in place.
 func Session(s *model.Session, homeDir string) {
 	r := New(homeDir)
+	// Session-level fields are rendered in the report header, so they must be
+	// scrubbed too (ProjectPath in particular carries the home path/username).
+	s.ProjectPath = r.String(s.ProjectPath)
+	s.Title = r.String(s.Title)
+	s.GitBranch = r.String(s.GitBranch)
 	for i := range s.Turns {
 		redactTurn(r, &s.Turns[i])
 	}
@@ -75,6 +80,7 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 		tc.Diff.Path = r.String(tc.Diff.Path)
 	}
 	for i := range tc.Subagents {
+		tc.Subagents[i].Description = r.String(tc.Subagents[i].Description)
 		for j := range tc.Subagents[i].Turns {
 			redactTurn(r, &tc.Subagents[i].Turns[j])
 		}

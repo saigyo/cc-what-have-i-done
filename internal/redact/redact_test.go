@@ -54,3 +54,23 @@ func TestRedactSessionWalksBlocks(t *testing.T) {
 		t.Error("tool fields not redacted")
 	}
 }
+
+func TestRedactSessionLevelFields(t *testing.T) {
+	s := &model.Session{
+		ProjectPath: "/Users/markus/IdeaProjects/app",
+		Turns: []model.Turn{{
+			Kind: model.TurnAssistant,
+			Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+				Name:      "Task",
+				Subagents: []model.Subagent{{Description: "run AKIAIOSFODNN7EXAMPLE"}},
+			}}},
+		}},
+	}
+	Session(s, "/Users/markus")
+	if strings.Contains(s.ProjectPath, "/Users/markus") {
+		t.Errorf("ProjectPath home not rewritten: %q", s.ProjectPath)
+	}
+	if strings.Contains(s.Turns[0].Blocks[0].Tool.Subagents[0].Description, "AKIA") {
+		t.Error("subagent description not redacted")
+	}
+}

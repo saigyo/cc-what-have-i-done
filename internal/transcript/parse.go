@@ -3,6 +3,7 @@ package transcript
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 
@@ -55,10 +56,9 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 	// toolIndex maps a tool_use id to the ToolCall pointer so results and
 	// sidechains can be attached after the fact.
 	toolIndex := map[string]*model.ToolCall{}
-	// lastTask tracks the most recent Task tool call for sidechain attachment.
+	// lastTask tracks the most recent Task tool call; sidechainOwner is the Task
+	// whose Subagents any subsequent sidechain turns are appended to.
 	var lastTask *model.ToolCall
-	// subByFirstUUID lets sidechain turns append to the right subagent; keyed
-	// by the Task tool that owns them.
 	sidechainOwner := lastTask
 
 	sc := bufio.NewScanner(r)
@@ -150,6 +150,13 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		}
 	}
 	if err := sc.Err(); err != nil {
+		// A single over-long line (bufio.ErrTooLong) is a pathological record,
+		// not a reason to discard the whole report: count it and return what we
+		// parsed so far.
+		if errors.Is(err, bufio.ErrTooLong) {
+			s.SkippedLines++
+			return s, nil
+		}
 		return s, err
 	}
 	return s, nil

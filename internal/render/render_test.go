@@ -19,6 +19,9 @@ func TestMarkdownRendersHeadingAndCode(t *testing.T) {
 	if !strings.Contains(out, "Println") {
 		t.Errorf("expected highlighted code in output")
 	}
+	if !strings.Contains(out, "<span") {
+		t.Errorf("expected chroma-highlighted <span> tokens in code output, got %q", out)
+	}
 }
 
 func TestDiffHTMLMarksLines(t *testing.T) {

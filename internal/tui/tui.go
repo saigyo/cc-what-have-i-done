@@ -69,7 +69,6 @@ type model struct {
 	screen    screen
 	sel       Selection
 	optCursor int
-	done      bool
 }
 
 func newModel(groups []discovery.ProjectGroup) model {
@@ -103,7 +102,6 @@ func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch key.String() {
 	case "ctrl+c", "q", "esc":
 		m.sel.Canceled = true
-		m.done = true
 		return m, tea.Quit
 	case "up", "k":
 		m.moveCursor(-1)
@@ -139,7 +137,6 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch key.String() {
 	case "ctrl+c", "q":
 		m.sel.Canceled = true
-		m.done = true
 		return m, tea.Quit
 	case "esc":
 		m.screen = screenList
@@ -160,7 +157,6 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case 2:
 			m.sel.Open = !m.sel.Open
 		case 3:
-			m.done = true
 			return m, tea.Quit
 		}
 	}

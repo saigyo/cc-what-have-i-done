@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,10 +13,6 @@ import (
 	"github.com/saigyo/cc-what-have-i-done/internal/render"
 	"github.com/saigyo/cc-what-have-i-done/internal/transcript"
 )
-
-// errNeedTUI signals that no session selector was provided and the caller
-// should launch the interactive browser.
-var errNeedTUI = errors.New("no session selected: launch TUI")
 
 func resolveOutDir(opts *options, si discovery.SessionInfo) string {
 	if opts.out != "" {
@@ -80,6 +75,9 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
 	}
 	if si.ID != "" {
 		sess.ID = si.ID
+	}
+	if sess.SkippedLines > 0 {
+		fmt.Fprintf(os.Stderr, "warning: skipped %d malformed line(s)\n", sess.SkippedLines)
 	}
 	if !opts.noRedact {
 		home, _ := os.UserHomeDir()
