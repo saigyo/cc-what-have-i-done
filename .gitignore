@@ -27,3 +27,6 @@ go.work.sum
 
 # Playwright MCP scratch output
 .playwright-mcp/
+
+# GoReleaser build output
+/dist/
