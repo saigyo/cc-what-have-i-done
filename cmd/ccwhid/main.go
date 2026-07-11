@@ -5,6 +5,9 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/saigyo/cc-what-have-i-done/internal/discovery"
+	"github.com/saigyo/cc-what-have-i-done/internal/tui"
 )
 
 // options holds all CLI flag values.
@@ -30,8 +33,7 @@ func newRootCmd() *cobra.Command {
 			"flags to browse sessions in an interactive TUI.",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Wired in Task 8 (TUI) and Task 9 (render dispatch).
-			return fmt.Errorf("not yet implemented")
+			return run(cmd, opts)
 		},
 	}
 	f := cmd.Flags()
@@ -45,6 +47,49 @@ func newRootCmd() *cobra.Command {
 	f.BoolVar(&opts.force, "force", false, "overwrite a non-empty output directory")
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
 	return cmd
+}
+
+func run(cmd *cobra.Command, opts *options) error {
+	root, err := discovery.DefaultRoot()
+	if err != nil {
+		return err
+	}
+	si, needTUI, err := resolveSession(opts, root)
+	if err != nil {
+		return err
+	}
+	if needTUI {
+		groups, err := discovery.Scan(root)
+		if err != nil {
+			return err
+		}
+		sel, err := tui.Run(groups)
+		if err != nil {
+			return err
+		}
+		if sel.Canceled {
+			fmt.Fprintln(cmd.OutOrStdout(), "canceled")
+			return nil
+		}
+		si = sel.Session
+		opts.includeSubagents = sel.IncludeSubagents
+		opts.noRedact = !sel.Redact
+		opts.open = sel.Open
+		if sel.OutDir != "" {
+			opts.out = sel.OutDir
+		}
+	}
+	outDir, err := generate(opts, si)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(cmd.OutOrStdout(), "report written to %s\n", outDir)
+	if opts.open {
+		if err := openInBrowser(outDir); err != nil {
+			fmt.Fprintf(cmd.ErrOrStderr(), "warning: could not open browser: %v\n", err)
+		}
+	}
+	return nil
 }
 
 func main() {
