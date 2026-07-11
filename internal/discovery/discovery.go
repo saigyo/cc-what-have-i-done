@@ -25,6 +25,11 @@ type SessionInfo struct {
 	ModTime      time.Time
 	MessageCount int
 	HasSubagents bool
+	// IsAgent reports that this transcript was produced by an SDK/agent
+	// invocation (e.g. a Task subagent or code-review agent) rather than an
+	// interactive human session. Such sessions get their own top-level
+	// transcript files and are hidden from the default listing.
+	IsAgent bool
 }
 
 // ProjectGroup groups a project's sessions.
@@ -62,12 +67,14 @@ func DefaultRoot() (string, error) {
 
 // scanLine is the subset of fields needed to index a session cheaply.
 type scanLine struct {
-	Type        string          `json:"type"`
-	AiTitle     string          `json:"aiTitle"`
-	IsSidechain bool            `json:"isSidechain"`
-	Timestamp   string          `json:"timestamp"`
-	Cwd         string          `json:"cwd"`
-	Message     json.RawMessage `json:"message"`
+	Type         string          `json:"type"`
+	AiTitle      string          `json:"aiTitle"`
+	IsSidechain  bool            `json:"isSidechain"`
+	Timestamp    string          `json:"timestamp"`
+	Cwd          string          `json:"cwd"`
+	Entrypoint   string          `json:"entrypoint"`
+	PromptSource string          `json:"promptSource"`
+	Message      json.RawMessage `json:"message"`
 }
 
 // indexFile reads a jsonl file and produces a SessionInfo without a full parse.
@@ -94,6 +101,7 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
 	sc := bufio.NewScanner(f)
 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
 	cwdSet := false
+	entrypointSet := false
 	for sc.Scan() {
 		var l scanLine
 		if err := json.Unmarshal(sc.Bytes(), &l); err != nil {
@@ -108,6 +116,16 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
 			info.MessageCount++
 			if l.IsSidechain {
 				info.HasSubagents = true
+			}
+			// Classify origin: the first record carrying an entrypoint decides
+			// it (interactive "cli"/IDE vs. "sdk-*"), and any prompt sourced
+			// from the SDK confirms an agent-spawned transcript.
+			if !entrypointSet && l.Entrypoint != "" {
+				info.IsAgent = strings.HasPrefix(l.Entrypoint, "sdk")
+				entrypointSet = true
+			}
+			if l.PromptSource == "sdk" {
+				info.IsAgent = true
 			}
 			if l.Type == "user" && info.FirstPrompt == "" {
 				info.FirstPrompt = firstPromptText(l.Message)
@@ -205,6 +223,65 @@ func Scan(root string) ([]ProjectGroup, error) {
 		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
 	})
 	return groups, nil
+}
+
+// RootSessions returns the group's interactive (non-agent) sessions, preserving
+// order.
+func (g ProjectGroup) RootSessions() []SessionInfo {
+	out := make([]SessionInfo, 0, len(g.Sessions))
+	for _, s := range g.Sessions {
+		if !s.IsAgent {
+			out = append(out, s)
+		}
+	}
+	return out
+}
+
+// AgentCount returns how many of the group's sessions were agent-spawned.
+func (g ProjectGroup) AgentCount() int {
+	n := 0
+	for _, s := range g.Sessions {
+		if s.IsAgent {
+			n++
+		}
+	}
+	return n
+}
+
+// FindProject resolves a project selector (full path, basename, or unambiguous
+// substring of the path) to an index into groups. It errors if nothing matches
+// or the selector is ambiguous.
+func FindProject(groups []ProjectGroup, want string) (int, error) {
+	// 1. Exact absolute-path match.
+	for i, g := range groups {
+		if g.ProjectPath == want {
+			return i, nil
+		}
+	}
+	// 2. Case-insensitive basename match.
+	var matches []int
+	for i, g := range groups {
+		if strings.EqualFold(filepath.Base(g.ProjectPath), want) {
+			matches = append(matches, i)
+		}
+	}
+	// 3. Fall back to a case-insensitive substring of the full path.
+	if len(matches) == 0 {
+		lw := strings.ToLower(want)
+		for i, g := range groups {
+			if strings.Contains(strings.ToLower(g.ProjectPath), lw) {
+				matches = append(matches, i)
+			}
+		}
+	}
+	switch len(matches) {
+	case 0:
+		return -1, fmt.Errorf("no project matching %q", want)
+	case 1:
+		return matches[0], nil
+	default:
+		return -1, fmt.Errorf("ambiguous project %q matches %d projects", want, len(matches))
+	}
 }
 
 // DisplayLabel returns a human-friendly one-line label for a session.

@@ -120,6 +120,69 @@ func TestScanUsesTranscriptCwd(t *testing.T) {
 	}
 }
 
+func TestScanClassifiesAgentSessions(t *testing.T) {
+	root := t.TempDir()
+	proj := filepath.Join(root, "-tmp-projA")
+	// Interactive session: entrypoint cli, no promptSource.
+	writeSession(t, proj, "aaaa1111-0000-0000-0000-000000000000",
+		`{"type":"user","message":{"role":"user","content":"hi"},"entrypoint":"cli","cwd":"/tmp/projA","timestamp":"2026-07-11T10:00:00Z"}`)
+	// Agent session: entrypoint sdk-py + promptSource sdk.
+	writeSession(t, proj, "bbbb2222-0000-0000-0000-000000000000",
+		`{"type":"user","message":{"role":"user","content":"review"},"entrypoint":"sdk-py","promptSource":"sdk","cwd":"/tmp/projA","timestamp":"2026-07-11T11:00:00Z"}`)
+	groups, err := Scan(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	byID := map[string]SessionInfo{}
+	for _, s := range groups[0].Sessions {
+		byID[s.ID[:4]] = s
+	}
+	if byID["aaaa"].IsAgent {
+		t.Error("cli session wrongly classified as agent")
+	}
+	if !byID["bbbb"].IsAgent {
+		t.Error("sdk session not classified as agent")
+	}
+	if got := groups[0].AgentCount(); got != 1 {
+		t.Errorf("AgentCount = %d, want 1", got)
+	}
+	if got := len(groups[0].RootSessions()); got != 1 {
+		t.Errorf("RootSessions = %d, want 1", got)
+	}
+}
+
+func TestFindProject(t *testing.T) {
+	groups := []ProjectGroup{
+		{ProjectPath: "/Users/x/IdeaProjects/cc-what-have-i-done"},
+		{ProjectPath: "/Users/x/IdeaProjects/other-app"},
+		{ProjectPath: "/Users/x/Downloads/apparatus"},
+	}
+	cases := []struct {
+		want    string
+		wantIdx int
+		wantErr bool
+	}{
+		{"/Users/x/IdeaProjects/other-app", 1, false}, // exact path
+		{"cc-what-have-i-done", 0, false},             // basename
+		{"OTHER-APP", 1, false},                       // basename, case-insensitive
+		{"Downloads", 2, false},                       // substring
+		{"nope", -1, true},                            // no match
+		{"IdeaProjects", -1, true},                    // ambiguous substring
+	}
+	for _, c := range cases {
+		idx, err := FindProject(groups, c.want)
+		if c.wantErr {
+			if err == nil {
+				t.Errorf("FindProject(%q) = %d, want error", c.want, idx)
+			}
+			continue
+		}
+		if err != nil || idx != c.wantIdx {
+			t.Errorf("FindProject(%q) = %d, %v; want %d", c.want, idx, err, c.wantIdx)
+		}
+	}
+}
+
 func TestDisplayLabel(t *testing.T) {
 	if got := (SessionInfo{Title: "T"}).DisplayLabel(); got != "T" {
 		t.Errorf("DisplayLabel = %q", got)

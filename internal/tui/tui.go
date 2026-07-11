@@ -1,5 +1,6 @@
 // Package tui provides an interactive session browser used when ccwhid is run
-// with no selector flags.
+// with no selector flags. It presents a two-level view: a scrollable list of
+// projects, then a scrollable list of that project's sessions.
 package tui
 
 import (
@@ -12,13 +13,6 @@ import (
 	"github.com/saigyo/cc-what-have-i-done/internal/discovery"
 )
 
-// Row is one line in the browser: either a project header or a session.
-type Row struct {
-	IsHeader bool
-	Label    string
-	Session  discovery.SessionInfo
-}
-
 // Selection is the result of running the browser.
 type Selection struct {
 	Session          discovery.SessionInfo
@@ -29,28 +23,9 @@ type Selection struct {
 	Canceled         bool
 }
 
-func flattenRows(groups []discovery.ProjectGroup) []Row {
-	var rows []Row
-	for _, g := range groups {
-		rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})
-		for _, s := range g.Sessions {
-			rows = append(rows, Row{Session: s})
-		}
-	}
-	return rows
-}
-
-func firstSelectable(rows []Row) int {
-	for i, r := range rows {
-		if !r.IsHeader {
-			return i
-		}
-	}
-	return 0
-}
-
 var (
-	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#D97757")).MarginTop(1)
+	titleStyle    = lipgloss.NewStyle().Bold(true)
+	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#D97757"))
 	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#1A1A18")).Background(lipgloss.Color("#F6E7DF"))
 	mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 	optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#D97757"))
@@ -59,23 +34,45 @@ var (
 type screen int
 
 const (
-	screenList screen = iota
+	screenProjects screen = iota
+	screenSessions
 	screenOptions
 )
 
+// reservedLines is how many rows the title and footer occupy, leaving the rest
+// of the terminal height for the scrollable list body.
+const reservedLines = 4
+
 type model struct {
-	rows      []Row
-	cursor    int
-	screen    screen
-	sel       Selection
+	groups []discovery.ProjectGroup
+
+	// projects screen
+	projCursor int
+	projTop    int
+
+	// sessions screen
+	groupIdx   int
+	showAll    bool
+	sessions   []discovery.SessionInfo // filtered view of groups[groupIdx]
+	sessCursor int
+	sessTop    int
+
+	// options screen
 	optCursor int
+
+	screen screen
+	sel    Selection
+
+	height int
+	width  int
 }
 
 func newModel(groups []discovery.ProjectGroup) model {
-	rows := flattenRows(groups)
 	return model{
-		rows:   rows,
-		cursor: firstSelectable(rows),
+		groups: groups,
+		screen: screenProjects,
+		height: 20,
+		width:  80,
 		sel: Selection{
 			IncludeSubagents: true,
 			Redact:           true,
@@ -83,52 +80,128 @@ func newModel(groups []discovery.ProjectGroup) model {
 	}
 }
 
+// listHeight is the number of list rows visible in the current terminal.
+func (m model) listHeight() int {
+	h := m.height - reservedLines
+	if h < 1 {
+		return 1
+	}
+	return h
+}
+
 func (m model) Init() tea.Cmd { return nil }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	key, ok := msg.(tea.KeyMsg)
-	if !ok {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.height = msg.Height
+		m.width = msg.Width
+		m.adjustProjScroll()
+		m.adjustSessScroll()
 		return m, nil
+	case tea.KeyMsg:
+		switch m.screen {
+		case screenProjects:
+			return m.updateProjects(msg)
+		case screenSessions:
+			return m.updateSessions(msg)
+		default:
+			return m.updateOptions(msg)
+		}
 	}
-	switch m.screen {
-	case screenList:
-		return m.updateList(key)
-	default:
-		return m.updateOptions(key)
-	}
+	return m, nil
 }
 
-func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+// --- projects screen ---
+
+func (m model) updateProjects(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch key.String() {
 	case "ctrl+c", "q", "esc":
 		m.sel.Canceled = true
 		return m, tea.Quit
 	case "up", "k":
-		m.moveCursor(-1)
+		if m.projCursor > 0 {
+			m.projCursor--
+			m.adjustProjScroll()
+		}
 	case "down", "j":
-		m.moveCursor(1)
-	case "enter":
-		if !m.rows[m.cursor].IsHeader {
-			m.sel.Session = m.rows[m.cursor].Session
+		if m.projCursor < len(m.groups)-1 {
+			m.projCursor++
+			m.adjustProjScroll()
+		}
+	case "enter", "right", "l":
+		if len(m.groups) > 0 {
+			m.enterProject(m.projCursor)
+		}
+	}
+	return m, nil
+}
+
+func (m *model) adjustProjScroll() {
+	m.projTop = clampScroll(m.projCursor, m.projTop, m.listHeight(), len(m.groups))
+}
+
+func (m *model) enterProject(idx int) {
+	m.groupIdx = idx
+	m.showAll = false
+	m.sessCursor = 0
+	m.sessTop = 0
+	m.refreshSessions()
+	m.screen = screenSessions
+}
+
+func (m *model) refreshSessions() {
+	g := m.groups[m.groupIdx]
+	if m.showAll {
+		m.sessions = g.Sessions
+	} else {
+		m.sessions = g.RootSessions()
+	}
+	if m.sessCursor >= len(m.sessions) {
+		m.sessCursor = max(0, len(m.sessions)-1)
+	}
+	m.adjustSessScroll()
+}
+
+// --- sessions screen ---
+
+func (m model) updateSessions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch key.String() {
+	case "ctrl+c", "q":
+		m.sel.Canceled = true
+		return m, tea.Quit
+	case "esc", "left", "h":
+		m.screen = screenProjects
+	case "up", "k":
+		if m.sessCursor > 0 {
+			m.sessCursor--
+			m.adjustSessScroll()
+		}
+	case "down", "j":
+		if m.sessCursor < len(m.sessions)-1 {
+			m.sessCursor++
+			m.adjustSessScroll()
+		}
+	case "a":
+		m.showAll = !m.showAll
+		m.sessCursor = 0
+		m.sessTop = 0
+		m.refreshSessions()
+	case "enter", "right", "l":
+		if len(m.sessions) > 0 {
+			m.sel.Session = m.sessions[m.sessCursor]
+			m.optCursor = 0
 			m.screen = screenOptions
 		}
 	}
 	return m, nil
 }
 
-func (m *model) moveCursor(delta int) {
-	i := m.cursor
-	for {
-		i += delta
-		if i < 0 || i >= len(m.rows) {
-			return // out of bounds; keep current
-		}
-		if !m.rows[i].IsHeader {
-			m.cursor = i
-			return
-		}
-	}
+func (m *model) adjustSessScroll() {
+	m.sessTop = clampScroll(m.sessCursor, m.sessTop, m.listHeight(), len(m.sessions))
 }
+
+// --- options screen ---
 
 // optionCount is the number of toggle rows plus the Generate action.
 const optionCount = 4 // subagents, redact, open, generate
@@ -138,8 +211,8 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "ctrl+c", "q":
 		m.sel.Canceled = true
 		return m, tea.Quit
-	case "esc":
-		m.screen = screenList
+	case "esc", "left", "h":
+		m.screen = screenSessions
 	case "up", "k":
 		if m.optCursor > 0 {
 			m.optCursor--
@@ -163,27 +236,95 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) View() string {
-	if m.screen == screenOptions {
-		return m.viewOptions()
+// clampScroll returns a scroll offset that keeps cursor within the visible
+// window [top, top+visible) over a list of length n.
+func clampScroll(cursor, top, visible, n int) int {
+	if visible < 1 {
+		visible = 1
 	}
-	return m.viewList()
+	if cursor < top {
+		top = cursor
+	}
+	if cursor >= top+visible {
+		top = cursor - visible + 1
+	}
+	if top < 0 {
+		top = 0
+	}
+	// Don't scroll past the end when the list shrank.
+	if max := n - visible; top > max && max >= 0 {
+		top = max
+	}
+	return top
 }
 
-func (m model) viewList() string {
+func (m model) View() string {
+	switch m.screen {
+	case screenProjects:
+		return m.viewProjects()
+	case screenSessions:
+		return m.viewSessions()
+	default:
+		return m.viewOptions()
+	}
+}
+
+func (m model) viewProjects() string {
 	var b strings.Builder
-	b.WriteString("Select a session  ↑/↓ move · enter select · q quit\n")
-	for i, r := range m.rows {
-		if r.IsHeader {
-			b.WriteString(headerStyle.Render(r.Label) + "\n")
-			continue
+	b.WriteString(titleStyle.Render("Select a project") +
+		mutedStyle.Render("   ↑/↓ move · enter open · q quit") + "\n\n")
+	visible := m.listHeight()
+	end := min(m.projTop+visible, len(m.groups))
+	for i := m.projTop; i < end; i++ {
+		g := m.groups[i]
+		roots := len(g.RootSessions())
+		agents := g.AgentCount()
+		count := fmt.Sprintf("%d session%s", roots, plural(roots))
+		if agents > 0 {
+			count += fmt.Sprintf(", %d agent", agents)
 		}
-		line := fmt.Sprintf("  %s  %s", r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))
-		if i == m.cursor {
-			line = selectedStyle.Render("▸ " + strings.TrimLeft(line, " "))
+		label := headerStyle.Render(g.ProjectPath) + "  " + mutedStyle.Render(count)
+		if i == m.projCursor {
+			label = selectedStyle.Render("▸ " + g.ProjectPath + "  " + count)
+		} else {
+			label = "  " + label
+		}
+		b.WriteString(label + "\n")
+	}
+	b.WriteString(scrollHint(m.projTop, end, len(m.groups)))
+	return b.String()
+}
+
+func (m model) viewSessions() string {
+	var b strings.Builder
+	g := m.groups[m.groupIdx]
+	b.WriteString(titleStyle.Render("Sessions in ") + headerStyle.Render(g.ProjectPath) + "\n")
+	toggle := "a show all"
+	if m.showAll {
+		toggle = "a root only"
+	}
+	b.WriteString(mutedStyle.Render("↑/↓ move · enter select · ← back · "+toggle+" · q quit") + "\n\n")
+
+	if len(m.sessions) == 0 {
+		b.WriteString(mutedStyle.Render("  no interactive sessions here — press a to show agent sessions") + "\n")
+		return b.String()
+	}
+	visible := m.listHeight()
+	end := min(m.sessTop+visible, len(m.sessions))
+	for i := m.sessTop; i < end; i++ {
+		s := m.sessions[i]
+		id := s.ID[:min(8, len(s.ID))]
+		tag := ""
+		if s.IsAgent {
+			tag = mutedStyle.Render(" ⟲")
+		}
+		line := fmt.Sprintf("  %s  %s%s", s.DisplayLabel(), mutedStyle.Render(id), tag)
+		if i == m.sessCursor {
+			line = selectedStyle.Render("▸ "+s.DisplayLabel()+"  "+id) + tag
 		}
 		b.WriteString(line + "\n")
 	}
+	b.WriteString(scrollHint(m.sessTop, end, len(m.sessions)))
 	return b.String()
 }
 
@@ -222,13 +363,35 @@ func (m model) viewOptions() string {
 	return b.String()
 }
 
-// Run launches the browser and returns the user's selection.
-func Run(groups []discovery.ProjectGroup) (Selection, error) {
+// scrollHint renders a one-line position indicator when the list is scrolled or
+// overflows the viewport.
+func scrollHint(top, end, n int) string {
+	if top == 0 && end >= n {
+		return ""
+	}
+	return mutedStyle.Render(fmt.Sprintf("\n  %d–%d of %d", top+1, end, n))
+}
+
+func plural(n int) string {
+	if n == 1 {
+		return ""
+	}
+	return "s"
+}
+
+// Run launches the browser and returns the user's selection. If focusIdx is a
+// valid index into groups, the browser opens directly on that project's session
+// list; pass -1 to start on the project list.
+func Run(groups []discovery.ProjectGroup, focusIdx int) (Selection, error) {
 	if len(groups) == 0 {
 		return Selection{Canceled: true}, fmt.Errorf("no sessions found under ~/.claude/projects")
 	}
 	m := newModel(groups)
-	p := tea.NewProgram(m)
+	if focusIdx >= 0 && focusIdx < len(groups) {
+		m.projCursor = focusIdx
+		m.enterProject(focusIdx)
+	}
+	p := tea.NewProgram(m, tea.WithAltScreen())
 	res, err := p.Run()
 	if err != nil {
 		return Selection{}, err
