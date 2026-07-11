@@ -94,14 +94,15 @@ func buildViewModel(s model.Session, title string) viewData {
 		d.StartedAt = s.StartedAt.Format("2006-01-02 15:04")
 	}
 	for i, t := range s.Turns {
+		plain := turnPlainText(t)
 		if t.Kind == model.TurnUser {
-			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(turnPlainText(t), 60)})
+			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
 		}
 		d.Turns = append(d.Turns, turnView{
 			Index:      i,
 			Kind:       string(t.Kind),
 			RoleLabel:  roleLabel(t.Kind),
-			SearchText: strings.ToLower(turnPlainText(t)),
+			SearchText: strings.ToLower(plain),
 			Body:       renderTurnBody(t),
 		})
 	}

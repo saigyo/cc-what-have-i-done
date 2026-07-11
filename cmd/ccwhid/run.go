@@ -123,13 +123,15 @@ func openInBrowser(path string) error {
 	if err != nil {
 		return err
 	}
-	url := "file://" + abs
+	// Pass the filesystem path directly rather than a file:// URL: exec runs the
+	// opener without a shell, so a single path argument handles spaces and
+	// special characters, and avoids Windows backslash/URL-encoding pitfalls.
 	switch runtime.GOOS {
 	case "darwin":
-		return exec.Command("open", url).Start()
+		return exec.Command("open", abs).Start()
 	case "windows":
-		return exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+		return exec.Command("rundll32", "url.dll,FileProtocolHandler", abs).Start()
 	default:
-		return exec.Command("xdg-open", url).Start()
+		return exec.Command("xdg-open", abs).Start()
 	}
 }
