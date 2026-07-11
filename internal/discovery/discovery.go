@@ -5,6 +5,7 @@ package discovery
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -135,6 +136,13 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
 				cwdSet = true
 			}
 		}
+	}
+	// A single pathologically long line (bufio.ErrTooLong) is tolerated like
+	// the full parser does — index what we read so the session still lists.
+	// Any other scan error means the file was truncated/unreadable, so signal
+	// it and let Scan skip this entry rather than list a misleading index.
+	if err := sc.Err(); err != nil && !errors.Is(err, bufio.ErrTooLong) {
+		return SessionInfo{}, err
 	}
 	if info.Title == "" {
 		info.Title = truncate(info.FirstPrompt, 60)

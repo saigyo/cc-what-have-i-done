@@ -359,7 +359,7 @@ func (m model) viewOptions() string {
 		gen = "  " + gen
 	}
 	b.WriteString("\n" + gen + "\n\n")
-	b.WriteString(mutedStyle.Render("space toggle · enter confirm · esc back · q quit") + "\n")
+	b.WriteString(mutedStyle.Render("↑/↓ move · space/enter select · esc back · q quit") + "\n")
 	return b.String()
 }
 
