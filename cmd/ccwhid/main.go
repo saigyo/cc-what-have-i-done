@@ -10,6 +10,10 @@ import (
 	"github.com/saigyo/cc-what-have-i-done/internal/tui"
 )
 
+// version is the build version, overridden at release time via
+// -ldflags "-X main.version=…" (GoReleaser). Defaults to "dev" for local builds.
+var version = "dev"
+
 // options holds all CLI flag values.
 type options struct {
 	session          string
@@ -31,6 +35,7 @@ func newRootCmd() *cobra.Command {
 		Long: "ccwhid (cc-what-have-i-done) renders a Claude Code session " +
 			"transcript into a self-contained static HTML report. Run with no " +
 			"flags to browse sessions in an interactive TUI.",
+		Version:      version,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(cmd, opts)
