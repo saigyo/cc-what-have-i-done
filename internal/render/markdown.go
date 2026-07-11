@@ -7,15 +7,25 @@ import (
 	"strings"
 
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/alecthomas/chroma/v2/lexers"
-	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
 
-var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
+// md renders markdown with GFM plus chroma-based syntax highlighting for fenced
+// code blocks. Highlighting uses inline styles (WithClasses(false)) so the
+// generated report stays fully self-contained — no external stylesheet.
+var md = goldmark.New(goldmark.WithExtensions(
+	extension.GFM,
+	highlighting.NewHighlighting(
+		highlighting.WithStyle("github"),
+		highlighting.WithFormatOptions(
+			chromahtml.WithClasses(false),
+		),
+	),
+))
 
 // Markdown renders CommonMark+GFM to HTML. goldmark runs with its default
 // Unsafe=false setting, so any raw HTML embedded in the transcript text is
@@ -25,32 +35,6 @@ func Markdown(src string) template.HTML {
 	var buf bytes.Buffer
 	if err := md.Convert([]byte(src), &buf); err != nil {
 		return template.HTML("<pre>" + html.EscapeString(src) + "</pre>")
-	}
-	return template.HTML(buf.String())
-}
-
-// Highlight renders a code string with chroma using inline styles (no external
-// stylesheet needed). lang may be empty for auto-detection.
-func Highlight(code, lang string) template.HTML {
-	lexer := lexers.Get(lang)
-	if lexer == nil {
-		lexer = lexers.Analyse(code)
-	}
-	if lexer == nil {
-		lexer = lexers.Fallback
-	}
-	style := styles.Get("github")
-	if style == nil {
-		style = styles.Fallback
-	}
-	formatter := chromahtml.New(chromahtml.WithClasses(false), chromahtml.TabWidth(2))
-	it, err := lexer.Tokenise(nil, code)
-	if err != nil {
-		return template.HTML("<pre>" + html.EscapeString(code) + "</pre>")
-	}
-	var buf bytes.Buffer
-	if err := formatter.Format(&buf, style, it); err != nil {
-		return template.HTML("<pre>" + html.EscapeString(code) + "</pre>")
 	}
 	return template.HTML(buf.String())
 }
