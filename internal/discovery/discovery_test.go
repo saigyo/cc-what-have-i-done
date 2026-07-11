@@ -88,3 +88,24 @@ func TestFindSessionByPrefix(t *testing.T) {
 		t.Errorf("ID = %q", got.ID)
 	}
 }
+
+func TestScanUsesTranscriptCwd(t *testing.T) {
+	root := t.TempDir()
+	// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.
+	proj := filepath.Join(root, "-tmp-proj-with-hyphen")
+	writeSession(t, proj, "cccc3333-0000-0000-0000-000000000000",
+		`{"type":"user","message":{"role":"user","content":"hi"},"cwd":"/tmp/proj-with-hyphen","timestamp":"2026-07-11T10:00:00Z"}`)
+	groups, err := Scan(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(groups) != 1 {
+		t.Fatalf("got %d groups, want 1", len(groups))
+	}
+	if groups[0].ProjectPath != "/tmp/proj-with-hyphen" {
+		t.Errorf("ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)", groups[0].ProjectPath)
+	}
+	if groups[0].Sessions[0].ProjectPath != "/tmp/proj-with-hyphen" {
+		t.Errorf("session ProjectPath = %q, want the true cwd", groups[0].Sessions[0].ProjectPath)
+	}
+}
