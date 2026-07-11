@@ -281,7 +281,7 @@ func (m model) viewProjects() string {
 		agents := g.AgentCount()
 		count := fmt.Sprintf("%d session%s", roots, plural(roots))
 		if agents > 0 {
-			count += fmt.Sprintf(", %d agent", agents)
+			count += fmt.Sprintf(", %d agent%s", agents, plural(agents))
 		}
 		label := headerStyle.Render(g.ProjectPath) + "  " + mutedStyle.Render(count)
 		if i == m.projCursor {
