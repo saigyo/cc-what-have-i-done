@@ -58,6 +58,9 @@ Run `ccwhid` with no selector to open the interactive browser:
   each Task subagent / code-review agent as its own transcript; press **`a`**
   in the session list to show (and hide) those agent sessions — they're marked
   with a `⟲`.
+- Selecting a session opens an **options screen** to toggle subagents,
+  redaction, and open-in-browser, and to type an output directory (blank uses
+  the default) before generating.
 
 `--project <name>` opens the browser directly on that project's session list.
 

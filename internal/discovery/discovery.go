@@ -247,13 +247,21 @@ func (g ProjectGroup) RootSessions() []SessionInfo {
 
 // AgentCount returns how many of the group's sessions were agent-spawned.
 func (g ProjectGroup) AgentCount() int {
-	n := 0
+	_, agent := g.Counts()
+	return agent
+}
+
+// Counts returns the number of interactive (root) and agent-spawned sessions in
+// a single pass, for callers that only need the tallies and not the slices.
+func (g ProjectGroup) Counts() (root, agent int) {
 	for _, s := range g.Sessions {
 		if s.IsAgent {
-			n++
+			agent++
+		} else {
+			root++
 		}
 	}
-	return n
+	return root, agent
 }
 
 // FindProject resolves a project selector (full path, basename, or unambiguous

@@ -59,6 +59,8 @@ type model struct {
 
 	// options screen
 	optCursor int
+	outDir    string // output directory override ("" = default); edited in place
+	editing   bool   // true while the output-directory field is being typed into
 
 	screen screen
 	sel    Selection
@@ -203,10 +205,40 @@ func (m *model) adjustSessScroll() {
 
 // --- options screen ---
 
-// optionCount is the number of toggle rows plus the Generate action.
-const optionCount = 4 // subagents, redact, open, generate
+// Option-screen row indices.
+const (
+	optSubagents = iota
+	optRedact
+	optOpen
+	optOutDir
+	optGenerate
+	optionCount
+)
 
 func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// While editing the output-directory field, keys feed the text buffer;
+	// only Ctrl+C still quits so typed characters (q, h, …) are taken literally.
+	if m.editing {
+		switch key.Type {
+		case tea.KeyCtrlC:
+			m.sel.Canceled = true
+			return m, tea.Quit
+		case tea.KeyEnter, tea.KeyEsc:
+			m.editing = false
+		case tea.KeyBackspace, tea.KeyDelete:
+			if r := []rune(m.outDir); len(r) > 0 {
+				m.outDir = string(r[:len(r)-1])
+			}
+		case tea.KeyCtrlU:
+			m.outDir = ""
+		case tea.KeySpace:
+			m.outDir += " "
+		case tea.KeyRunes:
+			m.outDir += string(key.Runes)
+		}
+		return m, nil
+	}
+
 	switch key.String() {
 	case "ctrl+c", "q":
 		m.sel.Canceled = true
@@ -223,13 +255,16 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	case " ", "enter":
 		switch m.optCursor {
-		case 0:
+		case optSubagents:
 			m.sel.IncludeSubagents = !m.sel.IncludeSubagents
-		case 1:
+		case optRedact:
 			m.sel.Redact = !m.sel.Redact
-		case 2:
+		case optOpen:
 			m.sel.Open = !m.sel.Open
-		case 3:
+		case optOutDir:
+			m.editing = true
+		case optGenerate:
+			m.sel.OutDir = strings.TrimSpace(m.outDir)
 			return m, tea.Quit
 		}
 	}
@@ -277,8 +312,7 @@ func (m model) viewProjects() string {
 	end := min(m.projTop+visible, len(m.groups))
 	for i := m.projTop; i < end; i++ {
 		g := m.groups[i]
-		roots := len(g.RootSessions())
-		agents := g.AgentCount()
+		roots, agents := g.Counts()
 		count := fmt.Sprintf("%d session%s", roots, plural(roots))
 		if agents > 0 {
 			count += fmt.Sprintf(", %d agent%s", agents, plural(agents))
@@ -352,15 +386,46 @@ func (m model) viewOptions() string {
 		}
 		b.WriteString(line + "\n")
 	}
+
+	// Output-directory field.
+	outRow := "Output dir: " + m.outDirDisplay()
+	if m.optCursor == optOutDir {
+		outRow = optionStyle.Render("▸ " + outRow)
+	} else {
+		outRow = "  " + outRow
+	}
+	b.WriteString(outRow + "\n")
+
 	gen := "Generate report"
-	if m.optCursor == 3 {
+	if m.optCursor == optGenerate {
 		gen = optionStyle.Render("▸ " + gen)
 	} else {
 		gen = "  " + gen
 	}
 	b.WriteString("\n" + gen + "\n\n")
-	b.WriteString(mutedStyle.Render("↑/↓ move · space/enter select · esc back · q quit") + "\n")
+
+	help := "↑/↓ move · space/enter select · esc back · q quit"
+	if m.editing {
+		help = "type a path · enter/esc done · ctrl+u clear"
+	}
+	b.WriteString(mutedStyle.Render(help) + "\n")
 	return b.String()
+}
+
+// outDirDisplay renders the current output-directory value: the typed path (with
+// a cursor while editing), or a muted hint showing the default destination.
+func (m model) outDirDisplay() string {
+	if m.editing {
+		return m.outDir + "▏"
+	}
+	if m.outDir != "" {
+		return m.outDir
+	}
+	short := m.sel.Session.ID
+	if len(short) > 8 {
+		short = short[:8]
+	}
+	return mutedStyle.Render("ccwhid-report/" + short + " (default)")
 }
 
 // scrollHint renders a one-line position indicator when the list is scrolled or

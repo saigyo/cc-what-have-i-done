@@ -149,6 +149,9 @@ func TestScanClassifiesAgentSessions(t *testing.T) {
 	if got := len(groups[0].RootSessions()); got != 1 {
 		t.Errorf("RootSessions = %d, want 1", got)
 	}
+	if root, agent := groups[0].Counts(); root != 1 || agent != 1 {
+		t.Errorf("Counts = (%d, %d), want (1, 1)", root, agent)
+	}
 }
 
 func TestFindProject(t *testing.T) {
