@@ -67,6 +67,24 @@ func TestComputeCountsSubagentTurnsInTotals(t *testing.T) {
 	}
 }
 
+func TestComputeGroupsDatedAndUndatedModelIDs(t *testing.T) {
+	s := model.Session{Turns: []model.Turn{
+		{Kind: model.TurnAssistant, Model: "claude-haiku-4-5", Usage: u(100, 10, 0, 0, 0)},
+		{Kind: model.TurnAssistant, Model: "claude-haiku-4-5-20251001", Usage: u(200, 20, 0, 0, 0)},
+	}}
+	r := Compute(s)
+	if len(r.ByModel) != 1 {
+		t.Fatalf("ByModel has %d rows, want 1 (dated+undated grouped)", len(r.ByModel))
+	}
+	m := r.ByModel[0]
+	if m.Model != "claude-haiku-4-5" {
+		t.Errorf("grouped model id = %q, want claude-haiku-4-5", m.Model)
+	}
+	if m.Tokens.Input != 300 || m.Tokens.Output != 30 {
+		t.Errorf("grouped tokens = %+v, want input300/output30", m.Tokens)
+	}
+}
+
 func TestComputeNoUsage(t *testing.T) {
 	s := model.Session{Turns: []model.Turn{{Kind: model.TurnUser}, {Kind: model.TurnAssistant}}}
 	r := Compute(s)

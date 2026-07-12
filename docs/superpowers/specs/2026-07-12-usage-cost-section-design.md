@@ -67,8 +67,10 @@ counted). User records carry no usage.
 ## Pricing (`internal/usage`)
 
 - An **embedded static table** (`prices.json`, `go:embed`) keyed by model id.
-  Each entry gives per-million-token USD rates:
-  `input`, `output`, `cacheWrite5m`, `cacheWrite1h`, `cacheRead`.
+  Each entry stores only the two base per-million-token USD rates, `input` and
+  `output`. Cache rates are **derived** from `input` via the universal Anthropic
+  multipliers (5m write = 1.25×, 1h write = 2×, cache read = 0.1×) applied in the
+  cost function, so they are not duplicated per model in the table.
 - A `PricesAsOf` date string (e.g. `"2026-07"`) is embedded and surfaced in the
   report footnote.
 - The table is **populated from Anthropic's published list prices at
