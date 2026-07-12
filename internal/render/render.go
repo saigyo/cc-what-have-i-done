@@ -168,12 +168,21 @@ func buildUsageView(r usage.Report) *usageView {
 	// formatted numbers and literal words, so this is safe to mark as raw HTML.
 	v.Headline = template.HTML(html.EscapeString(headline))
 
+	hasUnpriced := false
 	for _, m := range r.ByModel {
+		if m.Tokens == (usage.TokenCounts{}) {
+			continue // drop all-zero rows (e.g. <synthetic> with no tokens)
+		}
 		v.Models = append(v.Models, modelRow(m.Model, m.Tokens, m.CostUSD))
+		if m.CostUSD == nil {
+			hasUnpriced = true
+		}
 	}
 	v.Total = modelRow("Total", r.Total, r.TotalCostUSD)
-	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf + "; excludes server-tool fees."
-	if r.HasUnknownModel {
+
+	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf +
+		". Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded."
+	if hasUnpriced {
 		foot += " Totals exclude unpriced models (shown as n/a)."
 	}
 	v.Footnote = foot
