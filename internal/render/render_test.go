@@ -134,6 +134,34 @@ func TestSiteRendersUsageWhenEnabled(t *testing.T) {
 	}
 }
 
+func TestSiteDropsZeroTokenModelRow(t *testing.T) {
+	s := model.Session{
+		ID: "x", Title: "T",
+		Turns: []model.Turn{
+			{Kind: model.TurnAssistant, Model: "claude-opus-4-8",
+				Usage:  &model.Usage{Input: 1000, Output: 200},
+				Blocks: []model.Block{{Type: model.BlockText, Text: "ok"}}},
+			{Kind: model.TurnAssistant, Model: "<synthetic>",
+				Usage:  &model.Usage{}, // all-zero
+				Blocks: []model.Block{{Type: model.BlockText, Text: "x"}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{Usage: true}); err != nil {
+		t.Fatal(err)
+	}
+	html := readIndex(t, dir)
+	if strings.Contains(html, "synthetic") {
+		t.Error("all-zero <synthetic> row should be dropped from the usage table")
+	}
+	if strings.Contains(html, "unpriced models") {
+		t.Error("footnote should not mention unpriced models when the only unpriced model was dropped")
+	}
+	if !strings.Contains(html, "sub-agent sessions") {
+		t.Error("footnote should note sub-agent sessions are excluded")
+	}
+}
+
 func TestSiteOmitsUsageByDefault(t *testing.T) {
 	s := model.Session{ID: "x", Title: "T", Turns: []model.Turn{
 		{Kind: model.TurnAssistant, Model: "claude-opus-4-8", Usage: &model.Usage{Input: 1000, Output: 200},
