@@ -157,7 +157,13 @@ func (r *Redactor) String(s string) string {
 
 // Session redacts every user-visible text field of a Session in place.
 func Session(s *model.Session, cfg Config) {
-	r := New(cfg)
+	sessionWith(New(cfg), s)
+}
+
+// sessionWith redacts a session (and its linked agent sessions) with an
+// already-built Redactor, so the regexes are compiled once for the whole walk
+// rather than once per nested agent session.
+func sessionWith(r *Redactor, s *model.Session) {
 	// Session-level fields are rendered in the report header, so they must be
 	// scrubbed too (ProjectPath in particular carries the home path/username).
 	s.ProjectPath = r.String(s.ProjectPath)
@@ -168,7 +174,7 @@ func Session(s *model.Session, cfg Config) {
 	}
 	for i := range s.Agents {
 		s.Agents[i].Description = r.String(s.Agents[i].Description)
-		Session(&s.Agents[i].Session, cfg)
+		sessionWith(r, &s.Agents[i].Session)
 	}
 }
 
