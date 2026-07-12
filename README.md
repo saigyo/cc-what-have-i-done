@@ -109,6 +109,11 @@ Anthropic list-price table (dated in the report footnote) — unknown models sho
 tokens with cost `n/a`, and server-tool fees are not included. Prices are
 embedded, so this works fully offline.
 
+These figures cover the **single transcript being rendered**. Claude Code stores
+each `Task` sub-agent / code-review agent as its own transcript file, so their
+tokens are not included here — which is why the total can be lower than Claude
+Code's `/usage`, whose session rollup aggregates those sub-agent sessions too.
+
 ## License
 
 [MIT](LICENSE) © 2026 Markus Ackermann

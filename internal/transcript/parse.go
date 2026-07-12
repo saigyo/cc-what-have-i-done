@@ -56,6 +56,9 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 	// toolIndex maps a tool_use id to the ToolCall pointer so results and
 	// sidechains can be attached after the fact.
 	toolIndex := map[string]*model.ToolCall{}
+	// seenUsage tracks message ids whose usage has already been counted, so an
+	// assistant message split across multiple records is not counted per-record.
+	seenUsage := map[string]bool{}
 	// lastTask tracks the most recent Task tool call; sidechainOwner is the Task
 	// whose Subagents any subsequent sidechain turns are appended to.
 	var lastTask *model.ToolCall
@@ -113,7 +116,7 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 			if !opts.IncludeSubagents || sidechainOwner == nil {
 				continue
 			}
-			turn := buildTurn(rec, blocks, toolIndex)
+			turn := buildTurn(rec, blocks, toolIndex, seenUsage)
 			if turn == nil {
 				continue
 			}
@@ -123,7 +126,7 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		}
 
 		// Main-chain records.
-		turn := buildTurn(rec, blocks, toolIndex)
+		turn := buildTurn(rec, blocks, toolIndex, seenUsage)
 		if turn == nil {
 			continue // e.g. a user record that only carried a tool_result
 		}
@@ -162,19 +165,20 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 	return s, nil
 }
 
-// messageMeta converts a record's message model/usage into turn fields. Only
-// assistant records carry usage; the aggregate cache_creation figure (with no
-// 5m/1h split) is attributed to the cheaper 5-minute write.
-func messageMeta(raw json.RawMessage) (string, *model.Usage) {
-	id, u := decodeMessageMeta(raw)
+// messageMeta converts a record's message model/usage into turn fields, also
+// returning the message id for deduplication. Only assistant records carry
+// usage; the aggregate cache_creation figure (with no 5m/1h split) is attributed
+// to the cheaper 5-minute write.
+func messageMeta(raw json.RawMessage) (msgID, modelID string, usage *model.Usage) {
+	id, mdl, u := decodeMessageMeta(raw)
 	if u == nil {
-		return id, nil
+		return id, mdl, nil
 	}
 	w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
 	if w5 == 0 && w1 == 0 && u.CacheCreationInputTokens > 0 {
 		w5 = u.CacheCreationInputTokens
 	}
-	return id, &model.Usage{
+	return id, mdl, &model.Usage{
 		Input:        u.InputTokens,
 		Output:       u.OutputTokens,
 		CacheRead:    u.CacheReadInputTokens,
@@ -186,7 +190,7 @@ func messageMeta(raw json.RawMessage) (string, *model.Usage) {
 // buildTurn converts a record's blocks into a model.Turn. tool_result blocks are
 // attached to their originating ToolCall via toolIndex and do not themselves
 // produce turn content. Returns nil if the record yields no displayable blocks.
-func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {
 	turn := &model.Turn{Timestamp: parseTime(rec.Timestamp)}
 	if rec.Type == "user" {
 		turn.Kind = model.TurnUser
@@ -219,7 +223,20 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 		return nil
 	}
 	if rec.Type == "assistant" {
-		turn.Model, turn.Usage = messageMeta(rec.Message)
+		msgID, mdl, u := messageMeta(rec.Message)
+		turn.Model = mdl
+		// One assistant message is written as several records (one per content
+		// block), each repeating the same usage. Count usage on the first record
+		// of a message id only; later records of the same message get nil usage
+		// so totals are not multiplied by the block count.
+		if u != nil && msgID != "" {
+			if seenUsage[msgID] {
+				u = nil
+			} else {
+				seenUsage[msgID] = true
+			}
+		}
+		turn.Usage = u
 	}
 	return turn
 }
