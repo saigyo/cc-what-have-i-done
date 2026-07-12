@@ -94,19 +94,23 @@ type apiUsage struct {
 	} `json:"cache_creation"`
 }
 
-// decodeMessageMeta extracts the model id and usage (if any) from a raw message.
-func decodeMessageMeta(raw json.RawMessage) (modelID string, usage *apiUsage) {
+// decodeMessageMeta extracts the message id, model id, and usage (if any) from a
+// raw message. The message id lets callers deduplicate usage: Claude Code splits
+// one assistant message across several records (one per content block), each
+// repeating the same usage object, so usage must be counted once per message id.
+func decodeMessageMeta(raw json.RawMessage) (msgID, modelID string, usage *apiUsage) {
 	if len(raw) == 0 {
-		return "", nil
+		return "", "", nil
 	}
 	var m struct {
+		ID    string    `json:"id"`
 		Model string    `json:"model"`
 		Usage *apiUsage `json:"usage"`
 	}
 	if err := json.Unmarshal(raw, &m); err != nil {
-		return "", nil
+		return "", "", nil
 	}
-	return m.Model, m.Usage
+	return m.ID, m.Model, m.Usage
 }
 
 func parseTime(s string) time.Time {

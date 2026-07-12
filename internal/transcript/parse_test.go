@@ -7,6 +7,41 @@ import (
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
 
+func TestParseDeduplicatesUsagePerMessageID(t *testing.T) {
+	// Claude Code writes one assistant message as several records (one per
+	// content block), each repeating the same usage. Usage must be counted
+	// once per message id, not once per record.
+	mkRec := func(block string) string {
+		return `{"type":"assistant","message":{"role":"assistant","id":"msg_abc","model":"claude-opus-4-8","content":[` +
+			block + `],"usage":{"input_tokens":100,"output_tokens":20,"cache_read_input_tokens":500,"cache_creation_input_tokens":30}},"timestamp":"2026-07-12T10:00:00Z"}`
+	}
+	lines := strings.Join([]string{
+		mkRec(`{"type":"thinking","thinking":"hmm"}`),
+		mkRec(`{"type":"text","text":"hello"}`),
+		mkRec(`{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"ls"}}`),
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Three turns are produced (one per record), but exactly one carries usage.
+	withUsage := 0
+	for _, turn := range s.Turns {
+		if turn.Usage != nil {
+			withUsage++
+		}
+	}
+	if withUsage != 1 {
+		t.Fatalf("usage attached to %d turns, want 1 (deduped by message id)", withUsage)
+	}
+	// The one usage-bearing turn holds the message's full (single-counted) usage.
+	for _, turn := range s.Turns {
+		if turn.Usage != nil && (turn.Usage.Input != 100 || turn.Usage.Output != 20 || turn.Usage.CacheRead != 500) {
+			t.Errorf("deduped usage = %+v, want input100/output20/cacheRead500", *turn.Usage)
+		}
+	}
+}
+
 func TestParseBasicTimeline(t *testing.T) {
 	s, err := ParseFile("testdata/basic.jsonl", Options{IncludeSubagents: true})
 	if err != nil {
