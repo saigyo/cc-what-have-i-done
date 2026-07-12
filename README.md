@@ -80,7 +80,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--latest` | Render the most recent interactive session (skips agent transcripts) |
 | `--out <dir>` | Output directory |
 | `--title <str>` | Override the report title |
-| `--include-subagents` | Include subagent (Task) activity (default true; `--include-subagents=false` to omit) |
+| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |
 | `--no-redact` | Disable secret redaction |
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
@@ -97,8 +97,16 @@ committing them.** Disable with `--no-redact`.
 
 Your prompts, Claude's replies (rendered markdown + syntax-highlighted code),
 tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
-blocks, and — optionally — nested subagent activity. System reminders and
+blocks, and — optionally — nested subagent activity. Background-agent results
+(e.g. a `Task` finishing) appear as their own "Agent" cards; linked subagent
+sessions — found under the transcript's `<sessionId>/subagents/` directory —
+render as separate pages under `subagents/`, linked from both the Agent tool
+card and the result card. With `--usage`, their cost is rolled into the
+totals and shown as an "of which subagents" line. System reminders and
 attachments are omitted for readability.
+
+**Known limitation:** SDK-spawned sessions without parent linkage (e.g. some
+review-hook runs) aren't attributed to a parent turn and so aren't included.
 
 ## Token usage & cost
 
@@ -109,10 +117,10 @@ Anthropic list-price table (dated in the report footnote) — unknown models sho
 tokens with cost `n/a`, and server-tool fees are not included. Prices are
 embedded, so this works fully offline.
 
-These figures cover the **single transcript being rendered**. Claude Code stores
-each `Task` sub-agent / code-review agent as its own transcript file, so their
-tokens are not included here — which is why the total can be lower than Claude
-Code's `/usage`, whose session rollup aggregates those sub-agent sessions too.
+These figures cover the rendered transcript plus any linked subagent sessions
+(shown separately as "of which subagents"). SDK-spawned sessions without
+parent linkage aren't attributed or included, which is why the total can
+still differ from Claude Code's `/usage` session rollup.
 
 ## License
 

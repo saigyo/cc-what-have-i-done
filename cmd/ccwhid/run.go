@@ -92,6 +92,15 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
 	if sess.SkippedLines > 0 {
 		fmt.Fprintf(os.Stderr, "warning: skipped %d malformed line(s)\n", sess.SkippedLines)
 	}
+	if opts.includeSubagents {
+		agents, err := transcript.LoadAgentSessions(si.FilePath, transcript.Options{
+			IncludeSubagents: opts.includeSubagents,
+		})
+		if err != nil {
+			return "", err
+		}
+		sess.Agents = agents
+	}
 	if !opts.noRedact {
 		home, _ := os.UserHomeDir()
 		redact.Session(&sess, home)

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ .Title }} · ccwhid</title>
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="{{ .Base }}assets/styles.css">
 </head>
 <body>
 <header class="topbar">
@@ -26,11 +26,13 @@
   <main class="content">
     <section class="session-head">
       <h1>{{ .Title }}</h1>
+      {{ if .BackHref }}<a class="back-link" href="{{ .BackHref }}">← main session</a>{{ end }}
       <div class="meta">
         <span>{{ .Session.ProjectPath }}</span>
         {{ if .Session.GitBranch }}<span>⎇ {{ .Session.GitBranch }}</span>{{ end }}
         <span>{{ .StartedAt }}</span>
         <span>{{ .TurnCount }} turns</span>
+        {{ if .Subtitle }}<span>{{ .Subtitle }}</span>{{ end }}
       </div>
     </section>
     {{ with .Usage }}
@@ -51,12 +53,12 @@
     {{ end }}
     {{ range .Turns }}
     <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}" data-search="{{ .SearchText }}">
-      <div class="turn-role">{{ .RoleLabel }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
+      <div class="turn-role">{{ .RoleLabel }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .AgentHref }}<a class="agent-link" href="{{ .AgentHref }}">transcript ↗</a>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
       <div class="turn-body">{{ .Body }}</div>
     </article>
     {{ end }}
   </main>
 </div>
-<script src="assets/app.js"></script>
+<script src="{{ .Base }}assets/app.js"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@ func newRootCmd() *cobra.Command {
 	f.BoolVar(&opts.latest, "latest", false, "render the most recent interactive session (skips agent transcripts)")
 	f.StringVar(&opts.out, "out", "", "output directory (default ./ccwhid-report/<session-short>)")
 	f.StringVar(&opts.title, "title", "", "override the report title")
-	f.BoolVar(&opts.includeSubagents, "include-subagents", true, "include subagent (Task) activity")
+	f.BoolVar(&opts.includeSubagents, "include-subagents", true, "include subagent work: inline Task sidechains and linked agent-session pages")
 	f.BoolVar(&opts.noRedact, "no-redact", false, "disable secret redaction")
 	f.BoolVar(&opts.force, "force", false, "overwrite a non-empty output directory")
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
