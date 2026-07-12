@@ -30,6 +30,14 @@ type options struct {
 	usage            bool
 }
 
+// validate rejects contradictory flag combinations.
+func (o *options) validate() error {
+	if o.noRedactName && o.redactName != "" {
+		return fmt.Errorf("--no-redact-name cannot be combined with --redact-name")
+	}
+	return nil
+}
+
 func newRootCmd() *cobra.Command {
 	opts := &options{}
 	cmd := &cobra.Command{
@@ -61,6 +69,9 @@ func newRootCmd() *cobra.Command {
 }
 
 func run(cmd *cobra.Command, opts *options) error {
+	if err := opts.validate(); err != nil {
+		return err
+	}
 	root, err := discovery.DefaultRoot()
 	if err != nil {
 		return err
