@@ -361,7 +361,7 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 	for _, sub := range tc.Subagents {
 		b.WriteString(`<details class="subagent"><summary>subagent: ` + html.EscapeString(sub.Description) + `</summary>`)
 		for _, st := range sub.Turns {
-			b.WriteString(`<article class="turn turn-` + string(st.Kind) + `"><div class="turn-role">` + roleLabel(st) + `</div><div class="turn-body">`)
+			b.WriteString(`<article class="turn turn-` + string(st.Kind) + `"><div class="turn-role">` + html.EscapeString(roleLabel(st)) + `</div><div class="turn-body">`)
 			b.WriteString(string(renderTurnBody(st, links)))
 			b.WriteString(`</div></article>`)
 		}

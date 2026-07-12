@@ -270,3 +270,21 @@ func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {
 		t.Errorf("existing footnote must stay when no agents: %q", v.Footnote)
 	}
 }
+
+func TestSidechainAgentResultSummaryIsEscaped(t *testing.T) {
+	tc := &model.ToolCall{Name: "Task", Subagents: []model.Subagent{{
+		Description: "d",
+		Turns: []model.Turn{{
+			Kind:         model.TurnAgentResult,
+			AgentSummary: `Agent "<img src=x onerror=alert(1)>" finished`,
+			Blocks:       []model.Block{{Type: model.BlockText, Text: "x"}},
+		}},
+	}}}
+	out := renderTool(tc, newAgentLinks(nil, ""))
+	if strings.Contains(out, "<img") {
+		t.Fatal("agent summary must be HTML-escaped in sidechain rendering")
+	}
+	if !strings.Contains(out, "&lt;img") {
+		t.Error("escaped summary not found in output")
+	}
+}
