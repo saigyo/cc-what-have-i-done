@@ -1165,7 +1165,7 @@ go: added golang.org/x/text v0.3.8</pre></div></details></div>
 21		// against the original fixture).
 22		cwd := &#34;~/IdeaProjects/ccwhid&#34;
 23		enc := EncodeProjectDir(cwd)
-24		if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+24		if enc != &#34;-Users-[user]-IdeaProjects-ccwhid&#34; {
 25			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 26		}
 27		if dec := DecodeProjectDir(enc); dec != cwd {
@@ -1396,10 +1396,10 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s</pre></div></deta
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ccwhid-report/41f7e8f4/ | head -20; test -f ccwhid-report/41f7e8f4/index.html &amp;&amp; echo &#34;index.html exists&#34;; rm -rf ccwhid-report</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ccwhid-report/41f7e8f4/ | head -20; test -f ccwhid-report/41f7e8f4/index.html \u0026\u0026 echo \&#34;index.html exists\&#34;; rm -rf ccwhid-report&#34;
 }</pre><pre class="tool-result">total 944
-drwxr-xr-x@ 4 markus  staff     128 11 Juli 12:57 .
-drwxr-xr-x@ 3 markus  staff      96 11 Juli 12:57 ..
-drwxr-xr-x@ 4 markus  staff     128 11 Juli 12:57 assets
--rw-r--r--@ 1 markus  staff  479770 11 Juli 12:57 index.html
+drwxr-xr-x@ 4 [user]  staff     128 11 Juli 12:57 .
+drwxr-xr-x@ 3 [user]  staff      96 11 Juli 12:57 ..
+drwxr-xr-x@ 4 [user]  staff     128 11 Juli 12:57 assets
+-rw-r--r--@ 1 [user]  staff  479770 11 Juli 12:57 index.html
 index.html exists</pre></div></details></div>
     </article>
     

@@ -851,7 +851,7 @@ faa3097 feat: add secret and home-path redaction
   main
   remotes/origin/main
 commit fd591f472cef397c4fdae967b347c4f1c9c18bbb
-Author: Markus Ackermann &lt;markus@kaixo.de&gt;
+Author: [user] Ackermann &lt;[user]@kaixo.de&gt;
 Date:   Sat Jul 11 12:52:14 2026 +0200
 
     feat: wire session resolution, generation, and browser open
@@ -1028,7 +1028,7 @@ none critical or important.
 
 **minor:**
 - `cmd/ccwhid/run.go:102` — `home, _ := os.userhomedir()` silently ignores the error; on failure, home-path rewriting in redaction is silently skipped (secret-pattern redaction rules still apply). copied verbatim from the brief, low real-world impact (`userhomedir` essentially never fails on supported platforms).
-- `cmd/ccwhid/run.go:80-84` (`matchproject`) — the `strings.contains(g.projectpath, want)` fallback is broad (e.g. `--project app` would match `/users/x/apparatus`); verbatim from brief, not one of the named risks, but worth a note for whoever wires `--project` ux in a later task.
+- `cmd/ccwhid/run.go:80-84` (`matchproject`) — the `strings.contains(g.projectpath, want)` fallback is broad (e.g. `--project app` would match `/users/[user]/apparatus`); verbatim from brief, not one of the named risks, but worth a note for whoever wires `--project` ux in a later task.
 - shipped tests (`run_test.go`) only cover the two brief-mandated happy-path cases (`resolveoutdir` default, one `generate` round trip with default options). none of the four named risks — redaction on/off, `ensureoutdir`&#39;s three branches, or `resolvesession`&#39;s `needtui`/`--latest`/`--project` branches — have committed test coverage; i had to write and discard my own tests to verify them. not a spec violation (brief specified exactly these two tests) but a gap if this file is treated as the regression baseline.
 
 ## assessment
@@ -1060,7 +1060,7 @@ none critical or important.
 <p><strong>Minor:</strong></p>
 <ul>
 <li><code>cmd/ccwhid/run.go:102</code> — <code>home, _ := os.UserHomeDir()</code> silently ignores the error; on failure, home-path rewriting in redaction is silently skipped (secret-pattern redaction rules still apply). Copied verbatim from the brief, low real-world impact (<code>UserHomeDir</code> essentially never fails on supported platforms).</li>
-<li><code>cmd/ccwhid/run.go:80-84</code> (<code>matchProject</code>) — the <code>strings.Contains(g.ProjectPath, want)</code> fallback is broad (e.g. <code>--project app</code> would match <code>/Users/x/apparatus</code>); verbatim from brief, not one of the named risks, but worth a note for whoever wires <code>--project</code> UX in a later task.</li>
+<li><code>cmd/ccwhid/run.go:80-84</code> (<code>matchProject</code>) — the <code>strings.Contains(g.ProjectPath, want)</code> fallback is broad (e.g. <code>--project app</code> would match <code>/Users/[user]/apparatus</code>); verbatim from brief, not one of the named risks, but worth a note for whoever wires <code>--project</code> UX in a later task.</li>
 <li>Shipped tests (<code>run_test.go</code>) only cover the two brief-mandated happy-path cases (<code>resolveOutDir</code> default, one <code>generate</code> round trip with default options). None of the four named risks — redaction on/off, <code>ensureOutDir</code>'s three branches, or <code>resolveSession</code>'s <code>needTUI</code>/<code>--latest</code>/<code>--project</code> branches — have committed test coverage; I had to write and discard my own tests to verify them. Not a spec violation (brief specified exactly these two tests) but a gap if this file is treated as the regression baseline.</li>
 </ul>
 <h2>Assessment</h2>

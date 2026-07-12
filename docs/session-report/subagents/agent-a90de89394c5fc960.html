@@ -56,7 +56,7 @@
 
 ## the problem
 
-`decodeprojectdir` reverses the `/`→`-` encoding by replacing every `-` with `/`. this is lossy when a real path segment contains a hyphen (e.g. the project `cc-what-have-i-done` lives at `~/ideaprojects/cc-what-have-i-done`, encoded as `-users-markus-ideaprojects-cc-what-have-i-done`; naive decode wrongly yields `~/ideaprojects/cc/what/have/i/done`). claude code&#39;s on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.
+`decodeprojectdir` reverses the `/`→`-` encoding by replacing every `-` with `/`. this is lossy when a real path segment contains a hyphen (e.g. the project `cc-what-have-i-done` lives at `~/ideaprojects/cc-what-have-i-done`, encoded as `-users-[user]-ideaprojects-cc-what-have-i-done`; naive decode wrongly yields `~/ideaprojects/cc/what/have/i/done`). claude code&#39;s on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.
 
 ## the fix: use the real cwd from the transcript
 
@@ -138,7 +138,7 @@ reply with only (under 12 lines): status (done/blocked), commit sha&#43;subject,
       <div class="turn-role">You</div>
       <div class="turn-body"><p>You are applying a correctness fix to Task 3 (session discovery) in the Go CLI <code>ccwhid</code>. The file <code>internal/discovery/discovery.go</code> and its test already exist (commit 9def244). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The problem</h2>
-<p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>~/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-markus-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>~/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
+<p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>~/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-[user]-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>~/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
 <h2>The fix: use the real cwd from the transcript</h2>
 <p>Every <code>user</code>/<code>assistant</code> record in a transcript carries a <code>&quot;cwd&quot;</code> field with the true absolute path. Use it as the authoritative project path; fall back to the lossy decode only when no cwd is present.</p>
 <h3>Changes to <code>internal/discovery/discovery.go</code></h3>
@@ -558,7 +558,7 @@ String: 			groups = append(groups, ProjectGroup{
 19		// against the original fixture).
 20		cwd := &#34;~/IdeaProjects/ccwhid&#34;
 21		enc := EncodeProjectDir(cwd)
-22		if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+22		if enc != &#34;-Users-[user]-IdeaProjects-ccwhid&#34; {
 23			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 24		}
 25		if dec := DecodeProjectDir(enc); dec != cwd {
@@ -722,18 +722,18 @@ keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Check if report directory/file exists&#34;
 }</pre><pre class="tool-result">total 136
-drwxr-xr-x@ 12 markus  staff   384 11 Juli 12:02 .
-drwxr-xr-x@  3 markus  staff    96 11 Juli 11:52 ..
--rw-r--r--@  1 markus  staff     2 11 Juli 11:59 .gitignore
--rw-r--r--@  1 markus  staff   415 11 Juli 11:59 progress.md
--rw-r--r--@  1 markus  staff  4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
--rw-r--r--@  1 markus  staff  3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
--rw-r--r--@  1 markus  staff  3767 11 Juli 11:52 task-1-brief.md
--rw-r--r--@  1 markus  staff  4971 11 Juli 11:54 task-1-report.md
--rw-r--r--@  1 markus  staff  4282 11 Juli 11:56 task-2-brief.md
--rw-r--r--@  1 markus  staff  3422 11 Juli 11:57 task-2-report.md
--rw-r--r--@  1 markus  staff  9420 11 Juli 11:59 task-3-brief.md
--rw-r--r--@  1 markus  staff  9037 11 Juli 12:02 task-3-report.md</pre></div></details></div>
+drwxr-xr-x@ 12 [user]  staff   384 11 Juli 12:02 .
+drwxr-xr-x@  3 [user]  staff    96 11 Juli 11:52 ..
+-rw-r--r--@  1 [user]  staff     2 11 Juli 11:59 .gitignore
+-rw-r--r--@  1 [user]  staff   415 11 Juli 11:59 progress.md
+-rw-r--r--@  1 [user]  staff  4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
+-rw-r--r--@  1 [user]  staff  3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
+-rw-r--r--@  1 [user]  staff  3767 11 Juli 11:52 task-1-brief.md
+-rw-r--r--@  1 [user]  staff  4971 11 Juli 11:54 task-1-report.md
+-rw-r--r--@  1 [user]  staff  4282 11 Juli 11:56 task-2-brief.md
+-rw-r--r--@  1 [user]  staff  3422 11 Juli 11:57 task-2-report.md
+-rw-r--r--@  1 [user]  staff  9420 11 Juli 11:59 task-3-brief.md
+-rw-r--r--@  1 [user]  staff  9037 11 Juli 12:02 task-3-report.md</pre></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-25" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">

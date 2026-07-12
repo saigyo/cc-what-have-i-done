@@ -914,7 +914,7 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 770	+	// against the original fixture).
 771	+	cwd := &#34;~/IdeaProjects/ccwhid&#34;
 772	+	enc := EncodeProjectDir(cwd)
-773	+	if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+773	+	if enc != &#34;-Users-[user]-IdeaProjects-ccwhid&#34; {
 774	+		t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 775	+	}
 776	+	if dec := DecodeProjectDir(enc); dec != cwd {
@@ -1455,7 +1455,7 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 40	
 41	Sessions live at `~/.claude/projects/&lt;encoded-cwd&gt;/&lt;session-id&gt;.jsonl`. The
 42	encoded directory name is the absolute cwd with `/` replaced by `-` (e.g.
-43	`-Users-markus-IdeaProjects-cc-what-have-i-done`).
+43	`-Users-[user]-IdeaProjects-cc-what-have-i-done`).
 44	
 45	Each line is a JSON object with a `type`:
 46	- `user` / `assistant` — carry a `message` field in Anthropic message format

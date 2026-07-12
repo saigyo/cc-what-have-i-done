@@ -56,7 +56,7 @@
 
 ## the change under review
 read the review package (commit list, stat, full diff with context):
-`/private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt`
+`/private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt`
 
 then read the current full files as needed to verify (do not trust the diff alone):
 - ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go
@@ -88,7 +88,7 @@ classify each finding as critical / important / minor. for each: file:line, what
       <div class="turn-body"><p>You are performing a focused code review of a single commit in a Go CLI project (<code>ccwhid</code>, module github.com/saigyo/cc-what-have-i-done). The commit reworks the interactive TUI and fixes a <code>--project</code> flag. Your job: find real defects — correctness bugs, edge cases, logic errors, security issues, test gaps — and verify each against the actual code. Do NOT nitpick style. Report only issues you can substantiate.</p>
 <h2>The change under review</h2>
 <p>Read the review package (commit list, stat, full diff with context):
-<code>/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</code></p>
+<code>/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</code></p>
 <p>Then read the current full files as needed to verify (do not trust the diff alone):</p>
 <ul>
 <li>~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</li>
@@ -121,10 +121,10 @@ classify each finding as critical / important / minor. for each: file:line, what
 </div>
     </article>
     
-    <article class="turn turn-assistant" id="turn-1" data-search="read /private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt">
+    <article class="turn turn-assistant" id="turn-1" data-search="read /private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt">
       <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</span></summary><div class="tool-body"><pre class="tool-input">{
-  &#34;file_path&#34;: &#34;/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt&#34;
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt&#34;
 }</pre><pre class="tool-result">1	=== COMMIT ===
 2	0f130bc feat(tui): two-level scrollable browser + root-session filter; fix --project
 3	
@@ -544,16 +544,16 @@ classify each finding as critical / important / minor. for each: file:line, what
 417	+
 418	+func TestFindProject(t *testing.T) {
 419	+	groups := []ProjectGroup{
-420	+		{ProjectPath: &#34;/Users/x/IdeaProjects/cc-what-have-i-done&#34;},
-421	+		{ProjectPath: &#34;/Users/x/IdeaProjects/other-app&#34;},
-422	+		{ProjectPath: &#34;/Users/x/Downloads/apparatus&#34;},
+420	+		{ProjectPath: &#34;/Users/[user]/IdeaProjects/cc-what-have-i-done&#34;},
+421	+		{ProjectPath: &#34;/Users/[user]/IdeaProjects/other-app&#34;},
+422	+		{ProjectPath: &#34;/Users/[user]/Downloads/apparatus&#34;},
 423	+	}
 424	+	cases := []struct {
 425	+		want    string
 426	+		wantIdx int
 427	+		wantErr bool
 428	+	}{
-429	+		{&#34;/Users/x/IdeaProjects/other-app&#34;, 1, false}, // exact path
+429	+		{&#34;/Users/[user]/IdeaProjects/other-app&#34;, 1, false}, // exact path
 430	+		{&#34;cc-what-have-i-done&#34;, 0, false},             // basename
 431	+		{&#34;OTHER-APP&#34;, 1, false},                       // basename, case-insensitive
 432	+		{&#34;Downloads&#34;, 2, false},                       // substring
