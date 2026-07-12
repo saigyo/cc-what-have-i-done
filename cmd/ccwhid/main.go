@@ -25,6 +25,7 @@ type options struct {
 	noRedact         bool
 	force            bool
 	open             bool
+	usage            bool
 }
 
 func newRootCmd() *cobra.Command {
@@ -51,6 +52,7 @@ func newRootCmd() *cobra.Command {
 	f.BoolVar(&opts.noRedact, "no-redact", false, "disable secret redaction")
 	f.BoolVar(&opts.force, "force", false, "overwrite a non-empty output directory")
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
+	f.BoolVar(&opts.usage, "usage", false, "include a token-usage & estimated-cost section")
 	return cmd
 }
 
@@ -87,6 +89,7 @@ func run(cmd *cobra.Command, opts *options) error {
 		opts.includeSubagents = sel.IncludeSubagents
 		opts.noRedact = !sel.Redact
 		opts.open = sel.Open
+		opts.usage = sel.Usage
 		if sel.OutDir != "" {
 			opts.out = sel.OutDir
 		}

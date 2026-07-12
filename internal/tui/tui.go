@@ -19,6 +19,7 @@ type Selection struct {
 	IncludeSubagents bool
 	Redact           bool
 	Open             bool
+	Usage            bool
 	OutDir           string
 	Canceled         bool
 }
@@ -210,6 +211,7 @@ const (
 	optSubagents = iota
 	optRedact
 	optOpen
+	optUsage
 	optOutDir
 	optGenerate
 	optionCount
@@ -261,6 +263,8 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.sel.Redact = !m.sel.Redact
 		case optOpen:
 			m.sel.Open = !m.sel.Open
+		case optUsage:
+			m.sel.Usage = !m.sel.Usage
 		case optOutDir:
 			m.editing = true
 		case optGenerate:
@@ -372,6 +376,7 @@ func (m model) viewOptions() string {
 		{"Include subagents", m.sel.IncludeSubagents},
 		{"Redact secrets", m.sel.Redact},
 		{"Open in browser when done", m.sel.Open},
+		{"Include usage & cost", m.sel.Usage},
 	}
 	for i, t := range toggles {
 		check := "[ ]"

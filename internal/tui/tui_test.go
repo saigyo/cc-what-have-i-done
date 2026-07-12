@@ -141,7 +141,7 @@ func TestOptionsOutputDirInput(t *testing.T) {
 		t.Fatalf("screen = %v, want options", m.screen)
 	}
 	// Move down to the output-directory row.
-	m = send(m, key("down"), key("down"), key("down"))
+	m = send(m, key("down"), key("down"), key("down"), key("down"))
 	if m.optCursor != optOutDir {
 		t.Fatalf("optCursor = %d, want optOutDir (%d)", m.optCursor, optOutDir)
 	}
@@ -174,7 +174,7 @@ func TestOptionsOutputDirInput(t *testing.T) {
 func TestEditingModeTakesLiteralKeys(t *testing.T) {
 	m := newModel(testGroups())
 	m = send(m, key("enter"), key("enter")) // → options
-	m = send(m, key("down"), key("down"), key("down"), key("enter"))
+	m = send(m, key("down"), key("down"), key("down"), key("down"), key("enter"))
 	// 'q' would normally quit; while editing it must be a literal character.
 	m = send(m, key("q"), key("a"))
 	if m.sel.Canceled {
@@ -182,6 +182,20 @@ func TestEditingModeTakesLiteralKeys(t *testing.T) {
 	}
 	if m.outDir != "qa" {
 		t.Fatalf("outDir = %q, want qa", m.outDir)
+	}
+}
+
+func TestOptionsUsageToggle(t *testing.T) {
+	m := newModel(testGroups())
+	m = send(m, key("enter"), key("enter")) // open project, select session -> options
+	// move to the usage toggle row and toggle it on
+	m = send(m, key("down"), key("down"), key("down"))
+	if m.optCursor != optUsage {
+		t.Fatalf("optCursor = %d, want optUsage (%d)", m.optCursor, optUsage)
+	}
+	m = send(m, key(" "))
+	if !m.sel.Usage {
+		t.Fatal("space on usage row should enable Selection.Usage")
 	}
 }
 
