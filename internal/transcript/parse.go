@@ -14,6 +14,10 @@ import (
 // Options controls how a transcript is folded into a Session.
 type Options struct {
 	IncludeSubagents bool
+	// AgentFile marks the input as an agent's own transcript file: its records
+	// carry isSidechain=true but form the file's main chain, so the flag is
+	// ignored.
+	AgentFile bool
 }
 
 // ParseFile parses a transcript file at path.
@@ -90,6 +94,9 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		}
 		if rec.IsMeta {
 			continue
+		}
+		if opts.AgentFile {
+			rec.IsSidechain = false
 		}
 
 		// Capture session-level metadata from the first record that has it.

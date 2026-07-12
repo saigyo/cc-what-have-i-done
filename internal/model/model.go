@@ -30,7 +30,8 @@ type Session struct {
 	StartedAt    time.Time
 	EndedAt      time.Time
 	Turns        []Turn
-	SkippedLines int // count of malformed lines skipped while parsing
+	SkippedLines int            // count of malformed lines skipped while parsing
+	Agents       []AgentSession // linked subagent sessions (subagents/ dir), when loaded
 }
 
 func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
@@ -98,4 +99,15 @@ type Diff struct {
 type Subagent struct {
 	Description string
 	Turns       []Turn
+}
+
+// AgentSession is a subagent session file linked to a root session
+// (<projectDir>/<sessionId>/subagents/agent-<ID>.jsonl).
+type AgentSession struct {
+	ID          string  // agentId, from the file name agent-<ID>.jsonl
+	Description string  // from meta.json; falls back to ID
+	AgentType   string  // from meta.json; may be empty
+	ToolUseID   string  // id of the spawning tool call; may be empty
+	SpawnDepth  int     // from meta.json; informational only
+	Session     Session // the parsed agent transcript
 }

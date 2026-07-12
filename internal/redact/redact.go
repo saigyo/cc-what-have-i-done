@@ -56,6 +56,10 @@ func Session(s *model.Session, homeDir string) {
 	for i := range s.Turns {
 		redactTurn(r, &s.Turns[i])
 	}
+	for i := range s.Agents {
+		s.Agents[i].Description = r.String(s.Agents[i].Description)
+		Session(&s.Agents[i].Session, homeDir)
+	}
 }
 
 func redactTurn(r *Redactor, t *model.Turn) {
