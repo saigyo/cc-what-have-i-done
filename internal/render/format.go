@@ -5,10 +5,12 @@ import (
 	"strconv"
 )
 
-// formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M.
+// formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M. The M
+// threshold is 999_500 (not 1_000_000) so values that would round up to
+// "1000k" render as "1.0M" instead.
 func formatTokens(n int) string {
 	switch {
-	case n >= 1_000_000:
+	case n >= 999_500:
 		return fmt.Sprintf("%.1fM", float64(n)/1e6)
 	case n >= 1_000:
 		return fmt.Sprintf("%.0fk", float64(n)/1e3)

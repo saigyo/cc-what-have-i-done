@@ -69,11 +69,15 @@ func Compute(s model.Session) Report {
 		}
 		r.HasAnyUsage = true
 		r.Total.add(*t.Usage)
-		tc, ok := byModel[t.Model]
+		// Normalize the key so dated and undated ids for the same base model
+		// (e.g. claude-haiku-4-5 and claude-haiku-4-5-20251001) group into one
+		// row, matching how Lookup resolves prices.
+		key := stripDateSuffix(t.Model)
+		tc, ok := byModel[key]
 		if !ok {
 			tc = &TokenCounts{}
-			byModel[t.Model] = tc
-			order = append(order, t.Model)
+			byModel[key] = tc
+			order = append(order, key)
 		}
 		tc.add(*t.Usage)
 	}
