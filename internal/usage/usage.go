@@ -59,8 +59,9 @@ func cost(t TokenCounts, p Price) float64 {
 }
 
 // Compute aggregates token usage and estimated cost for a session. Totals and
-// per-model figures include nested subagent turns; per-turn costs are recorded
-// for top-level turns only.
+// per-model figures include nested subagent turns and linked agent sessions
+// (s.Agents), tracked separately in the Subagents subtotal; per-turn costs are
+// recorded for top-level main-session turns only.
 func Compute(s model.Session) Report {
 	r := Report{PricesAsOf: PricesAsOf, PerTurnCost: map[int]*float64{}}
 	byModel := map[string]*TokenCounts{}
