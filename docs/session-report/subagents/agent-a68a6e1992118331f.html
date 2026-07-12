@@ -143,7 +143,7 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 30	func TestEncodeDecodeRoundTrip(t *testing.T) {
 31		cwd := &#34;~/IdeaProjects/cc-what-have-i-done&#34;
 32		enc := EncodeProjectDir(cwd)
-33		if enc != &#34;-Users-markus-IdeaProjects-cc-what-have-i-done&#34; {
+33		if enc != &#34;-Users-[user]-IdeaProjects-cc-what-have-i-done&#34; {
 34			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 35		}
 36		if dec := DecodeProjectDir(enc); dec != cwd {
@@ -523,7 +523,7 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 54	}
 55	EOF
 56	$ go run /tmp/check.go
-57	enc: -Users-markus-IdeaProjects-cc-what-have-i-done
+57	enc: -Users-[user]-IdeaProjects-cc-what-have-i-done
 58	dec: ~/IdeaProjects/cc/what/have/i/done
 59	roundtrip ok: false
 60	```
@@ -1000,7 +1000,7 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 277	+	// against the original fixture).
 278	+	cwd := &#34;~/IdeaProjects/ccwhid&#34;
 279	+	enc := EncodeProjectDir(cwd)
-280	+	if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+280	+	if enc != &#34;-Users-[user]-IdeaProjects-ccwhid&#34; {
 281	+		t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 282	+	}
 283	+	if dec := DecodeProjectDir(enc); dec != cwd {

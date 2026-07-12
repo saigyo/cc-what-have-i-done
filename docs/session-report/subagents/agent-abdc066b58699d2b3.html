@@ -79,13 +79,13 @@ report back concisely: field names, their exact source, and whether any could co
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/&#34;
 }</pre><pre class="tool-result">total 40
-drwxr-xr-x@ 7 markus  staff   224 12 Juli 08:07 .
-drwxr-xr-x@ 9 markus  staff   288 12 Juli 08:02 ..
--rw-r--r--@ 1 markus  staff   542 12 Juli 08:02 prices.json
--rw-r--r--@ 1 markus  staff   766 12 Juli 08:02 pricing_test.go
--rw-r--r--@ 1 markus  staff  1699 12 Juli 08:03 pricing.go
--rw-r--r--@ 1 markus  staff  2744 12 Juli 08:07 usage_test.go
--rw-r--r--@ 1 markus  staff  3730 12 Juli 08:07 usage.go</pre></div></details></div>
+drwxr-xr-x@ 7 [user]  staff   224 12 Juli 08:07 .
+drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
+-rw-r--r--@ 1 [user]  staff   542 12 Juli 08:02 prices.json
+-rw-r--r--@ 1 [user]  staff   766 12 Juli 08:02 pricing_test.go
+-rw-r--r--@ 1 [user]  staff  1699 12 Juli 08:03 pricing.go
+-rw-r--r--@ 1 [user]  staff  2744 12 Juli 08:07 usage_test.go
+-rw-r--r--@ 1 [user]  staff  3730 12 Juli 08:07 usage.go</pre></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
@@ -675,7 +675,7 @@ func renderTurnBody(t model.Turn) template.HTML {</pre></div></details></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;\.Model\b&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2&gt;/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln &#34;usageModel\|Models&#34; 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;\\.Model\\b\&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2\u003e/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln \&#34;usageModel\\|Models\&#34; 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">&lt;persisted-output&gt;
-Output too large (208.4KB). Full output saved to: ~/.claude/projects/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tool-results/buhhqrrg4.txt
+Output too large (208.4KB). Full output saved to: ~/.claude/projects/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tool-results/buhhqrrg4.txt
 
 Preview (first 2KB):
 ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl:46:          {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}

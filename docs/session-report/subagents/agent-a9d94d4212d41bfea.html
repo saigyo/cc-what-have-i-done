@@ -1337,7 +1337,7 @@ Common causes: unescaped backslashes in file paths (use / or \\), unescaped cont
 116	
 117	## License
 118	
-119	[MIT](LICENSE) © 2026 Markus Ackermann
+119	[MIT](LICENSE) © 2026 [user] Ackermann
 120	</pre></div></details></div>
     </article>
     
@@ -1689,7 +1689,7 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.367s</pre></div></d
 116	
 117	## License
 118	
-119	[MIT](LICENSE) © 2026 Markus Ackermann</pre></div></details></div>
+119	[MIT](LICENSE) © 2026 [user] Ackermann</pre></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-61" data-search="bash git log --oneline --all -- readme.md | head -20">
@@ -1770,9 +1770,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></
       <div class="turn-role">Claude<span class="usage-badge">122 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/.claude/projects -maxdepth 3 -type d -name subagents 2&gt;/dev/null | head -5; find / -maxdepth 6 -type d -iname &#34;subagents&#34; 2&gt;/dev/null | head -5</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/.claude/projects -maxdepth 3 -type d -name subagents 2\u003e/dev/null | head -5; find / -maxdepth 6 -type d -iname \&#34;subagents\&#34; 2\u003e/dev/null | head -5&#34;
-}</pre><pre class="tool-result">~/.claude/projects/-Users-markus-IdeaProjects-fabulous-writing/65c7f188-db68-4195-b05b-1819120fc3cc/subagents
-~/.claude/projects/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/subagents
-~/.claude/projects/-Users-markus-Downloads-baufinanzierung-simulator/77dd9fa3-7133-406f-867e-d11f68331a16/subagents</pre></div></details></div>
+}</pre><pre class="tool-result">~/.claude/projects/-Users-[user]-IdeaProjects-fabulous-writing/65c7f188-db68-4195-b05b-1819120fc3cc/subagents
+~/.claude/projects/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/subagents
+~/.claude/projects/-Users-[user]-Downloads-baufinanzierung-simulator/77dd9fa3-7133-406f-867e-d11f68331a16/subagents</pre></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-71" data-search="found real data. let&#39;s smoke-test with one of these.">
@@ -1903,7 +1903,7 @@ Zum Commit vorgemerkte Änderungen:
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git show --stat HEAD; echo ---; git diff HEAD~1 HEAD -- internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git show --stat HEAD; echo ---; git diff HEAD~1 HEAD -- internal/render/render.go&#34;
 }</pre><pre class="tool-result">commit b703c819d10e4ae4daf2413bd290aa90b4e08a5a
-Author: Markus Ackermann &lt;markus@kaixo.de&gt;
+Author: [user] Ackermann &lt;[user]@kaixo.de&gt;
 Date:   Sun Jul 12 12:26:13 2026 +0200
 
     feat: subagent transcript pages linked from the report
@@ -2243,54 +2243,54 @@ index 79b9023..848433e 100644
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">total 1288
-drwxr-xr-x@ 48 markus  staff   1536 12 Juli 11:37 .
-drwxr-xr-x@  3 markus  staff     96 11 Juli 11:52 ..
--rw-r--r--@  1 markus  staff      2 12 Juli 12:21 .gitignore
--rw-r--r--@  1 markus  staff   5859 11 Juli 13:15 final-cleanup-report.md
--rw-r--r--@  1 markus  staff  10789 12 Juli 12:21 progress.md
--rw-r--r--@  1 markus  staff   7360 12 Juli 08:10 review-08d3928..4140bfb.diff
--rw-r--r--@  1 markus  staff   8406 12 Juli 08:00 review-0bd5a25..1753ede.diff
--rw-r--r--@  1 markus  staff   6514 12 Juli 11:30 review-10aff40..a6bc8fb.diff
--rw-r--r--@  1 markus  staff   4534 11 Juli 12:09 review-159ee65..5980a02.diff
--rw-r--r--@  1 markus  staff   4016 12 Juli 08:04 review-1753ede..08d3928.diff
--rw-r--r--@  1 markus  staff   2194 11 Juli 13:03 review-19a5d33..6678bb5.diff
--rw-r--r--@  1 markus  staff  85528 11 Juli 13:05 review-2ff127a..6678bb5.diff
--rw-r--r--@  1 markus  staff   4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
--rw-r--r--@  1 markus  staff   3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
--rw-r--r--@  1 markus  staff  13302 12 Juli 08:19 review-4140bfb..4de9666.diff
--rw-r--r--@  1 markus  staff   4622 11 Juli 12:36 review-41ed5b8..faa3097.diff
--rw-r--r--@  1 markus  staff  11230 12 Juli 08:26 review-4de9666..6fef39b.diff
--rw-r--r--@  1 markus  staff  13074 11 Juli 12:14 review-5980a02..09d5d88.diff
--rw-r--r--@  1 markus  staff  15683 11 Juli 12:22 review-5980a02..41ed5b8.diff
--rw-r--r--@  1 markus  staff  10578 12 Juli 11:18 review-608d700..b1bc70e.diff
--rw-r--r--@  1 markus  staff  21699 11 Juli 13:16 review-6678bb5..b2f6fc7.diff
--rw-r--r--@  1 markus  staff   5568 11 Juli 12:52 review-6d415b6..fd591f4.diff
--rw-r--r--@  1 markus  staff  10970 11 Juli 12:05 review-7b11575..159ee65.diff
--rw-r--r--@  1 markus  staff  13054 12 Juli 11:37 review-a6bc8fb..b66ed79.diff
--rw-r--r--@  1 markus  staff  10274 12 Juli 11:24 review-b1bc70e..10aff40.diff
--rw-r--r--@  1 markus  staff  21662 11 Juli 12:43 review-faa3097..a713dfe.diff
--rw-r--r--@  1 markus  staff  90591 12 Juli 08:28 review-fcd7fbd..6fef39b.diff
--rw-r--r--@  1 markus  staff  20274 11 Juli 12:58 review-fd591f4..777b116.diff
--rw-r--r--@  1 markus  staff   8698 12 Juli 11:14 task-1-brief.md
--rw-r--r--@  1 markus  staff   7177 12 Juli 11:17 task-1-report.md
--rw-r--r--@  1 markus  staff   4087 11 Juli 13:01 task-10-brief.md
--rw-r--r--@  1 markus  staff   5850 11 Juli 13:03 task-10-report.md
--rw-r--r--@  1 markus  staff   8746 12 Juli 11:20 task-2-brief.md
--rw-r--r--@  1 markus  staff   7566 12 Juli 11:23 task-2-report.md
--rw-r--r--@  1 markus  staff   4566 12 Juli 11:26 task-3-brief.md
--rw-r--r--@  1 markus  staff   6307 12 Juli 11:30 task-3-report.md
--rw-r--r--@  1 markus  staff   7121 12 Juli 11:32 task-4-brief.md
--rw-r--r--@  1 markus  staff   9048 12 Juli 11:36 task-4-report.md
--rw-r--r--@  1 markus  staff  10978 12 Juli 12:21 task-5-brief.md
--rw-r--r--@  1 markus  staff   5689 12 Juli 08:26 task-5-report.md
--rw-r--r--@  1 markus  staff   5130 11 Juli 12:25 task-6-brief.md
--rw-r--r--@  1 markus  staff   4483 11 Juli 12:26 task-6-report.md
--rw-r--r--@  1 markus  staff  19316 11 Juli 12:39 task-7-brief.md
--rw-r--r--@  1 markus  staff   9188 11 Juli 12:50 task-7-report.md
--rw-r--r--@  1 markus  staff   6394 11 Juli 12:51 task-8-brief.md
--rw-r--r--@  1 markus  staff   6042 11 Juli 12:52 task-8-report.md
--rw-r--r--@  1 markus  staff  10423 11 Juli 12:55 task-9-brief.md
--rw-r--r--@  1 markus  staff   7698 11 Juli 12:58 task-9-report.md</pre></div></details></div>
+drwxr-xr-x@ 48 [user]  staff   1536 12 Juli 11:37 .
+drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
+-rw-r--r--@  1 [user]  staff      2 12 Juli 12:21 .gitignore
+-rw-r--r--@  1 [user]  staff   5859 11 Juli 13:15 final-cleanup-report.md
+-rw-r--r--@  1 [user]  staff  10789 12 Juli 12:21 progress.md
+-rw-r--r--@  1 [user]  staff   7360 12 Juli 08:10 review-08d3928..4140bfb.diff
+-rw-r--r--@  1 [user]  staff   8406 12 Juli 08:00 review-0bd5a25..1753ede.diff
+-rw-r--r--@  1 [user]  staff   6514 12 Juli 11:30 review-10aff40..a6bc8fb.diff
+-rw-r--r--@  1 [user]  staff   4534 11 Juli 12:09 review-159ee65..5980a02.diff
+-rw-r--r--@  1 [user]  staff   4016 12 Juli 08:04 review-1753ede..08d3928.diff
+-rw-r--r--@  1 [user]  staff   2194 11 Juli 13:03 review-19a5d33..6678bb5.diff
+-rw-r--r--@  1 [user]  staff  85528 11 Juli 13:05 review-2ff127a..6678bb5.diff
+-rw-r--r--@  1 [user]  staff   4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
+-rw-r--r--@  1 [user]  staff   3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
+-rw-r--r--@  1 [user]  staff  13302 12 Juli 08:19 review-4140bfb..4de9666.diff
+-rw-r--r--@  1 [user]  staff   4622 11 Juli 12:36 review-41ed5b8..faa3097.diff
+-rw-r--r--@  1 [user]  staff  11230 12 Juli 08:26 review-4de9666..6fef39b.diff
+-rw-r--r--@  1 [user]  staff  13074 11 Juli 12:14 review-5980a02..09d5d88.diff
+-rw-r--r--@  1 [user]  staff  15683 11 Juli 12:22 review-5980a02..41ed5b8.diff
+-rw-r--r--@  1 [user]  staff  10578 12 Juli 11:18 review-608d700..b1bc70e.diff
+-rw-r--r--@  1 [user]  staff  21699 11 Juli 13:16 review-6678bb5..b2f6fc7.diff
+-rw-r--r--@  1 [user]  staff   5568 11 Juli 12:52 review-6d415b6..fd591f4.diff
+-rw-r--r--@  1 [user]  staff  10970 11 Juli 12:05 review-7b11575..159ee65.diff
+-rw-r--r--@  1 [user]  staff  13054 12 Juli 11:37 review-a6bc8fb..b66ed79.diff
+-rw-r--r--@  1 [user]  staff  10274 12 Juli 11:24 review-b1bc70e..10aff40.diff
+-rw-r--r--@  1 [user]  staff  21662 11 Juli 12:43 review-faa3097..a713dfe.diff
+-rw-r--r--@  1 [user]  staff  90591 12 Juli 08:28 review-fcd7fbd..6fef39b.diff
+-rw-r--r--@  1 [user]  staff  20274 11 Juli 12:58 review-fd591f4..777b116.diff
+-rw-r--r--@  1 [user]  staff   8698 12 Juli 11:14 task-1-brief.md
+-rw-r--r--@  1 [user]  staff   7177 12 Juli 11:17 task-1-report.md
+-rw-r--r--@  1 [user]  staff   4087 11 Juli 13:01 task-10-brief.md
+-rw-r--r--@  1 [user]  staff   5850 11 Juli 13:03 task-10-report.md
+-rw-r--r--@  1 [user]  staff   8746 12 Juli 11:20 task-2-brief.md
+-rw-r--r--@  1 [user]  staff   7566 12 Juli 11:23 task-2-report.md
+-rw-r--r--@  1 [user]  staff   4566 12 Juli 11:26 task-3-brief.md
+-rw-r--r--@  1 [user]  staff   6307 12 Juli 11:30 task-3-report.md
+-rw-r--r--@  1 [user]  staff   7121 12 Juli 11:32 task-4-brief.md
+-rw-r--r--@  1 [user]  staff   9048 12 Juli 11:36 task-4-report.md
+-rw-r--r--@  1 [user]  staff  10978 12 Juli 12:21 task-5-brief.md
+-rw-r--r--@  1 [user]  staff   5689 12 Juli 08:26 task-5-report.md
+-rw-r--r--@  1 [user]  staff   5130 11 Juli 12:25 task-6-brief.md
+-rw-r--r--@  1 [user]  staff   4483 11 Juli 12:26 task-6-report.md
+-rw-r--r--@  1 [user]  staff  19316 11 Juli 12:39 task-7-brief.md
+-rw-r--r--@  1 [user]  staff   9188 11 Juli 12:50 task-7-report.md
+-rw-r--r--@  1 [user]  staff   6394 11 Juli 12:51 task-8-brief.md
+-rw-r--r--@  1 [user]  staff   6042 11 Juli 12:52 task-8-report.md
+-rw-r--r--@  1 [user]  staff  10423 11 Juli 12:55 task-9-brief.md
+-rw-r--r--@  1 [user]  staff   7698 11 Juli 12:58 task-9-report.md</pre></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-90" data-search="a file already exists there (from an earlier milestone, different content). i need to read it first before overwriting.">

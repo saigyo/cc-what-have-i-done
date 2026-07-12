@@ -890,7 +890,7 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 19		// against the original fixture).
 20		cwd := &#34;~/IdeaProjects/ccwhid&#34;
 21		enc := EncodeProjectDir(cwd)
-22		if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+22		if enc != &#34;-Users-[user]-IdeaProjects-ccwhid&#34; {
 23			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
 24		}
 25		if dec := DecodeProjectDir(enc); dec != cwd {
@@ -1120,32 +1120,32 @@ Zum Commit vorgemerkte Änderungen:
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1; test -f ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md &amp;&amp; echo EXISTS || echo MISSING</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261; test -f ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md \u0026\u0026 echo EXISTS || echo MISSING&#34;
 }</pre><pre class="tool-result">total 480
-drwxr-xr-x@ 26 markus  staff    832 11 Juli 12:43 .
-drwxr-xr-x@  3 markus  staff     96 11 Juli 11:52 ..
--rw-r--r--@  1 markus  staff      2 11 Juli 12:43 .gitignore
--rw-r--r--@  1 markus  staff   1855 11 Juli 12:39 progress.md
--rw-r--r--@  1 markus  staff   4534 11 Juli 12:09 review-159ee65..5980a02.diff
--rw-r--r--@  1 markus  staff   4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
--rw-r--r--@  1 markus  staff   3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
--rw-r--r--@  1 markus  staff   4622 11 Juli 12:36 review-41ed5b8..faa3097.diff
--rw-r--r--@  1 markus  staff  13074 11 Juli 12:14 review-5980a02..09d5d88.diff
--rw-r--r--@  1 markus  staff  15683 11 Juli 12:22 review-5980a02..41ed5b8.diff
--rw-r--r--@  1 markus  staff  10970 11 Juli 12:05 review-7b11575..159ee65.diff
--rw-r--r--@  1 markus  staff  21662 11 Juli 12:43 review-faa3097..a713dfe.diff
--rw-r--r--@  1 markus  staff   3767 11 Juli 11:52 task-1-brief.md
--rw-r--r--@  1 markus  staff   4971 11 Juli 11:54 task-1-report.md
--rw-r--r--@  1 markus  staff   4282 11 Juli 11:56 task-2-brief.md
--rw-r--r--@  1 markus  staff   3422 11 Juli 11:57 task-2-report.md
--rw-r--r--@  1 markus  staff   9420 11 Juli 11:59 task-3-brief.md
--rw-r--r--@  1 markus  staff  11968 11 Juli 12:05 task-3-report.md
--rw-r--r--@  1 markus  staff   5417 11 Juli 12:08 task-4-brief.md
--rw-r--r--@  1 markus  staff   5742 11 Juli 12:09 task-4-report.md
--rw-r--r--@  1 markus  staff  13561 11 Juli 12:11 task-5-brief.md
--rw-r--r--@  1 markus  staff  10562 11 Juli 12:22 task-5-report.md
--rw-r--r--@  1 markus  staff   5130 11 Juli 12:25 task-6-brief.md
--rw-r--r--@  1 markus  staff   4483 11 Juli 12:26 task-6-report.md
--rw-r--r--@  1 markus  staff  19316 11 Juli 12:39 task-7-brief.md
--rw-r--r--@  1 markus  staff   6806 11 Juli 12:42 task-7-report.md
+drwxr-xr-x@ 26 [user]  staff    832 11 Juli 12:43 .
+drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
+-rw-r--r--@  1 [user]  staff      2 11 Juli 12:43 .gitignore
+-rw-r--r--@  1 [user]  staff   1855 11 Juli 12:39 progress.md
+-rw-r--r--@  1 [user]  staff   4534 11 Juli 12:09 review-159ee65..5980a02.diff
+-rw-r--r--@  1 [user]  staff   4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
+-rw-r--r--@  1 [user]  staff   3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
+-rw-r--r--@  1 [user]  staff   4622 11 Juli 12:36 review-41ed5b8..faa3097.diff
+-rw-r--r--@  1 [user]  staff  13074 11 Juli 12:14 review-5980a02..09d5d88.diff
+-rw-r--r--@  1 [user]  staff  15683 11 Juli 12:22 review-5980a02..41ed5b8.diff
+-rw-r--r--@  1 [user]  staff  10970 11 Juli 12:05 review-7b11575..159ee65.diff
+-rw-r--r--@  1 [user]  staff  21662 11 Juli 12:43 review-faa3097..a713dfe.diff
+-rw-r--r--@  1 [user]  staff   3767 11 Juli 11:52 task-1-brief.md
+-rw-r--r--@  1 [user]  staff   4971 11 Juli 11:54 task-1-report.md
+-rw-r--r--@  1 [user]  staff   4282 11 Juli 11:56 task-2-brief.md
+-rw-r--r--@  1 [user]  staff   3422 11 Juli 11:57 task-2-report.md
+-rw-r--r--@  1 [user]  staff   9420 11 Juli 11:59 task-3-brief.md
+-rw-r--r--@  1 [user]  staff  11968 11 Juli 12:05 task-3-report.md
+-rw-r--r--@  1 [user]  staff   5417 11 Juli 12:08 task-4-brief.md
+-rw-r--r--@  1 [user]  staff   5742 11 Juli 12:09 task-4-report.md
+-rw-r--r--@  1 [user]  staff  13561 11 Juli 12:11 task-5-brief.md
+-rw-r--r--@  1 [user]  staff  10562 11 Juli 12:22 task-5-report.md
+-rw-r--r--@  1 [user]  staff   5130 11 Juli 12:25 task-6-brief.md
+-rw-r--r--@  1 [user]  staff   4483 11 Juli 12:26 task-6-report.md
+-rw-r--r--@  1 [user]  staff  19316 11 Juli 12:39 task-7-brief.md
+-rw-r--r--@  1 [user]  staff   6806 11 Juli 12:42 task-7-report.md
 EXISTS</pre></div></details></div>
     </article>
     
