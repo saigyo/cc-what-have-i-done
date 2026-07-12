@@ -41,8 +41,11 @@ type Report struct {
 	ByModel         []ModelUsage     // sorted, highest in+out first
 	PerTurnCost     map[int]*float64 // top-level turn index -> cost (nil = unpriced)
 	PricesAsOf      string
-	HasUnknownModel bool // some tokens came from an unpriced model
-	HasAnyUsage     bool // at least one turn carried usage
+	HasUnknownModel bool        // some tokens came from an unpriced model
+	HasAnyUsage     bool        // at least one turn carried usage
+	Subagents       TokenCounts // tokens from linked agent sessions
+	SubagentsCost   *float64    // nil when nothing in them was priced
+	AgentSessions   int         // number of linked agent sessions
 }
 
 // cost returns the USD cost of a token bucket at a model's price.
@@ -62,6 +65,9 @@ func Compute(s model.Session) Report {
 	r := Report{PricesAsOf: PricesAsOf, PerTurnCost: map[int]*float64{}}
 	byModel := map[string]*TokenCounts{}
 	var order []string
+
+	subByModel := map[string]*TokenCounts{}
+	inAgent := false
 
 	accumulate := func(t model.Turn) {
 		if t.Usage == nil {
@@ -84,11 +90,41 @@ func Compute(s model.Session) Report {
 			order = append(order, key)
 		}
 		tc.add(*t.Usage)
+		if inAgent {
+			r.Subagents.add(*t.Usage)
+			stc, ok := subByModel[key]
+			if !ok {
+				stc = &TokenCounts{}
+				subByModel[key] = stc
+			}
+			stc.add(*t.Usage)
+		}
 	}
 
 	// Totals + per-model: walk top-level and nested subagent turns.
 	for _, t := range s.Turns {
 		walk(t, accumulate)
+	}
+
+	// Linked agent sessions merge into the same totals and per-model rows,
+	// tracked separately so the report can show the subagent share.
+	r.AgentSessions = len(s.Agents)
+	inAgent = true
+	for _, a := range s.Agents {
+		for _, t := range a.Session.Turns {
+			walk(t, accumulate)
+		}
+	}
+	var subTotal float64
+	subPriced := false
+	for m, tc := range subByModel {
+		if p, ok := Lookup(m); ok {
+			subTotal += cost(*tc, p)
+			subPriced = true
+		}
+	}
+	if subPriced {
+		r.SubagentsCost = &subTotal
 	}
 
 	// Per-turn cost for top-level turns only.

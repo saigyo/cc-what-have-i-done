@@ -105,3 +105,61 @@ func TestComputeNoUsage(t *testing.T) {
 		t.Error("TotalCostUSD should be nil with no usage")
 	}
 }
+
+func TestComputeRollsUpLinkedAgentSessions(t *testing.T) {
+	agent := model.AgentSession{
+		ID: "a1",
+		Session: model.Session{Turns: []model.Turn{
+			{Kind: model.TurnAssistant, Model: "claude-opus-4-8", Usage: u(1_000_000, 0, 0, 0, 0)},
+		}},
+	}
+	s := model.Session{
+		Turns: []model.Turn{
+			{Kind: model.TurnAssistant, Model: "claude-opus-4-8", Usage: u(1_000_000, 0, 0, 0, 0)},
+		},
+		Agents: []model.AgentSession{agent},
+	}
+	r := Compute(s)
+	if r.Total.Input != 2_000_000 {
+		t.Errorf("Total.Input = %d, want 2000000 (main + agent)", r.Total.Input)
+	}
+	if r.Subagents.Input != 1_000_000 {
+		t.Errorf("Subagents.Input = %d, want 1000000", r.Subagents.Input)
+	}
+	if r.AgentSessions != 1 {
+		t.Errorf("AgentSessions = %d, want 1", r.AgentSessions)
+	}
+	// opus-4-8 input $5/MTok -> subagent cost $5.00.
+	if r.SubagentsCost == nil || *r.SubagentsCost < 4.99 || *r.SubagentsCost > 5.01 {
+		t.Errorf("SubagentsCost = %v, want ~5.00", r.SubagentsCost)
+	}
+	// Per-model table merges both (one opus row with 2M input).
+	if len(r.ByModel) != 1 || r.ByModel[0].Tokens.Input != 2_000_000 {
+		t.Errorf("ByModel = %+v, want single merged opus row with 2M input", r.ByModel)
+	}
+	// Agent turns must not create per-turn cost entries.
+	if len(r.PerTurnCost) != 1 {
+		t.Errorf("PerTurnCost entries = %d, want 1 (main turn only)", len(r.PerTurnCost))
+	}
+}
+
+func TestComputeUnpricedAgentSessionHasNilSubagentsCost(t *testing.T) {
+	s := model.Session{
+		Agents: []model.AgentSession{{
+			ID: "a1",
+			Session: model.Session{Turns: []model.Turn{
+				{Kind: model.TurnAssistant, Model: "mystery-model", Usage: u(100, 0, 0, 0, 0)},
+			}},
+		}},
+	}
+	r := Compute(s)
+	if r.SubagentsCost != nil {
+		t.Errorf("SubagentsCost = %v, want nil (unpriced)", *r.SubagentsCost)
+	}
+	if r.Subagents.Input != 100 || r.AgentSessions != 1 {
+		t.Errorf("subtotal wrong: %+v sessions=%d", r.Subagents, r.AgentSessions)
+	}
+	if !r.HasUnknownModel {
+		t.Error("HasUnknownModel should be true")
+	}
+}
