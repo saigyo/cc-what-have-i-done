@@ -46,6 +46,18 @@ type Turn struct {
 	Kind      TurnKind
 	Timestamp time.Time
 	Blocks    []Block
+	Model     string // assistant model id (empty for user turns / when absent)
+	Usage     *Usage // token usage for this assistant turn; nil when absent
+}
+
+// Usage holds the token counts reported for one assistant message. Cache writes
+// keep the 5-minute / 1-hour split because they are priced differently.
+type Usage struct {
+	Input        int
+	Output       int
+	CacheRead    int
+	CacheWrite5m int
+	CacheWrite1h int
 }
 
 // Block is one content unit: assistant/user text, a thinking block, or a tool call.

@@ -1,6 +1,7 @@
 package transcript
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
@@ -102,5 +103,51 @@ func TestParseSubagentInnerToolResult(t *testing.T) {
 	}
 	if inner.Result == nil || inner.Result.Content != "file.txt" {
 		t.Errorf("inner tool result = %+v, want content 'file.txt'", inner.Result)
+	}
+}
+
+func TestParseAttachesModelAndUsage(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":"hi"},"timestamp":"2026-07-12T10:00:00Z"}`,
+		`{"type":"assistant","message":{"role":"assistant","model":"claude-opus-4-8","content":[{"type":"text","text":"hello"}],"usage":{"input_tokens":100,"output_tokens":20,"cache_read_input_tokens":500,"cache_creation_input_tokens":30,"cache_creation":{"ephemeral_5m_input_tokens":10,"ephemeral_1h_input_tokens":20}}},"timestamp":"2026-07-12T10:00:01Z"}`,
+		`{"type":"assistant","message":{"role":"assistant","model":"claude-opus-4-8","content":[{"type":"text","text":"no usage here"}]},"timestamp":"2026-07-12T10:00:02Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// turns: [user, assistant-with-usage, assistant-without-usage]
+	if len(s.Turns) != 3 {
+		t.Fatalf("got %d turns, want 3", len(s.Turns))
+	}
+	if s.Turns[0].Usage != nil {
+		t.Error("user turn should have nil usage")
+	}
+	a := s.Turns[1]
+	if a.Model != "claude-opus-4-8" {
+		t.Errorf("Model = %q", a.Model)
+	}
+	if a.Usage == nil {
+		t.Fatal("assistant usage is nil")
+	}
+	want := model.Usage{Input: 100, Output: 20, CacheRead: 500, CacheWrite5m: 10, CacheWrite1h: 20}
+	if *a.Usage != want {
+		t.Errorf("Usage = %+v, want %+v", *a.Usage, want)
+	}
+	if s.Turns[2].Usage != nil {
+		t.Error("assistant without usage should have nil Usage")
+	}
+}
+
+func TestParseAggregateCacheCreationDefaultsTo5m(t *testing.T) {
+	// Only the aggregate cache_creation_input_tokens is present (no split).
+	line := `{"type":"assistant","message":{"role":"assistant","model":"claude-sonnet-5","content":[{"type":"text","text":"x"}],"usage":{"input_tokens":1,"output_tokens":1,"cache_creation_input_tokens":40}},"timestamp":"2026-07-12T10:00:00Z"}`
+	s, err := Parse(strings.NewReader(line), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	u := s.Turns[0].Usage
+	if u == nil || u.CacheWrite5m != 40 || u.CacheWrite1h != 0 {
+		t.Errorf("aggregate cache_creation should default to 5m: %+v", u)
 	}
 }

@@ -162,6 +162,27 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 	return s, nil
 }
 
+// messageMeta converts a record's message model/usage into turn fields. Only
+// assistant records carry usage; the aggregate cache_creation figure (with no
+// 5m/1h split) is attributed to the cheaper 5-minute write.
+func messageMeta(raw json.RawMessage) (string, *model.Usage) {
+	id, u := decodeMessageMeta(raw)
+	if u == nil {
+		return id, nil
+	}
+	w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+	if w5 == 0 && w1 == 0 && u.CacheCreationInputTokens > 0 {
+		w5 = u.CacheCreationInputTokens
+	}
+	return id, &model.Usage{
+		Input:        u.InputTokens,
+		Output:       u.OutputTokens,
+		CacheRead:    u.CacheReadInputTokens,
+		CacheWrite5m: w5,
+		CacheWrite1h: w1,
+	}
+}
+
 // buildTurn converts a record's blocks into a model.Turn. tool_result blocks are
 // attached to their originating ToolCall via toolIndex and do not themselves
 // produce turn content. Returns nil if the record yields no displayable blocks.
@@ -196,6 +217,9 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 	}
 	if len(turn.Blocks) == 0 {
 		return nil
+	}
+	if rec.Type == "assistant" {
+		turn.Model, turn.Usage = messageMeta(rec.Message)
 	}
 	return turn
 }
