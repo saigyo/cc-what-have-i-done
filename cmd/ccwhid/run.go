@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/discovery"
 	"github.com/saigyo/cc-what-have-i-done/internal/redact"
@@ -103,12 +105,36 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
 	}
 	if !opts.noRedact {
 		home, _ := os.UserHomeDir()
-		redact.Session(&sess, home)
+		redact.Session(&sess, redact.Config{HomeDir: home, UserName: redactUserName(opts)})
 	}
 	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
 		return "", err
 	}
 	return outDir, nil
+}
+
+// redactUserName resolves the display name to scrub from the report. An explicit
+// --redact-name wins; otherwise it falls back to the OS account's display name
+// and then to git's configured user.name. Returns "" when name redaction is
+// disabled or no name can be found.
+func redactUserName(opts *options) string {
+	if opts.noRedactName {
+		return ""
+	}
+	if opts.redactName != "" {
+		return opts.redactName
+	}
+	if u, err := user.Current(); err == nil {
+		if name := strings.TrimSpace(u.Name); name != "" {
+			return name
+		}
+	}
+	if out, err := exec.Command("git", "config", "--get", "user.name").Output(); err == nil {
+		if name := strings.TrimSpace(string(out)); name != "" {
+			return name
+		}
+	}
+	return ""
 }
 
 func ensureOutDir(dir string, force bool) error {

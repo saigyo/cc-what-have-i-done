@@ -28,7 +28,7 @@ func TestEndToEndRedactedReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	redact.Session(&sess, "")
+	redact.Session(&sess, redact.Config{})
 	out := filepath.Join(dir, "report")
 	if err := render.Site(sess, out, render.Options{}); err != nil {
 		t.Fatal(err)
