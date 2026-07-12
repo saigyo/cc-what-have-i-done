@@ -1,6 +1,7 @@
 package transcript
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -184,5 +185,40 @@ func TestParseAggregateCacheCreationDefaultsTo5m(t *testing.T) {
 	u := s.Turns[0].Usage
 	if u == nil || u.CacheWrite5m != 40 || u.CacheWrite1h != 0 {
 		t.Errorf("aggregate cache_creation should default to 5m: %+v", u)
+	}
+}
+
+func TestBuildToolCallAgentSummaryAndPrompt(t *testing.T) {
+	b := apiBlock{
+		Type:  "tool_use",
+		ID:    "t1",
+		Name:  "Agent",
+		Input: json.RawMessage(`{"description":"Implement Task 1","subagent_type":"general-purpose","prompt":"# Do it\n\nWith **care**."}`),
+	}
+	tc := buildToolCall(b)
+	if tc.Summary != "Implement Task 1" {
+		t.Errorf("Summary = %q, want the agent description", tc.Summary)
+	}
+	if tc.AgentPrompt != "# Do it\n\nWith **care**." {
+		t.Errorf("AgentPrompt = %q", tc.AgentPrompt)
+	}
+	if !tc.IsAgent() {
+		t.Error("Agent tool should report IsAgent")
+	}
+}
+
+func TestBuildToolCallSkillSummaryIsSkillName(t *testing.T) {
+	b := apiBlock{
+		Type:  "tool_use",
+		ID:    "t2",
+		Name:  "Skill",
+		Input: json.RawMessage(`{"skill":"brainstorming","args":"an idea"}`),
+	}
+	tc := buildToolCall(b)
+	if tc.Summary != "brainstorming" {
+		t.Errorf("Summary = %q, want the skill name", tc.Summary)
+	}
+	if tc.AgentPrompt != "" {
+		t.Errorf("Skill call should not set AgentPrompt, got %q", tc.AgentPrompt)
 	}
 }

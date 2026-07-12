@@ -75,13 +75,20 @@ type Block struct {
 
 // ToolCall is a single tool invocation and its result.
 type ToolCall struct {
-	ID        string
-	Name      string // e.g. "Bash", "Edit", "Read", "Task"
-	Summary   string // one-line summary for the collapsed card header
-	InputJSON string // pretty-printed input for generic display
-	Result    *ToolResult
-	Diff      *Diff      // set for Edit/Write
-	Subagents []Subagent // set for Task calls with sidechain activity
+	ID          string
+	Name        string // e.g. "Bash", "Edit", "Read", "Task"
+	Summary     string // one-line summary for the collapsed card header
+	InputJSON   string // pretty-printed input for generic display
+	AgentPrompt string // for Task/Agent calls: the subagent prompt, rendered as markdown
+	Result      *ToolResult
+	Diff        *Diff      // set for Edit/Write
+	Subagents   []Subagent // set for Task calls with sidechain activity
+}
+
+// IsAgent reports whether this tool call spawns a subagent — the historical
+// "Task" tool or the modern "Agent" tool.
+func (t *ToolCall) IsAgent() bool {
+	return t.Name == "Task" || t.Name == "Agent"
 }
 
 type ToolResult struct {

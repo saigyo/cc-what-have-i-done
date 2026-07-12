@@ -345,6 +345,9 @@ func buildToolCall(b apiBlock) *model.ToolCall {
 	case "Edit", "Write":
 		tc.Diff = buildDiff(b.Name, input)
 	}
+	if tc.IsAgent() {
+		tc.AgentPrompt = str(input, "prompt")
+	}
 	return tc
 }
 
@@ -378,8 +381,10 @@ func toolSummary(name string, in map[string]any) string {
 		return str(in, "pattern")
 	case "Grep":
 		return str(in, "pattern")
-	case "Task":
+	case "Task", "Agent":
 		return str(in, "description")
+	case "Skill":
+		return str(in, "skill")
 	case "WebFetch":
 		return str(in, "url")
 	case "WebSearch":

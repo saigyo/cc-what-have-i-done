@@ -346,17 +346,28 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 		b.WriteString(`<a class="agent-link" href="` + html.EscapeString(href) + `">transcript ↗</a>`)
 	}
 	b.WriteString(`</summary><div class="tool-body">`)
-	if tc.Diff != nil {
+	switch {
+	case tc.Diff != nil:
 		b.WriteString(string(DiffHTML(tc.Diff)))
-	} else if tc.InputJSON != "" {
+	case tc.IsAgent() && tc.AgentPrompt != "":
+		// The agent prompt is markdown and often long; render it readably
+		// instead of dumping the raw one-line JSON input.
+		b.WriteString(`<div class="agent-prompt">` + string(Markdown(tc.AgentPrompt)) + `</div>`)
+	case tc.InputJSON != "":
 		b.WriteString(`<pre class="tool-input">` + html.EscapeString(tc.InputJSON) + `</pre>`)
 	}
 	if tc.Result != nil && tc.Result.Content != "" {
-		cls := "tool-result"
-		if tc.Result.IsError {
-			cls += " tool-result-error"
+		if tc.IsAgent() {
+			// A subagent's result is markdown too; render it rather than showing
+			// a monospace block.
+			b.WriteString(`<div class="agent-result-body">` + string(Markdown(tc.Result.Content)) + `</div>`)
+		} else {
+			cls := "tool-result"
+			if tc.Result.IsError {
+				cls += " tool-result-error"
+			}
+			b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
 		}
-		b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
 	}
 	for _, sub := range tc.Subagents {
 		b.WriteString(`<details class="subagent"><summary>subagent: ` + html.EscapeString(sub.Description) + `</summary>`)

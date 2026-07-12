@@ -288,3 +288,54 @@ func TestSidechainAgentResultSummaryIsEscaped(t *testing.T) {
 		t.Error("escaped summary not found in output")
 	}
 }
+
+func TestAgentToolCardRendersPromptAndResultAsMarkdown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:        "Agent",
+		Summary:     "Implement Task 1: scaffold",
+		AgentPrompt: "# Do the thing\n\nWith **emphasis**.",
+		InputJSON:   `{"prompt":"# Do the thing"}`,
+		Result:      &model.ToolResult{Content: "**Status:** DONE"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+
+	if !strings.Contains(out, `class="agent-prompt"`) {
+		t.Errorf("expected agent-prompt block, got %q", out)
+	}
+	if !strings.Contains(out, "<strong>emphasis</strong>") {
+		t.Errorf("prompt should be rendered as markdown: %q", out)
+	}
+	if !strings.Contains(out, `class="agent-result-body"`) {
+		t.Errorf("expected agent-result-body block: %q", out)
+	}
+	if !strings.Contains(out, "<strong>Status:</strong>") {
+		t.Errorf("result should be rendered as markdown: %q", out)
+	}
+	if strings.Contains(out, `class="tool-input"`) {
+		t.Errorf("agent card must not dump raw JSON input: %q", out)
+	}
+	if strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("agent result must not use the monospace tool-result block: %q", out)
+	}
+	if !strings.Contains(out, "Implement Task 1: scaffold") {
+		t.Errorf("tool header should show the agent description: %q", out)
+	}
+}
+
+func TestNonAgentToolResultStaysMonospace(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:      "Bash",
+		Summary:   "ls",
+		InputJSON: `{"command":"ls"}`,
+		Result:    &model.ToolResult{Content: "file1\nfile2"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("non-agent result should keep the monospace tool-result block: %q", out)
+	}
+	if strings.Contains(out, `class="agent-result-body"`) {
+		t.Errorf("non-agent result must not be markdown-rendered: %q", out)
+	}
+}
