@@ -98,11 +98,12 @@ dash-encoded project dirs (`-Users-alice-IdeaProjects-…`) — plus standalone
 mentions of your own login name (e.g. the owner column of `ls -l` output),
 replacing them with `[user]`.
 
-It also scrubs your **display name** (resolved from your OS account, or
-`git config user.name`, or `--redact-name`) in the forms that leak into module
-paths, usernames, and commit trailers — the verbatim name plus its concatenated
-and separator-joined variants (`Jane Doe`, `janedoe`, `jane-doe`, `jane.doe`),
-so `github.com/janedoe/project` becomes `github.com/[user]/project`. Only
+It also scrubs your **display name** (resolved from `--redact-name` if given,
+otherwise your OS account name, otherwise `git config user.name`) in the forms
+that leak into module paths, usernames, and commit trailers — the verbatim name
+plus its concatenated and separator-joined variants (`Jane Doe`, `janedoe`,
+`jane-doe`, `jane.doe`, `jane_doe`), so `github.com/janedoe/project` becomes
+`github.com/[user]/project`. Only
 multi-word names are matched, and only the known name — generic GitHub usernames
 are left intact. Turn this off with `--no-redact-name`.
 

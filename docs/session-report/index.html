@@ -31,19 +31,19 @@
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ main</span>
         <span>2026-07-11 09:15</span>
-        <span>1300 turns</span>
+        <span>1319 turns</span>
         
       </div>
     </section>
     
     <details class="usage-card">
-      <summary class="usage-summary">Usage · 1.6M in+out · ~$164.28 (est.)</summary>
+      <summary class="usage-summary">Usage · 1.6M in+out · ~$166.29 (est.)</summary>
       <div class="usage-body">
         
         <table class="usage-models">
           <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
-          <tr><td>claude-opus-4-8</td><td>169k</td><td>638k</td><td>157.7M</td><td>2.6M</td><td>$120.21</td></tr><tr><td>claude-sonnet-5</td><td>388k</td><td>171k</td><td>22.0M</td><td>1.5M</td><td>$10.59</td></tr><tr><td>claude-fable-5</td><td>42k</td><td>96k</td><td>21.7M</td><td>239k</td><td>$31.68</td></tr><tr><td>claude-haiku-4-5</td><td>3k</td><td>50k</td><td>9.4M</td><td>480k</td><td>$1.79</td></tr>
-          <tr class="usage-total"><td>Total</td><td>601k</td><td>954k</td><td>210.8M</td><td>4.8M</td><td>$164.28</td></tr>
+          <tr><td>claude-opus-4-8</td><td>169k</td><td>651k</td><td>160.7M</td><td>2.6M</td><td>$122.23</td></tr><tr><td>claude-sonnet-5</td><td>388k</td><td>171k</td><td>22.0M</td><td>1.5M</td><td>$10.59</td></tr><tr><td>claude-fable-5</td><td>42k</td><td>96k</td><td>21.7M</td><td>239k</td><td>$31.68</td></tr><tr><td>claude-haiku-4-5</td><td>3k</td><td>50k</td><td>9.4M</td><td>480k</td><td>$1.79</td></tr>
+          <tr class="usage-total"><td>Total</td><td>601k</td><td>967k</td><td>213.8M</td><td>4.8M</td><td>$166.29</td></tr>
         </table>
         
         <p class="usage-sub">of which subagents: 660k in&#43;out · ~$15.57 (59 sessions)</p>
@@ -26033,7 +26033,213 @@ kermann, [user], and the verbatim &#39;[user]&#39;. Kills the module-</pre></div
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done; cat &gt;&gt; internal/redact/redact_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done; cat \u003e\u003e internal/redact/redact_test.go \u003c\u003c&#39;EOF&#39;\n\nfunc TestRedactScrubsAskUserQuestionFields(t *testing.T) {\n\t// AskUserQuestion cards render from the structured Questions, which must be\n\t// scrubbed just like every other user-visible field.\n\ts := \u0026model.Session{Turns: []model.Turn{{\n\t\tKind: model.TurnAssistant,\n\t\tBlocks: []model.Block{{Type: model.BlockToolUse, Tool: \u0026model.ToolCall{\n\t\t\tName: \&#34;AskUserQuestion\&#34;,\n\t\t\tQuestions: []model.Question{{\n\t\t\t\tHeader: \&#34;Path for [user]\&#34;,\n\t\t\t\tPrompt: \&#34;Use ~/secret?\&#34;,\n\t\t\t\tOptions: []model.QuestionOption{{\n\t\t\t\t\tLabel:       \&#34;Yes, [user]\&#34;,\n\t\t\t\t\tDescription: \&#34;keep ~/notes\&#34;,\n\t\t\t\t\tPreview:     \&#34;cat ~/.env\&#34;,\n\t\t\t\t}},\n\t\t\t}},\n\t\t}}},\n\t}}}\n\tSession(s, Config{HomeDir: \&#34;~\&#34;, UserName: \&#34;[user]\&#34;})\n\tq := s.Turns[0].Blocks[0].Tool.Questions[0]\n\tblob := q.Header + \&#34;\\n\&#34; + q.Prompt + \&#34;\\n\&#34; + q.Options[0].Label + \&#34;\\n\&#34; + q.Options[0].Description + \&#34;\\n\&#34; + q.Options[0].Preview\n\tfor _, leak := range []string{\&#34;[user]\&#34;, \&#34;~\&#34;} {\n\t\tif strings.Contains(blob, leak) {\n\t\t\tt.Errorf(\&#34;AskUserQuestion field still leaks %q: %q\&#34;, leak, blob)\n\t\t}\n\t}\n}\nEOF\ngofmt -w internal/redact/redact_test.go\nSCR=/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad\ngo test ./internal/redact/ -run AskUserQuestion -v 2\u003e\u00261 | tail -4\ngo build -o \&#34;$SCR/ccwhid\&#34; ./cmd/ccwhid \u0026\u0026 \&#34;$SCR/ccwhid\&#34; --session 41f7e8f4 --include-subagents --usage --out docs/session-report --force 2\u003e\u00261 | tail -1\necho \&#34;=== [user] in demo (want 0) ===\&#34;; grep -roc \&#34;[user]\&#34; docs/session-report/ | grep -v &#39;:0&#39;; echo \&#34;(no output above = 0)\&#34;\necho \&#34;=== &#39;[user]&#39; in demo (want 0) ===\&#34;; grep -rc \&#34;[user]\&#34; docs/session-report/ | grep -v &#39;:0&#39;; echo \&#34;(no output above = 0)\&#34;&#34;,
   &#34;description&#34;: &#34;Add test, rebuild, regenerate, verify zero leaks&#34;
-}</pre></div></details></div>
+}</pre><pre class="tool-result">=== RUN   TestRedactScrubsAskUserQuestionFields
+--- PASS: TestRedactScrubsAskUserQuestionFields (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.307s
+report written to docs/session-report
+=== [user] in demo (want 0) ===
+(no output above = 0)
+=== &#39;[user]&#39; in demo (want 0) ===
+(no output above = 0)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1300" data-search="zero leaks — the module-path name is finally gone. final full verification and redaction sweep:">
+      <div class="turn-role">Claude<span class="usage-badge">894 tok · ~$0.15</span></div>
+      <div class="turn-body"><p>Zero leaks — the module-path name is finally gone. Final full verification and redaction sweep:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1301" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngofmt -l . \u0026\u0026 echo \&#34;gofmt clean\&#34; \u0026\u0026 go vet ./... \u0026\u0026 echo \&#34;vet clean\&#34; \u0026\u0026 go test ./... 2\u003e\u00261 | tail -9\necho \&#34;=== demo redaction sweep ===\&#34;\necho \&#34;bare standalone [user] (not ...ackermann): $(grep -roE &#39;(^|[^a-zA-Z])[user]([^a-zA-Z]|$)&#39; docs/session-report/ | grep -vi [user] | wc -l | tr -d &#39; &#39;)\&#34;\necho \&#34;unscrubbed -Users-\[user]\u003e:\&#34;; grep -roE &#39;\\-Users\\-[user]-Za-z0-9]+&#39; docs/session-report/ | grep -v &#39;\\-Users\\-\\[user]\\]&#39; | sort -u | head\necho \&#34;legit saigyo module refs: $(grep -c &#39;github.com/saigyo/cc-what-have-i-done&#39; docs/session-report/index.html)\&#34;\necho \&#34;scrubbed module path present: $(grep -c &#39;github.com/\\[user\\]/ccwhid&#39; docs/session-report/index.html)\&#34;&#34;,
+  &#34;description&#34;: &#34;Full suite, gofmt/vet, demo redaction sweep&#34;
+}</pre><pre class="tool-result">gofmt clean
+vet clean
+ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.344s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.703s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.617s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)
+=== demo redaction sweep ===
+bare standalone [user] (not ...ackermann): 0
+unscrubbed -Users-[user]</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1302" data-search="everything&#39;s clean. let me update the readme&#39;s redaction docs to cover the new behavior and flags:">
+      <div class="turn-role">Claude<span class="usage-badge">340 tok · ~$0.13</span></div>
+      <div class="turn-body"><p>Everything's clean. Let me update the README's redaction docs to cover the new behavior and flags:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1303" data-search="bash cd ~/ideaprojects/cc-what-have-i-done; grep -n &#34;edact&#34; readme.md | head">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done; grep -n &#34;edact&#34; README.md | head</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done; grep -n \&#34;edact\&#34; README.md | head&#34;,
+  &#34;description&#34;: &#34;Locate redaction section in README&#34;
+}</pre><pre class="tool-result">62:  redaction, and open-in-browser, and to type an output directory (blank uses
+84:| `--no-redact` | Disable secret redaction |
+89:## Redaction
+99:module path, for instance, is out of scope). Disable with `--no-redact`.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1304" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~$0.12</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;,
+  &#34;limit&#34;: 22,
+  &#34;offset&#34;: 78
+}</pre><pre class="tool-result">78	| `--session &lt;id&gt;` | Session id or unambiguous prefix to render |
+79	| `--project &lt;path\|name&gt;` | Scope `--latest` to a project, or open the TUI on it (matches full path, basename, or unambiguous substring) |
+80	| `--latest` | Render the most recent interactive session (skips agent transcripts) |
+81	| `--out &lt;dir&gt;` | Output directory |
+82	| `--title &lt;str&gt;` | Override the report title |
+83	| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; `--include-subagents=false` to omit) |
+84	| `--no-redact` | Disable secret redaction |
+85	| `--force` | Overwrite a non-empty output directory |
+86	| `--open` | Open the report in a browser when done |
+87	| `--usage` | Include a token-usage &amp; estimated-cost section (default off) |
+88	
+89	## Redaction
+90	
+91	By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
+92	`KEY=[REDACTED:assignment] assignments) and rewrites your home directory to `~`.
+93	It also scrubs account names from home-directory paths in any form — plain
+94	(`/Users/[user]/home/[user]\Users\[user]-encoded project dirs (`-Users-[user]-IdeaProjects-…`) — plus standalone
+96	mentions of your own login name (e.g. the owner column of `ls -l` output),
+97	replacing them with `[user]`. This is best-effort defense-in-depth — **review
+98	generated reports before committing them** (a real name embedded in a URL or
+99	module path, for instance, is out of scope). Disable with `--no-redact`.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1305" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude<span class="usage-badge">292 tok · ~$0.13</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- | `--no-redact` | Disable secret redaction |</div><div class="diff-del">- | `--force` | Overwrite a non-empty output directory |</div><div class="diff-add">+ | `--no-redact` | Disable secret redaction |</div><div class="diff-add">+ | `--redact-name &lt;str&gt;` | Display name to scrub from output (default: your OS/git display name) |</div><div class="diff-add">+ | `--no-redact-name` | Disable display-name redaction (account/path redaction still applies) |</div><div class="diff-add">+ | `--force` | Overwrite a non-empty output directory |</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1306" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude<span class="usage-badge">603 tok · ~$0.13</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- dash-encoded project dirs (`-Users-[user]-IdeaProjects-…`) — plus standalone</div><div class="diff-del">- mentions of your own login name (e.g. the owner column of `ls -l` output),</div><div class="diff-del">- replacing them with `[user]`. This is best-effort defense-in-depth — **review</div><div class="diff-del">- generated reports before committing them** (a real name embedded in a URL or</div><div class="diff-del">- module path, for instance, is out of scope). Disable with `--no-redact`.</div><div class="diff-add">+ dash-encoded project dirs (`-Users-[user]-IdeaProjects-…`) — plus standalone</div><div class="diff-add">+ mentions of your own login name (e.g. the owner column of `ls -l` output),</div><div class="diff-add">+ replacing them with `[user]`.</div><div class="diff-add">+ </div><div class="diff-add">+ It also scrubs your **display name** (resolved from your OS account, or</div><div class="diff-add">+ `git config user.name`, or `--redact-name`) in the forms that leak into module</div><div class="diff-add">+ paths, usernames, and commit trailers — the verbatim name plus its concatenated</div><div class="diff-add">+ and separator-joined variants (`Jane Doe`, `janedoe`, `jane-doe`, `jane.doe`),</div><div class="diff-add">+ so `github.com/janedoe/project` becomes `github.com/[user]/project`. Only</div><div class="diff-add">+ multi-word names are matched, and only the known name — generic GitHub usernames</div><div class="diff-add">+ are left intact. Turn this off with `--no-redact-name`.</div><div class="diff-add">+ </div><div class="diff-add">+ This is best-effort defense-in-depth — **review generated reports before</div><div class="diff-add">+ committing them.** Disable all redaction with `--no-redact`.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1307" data-search="now commit the code &#43; readme, then the demo, and push:">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.16</span></div>
+      <div class="turn-body"><p>Now commit the code + README, then the demo, and push:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1308" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngit add internal/redact/redact.go internal/redact/redact_test.go cmd/ccwhid/main.go cmd/ccwhid/run.go internal/render/render_e2e_test.go README.md\ngit commit -q -F - \u003c\u003c&#39;EOF&#39;\nfeat(redact): scrub the user&#39;s display name from reports\n\nThe redactor knew only the account name (from $HOME), whose word-boundary\nrule deliberately misses the name when it is concatenated into a Go module\npath or username — so \&#34;github.com/[user]/ccwhid\&#34; leaked through.\n\nTeach the redactor a second known-PII source: the display name, resolved by\nthe CLI from --redact-name, else the OS account, else `git config user.name`,\nand passed in via the new redact.Config. From it we derive literal forms to\nscrub — the verbatim name plus concatenated/separator-joined lowercase\nvariants (janedoe, jane-doe, jane.doe, jane_doe) — so the module path becomes\n\&#34;github.com/[user]/project\&#34;. Guards keep it safe: only multi-word names are\nmatched (a lone word could be a common noun/company), each form is \u003e= 4 chars,\nand only the known name is touched, so generic usernames and the legitimate\ngithub.com/saigyo/... refs stay intact. On by default; --no-redact-name opts\nout, --redact-name overrides the detected name.\n\nAlso close a redaction gap the AskUserQuestion feature introduced: cards\nrender from the structured Questions field, which redactTool did not scrub,\nso question/option text bypassed redaction. Scrub every Questions field too.\n\nredact.New/Session now take a redact.Config; call sites and tests updated.\n\nCo-Authored-By: Claude Opus 4.8 \u003cnoreply@anthropic.com\u003e\nEOF\ngit add docs/session-report \u0026\u0026 git commit -q -F - \u003c\u003c&#39;EOF&#39;\ndocs: regenerate demo report with display-name redaction\n\nThe stale github.com/[user]/ccwhid module path and the verbatim\nname are now scrubbed to [user]; legitimate github.com/saigyo refs are intact.\n\nCo-Authored-By: Claude Opus 4.8 \u003cnoreply@anthropic.com\u003e\nEOF\ngit push -u origin feature/redact-full-name 2\u003e\u00261 | tail -3&#34;,
+  &#34;description&#34;: &#34;Commit code + demo and push branch&#34;
+}</pre><pre class="tool-result">To https://github.com/saigyo/cc-what-have-i-done.git
+ * [new branch]      feature/redact-full-name -&gt; feature/redact-full-name
+Branch &#39;feature/redact-full-name&#39; folgt nun &#39;origin/feature/redact-full-name&#39;.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1309" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.16</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngh pr create --title \&#34;Redact the user&#39;s display name from reports\&#34; --body \&#34;$(cat \u003c\u003c&#39;EOF&#39;\n## Summary\n\nCloses the long-standing gap where the user&#39;s real name leaked through redaction as a concatenated Go module path (`github.com/[user]/ccwhid`). The account-name rule (`\\bmarkus\\b`) deliberately can&#39;t match inside `[user]`, so the name survived.\n\n**Fix:** teach the redactor a second known-PII source — the **display name** — alongside `$HOME`:\n\n- The CLI resolves it from `--redact-name`, else the OS account display name, else `git config user.name`, and passes it via the new `redact.Config`.\n- From `\&#34;Jane Doe\&#34;` we derive literal scrub forms: the verbatim name plus concatenated/separator-joined lowercase variants (`janedoe`, `jane-doe`, `jane.doe`, `jane_doe`) → `github.com/janedoe/x` becomes `github.com/[user]/x`.\n- **Guards** keep it safe as a default: only multi-word names are matched (a lone word could be a common noun/company), each form ≥4 chars, and only the *known* name is scrubbed — generic GitHub usernames and the legit `github.com/saigyo/…` refs stay intact.\n- On by default; `--no-redact-name` opts out, `--redact-name` overrides the detected name.\n\n**Also fixes a redaction gap from PR #9:** AskUserQuestion cards render from the structured `Questions` field, which `redactTool` never scrubbed — so question/option text bypassed redaction. Now every `Questions` field is scrubbed (this is what still leaked the name in the demo until fixed).\n\n## Changes\n\n- `internal/redact/redact.go` — `Config` struct, `nameForms`, display-name regex, `Questions` scrubbing; `New`/`Session` now take `redact.Config`.\n- `cmd/ccwhid/{main,run}.go` — `--redact-name`/`--no-redact-name` flags and name resolution (OS account → git config).\n- `README.md` — documents display-name redaction and the flags.\n- Tests: name-form scrubbing, single-token safety, legit-ref preservation, and the AskUserQuestion `Questions` regression; call sites migrated to `Config`.\n- `docs/session-report/` regenerated — `[user]`/`[user]` now 0 (were 37), `saigyo` refs intact.\n\n## Verification\n\n- `gofmt -l .`, `go vet ./...`, `go test ./...` all clean.\n- Demo sweep: 0 `[user]`, 0 verbatim name, 0 bare `[user]`, 0 unscrubbed `-Users-\[user]\u003e`; 458 legit `saigyo` refs intact; module path renders as `github.com/[user]/ccwhid`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\&#34; 2\u003e\u00261 | tail -2&#34;,
+  &#34;description&#34;: &#34;Open the PR&#34;
+}</pre><pre class="tool-result">https://github.com/saigyo/cc-what-have-i-done/pull/10</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1310" data-search="pr #10 is open. let me request copilot review and poll:">
+      <div class="turn-role">Claude<span class="usage-badge">420 tok · ~$0.14</span></div>
+      <div class="turn-body"><p>PR #10 is open. Let me request Copilot review and poll:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1311" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngh api -X POST repos/saigyo/cc-what-have-i-done/pulls/10/requested_reviewers -f \&#34;reviewers[]=copilot-pull-request-reviewer[bot]\&#34; --jq &#39;.number&#39; 2\u003e\u00261 | tail -1\necho \&#34;requested; polling...\&#34;\nfor i in $(seq 1 24); do\n  n=$(gh api repos/saigyo/cc-what-have-i-done/pulls/10/reviews --jq &#39;[.[]|select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;)]|length&#39; 2\u003e/dev/null)\n  if [ \&#34;$n\&#34; != \&#34;0\&#34; ] \u0026\u0026 [ -n \&#34;$n\&#34; ]; then echo \&#34;Copilot review present ($n)\&#34;; break; fi\n  echo \&#34;waiting ($i)...\&#34;; sleep 15\ndone&#34;,
+  &#34;description&#34;: &#34;Request Copilot review and poll for round 1&#34;,
+  &#34;timeout&#34;: 420000
+}</pre><pre class="tool-result">10
+requested; polling...
+waiting (1)...
+waiting (2)...
+waiting (3)...
+waiting (4)...
+waiting (5)...
+waiting (6)...
+waiting (7)...
+waiting (8)...
+waiting (9)...
+waiting (10)...
+waiting (11)...
+waiting (12)...
+waiting (13)...
+waiting (14)...
+Copilot review present (1)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1312" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude<span class="usage-badge">321 tok · ~$0.13</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\necho \&#34;=== review meta ===\&#34;; gh api repos/saigyo/cc-what-have-i-done/pulls/10/reviews --jq &#39;.[]|select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;)|{state,body,submitted:.submitted_at}&#39;\necho \&#34;=== inline comments ===\&#34;; gh api repos/saigyo/cc-what-have-i-done/pulls/10/comments --jq &#39;.[]|select(.user.login==\&#34;Copilot\&#34;)|{id,path,line,body}&#39;&#34;,
+  &#34;description&#34;: &#34;Fetch round-1 findings&#34;
+}</pre><pre class="tool-result">=== review meta ===
+{&#34;body&#34;:&#34;## Pull request overview\n\nThis PR closes a privacy gap in report generation by extending redaction beyond `$HOME`/account-name heuristics to also scrub the user’s **display name** (including common module-path/username forms), and by ensuring structured `AskUserQuestion` content is redacted.\n\n**Changes:**\n- Introduces `redact.Config` and updates the redactor to optionally scrub display-name–derived forms (verbatim + concatenated/separator variants) and to scrub structured `ToolCall.Questions`.\n- Adds CLI support for `--redact-name` / `--no-redact-name`, with automatic display-name discovery (OS account → git config) when enabled.\n- Updates docs, tests, and regenerates the demo session report artifacts to reflect the new redaction behavior.\n\n### Reviewed changes\n\nCopilot reviewed 27 out of 28 changed files in this pull request and generated 2 comments.\n\n\u003cdetails\u003e\n\u003csummary\u003eShow a summary per file\u003c/summary\u003e\n\n| File | Description |\r\n| ---- | ----------- |\r\n| README.md | Documents display-name redaction behavior and new CLI flags. |\r\n| cmd/ccwhid/main.go | Adds `--redact-name` / `--no-redact-name` flags and option plumbing. |\r\n| cmd/ccwhid/run.go | Resolves display name from flags/OS/git and passes it into redaction config. |\r\n| internal/redact/redact.go | Adds `Config`, display-name redaction, and scrubs `Questions` fields; updates `Session`/`New` signatures. |\r\n| internal/redact/redact_test.go | Adds tests for name-form scrubbing and AskUserQuestion structured-field redaction; updates call sites for `Config`. |\r\n| internal/render/render_e2e_test.go | Updates redaction call site to pass `redact.Config{}`. |\r\n| docs/session-report/subagents/agent-afc224140cdd349a8.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-af0beb7f8d1b0d24b.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ae36a349eae01457d.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ada019f3b0850c356.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ad4bf7ee324e11d5f.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ac40361002238f5f6.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-abdd3de6a5bfdbdb8.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ab90453a4e9e96ae6.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-ab4c2d6c21dfc4ae2.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-aa45117265cc26f4f.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a9d94d4212d41bfea.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a900be2071f19ab09.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a71883234be81e1c3.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a4b5fff9e8d98f303.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a31eb1c9e09cf11a1.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a31cf203cf21e4233.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a2e10427331a80ab4.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a2d4933a5f1507c85.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a2a5eae2bcbc85447.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a14e514d14572d3cc.html | Regenerated report artifact reflecting updated redaction output. |\r\n| docs/session-report/subagents/agent-a0c5c8d82977d9732.html | Regenerated report artifact reflecting updated redaction output. |\n\u003c/details\u003e\n\n\n\n\n\n\n\n---\n\n💡 \u003ca href=\&#34;/saigyo/cc-what-have-i-done/new/main?filename=.github/instructions/*.instructions.md\&#34; class=\&#34;Link--inTextBlock\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener noreferrer\&#34;\u003eAdd Copilot custom instructions\u003c/a\u003e for smarter, more guided reviews. \u003ca href=\&#34;https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot\&#34; class=\&#34;Link--inTextBlock\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener noreferrer\&#34;\u003eLearn how to get started\u003c/a\u003e.&#34;,&#34;state&#34;:&#34;COMMENTED&#34;,&#34;submitted&#34;:&#34;2026-07-12T22:03:04Z&#34;}
+=== inline comments ===
+{&#34;body&#34;:&#34;The display-name redaction regex uses `\\b` word boundaries, which in Go&#39;s `regexp` are ASCII-only. That can cause non-ASCII display names (e.g. accented letters) to *not* match as whole words, leaving the name unredacted in reports.\n\nConsider switching to explicit Unicode-aware boundaries (e.g. using `\\pL`/`\\pN`) and preserving the surrounding delimiter characters during replacement, since RE2 doesn&#39;t support lookarounds. Adding a test case with a non-ASCII name would help prevent regressions.&#34;,&#34;id&#34;:3567211878,&#34;line&#34;:67,&#34;path&#34;:&#34;internal/redact/redact.go&#34;}
+{&#34;body&#34;:&#34;README: the display-name resolution order here is ambiguous and currently reads like `--redact-name` is the *last* fallback, while the implementation makes `--redact-name` take precedence. Also, the docs list separator variants but omit the underscore form (`jane_doe`) which the implementation scrubs.&#34;,&#34;id&#34;:3567211880,&#34;line&#34;:105,&#34;path&#34;:&#34;README.md&#34;}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1313" data-search="both round-1 findings are valid:
+1. **`\b` is ascii-only in re2** — a display name with accented letters at a form boundary can escape redaction. i&#39;ll switch to unicode-aware delimiter capture (`[^\pl\pn]`), matching the pattern `userpathre` already uses.
+2. **readme nits** — resolution order reads backwards (`--redact-name` is highest precedence, not last) and omits the `jane_doe` form.
+
+let me fix the regex first:">
+      <div class="turn-role">Claude<span class="usage-badge">6k tok · ~$0.30</span></div>
+      <div class="turn-body"><p>Both round-1 findings are valid:</p>
+<ol>
+<li><strong><code>\b</code> is ASCII-only in RE2</strong> — a display name with accented letters at a form boundary can escape redaction. I'll switch to Unicode-aware delimiter capture (<code>[^\pL\pN]</code>), matching the pattern <code>userPathRe</code> already uses.</li>
+<li><strong>README nits</strong> — resolution order reads backwards (<code>--redact-name</code> is highest precedence, not last) and omits the <code>jane_doe</code> form.</li>
+</ol>
+<p>Let me fix the regex first:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1314" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		alts := make([]string, len(forms))</div><div class="diff-del">- 		for i, f := range forms {</div><div class="diff-del">- 			alts[i] = regexp.QuoteMeta(f)</div><div class="diff-del">- 		}</div><div class="diff-del">- 		r.nameRe = regexp.MustCompile(`(?i)\b(?:` + strings.Join(alts, &#34;|&#34;) + `)\b`)</div><div class="diff-add">+ 		alts := make([]string, len(forms))</div><div class="diff-add">+ 		for i, f := range forms {</div><div class="diff-add">+ 			alts[i] = regexp.QuoteMeta(f)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		// Delimit with Unicode letter/number classes rather than \b: RE2&#39;s \b is</div><div class="diff-add">+ 		// ASCII-only, so it mishandles accented display names (e.g. a form ending</div><div class="diff-add">+ 		// in &#34;á&#34;). Capture the surrounding delimiters and re-emit them, since RE2</div><div class="diff-add">+ 		// has no lookarounds.</div><div class="diff-add">+ 		r.nameRe = regexp.MustCompile(`(?i)(^|[^\pL\pN])(?:` + strings.Join(alts, &#34;|&#34;) + `)($|[^\pL\pN])`)</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1315" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude<span class="usage-badge">255 tok · ~$0.19</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if r.nameRe != nil {</div><div class="diff-del">- 		s = r.nameRe.ReplaceAllString(s, userPlaceholder)</div><div class="diff-del">- 	}</div><div class="diff-add">+ 	if r.nameRe != nil {</div><div class="diff-add">+ 		s = r.nameRe.ReplaceAllString(s, &#34;${1}&#34;+userPlaceholder+&#34;${2}&#34;)</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1316" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude<span class="usage-badge">620 tok · ~$0.14</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- It also scrubs your **display name** (resolved from your OS account, or</div><div class="diff-del">- `git config user.name`, or `--redact-name`) in the forms that leak into module</div><div class="diff-del">- paths, usernames, and commit trailers — the verbatim name plus its concatenated</div><div class="diff-del">- and separator-joined variants (`Jane Doe`, `janedoe`, `jane-doe`, `jane.doe`),</div><div class="diff-del">- so `github.com/janedoe/project` becomes `github.com/[user]/project`. Only</div><div class="diff-add">+ It also scrubs your **display name** (resolved from `--redact-name` if given,</div><div class="diff-add">+ otherwise your OS account name, otherwise `git config user.name`) in the forms</div><div class="diff-add">+ that leak into module paths, usernames, and commit trailers — the verbatim name</div><div class="diff-add">+ plus its concatenated and separator-joined variants (`Jane Doe`, `janedoe`,</div><div class="diff-add">+ `jane-doe`, `jane.doe`, `jane_doe`), so `github.com/janedoe/project` becomes</div><div class="diff-add">+ `github.com/[user]/project`. Only</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1317" data-search="now add a non-ascii regression test that genuinely exercises the boundary fix (a name ending in an accented letter), and verify:">
+      <div class="turn-role">Claude<span class="usage-badge">562 tok · ~$0.14</span></div>
+      <div class="turn-body"><p>Now add a non-ASCII regression test that genuinely exercises the boundary fix (a name ending in an accented letter), and verify:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1318" data-search="bash cd ~/ideaprojects/cc-what-have-i-done; cat &gt;&gt; internal/redact/redact_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done; cat &gt;&gt; internal/redact/redact_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done; cat \u003e\u003e internal/redact/redact_test.go \u003c\u003c&#39;EOF&#39;\n\nfunc TestRedactFullNameUnicodeBoundaries(t *testing.T) {\n\t// A name ending in an accented letter would slip past RE2&#39;s ASCII-only \\b;\n\t// the Unicode delimiter capture must still scrub it and keep the delimiters.\n\tr := New(Config{HomeDir: \&#34;/home/[user]\&#34;, UserName: \&#34;Ana Peñá\&#34;})\n\tcases := []struct{ in, want string }{\n\t\t{\&#34;repo github.com/anapeñá/x\&#34;, \&#34;repo github.com/[user]/x\&#34;},\n\t\t{\&#34;by Ana Peñá.\&#34;, \&#34;by [user].\&#34;},\n\t\t{\&#34;user ana-peñá pushed\&#34;, \&#34;user [user] pushed\&#34;},\n\t}\n\tfor _, c := range cases {\n\t\tif got := r.String(c.in); got != c.want {\n\t\t\tt.Errorf(\&#34;String(%q) = %q, want %q\&#34;, c.in, got, c.want)\n\t\t}\n\t}\n}\nEOF\ngofmt -w internal/redact/redact_test.go internal/redact/redact.go\ngo test ./internal/redact/ -run &#39;FullName|Unicode|AskUserQuestion&#39; -v 2\u003e\u00261 | grep -E \&#34;PASS|FAIL|ok\&#34; | head&#34;,
+  &#34;description&#34;: &#34;Add unicode test and run redact tests&#34;
+}</pre><pre class="tool-result">--- PASS: TestRedactFullNameModulePathForms (0.00s)
+--- PASS: TestRedactFullNameLeavesLegitimateRefsIntact (0.00s)
+--- PASS: TestRedactScrubsAskUserQuestionFields (0.00s)
+--- PASS: TestRedactFullNameUnicodeBoundaries (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.309s</pre></div></details></div>
     </article>
     
   </main>
