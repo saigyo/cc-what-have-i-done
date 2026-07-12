@@ -1106,73 +1106,69 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 410	</pre></div></details></div>
     </article>
     
-    <article class="turn turn-assistant" id="turn-4" data-search="agent ">
+    <article class="turn turn-assistant" id="turn-4" data-search="agent check usage.report field origins">
       <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.09</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-abdc066b58699d2b3.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
-  &#34;description&#34;: &#34;Check usage.Report field origins&#34;,
-  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.\n\nI need to know, for the review of a rendering feature:\n1. Where does `usage.Report.PricesAsOf` (a string field) come from? Is it a hardcoded constant, derived from a pricing table file, or ever derived from session/transcript data (e.g. model IDs, user text)?\n2. Where does `usage.ModelUsage.Model` come from? Confirm it is the model ID string as it appears in the transcript (i.e., session/transcript-derived, potentially attacker-influenced if a transcript file were crafted).\n3. Is there any per-model or aggregate field on usage.Report/usage.ModelUsage other than `Model` that contains raw text (as opposed to formatted numbers)? List every string-typed field there.\n4. Does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?\n\nReport back concisely: field names, their exact source, and whether any could contain HTML-special characters like `\u003c`, `\u003e`, `\u0026`, or quotes if a transcript were maliciously crafted with a bogus \&#34;model\&#34; field value.&#34;,
-  &#34;run_in_background&#34;: false,
-  &#34;subagent_type&#34;: &#34;Explore&#34;
-}</pre><pre class="tool-result">Confirmed: `html/template` is used, so the plain `string` field `usageModel.Model` (and thus `ModelUsage.Model`) is auto-escaped by Go&#39;s contextual HTML escaper when rendered into the `&lt;td&gt;` in `report.html.tmpl`. `PricesAsOf` is only ever consumed inside `render.go`&#39;s Go code (concatenated into `foot` and passed through `html.EscapeString` at line ~184-186 before landing in `Footnote`), never inserted as raw HTML.
-
-Now I have everything needed. Here&#39;s my report.
-
-## Summary
-
-**Files read:** `internal/usage/usage.go`, `internal/usage/pricing.go`, `internal/usage/prices.json`, `internal/usage/usage_test.go`, `internal/usage/pricing_test.go`, plus `internal/transcript/raw.go` and `internal/render/render.go` for provenance/sink tracing.
-
-### 1. `usage.Report.PricesAsOf`
-- Type: `string`, set in `Compute()` (`usage.go:62`): `r := Report{PricesAsOf: PricesAsOf, ...}`.
-- Source: `PricesAsOf` is a **hardcoded Go constant** in `internal/usage/pricing.go:15`: `const PricesAsOf = &#34;2026-07&#34;`.
-- It is never derived from the pricing table file (`prices.json`) or from any session/transcript data. It&#39;s a literal string maintained by hand in the source.
-- Sink: consumed in `internal/render/render.go` — concatenated into the footnote string and passed through `html.EscapeString` before being marked `template.HTML`/placed in `Footnote`. Since it&#39;s a fixed constant, it can&#39;t contain HTML-special chars unless someone edits the source.
-
-### 2. `usage.ModelUsage.Model`
-- Type: `string`, set in `Compute()` (`usage.go:104`): `mu := ModelUsage{Model: m, Tokens: tc}`, where `m` comes from `order`/`byModel` keys, which are populated from `t.Model` for each `model.Turn` (`usage.go:72-77`).
-- `model.Turn.Model` is populated in `internal/transcript/parse.go:222`: `turn.Model, turn.Usage = messageMeta(rec.Message)`, which decodes the raw JSONL message record. In `internal/transcript/raw.go:98-109` (`decodeMessageMeta`), the model id is extracted via `json.Unmarshal` into a struct field tagged `json:&#34;model&#34;`, with **no validation, allow-listing, or sanitization** — it is exactly whatever string value sits at `message.model` in the transcript JSONL file.
-- **Confirmed: this is transcript-derived and attacker-controllable** if a `.jsonl` transcript file is crafted with an arbitrary `&#34;model&#34;: &#34;&lt;payload&gt;&#34;` value (e.g. containing `&lt;script&gt;`, quotes, `&amp;`, etc.). The existing test `usage_test.go` even exercises a non-conforming model string (`&#34;&lt;synthetic&gt;&#34;`) and confirms it flows through unpriced but otherwise unaltered as `ModelUsage.Model`.
-
-### 3. Other string fields on `usage.Report` / `usage.ModelUsage`
-Full field inventory:
-- `Report.Total` — `TokenCounts` (all `int`)
-- `Report.TotalCostUSD` — `*float64`
-- `Report.ByModel` — `[]ModelUsage`
-- `Report.PerTurnCost` — `map[int]*float64`
-- `Report.PricesAsOf` — **`string`** (hardcoded constant, see #1)
-- `Report.HasUnknownModel`, `Report.HasAnyUsage` — `bool`
-- `ModelUsage.Model` — **`string`** (transcript-derived, see #2)
-- `ModelUsage.Tokens` — `TokenCounts` (all `int`)
-- `ModelUsage.CostUSD` — `*float64`
-
-So the **only two string-typed fields** in this package&#39;s exported types are `Report.PricesAsOf` (hardcoded constant) and `ModelUsage.Model` (transcript-derived model id). No other field carries raw/free text — everything else is numeric (`int`/`float64`) or boolean.
-
-### 4. Arbitrary/unbounded text (model output, prompts, etc.)
-No. The `usage` package itself never touches prompt text, assistant output text, tool output, or any free-form content — it only reads `model.Turn.Model` (string) and `model.Turn.Usage` (numeric token counts: `Input`, `Output`, `CacheRead`, `CacheWrite5m`, `CacheWrite1h`). It has no access to message bodies/blocks at all. The one non-numeric, non-constant string that flows through this package end-to-end is `ModelUsage.Model`.
-
-### Risk assessment for the rendering review
-- `PricesAsOf`: safe — compile-time constant, cannot be attacker-influenced.
-- `ModelUsage.Model`: **can contain any bytes an attacker puts in the transcript&#39;s `message.model` field**, including `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;`, or full HTML/script payloads. Whether this is exploitable depends entirely on the sink: in the current code, `internal/render/render.go` passes `usageModel.Model` (assigned directly from `m.Model`, i.e. `ModelUsage.Model`) as a **plain `string`** field into the `html/template`-parsed template `internal/render/assets/report.html.tmpl:46` (`{{ .Model }}` inside a `&lt;td&gt;`), and `render.go` imports `html/template` (not `text/template`), so Go&#39;s contextual auto-escaper will HTML-escape `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;` at render time for that particular sink. If a reviewer finds any *other* code path that writes `ModelUsage.Model` (or the string derived from it) into HTML via `text/template`, raw string concatenation, `template.HTML(...)` casts, or JS/attribute contexts without going through the `html/template` auto-escaper, that would be the actual injection point to flag — the `usage` package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer&#39;s auto-escaping.</pre></div></details></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check usage.Report field origins</span><a class="agent-link" href="agent-abdc066b58699d2b3.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at /Users/markus/IdeaProjects/cc-what-have-i-done, read /Users/markus/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.</p>
+<p>I need to know, for the review of a rendering feature:</p>
+<ol>
+<li>Where does <code>usage.Report.PricesAsOf</code> (a string field) come from? Is it a hardcoded constant, derived from a pricing table file, or ever derived from session/transcript data (e.g. model IDs, user text)?</li>
+<li>Where does <code>usage.ModelUsage.Model</code> come from? Confirm it is the model ID string as it appears in the transcript (i.e., session/transcript-derived, potentially attacker-influenced if a transcript file were crafted).</li>
+<li>Is there any per-model or aggregate field on usage.Report/usage.ModelUsage other than <code>Model</code> that contains raw text (as opposed to formatted numbers)? List every string-typed field there.</li>
+<li>Does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?</li>
+</ol>
+<p>Report back concisely: field names, their exact source, and whether any could contain HTML-special characters like <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, or quotes if a transcript were maliciously crafted with a bogus &quot;model&quot; field value.</p>
+</div><div class="agent-result-body"><p>Confirmed: <code>html/template</code> is used, so the plain <code>string</code> field <code>usageModel.Model</code> (and thus <code>ModelUsage.Model</code>) is auto-escaped by Go's contextual HTML escaper when rendered into the <code>&lt;td&gt;</code> in <code>report.html.tmpl</code>. <code>PricesAsOf</code> is only ever consumed inside <code>render.go</code>'s Go code (concatenated into <code>foot</code> and passed through <code>html.EscapeString</code> at line ~184-186 before landing in <code>Footnote</code>), never inserted as raw HTML.</p>
+<p>Now I have everything needed. Here's my report.</p>
+<h2>Summary</h2>
+<p><strong>Files read:</strong> <code>internal/usage/usage.go</code>, <code>internal/usage/pricing.go</code>, <code>internal/usage/prices.json</code>, <code>internal/usage/usage_test.go</code>, <code>internal/usage/pricing_test.go</code>, plus <code>internal/transcript/raw.go</code> and <code>internal/render/render.go</code> for provenance/sink tracing.</p>
+<h3>1. <code>usage.Report.PricesAsOf</code></h3>
+<ul>
+<li>Type: <code>string</code>, set in <code>Compute()</code> (<code>usage.go:62</code>): <code>r := Report{PricesAsOf: PricesAsOf, ...}</code>.</li>
+<li>Source: <code>PricesAsOf</code> is a <strong>hardcoded Go constant</strong> in <code>internal/usage/pricing.go:15</code>: <code>const PricesAsOf = &quot;2026-07&quot;</code>.</li>
+<li>It is never derived from the pricing table file (<code>prices.json</code>) or from any session/transcript data. It's a literal string maintained by hand in the source.</li>
+<li>Sink: consumed in <code>internal/render/render.go</code> — concatenated into the footnote string and passed through <code>html.EscapeString</code> before being marked <code>template.HTML</code>/placed in <code>Footnote</code>. Since it's a fixed constant, it can't contain HTML-special chars unless someone edits the source.</li>
+</ul>
+<h3>2. <code>usage.ModelUsage.Model</code></h3>
+<ul>
+<li>Type: <code>string</code>, set in <code>Compute()</code> (<code>usage.go:104</code>): <code>mu := ModelUsage{Model: m, Tokens: tc}</code>, where <code>m</code> comes from <code>order</code>/<code>byModel</code> keys, which are populated from <code>t.Model</code> for each <code>model.Turn</code> (<code>usage.go:72-77</code>).</li>
+<li><code>model.Turn.Model</code> is populated in <code>internal/transcript/parse.go:222</code>: <code>turn.Model, turn.Usage = messageMeta(rec.Message)</code>, which decodes the raw JSONL message record. In <code>internal/transcript/raw.go:98-109</code> (<code>decodeMessageMeta</code>), the model id is extracted via <code>json.Unmarshal</code> into a struct field tagged <code>json:&quot;model&quot;</code>, with <strong>no validation, allow-listing, or sanitization</strong> — it is exactly whatever string value sits at <code>message.model</code> in the transcript JSONL file.</li>
+<li><strong>Confirmed: this is transcript-derived and attacker-controllable</strong> if a <code>.jsonl</code> transcript file is crafted with an arbitrary <code>&quot;model&quot;: &quot;&lt;payload&gt;&quot;</code> value (e.g. containing <code>&lt;script&gt;</code>, quotes, <code>&amp;</code>, etc.). The existing test <code>usage_test.go</code> even exercises a non-conforming model string (<code>&quot;&lt;synthetic&gt;&quot;</code>) and confirms it flows through unpriced but otherwise unaltered as <code>ModelUsage.Model</code>.</li>
+</ul>
+<h3>3. Other string fields on <code>usage.Report</code> / <code>usage.ModelUsage</code></h3>
+<p>Full field inventory:</p>
+<ul>
+<li><code>Report.Total</code> — <code>TokenCounts</code> (all <code>int</code>)</li>
+<li><code>Report.TotalCostUSD</code> — <code>*float64</code></li>
+<li><code>Report.ByModel</code> — <code>[]ModelUsage</code></li>
+<li><code>Report.PerTurnCost</code> — <code>map[int]*float64</code></li>
+<li><code>Report.PricesAsOf</code> — <strong><code>string</code></strong> (hardcoded constant, see #1)</li>
+<li><code>Report.HasUnknownModel</code>, <code>Report.HasAnyUsage</code> — <code>bool</code></li>
+<li><code>ModelUsage.Model</code> — <strong><code>string</code></strong> (transcript-derived, see #2)</li>
+<li><code>ModelUsage.Tokens</code> — <code>TokenCounts</code> (all <code>int</code>)</li>
+<li><code>ModelUsage.CostUSD</code> — <code>*float64</code></li>
+</ul>
+<p>So the <strong>only two string-typed fields</strong> in this package's exported types are <code>Report.PricesAsOf</code> (hardcoded constant) and <code>ModelUsage.Model</code> (transcript-derived model id). No other field carries raw/free text — everything else is numeric (<code>int</code>/<code>float64</code>) or boolean.</p>
+<h3>4. Arbitrary/unbounded text (model output, prompts, etc.)</h3>
+<p>No. The <code>usage</code> package itself never touches prompt text, assistant output text, tool output, or any free-form content — it only reads <code>model.Turn.Model</code> (string) and <code>model.Turn.Usage</code> (numeric token counts: <code>Input</code>, <code>Output</code>, <code>CacheRead</code>, <code>CacheWrite5m</code>, <code>CacheWrite1h</code>). It has no access to message bodies/blocks at all. The one non-numeric, non-constant string that flows through this package end-to-end is <code>ModelUsage.Model</code>.</p>
+<h3>Risk assessment for the rendering review</h3>
+<ul>
+<li><code>PricesAsOf</code>: safe — compile-time constant, cannot be attacker-influenced.</li>
+<li><code>ModelUsage.Model</code>: <strong>can contain any bytes an attacker puts in the transcript's <code>message.model</code> field</strong>, including <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, <code>'</code>, or full HTML/script payloads. Whether this is exploitable depends entirely on the sink: in the current code, <code>internal/render/render.go</code> passes <code>usageModel.Model</code> (assigned directly from <code>m.Model</code>, i.e. <code>ModelUsage.Model</code>) as a <strong>plain <code>string</code></strong> field into the <code>html/template</code>-parsed template <code>internal/render/assets/report.html.tmpl:46</code> (<code>{{ .Model }}</code> inside a <code>&lt;td&gt;</code>), and <code>render.go</code> imports <code>html/template</code> (not <code>text/template</code>), so Go's contextual auto-escaper will HTML-escape <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, <code>'</code> at render time for that particular sink. If a reviewer finds any <em>other</em> code path that writes <code>ModelUsage.Model</code> (or the string derived from it) into HTML via <code>text/template</code>, raw string concatenation, <code>template.HTML(...)</code> casts, or JS/attribute contexts without going through the <code>html/template</code> auto-escaper, that would be the actual injection point to flag — the <code>usage</code> package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer's auto-escaping.</li>
+</ul>
+</div></div></details></div>
     </article>
     
-    <article class="turn turn-assistant" id="turn-5" data-search="agent ">
+    <article class="turn turn-assistant" id="turn-5" data-search="agent check tokencounts.inout method">
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-a8bb274c803350c57.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
-  &#34;description&#34;: &#34;Check TokenCounts.InOut method&#34;,
-  &#34;prompt&#34;: &#34;In the Go repo ~/IdeaProjects/cc-what-have-i-done, find the definition of the `InOut()` method on `TokenCounts` (likely in internal/usage/usage.go or internal/model package). Show its exact implementation. I need to confirm it sums ONLY Input and Output token counts (not cache read/write). Report back the exact method body and its file:line location.&#34;,
-  &#34;run_in_background&#34;: false,
-  &#34;subagent_type&#34;: &#34;Explore&#34;
-}</pre><pre class="tool-result">Found it.
-
-**Location:** `~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:20`
-
-**Method body:**
-```go
-// InOut is the base input+output total, excluding cache tokens. Used for the
-// report&#39;s headline figure so cache-read volume does not dominate it.
-func (t TokenCounts) InOut() int { return t.Input + t.Output }
-```
-
-Confirmed: `InOut()` sums only `Input` and `Output` fields. The `TokenCounts` struct (lines 10-16) also has `CacheRead`, `CacheWrite5m`, and `CacheWrite1h` fields, but none of these are included in the `InOut()` calculation — the doc comment explicitly states this is intentional (&#34;excluding cache tokens&#34;).</pre></div></details></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check TokenCounts.InOut method</span><a class="agent-link" href="agent-a8bb274c803350c57.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo /Users/markus/IdeaProjects/cc-what-have-i-done, find the definition of the <code>InOut()</code> method on <code>TokenCounts</code> (likely in internal/usage/usage.go or internal/model package). Show its exact implementation. I need to confirm it sums ONLY Input and Output token counts (not cache read/write). Report back the exact method body and its file:line location.</p>
+</div><div class="agent-result-body"><p>Found it.</p>
+<p><strong>Location:</strong> <code>~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:20</code></p>
+<p><strong>Method body:</strong></p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#57606a">// InOut is the base input+output total, excluding cache tokens. Used for the</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// report&#39;s headline figure so cache-read volume does not dominate it.</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#cf222e">func</span><span style="color:#fff"> </span><span style="color:#1f2328">(</span><span style="color:#1f2328">t</span><span style="color:#fff"> </span><span style="color:#1f2328">TokenCounts</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#6639ba">InOut</span><span style="color:#1f2328">()</span><span style="color:#fff"> </span><span style="color:#cf222e">int</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff"> </span><span style="color:#cf222e">return</span><span style="color:#fff"> </span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Input</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Output</span><span style="color:#fff"> </span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span></code></pre><p>Confirmed: <code>InOut()</code> sums only <code>Input</code> and <code>Output</code> fields. The <code>TokenCounts</code> struct (lines 10-16) also has <code>CacheRead</code>, <code>CacheWrite5m</code>, and <code>CacheWrite1h</code> fields, but none of these are included in the <code>InOut()</code> calculation — the doc comment explicitly states this is intentional (&quot;excluding cache tokens&quot;).</p>
+</div></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-6" data-search="bash grep -rn &#34;buildviewmodel\|render.site\|render.options&#34; --include=&#34;*.go&#34; . | grep -v _test.go">
