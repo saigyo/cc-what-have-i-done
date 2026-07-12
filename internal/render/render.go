@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
+	"github.com/saigyo/cc-what-have-i-done/internal/usage"
 )
 
 //go:embed assets/report.html.tmpl assets/styles.css assets/app.js
@@ -18,6 +19,7 @@ var assets embed.FS
 // Options configures a render.
 type Options struct {
 	Title string
+	Usage bool // render the token-usage & cost section
 }
 
 // Site renders the session into outDir as index.html + assets/.
@@ -36,7 +38,7 @@ func Site(s model.Session, outDir string, opts Options) error {
 		return err
 	}
 
-	data := buildViewModel(s, title)
+	data := buildViewModel(s, title, opts)
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, data); err != nil {
 		return err
@@ -69,6 +71,7 @@ type viewData struct {
 	TurnCount int
 	Prompts   []promptRef
 	Turns     []turnView
+	Usage     *usageView
 }
 
 type promptRef struct {
@@ -82,9 +85,29 @@ type turnView struct {
 	RoleLabel  string
 	SearchText string
 	Body       template.HTML
+	Badge      string // per-turn usage badge, e.g. "12k tok · ~$0.18"
 }
 
-func buildViewModel(s model.Session, title string) viewData {
+type usageView struct {
+	HasAny   bool
+	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
+	Rows     []usageRow    // token breakdown
+	Models   []usageModel  // per-model table rows
+	Footnote string
+}
+
+type usageRow struct {
+	Label string
+	Value string
+}
+
+type usageModel struct {
+	Model  string
+	Tokens template.HTML // safe, built only from our own formatted numbers/words
+	Cost   string        // "$1.23" or "n/a"
+}
+
+func buildViewModel(s model.Session, title string, opts Options) viewData {
 	d := viewData{
 		Title:     title,
 		Session:   s,
@@ -93,20 +116,77 @@ func buildViewModel(s model.Session, title string) viewData {
 	if !s.StartedAt.IsZero() {
 		d.StartedAt = s.StartedAt.Format("2006-01-02 15:04")
 	}
+
+	var rep usage.Report
+	if opts.Usage {
+		rep = usage.Compute(s)
+		d.Usage = buildUsageView(rep)
+	}
+
 	for i, t := range s.Turns {
 		plain := turnPlainText(t)
 		if t.Kind == model.TurnUser {
 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
 		}
-		d.Turns = append(d.Turns, turnView{
+		tv := turnView{
 			Index:      i,
 			Kind:       string(t.Kind),
 			RoleLabel:  roleLabel(t.Kind),
 			SearchText: strings.ToLower(plain),
 			Body:       renderTurnBody(t),
-		})
+		}
+		if opts.Usage && t.Usage != nil {
+			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+		}
+		d.Turns = append(d.Turns, tv)
 	}
 	return d
+}
+
+// turnBadge formats the per-turn usage badge: "12k tok" plus "· ~$0.18" if priced.
+func turnBadge(u model.Usage, costUSD *float64) string {
+	b := formatTokens(u.Input+u.Output) + " tok"
+	if costUSD != nil {
+		b += " · ~" + formatCost(*costUSD)
+	}
+	return b
+}
+
+// buildUsageView turns a usage.Report into the template-facing view model.
+func buildUsageView(r usage.Report) *usageView {
+	v := &usageView{HasAny: r.HasAnyUsage}
+	if !r.HasAnyUsage {
+		v.Headline = template.HTML("Usage · no token-usage data")
+		return v
+	}
+	headline := "Usage · " + formatTokens(r.Total.InOut()) + " in+out"
+	if r.TotalCostUSD != nil {
+		headline += " · ~" + formatCost(*r.TotalCostUSD) + " (est.)"
+	}
+	// html.EscapeString (unlike html/template's auto-escaper) leaves "+" intact
+	// while still escaping "<"/"&" etc.; headline is built solely from our own
+	// formatted numbers and literal words, so this is safe to mark as raw HTML.
+	v.Headline = template.HTML(html.EscapeString(headline))
+
+	v.Rows = []usageRow{
+		{"input", formatTokens(r.Total.Input)},
+		{"output", formatTokens(r.Total.Output)},
+		{"cache read", formatTokens(r.Total.CacheRead)},
+		{"cache write", formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
+	}
+	for _, m := range r.ByModel {
+		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + " in+out")), Cost: "n/a"}
+		if m.CostUSD != nil {
+			row.Cost = formatCost(*m.CostUSD)
+		}
+		v.Models = append(v.Models, row)
+	}
+	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf + "; excludes server-tool fees."
+	if r.HasUnknownModel {
+		foot += " Totals exclude unpriced models (shown as n/a)."
+	}
+	v.Footnote = foot
+	return v
 }
 
 func roleLabel(k model.TurnKind) string {
