@@ -896,18 +896,26 @@ internal/usage/pricing.go:41:func Lookup(modelID string) (Price, bool) {</pre></
 6:  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },</pre></div></details></div>
     </article>
     
-    <article class="turn turn-assistant" id="turn-8" data-search="agent ">
+    <article class="turn turn-assistant" id="turn-8" data-search="agent verify model package structures match usage.go usage">
       <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-a0d92c339000f1e86.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
-  &#34;description&#34;: &#34;Verify model package structures match usage.go usage&#34;,
-  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go (whichever file(s) define the model package types) and report back, concisely:\n\n1. The exact field names and types of model.Turn (specifically: Kind, Model, Usage, Blocks).\n2. The exact field names and types of model.Block (specifically: Type, Tool).\n3. The exact field names and types of model.ToolCall (specifically: Name, Subagents).\n4. The exact field names and types of model.Subagent (specifically: Turns).\n5. The exact field names and types of model.Usage (Input, Output, CacheRead, CacheWrite5m, CacheWrite1h).\n6. Whether model.Block.Tool is a pointer type (*model.ToolCall) or a value type.\n7. Whether model.TurnUser and model.TurnAssistant and model.BlockToolUse constants exist and what type they are.\n\nThis is purely a research/verification task - do not modify any files. Report the exact struct definitions you find (with file:line references), so I can confirm that internal/usage/usage.go (which references model.Session, model.Turn, model.Block, model.ToolCall, model.Subagent, model.Usage) compiles correctly against them.&#34;,
-  &#34;subagent_type&#34;: &#34;Explore&#34;
-}</pre><pre class="tool-result">Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
-agentId: a0d92c339000f1e86 (internal ID - do not mention to user. Use SendMessage with to: &#39;a0d92c339000f1e86&#39;, summary: &#39;&lt;5-10 word recap&gt;&#39; to continue this agent.)
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Verify model package structures match usage.go usage</span><a class="agent-link" href="agent-a0d92c339000f1e86.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at /Users/markus/IdeaProjects/cc-what-have-i-done, read /Users/markus/IdeaProjects/cc-what-have-i-done/internal/model/*.go (whichever file(s) define the model package types) and report back, concisely:</p>
+<ol>
+<li>The exact field names and types of model.Turn (specifically: Kind, Model, Usage, Blocks).</li>
+<li>The exact field names and types of model.Block (specifically: Type, Tool).</li>
+<li>The exact field names and types of model.ToolCall (specifically: Name, Subagents).</li>
+<li>The exact field names and types of model.Subagent (specifically: Turns).</li>
+<li>The exact field names and types of model.Usage (Input, Output, CacheRead, CacheWrite5m, CacheWrite1h).</li>
+<li>Whether model.Block.Tool is a pointer type (*model.ToolCall) or a value type.</li>
+<li>Whether model.TurnUser and model.TurnAssistant and model.BlockToolUse constants exist and what type they are.</li>
+</ol>
+<p>This is purely a research/verification task - do not modify any files. Report the exact struct definitions you find (with file:line references), so I can confirm that internal/usage/usage.go (which references model.Session, model.Turn, model.Block, model.ToolCall, model.Subagent, model.Usage) compiles correctly against them.</p>
+</div><div class="agent-result-body"><p>Async agent launched successfully. (This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)
+agentId: a0d92c339000f1e86 (internal ID - do not mention to user. Use SendMessage with to: 'a0d92c339000f1e86', summary: '&lt;5-10 word recap&gt;' to continue this agent.)
 The agent is working in the background. You will be notified automatically when it completes.
-Do not duplicate this agent&#39;s work — avoid working with the same files or topics it is using.
+Do not duplicate this agent's work — avoid working with the same files or topics it is using.
 output_file: /private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/a0d92c339000f1e86.output
-Do NOT Read or tail this file via the shell tool — it is the full subagent JSONL transcript and reading it will overflow your context. If the user asks for progress, say the agent is still running; you&#39;ll get a completion notification.</pre></div></details></div>
+Do NOT Read or tail this file via the shell tool — it is the full subagent JSONL transcript and reading it will overflow your context. If the user asks for progress, say the agent is still running; you'll get a completion notification.</p>
+</div></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-9" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; echo &#34;build_ok&#34; &amp;&amp; go vet ./internal/usage/... 2&gt;&amp;1 &amp;&amp; echo &#34;vet_ok&#34;">

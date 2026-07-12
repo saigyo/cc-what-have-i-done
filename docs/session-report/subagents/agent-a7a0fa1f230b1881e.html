@@ -1265,29 +1265,26 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 97	</pre></div></details></div>
     </article>
     
-    <article class="turn turn-assistant" id="turn-7" data-search="agent ">
+    <article class="turn turn-assistant" id="turn-7" data-search="agent check for positional turn struct literals">
       <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.04</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-a9362c6415f36d9ba.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
-  &#34;description&#34;: &#34;Check for positional Turn struct literals&#34;,
-  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.Turn{} struct literal using positional (unkeyed) field initialization, e.g. `model.Turn{TurnKind, time.Now(), nil}` rather than keyed fields like `model.Turn{Kind: ..., Timestamp: ...}`. The Turn struct in internal/model/model.go just had two new fields (Model string, Usage *Usage) appended to it; if any code constructs Turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. Also check whether internal/model.Turn or internal/model.Usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. Report back: any positional Turn literals found (file:line), and a list of all other files that reference model.Turn or model.Usage. Keep the report under 150 words, this is a quick focused check.&#34;,
-  &#34;run_in_background&#34;: false
-}</pre><pre class="tool-result">No positional (unkeyed) `model.Turn{}` literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new `Model`/`Usage` fields.
-
-Positional Turn literals found: none.
-
-Files referencing `model.Turn` / `model.Usage`:
-- `internal/transcript/parse.go` (constructs `&amp;model.Turn{Timestamp: ...}` keyed; `&amp;model.Usage{...}` keyed, in `messageMeta`)
-- `internal/transcript/parse_test.go` (keyed `model.Usage{...}`)
-- `internal/render/render.go` (uses `model.Turn`/`model.TurnKind` only as param types: `roleLabel`, `renderTurnBody`, `turnPlainText` — no construction, no field access needing update)
-- `internal/render/render_test.go` (keyed `model.Turn{Kind: ..., Blocks: ...}` literals, x2)
-- `internal/redact/redact.go` (`redactTurn(r *Redactor, t *model.Turn)` — pointer param, mutates fields by name, no literal construction)
-- `internal/redact/redact_test.go` (keyed `model.Turn{{Kind: ..., Blocks: ...}}` literals, x2)
-
-No `cmd/` or `internal/report` files reference `model.Turn`/`model.Usage` at all. Everything compiles as-is; no code needs updating for the new `Model`/`Usage` fields.
-agentId: a9362c6415f36d9ba (use SendMessage with to: &#39;a9362c6415f36d9ba&#39;, summary: &#39;&lt;5-10 word recap&gt;&#39; to continue this agent)
-&lt;usage&gt;subagent_tokens: 29422
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check for positional Turn struct literals</span><a class="agent-link" href="agent-a9362c6415f36d9ba.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at /Users/markus/IdeaProjects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.Turn{} struct literal using positional (unkeyed) field initialization, e.g. <code>model.Turn{TurnKind, time.Now(), nil}</code> rather than keyed fields like <code>model.Turn{Kind: ..., Timestamp: ...}</code>. The Turn struct in internal/model/model.go just had two new fields (Model string, Usage *Usage) appended to it; if any code constructs Turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. Also check whether internal/model.Turn or internal/model.Usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. Report back: any positional Turn literals found (file:line), and a list of all other files that reference model.Turn or model.Usage. Keep the report under 150 words, this is a quick focused check.</p>
+</div><div class="agent-result-body"><p>No positional (unkeyed) <code>model.Turn{}</code> literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new <code>Model</code>/<code>Usage</code> fields.</p>
+<p>Positional Turn literals found: none.</p>
+<p>Files referencing <code>model.Turn</code> / <code>model.Usage</code>:</p>
+<ul>
+<li><code>internal/transcript/parse.go</code> (constructs <code>&amp;model.Turn{Timestamp: ...}</code> keyed; <code>&amp;model.Usage{...}</code> keyed, in <code>messageMeta</code>)</li>
+<li><code>internal/transcript/parse_test.go</code> (keyed <code>model.Usage{...}</code>)</li>
+<li><code>internal/render/render.go</code> (uses <code>model.Turn</code>/<code>model.TurnKind</code> only as param types: <code>roleLabel</code>, <code>renderTurnBody</code>, <code>turnPlainText</code> — no construction, no field access needing update)</li>
+<li><code>internal/render/render_test.go</code> (keyed <code>model.Turn{Kind: ..., Blocks: ...}</code> literals, x2)</li>
+<li><code>internal/redact/redact.go</code> (<code>redactTurn(r *Redactor, t *model.Turn)</code> — pointer param, mutates fields by name, no literal construction)</li>
+<li><code>internal/redact/redact_test.go</code> (keyed <code>model.Turn{{Kind: ..., Blocks: ...}}</code> literals, x2)</li>
+</ul>
+<p>No <code>cmd/</code> or <code>internal/report</code> files reference <code>model.Turn</code>/<code>model.Usage</code> at all. Everything compiles as-is; no code needs updating for the new <code>Model</code>/<code>Usage</code> fields.
+agentId: a9362c6415f36d9ba (use SendMessage with to: 'a9362c6415f36d9ba', summary: '&lt;5-10 word recap&gt;' to continue this agent)
+<!-- raw HTML omitted -->subagent_tokens: 29422
 tool_uses: 5
-duration_ms: 21962&lt;/usage&gt;</pre></div></details></div>
+duration_ms: 21962<!-- raw HTML omitted --></p>
+</div></div></details></div>
     </article>
     
     <article class="turn turn-assistant" id="turn-8" data-search="all checks confirmed clean. compiling review conclusions.
