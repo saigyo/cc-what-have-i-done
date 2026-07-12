@@ -63,7 +63,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .ask { margin: .2rem 0 .4rem; }
 .ask-q { margin-bottom: 1rem; }
 .ask-q:last-child { margin-bottom: 0; }
-.ask-header { display: inline-block; background: var(--accent-soft); color: var(--accent); font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding: .1rem .5rem; border-radius: 999px; margin-bottom: .35rem; }
+.ask-header { display: inline-block; background: var(--accent-soft); color: var(--accent); font-size: .72rem; font-weight: 600; letter-spacing: .02em; padding: .1rem .5rem; border-radius: 999px; margin-bottom: .35rem; }
 .ask-prompt { font-size: .9rem; margin-bottom: .5rem; }
 .ask-prompt > :first-child { margin-top: 0; }
 .ask-prompt > :last-child { margin-bottom: 0; }
