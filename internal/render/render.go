@@ -376,7 +376,11 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 			if ans := renderAnswers(tc.Questions, tc.Result.Content); ans != "" {
 				b.WriteString(ans)
 			} else {
-				b.WriteString(`<pre class="tool-result">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
+				cls := "tool-result"
+				if tc.Result.IsError {
+					cls += " tool-result-error"
+				}
+				b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
 			}
 		default:
 			cls := "tool-result"

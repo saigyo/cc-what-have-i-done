@@ -421,6 +421,20 @@ func TestAskUserQuestionFallsBackToRawResultWhenUnparsed(t *testing.T) {
 	}
 }
 
+func TestAskUserQuestionErrorFallbackKeepsErrorAffordance(t *testing.T) {
+	// An errored result that also can't be parsed must keep the error affordance.
+	tc := &model.ToolCall{
+		Name:      "AskUserQuestion",
+		Questions: []model.Question{{Header: "Scope", Prompt: "What scope?", Options: []model.QuestionOption{{Label: "Small"}}}},
+		Result:    &model.ToolResult{Content: "interrupted by user", IsError: true},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
+		t.Errorf("errored AskUserQuestion fallback should keep the tool-result-error affordance: %q", out)
+	}
+}
+
 func TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {
 	tc := &model.ToolCall{
 		Name:   "Agent",
