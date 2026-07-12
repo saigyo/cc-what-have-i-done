@@ -451,13 +451,13 @@ func renderQuestions(qs []model.Question, result string) string {
 // "" when no answer could be parsed, so the caller can fall back to raw text.
 func renderAnswers(qs []model.Question, result string) string {
 	var rows strings.Builder
-	any := false
+	hasAny := false
 	for _, q := range qs {
 		ans := answerFor(result, q.Prompt)
 		if ans == "" {
 			continue
 		}
-		any = true
+		hasAny = true
 		label := q.Header
 		if label == "" {
 			label = preview(q.Prompt, 40)
@@ -465,7 +465,7 @@ func renderAnswers(qs []model.Question, result string) string {
 		rows.WriteString(`<li><span class="ask-answers-q">` + html.EscapeString(label) +
 			`</span><span class="ask-answers-a">` + html.EscapeString(ans) + `</span></li>`)
 	}
-	if !any {
+	if !hasAny {
 		return ""
 	}
 	return `<div class="ask-answers"><div class="ask-answers-title">answered</div><ul>` +
