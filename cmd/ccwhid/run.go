@@ -125,7 +125,7 @@ func redactUserName(opts *options) string {
 		return opts.redactName
 	}
 	if u, err := user.Current(); err == nil {
-		if name := strings.TrimSpace(u.Name); name != "" {
+		if name := gecosName(u.Name); name != "" {
 			return name
 		}
 	}
@@ -135,6 +135,18 @@ func redactUserName(opts *options) string {
 		}
 	}
 	return ""
+}
+
+// gecosName cleans a display name from os/user, whose Name comes from the Unix
+// GECOS field and can carry trailing empty comma-separated sub-fields
+// ("Jane Doe,,,"). It drops those trailing empties (keeping a genuine embedded
+// field like "Doe, John") and trims surrounding space.
+func gecosName(name string) string {
+	fields := strings.Split(name, ",")
+	for len(fields) > 1 && strings.TrimSpace(fields[len(fields)-1]) == "" {
+		fields = fields[:len(fields)-1]
+	}
+	return strings.TrimSpace(strings.Join(fields, ","))
 }
 
 func ensureOutDir(dir string, force bool) error {
