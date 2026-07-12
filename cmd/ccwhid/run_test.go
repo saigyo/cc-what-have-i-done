@@ -151,3 +151,19 @@ func TestGenerateProducesReport(t *testing.T) {
 		t.Error("report missing expected content")
 	}
 }
+
+func TestGecosName(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"Jane Doe,,,", "Jane Doe"},   // trailing empty GECOS sub-fields dropped
+		{"Jane Doe", "Jane Doe"},      // plain name unchanged
+		{"Jane Doe, ,", "Jane Doe"},   // whitespace-only trailing fields dropped
+		{"Doe, John", "Doe, John"},    // genuine embedded field preserved
+		{"  Jane Doe ,,", "Jane Doe"}, // surrounding space trimmed
+		{"", ""},                      // empty stays empty
+	}
+	for _, c := range cases {
+		if got := gecosName(c.in); got != c.want {
+			t.Errorf("gecosName(%q) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
