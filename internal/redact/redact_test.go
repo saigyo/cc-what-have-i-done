@@ -236,3 +236,19 @@ func TestRedactScrubsAskUserQuestionFields(t *testing.T) {
 		}
 	}
 }
+
+func TestRedactFullNameUnicodeBoundaries(t *testing.T) {
+	// A name ending in an accented letter would slip past RE2's ASCII-only \b;
+	// the Unicode delimiter capture must still scrub it and keep the delimiters.
+	r := New(Config{HomeDir: "/home/ana", UserName: "Ana Peñá"})
+	cases := []struct{ in, want string }{
+		{"repo github.com/anapeñá/x", "repo github.com/[user]/x"},
+		{"by Ana Peñá.", "by [user]."},
+		{"user ana-peñá pushed", "user [user] pushed"},
+	}
+	for _, c := range cases {
+		if got := r.String(c.in); got != c.want {
+			t.Errorf("String(%q) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}

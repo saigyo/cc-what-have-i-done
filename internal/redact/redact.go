@@ -64,7 +64,11 @@ func New(cfg Config) *Redactor {
 		for i, f := range forms {
 			alts[i] = regexp.QuoteMeta(f)
 		}
-		r.nameRe = regexp.MustCompile(`(?i)\b(?:` + strings.Join(alts, "|") + `)\b`)
+		// Delimit with Unicode letter/number classes rather than \b: RE2's \b is
+		// ASCII-only, so it mishandles accented display names (e.g. a form ending
+		// in "á"). Capture the surrounding delimiters and re-emit them, since RE2
+		// has no lookarounds.
+		r.nameRe = regexp.MustCompile(`(?i)(^|[^\pL\pN])(?:` + strings.Join(alts, "|") + `)($|[^\pL\pN])`)
 	}
 	return r
 }
@@ -138,7 +142,7 @@ func (r *Redactor) String(s string) string {
 	// in a Go module path, "github.com/markusackermann/…"), which the account-name
 	// rule below deliberately misses because of its word boundary.
 	if r.nameRe != nil {
-		s = r.nameRe.ReplaceAllString(s, userPlaceholder)
+		s = r.nameRe.ReplaceAllString(s, "${1}"+userPlaceholder+"${2}")
 	}
 	// Scrub account names in any remaining home-style path: dash-encoded project
 	// dirs, other users' home paths, Windows paths.
