@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix Task 3: cwd-based project path · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are applying a correctness fix to Task 3 (session disco…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Fix Task 3: cwd-based project path</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:03</span>
+        <span>31 turns</span>
+        <span>general-purpose · agent-a90de89394c5fc960</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 12k in+out · ~$0.23 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>3k</td><td>620k</td><td>25k</td><td>$0.23</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>3k</td><td>620k</td><td>25k</td><td>$0.23</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are applying a correctness fix to task 3 (session discovery) in the go cli `ccwhid`. the file `internal/discovery/discovery.go` and its test already exist (commit 9def244). work in ~/ideaprojects/cc-what-have-i-done on branch feat/ccwhid-impl. do not create/switch branches.
+
+## the problem
+
+`decodeprojectdir` reverses the `/`→`-` encoding by replacing every `-` with `/`. this is lossy when a real path segment contains a hyphen (e.g. the project `cc-what-have-i-done` lives at `~/ideaprojects/cc-what-have-i-done`, encoded as `-users-markus-ideaprojects-cc-what-have-i-done`; naive decode wrongly yields `~/ideaprojects/cc/what/have/i/done`). claude code&#39;s on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.
+
+## the fix: use the real cwd from the transcript
+
+every `user`/`assistant` record in a transcript carries a `&#34;cwd&#34;` field with the true absolute path. use it as the authoritative project path; fall back to the lossy decode only when no cwd is present.
+
+### changes to `internal/discovery/discovery.go`
+
+1. in the `scanline` struct, add a field: `cwd string `json:&#34;cwd&#34;`` (place it near the other fields).
+
+2. in `indexfile`: keep initializing `info.projectpath` to `decodeprojectdir(projectdir)` as the fallback. add a local `cwdset := false` before the scan loop. inside the `case &#34;user&#34;, &#34;assistant&#34;:` block, add:
+   ```go
+   if !cwdset &amp;&amp; l.cwd != &#34;&#34; {
+       info.projectpath = l.cwd
+       cwdset = true
+   }
+   ```
+   (all sessions in one dir share the same cwd, so capturing it once is enough.)
+
+3. in `scan`, change the `projectgroup` construction so `projectpath` comes from the sessions&#39; true path instead of re-decoding the dir name. after the sessions are sorted, use `sessions[0].projectpath` (indexfile guarantees it is non-empty — real cwd or decoded fallback):
+   ```go
+   groups = append(groups, projectgroup{
+       projectdir:  e.name(),
+       projectpath: sessions[0].projectpath,
+       sessions:    sessions,
+   })
+   ```
+   also update the `sort.slice(groups, ...)` that follows — it already sorts by `sessions[0].modtime`, leave that as is.
+
+4. update the doc comment on `decodeprojectdir` to note it is best-effort and lossy when original path segments contain `-`, and that the true path is taken from the transcript `cwd` when available.
+
+### changes to `internal/discovery/discovery_test.go`
+
+keep the existing tests (including the leading-space `&#34; zzzz2222&#34;` fixture and the hyphen-free round-trip). add a new test proving cwd wins over the lossy decode:
+
+```go
+func testscanusestranscriptcwd(t *testing.t) {
+	root := t.tempdir()
+	// dir name would decode losslessly-wrong; the transcript cwd is authoritative.
+	proj := filepath.join(root, &#34;-tmp-proj-with-hyphen&#34;)
+	writesession(t, proj, &#34;cccc3333-0000-0000-0000-000000000000&#34;,
+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11t10:00:00z&#34;}`)
+	groups, err := scan(root)
+	if err != nil {
+		t.fatal(err)
+	}
+	if len(groups) != 1 {
+		t.fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+	}
+	if groups[0].projectpath != &#34;/tmp/proj-with-hyphen&#34; {
+		t.errorf(&#34;projectpath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].projectpath)
+	}
+	if groups[0].sessions[0].projectpath != &#34;/tmp/proj-with-hyphen&#34; {
+		t.errorf(&#34;session projectpath = %q, want the true cwd&#34;, groups[0].sessions[0].projectpath)
+	}
+}
+```
+
+confirm the existing `testscanbuildsgroups` still passes: its fixture has no `cwd` field, so it falls back to decoding `-tmp-proja` → `/tmp/proja`, which still matches.
+
+## then
+
+1. run `go test ./internal/discovery/ -v` — all tests (existing &#43; new) must pass. this is the covering test file for your change.
+2. run `go test ./...` once to confirm no regressions.
+3. commit with:
+   ```
+   fix: use transcript cwd for authoritative project path
+
+   decodeprojectdir is lossy for paths whose segments contain hyphens;
+   prefer the true cwd carried in transcript records, decode only as fallback.
+
+   co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;
+   ```
+
+## report
+
+append a &#34;## fix: transcript cwd for project path&#34; section to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md with: what you changed, the covering test command run and its output, and confirmation `go test ./...` is green.
+
+reply with only (under 12 lines): status (done/blocked), commit sha&#43;subject, one-line test summary (name the covering test file), concerns.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are applying a correctness fix to Task 3 (session discovery) in the Go CLI <code>ccwhid</code>. The file <code>internal/discovery/discovery.go</code> and its test already exist (commit 9def244). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
+<h2>The problem</h2>
+<p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>~/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-markus-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>~/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
+<h2>The fix: use the real cwd from the transcript</h2>
+<p>Every <code>user</code>/<code>assistant</code> record in a transcript carries a <code>&quot;cwd&quot;</code> field with the true absolute path. Use it as the authoritative project path; fall back to the lossy decode only when no cwd is present.</p>
+<h3>Changes to <code>internal/discovery/discovery.go</code></h3>
+<ol>
+<li>
+<p>In the <code>scanLine</code> struct, add a field: <code>Cwd string </code>json:&quot;cwd&quot;`` (place it near the other fields).</p>
+</li>
+<li>
+<p>In <code>indexFile</code>: keep initializing <code>info.ProjectPath</code> to <code>DecodeProjectDir(projectDir)</code> as the fallback. Add a local <code>cwdSet := false</code> before the scan loop. Inside the <code>case &quot;user&quot;, &quot;assistant&quot;:</code> block, add:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">!</span><span style="color:#1f2328">cwdSet</span><span style="color:#fff"> </span><span style="color:#0550ae">&amp;&amp;</span><span style="color:#fff"> </span><span style="color:#1f2328">l</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Cwd</span><span style="color:#fff"> </span><span style="color:#0550ae">!=</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;&#34;</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">info</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ProjectPath</span><span style="color:#fff"> </span><span style="color:#1f2328">=</span><span style="color:#fff"> </span><span style="color:#1f2328">l</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Cwd</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">cwdSet</span><span style="color:#fff"> </span><span style="color:#1f2328">=</span><span style="color:#fff"> </span><span style="color:#cf222e">true</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span></code></pre><p>(All sessions in one dir share the same cwd, so capturing it once is enough.)</p>
+</li>
+<li>
+<p>In <code>Scan</code>, change the <code>ProjectGroup</code> construction so <code>ProjectPath</code> comes from the sessions' true path instead of re-decoding the dir name. After the sessions are sorted, use <code>sessions[0].ProjectPath</code> (indexFile guarantees it is non-empty — real cwd or decoded fallback):</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#1f2328">groups</span><span style="color:#fff"> </span><span style="color:#1f2328">=</span><span style="color:#fff"> </span><span style="color:#6639ba">append</span><span style="color:#1f2328">(</span><span style="color:#1f2328">groups</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">ProjectGroup</span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">ProjectDir</span><span style="color:#1f2328">:</span><span style="color:#fff">  </span><span style="color:#1f2328">e</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Name</span><span style="color:#1f2328">(),</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">sessions</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">Sessions</span><span style="color:#1f2328">:</span><span style="color:#fff">    </span><span style="color:#1f2328">sessions</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#1f2328">})</span><span style="color:#fff">
+</span></span></span></code></pre><p>Also update the <code>sort.Slice(groups, ...)</code> that follows — it already sorts by <code>Sessions[0].ModTime</code>, leave that as is.</p>
+</li>
+<li>
+<p>Update the doc comment on <code>DecodeProjectDir</code> to note it is best-effort and lossy when original path segments contain <code>-</code>, and that the true path is taken from the transcript <code>cwd</code> when available.</p>
+</li>
+</ol>
+<h3>Changes to <code>internal/discovery/discovery_test.go</code></h3>
+<p>Keep the existing tests (including the leading-space <code>&quot; zzzz2222&quot;</code> fixture and the hyphen-free round-trip). ADD a new test proving cwd wins over the lossy decode:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">func</span><span style="color:#fff"> </span><span style="color:#6639ba">TestScanUsesTranscriptCwd</span><span style="color:#1f2328">(</span><span style="color:#1f2328">t</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#1f2328">testing</span><span style="color:#1f2328">.</span><span style="color:#1f2328">T</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">root</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">TempDir</span><span style="color:#1f2328">()</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#57606a">// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">proj</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#1f2328">filepath</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Join</span><span style="color:#1f2328">(</span><span style="color:#1f2328">root</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;-tmp-proj-with-hyphen&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#6639ba">writeSession</span><span style="color:#1f2328">(</span><span style="color:#1f2328">t</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">proj</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;cccc3333-0000-0000-0000-000000000000&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#0a3069">`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">groups</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">err</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#6639ba">Scan</span><span style="color:#1f2328">(</span><span style="color:#1f2328">root</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">err</span><span style="color:#fff"> </span><span style="color:#0550ae">!=</span><span style="color:#fff"> </span><span style="color:#cf222e">nil</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Fatal</span><span style="color:#1f2328">(</span><span style="color:#1f2328">err</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#6639ba">len</span><span style="color:#1f2328">(</span><span style="color:#1f2328">groups</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#0550ae">!=</span><span style="color:#fff"> </span><span style="color:#0550ae">1</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Fatalf</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;got %d groups, want 1&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#6639ba">len</span><span style="color:#1f2328">(</span><span style="color:#1f2328">groups</span><span style="color:#1f2328">))</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">groups</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">ProjectPath</span><span style="color:#fff"> </span><span style="color:#0550ae">!=</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;/tmp/proj-with-hyphen&#34;</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Errorf</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">groups</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">groups</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">Sessions</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">ProjectPath</span><span style="color:#fff"> </span><span style="color:#0550ae">!=</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;/tmp/proj-with-hyphen&#34;</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Errorf</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;session ProjectPath = %q, want the true cwd&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">groups</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">Sessions</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span></code></pre><p>Confirm the existing <code>TestScanBuildsGroups</code> still passes: its fixture has no <code>cwd</code> field, so it falls back to decoding <code>-tmp-projA</code> → <code>/tmp/projA</code>, which still matches.</p>
+<h2>Then</h2>
+<ol>
+<li>Run <code>go test ./internal/discovery/ -v</code> — all tests (existing + new) must pass. This is the covering test file for your change.</li>
+<li>Run <code>go test ./...</code> once to confirm no regressions.</li>
+<li>Commit with:
+<pre><code>fix: use transcript cwd for authoritative project path
+
+DecodeProjectDir is lossy for paths whose segments contain hyphens;
+prefer the true cwd carried in transcript records, decode only as fallback.
+
+Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
+</code></pre>
+</li>
+</ol>
+<h2>Report</h2>
+<p>Append a &quot;## Fix: transcript cwd for project path&quot; section to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md with: what you changed, the covering test command run and its output, and confirmation <code>go test ./...</code> is green.</p>
+<p>Reply with ONLY (under 12 lines): Status (DONE/BLOCKED), commit SHA+subject, one-line test summary (name the covering test file), concerns.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
+}</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
+2	// ~/.claude/projects and builds a lightweight index for listing and selection.
+3	package discovery
+4	
+5	import (
+6		&#34;bufio&#34;
+7		&#34;encoding/json&#34;
+8		&#34;fmt&#34;
+9		&#34;os&#34;
+10		&#34;path/filepath&#34;
+11		&#34;sort&#34;
+12		&#34;strings&#34;
+13		&#34;time&#34;
+14	)
+15	
+16	// SessionInfo is a lightweight index entry for one transcript file. It is built
+17	// by a cheap scan and does not parse the full timeline.
+18	type SessionInfo struct {
+19		ID           string
+20		FilePath     string
+21		ProjectDir   string // encoded directory name
+22		ProjectPath  string // decoded absolute path
+23		Title        string
+24		FirstPrompt  string
+25		ModTime      time.Time
+26		MessageCount int
+27		HasSubagents bool
+28	}
+29	
+30	// ProjectGroup groups a project&#39;s sessions.
+31	type ProjectGroup struct {
+32		ProjectDir  string
+33		ProjectPath string
+34		Sessions    []SessionInfo
+35	}
+36	
+37	// EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+38	func EncodeProjectDir(cwd string) string {
+39		return strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+40	}
+41	
+42	// DecodeProjectDir maps a projects dir name back to an absolute path.
+43	func DecodeProjectDir(name string) string {
+44		return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)
+45	}
+46	
+47	// DefaultRoot returns ~/.claude/projects.
+48	func DefaultRoot() (string, error) {
+49		home, err := os.UserHomeDir()
+50		if err != nil {
+51			return &#34;&#34;, err
+52		}
+53		return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+54	}
+55	
+56	// scanLine is the subset of fields needed to index a session cheaply.
+57	type scanLine struct {
+58		Type        string          `json:&#34;type&#34;`
+59		AiTitle     string          `json:&#34;aiTitle&#34;`
+60		IsSidechain bool            `json:&#34;isSidechain&#34;`
+61		Timestamp   string          `json:&#34;timestamp&#34;`
+62		Message     json.RawMessage `json:&#34;message&#34;`
+63	}
+64	
+65	// indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+66	func indexFile(path, projectDir string) (SessionInfo, error) {
+67		f, err := os.Open(path)
+68		if err != nil {
+69			return SessionInfo{}, err
+70		}
+71		defer f.Close()
+72	
+73		fi, err := f.Stat()
+74		if err != nil {
+75			return SessionInfo{}, err
+76		}
+77	
+78		info := SessionInfo{
+79			ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+80			FilePath:    path,
+81			ProjectDir:  projectDir,
+82			ProjectPath: DecodeProjectDir(projectDir),
+83			ModTime:     fi.ModTime(),
+84		}
+85	
+86		sc := bufio.NewScanner(f)
+87		sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+88		for sc.Scan() {
+89			var l scanLine
+90			if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+91				continue // tolerate malformed lines
+92			}
+93			switch l.Type {
+94			case &#34;ai-title&#34;:
+95				if l.AiTitle != &#34;&#34; {
+96					info.Title = l.AiTitle
+97				}
+98			case &#34;user&#34;, &#34;assistant&#34;:
+99				info.MessageCount++
+100				if l.IsSidechain {
+101					info.HasSubagents = true
+102				}
+103				if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+104					info.FirstPrompt = firstPromptText(l.Message)
+105				}
+106			}
+107		}
+108		if info.Title == &#34;&#34; {
+109			info.Title = truncate(info.FirstPrompt, 60)
+110		}
+111		return info, nil
+112	}
+113	
+114	// firstPromptText extracts a plain-text preview from a user message whose
+115	// content is either a JSON string or an array of blocks.
+116	func firstPromptText(raw json.RawMessage) string {
+117		if len(raw) == 0 {
+118			return &#34;&#34;
+119		}
+120		var msg struct {
+121			Content json.RawMessage `json:&#34;content&#34;`
+122		}
+123		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+124			return &#34;&#34;
+125		}
+126		var s string
+127		if json.Unmarshal(msg.Content, &amp;s) == nil {
+128			return strings.TrimSpace(s)
+129		}
+130		var blocks []struct {
+131			Type string `json:&#34;type&#34;`
+132			Text string `json:&#34;text&#34;`
+133		}
+134		if json.Unmarshal(msg.Content, &amp;blocks) == nil {
+135			for _, b := range blocks {
+136				if b.Type == &#34;text&#34; {
+137					return strings.TrimSpace(b.Text)
+138				}
+139			}
+140		}
+141		return &#34;&#34;
+142	}
+143	
+144	func truncate(s string, n int) string {
+145		s = strings.TrimSpace(s)
+146		if len(s) &lt;= n {
+147			return s
+148		}
+149		return s[:n-1] + &#34;…&#34;
+150	}
+151	
+152	// Scan indexes every session under root (the projects directory), grouped by
+153	// project. Groups are ordered by most-recent session first; sessions within a
+154	// group are newest-first.
+155	func Scan(root string) ([]ProjectGroup, error) {
+156		entries, err := os.ReadDir(root)
+157		if err != nil {
+158			return nil, err
+159		}
+160		var groups []ProjectGroup
+161		for _, e := range entries {
+162			if !e.IsDir() {
+163				continue
+164			}
+165			dir := filepath.Join(root, e.Name())
+166			files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+167			if err != nil {
+168				return nil, err
+169			}
+170			var sessions []SessionInfo
+171			for _, fp := range files {
+172				si, err := indexFile(fp, e.Name())
+173				if err != nil {
+174					continue
+175				}
+176				sessions = append(sessions, si)
+177			}
+178			if len(sessions) == 0 {
+179				continue
+180			}
+181			sort.Slice(sessions, func(i, j int) bool {
+182				return sessions[i].ModTime.After(sessions[j].ModTime)
+183			})
+184			groups = append(groups, ProjectGroup{
+185				ProjectDir:  e.Name(),
+186				ProjectPath: DecodeProjectDir(e.Name()),
+187				Sessions:    sessions,
+188			})
+189		}
+190		sort.Slice(groups, func(i, j int) bool {
+191			return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+192		})
+193		return groups, nil
+194	}
+195	
+196	// FindSession resolves a session id or unambiguous prefix across all projects.
+197	func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+198		groups, err := Scan(root)
+199		if err != nil {
+200			return SessionInfo{}, err
+201		}
+202		var matches []SessionInfo
+203		for _, g := range groups {
+204			for _, s := range g.Sessions {
+205				if s.ID == idOrPrefix {
+206					return s, nil // exact wins immediately
+207				}
+208				if strings.HasPrefix(s.ID, idOrPrefix) {
+209					matches = append(matches, s)
+210				}
+211			}
+212		}
+213		switch len(matches) {
+214		case 0:
+215			return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)
+216		case 1:
+217			return matches[0], nil
+218		default:
+219			return SessionInfo{}, fmt.Errorf(&#34;ambiguous prefix %q matches %d sessions&#34;, idOrPrefix, len(matches))
+220		}
+221	}
+222	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="bash git branch --show-current &amp;&amp; git log --oneline -3">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git branch --show-current &amp;&amp; git log --oneline -3</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git branch --show-current \u0026\u0026 git log --oneline -3&#34;,
+  &#34;description&#34;: &#34;Check current branch and recent commits&#34;
+}</pre><pre class="tool-result">feat/ccwhid-impl
+9def244 feat: add session discovery and indexing
+7b11575 feat: add domain model types
+37ba8bc chore: go mod tidy to correct cobra require metadata</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="good, already on the right branch. now let&#39;s make the code changes.">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Good, already on the right branch. Now let's make the code changes.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // DecodeProjectDir maps a projects dir name back to an absolute path.</div><div class="diff-del">- func DecodeProjectDir(name string) string {</div><div class="diff-del">- 	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)</div><div class="diff-del">- }</div><div class="diff-add">+ // DecodeProjectDir maps a projects dir name back to an absolute path.</div><div class="diff-add">+ //</div><div class="diff-add">+ // This is best-effort and lossy: the encoding used for ~/.claude/projects</div><div class="diff-add">+ // directory names replaces every &#34;/&#34; with &#34;-&#34;, so a decode cannot distinguish</div><div class="diff-add">+ // an original path separator from a literal &#34;-&#34; inside a path segment (e.g.</div><div class="diff-add">+ // &#34;cc-what-have-i-done&#34; decodes to &#34;cc/what/have/i/done&#34;). Callers that need</div><div class="diff-add">+ // the true path should prefer the &#34;cwd&#34; field recorded in transcript records</div><div class="diff-add">+ // and only fall back to this function when no such record is available.</div><div class="diff-add">+ func DecodeProjectDir(name string) string {</div><div class="diff-add">+ 	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">340 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	Type        string          `json:&#34;type&#34;`</div><div class="diff-del">- 	AiTitle     string          `json:&#34;aiTitle&#34;`</div><div class="diff-del">- 	IsSidechain bool            `json:&#34;isSidechain&#34;`</div><div class="diff-del">- 	Timestamp   string          `json:&#34;timestamp&#34;`</div><div class="diff-del">- 	Message     json.RawMessage `json:&#34;message&#34;`</div><div class="diff-add">+ 	Type        string          `json:&#34;type&#34;`</div><div class="diff-add">+ 	AiTitle     string          `json:&#34;aiTitle&#34;`</div><div class="diff-add">+ 	IsSidechain bool            `json:&#34;isSidechain&#34;`</div><div class="diff-add">+ 	Timestamp   string          `json:&#34;timestamp&#34;`</div><div class="diff-add">+ 	Cwd         string          `json:&#34;cwd&#34;`</div><div class="diff-add">+ 	Message     json.RawMessage `json:&#34;message&#34;`</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">736 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	sc := bufio.NewScanner(f)</div><div class="diff-del">- 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)</div><div class="diff-del">- 	for sc.Scan() {</div><div class="diff-del">- 		var l scanLine</div><div class="diff-del">- 		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {</div><div class="diff-del">- 			continue // tolerate malformed lines</div><div class="diff-del">- 		}</div><div class="diff-del">- 		switch l.Type {</div><div class="diff-del">- 		case &#34;ai-title&#34;:</div><div class="diff-del">- 			if l.AiTitle != &#34;&#34; {</div><div class="diff-del">- 				info.Title = l.AiTitle</div><div class="diff-del">- 			}</div><div class="diff-del">- 		case &#34;user&#34;, &#34;assistant&#34;:</div><div class="diff-del">- 			info.MessageCount++</div><div class="diff-del">- 			if l.IsSidechain {</div><div class="diff-del">- 				info.HasSubagents = true</div><div class="diff-del">- 			}</div><div class="diff-del">- 			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {</div><div class="diff-del">- 				info.FirstPrompt = firstPromptText(l.Message)</div><div class="diff-del">- 			}</div><div class="diff-del">- 		}</div><div class="diff-del">- 	}</div><div class="diff-add">+ 	sc := bufio.NewScanner(f)</div><div class="diff-add">+ 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)</div><div class="diff-add">+ 	cwdSet := false</div><div class="diff-add">+ 	for sc.Scan() {</div><div class="diff-add">+ 		var l scanLine</div><div class="diff-add">+ 		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {</div><div class="diff-add">+ 			continue // tolerate malformed lines</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		switch l.Type {</div><div class="diff-add">+ 		case &#34;ai-title&#34;:</div><div class="diff-add">+ 			if l.AiTitle != &#34;&#34; {</div><div class="diff-add">+ 				info.Title = l.AiTitle</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		case &#34;user&#34;, &#34;assistant&#34;:</div><div class="diff-add">+ 			info.MessageCount++</div><div class="diff-add">+ 			if l.IsSidechain {</div><div class="diff-add">+ 				info.HasSubagents = true</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {</div><div class="diff-add">+ 				info.FirstPrompt = firstPromptText(l.Message)</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {</div><div class="diff-add">+ 				info.ProjectPath = l.Cwd</div><div class="diff-add">+ 				cwdSet = true</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">299 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 			groups = append(groups, ProjectGroup{</div><div class="diff-del">- 				ProjectDir:  e.Name(),</div><div class="diff-del">- 				ProjectPath: DecodeProjectDir(e.Name()),</div><div class="diff-del">- 				Sessions:    sessions,</div><div class="diff-del">- 			})</div><div class="diff-add">+ 			groups = append(groups, ProjectGroup{</div><div class="diff-add">+ 				ProjectDir:  e.Name(),</div><div class="diff-add">+ 				ProjectPath: sessions[0].ProjectPath,</div><div class="diff-add">+ 				Sessions:    sessions,</div><div class="diff-add">+ 			})</div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;String to replace not found in file.
+String: 			groups = append(groups, ProjectGroup{
+				ProjectDir:  e.Name(),
+				ProjectPath: DecodeProjectDir(e.Name()),
+				Sessions:    sessions,
+			})&lt;/tool_use_error&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">159 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;,
+  &#34;limit&#34;: 10,
+  &#34;offset&#34;: 183
+}</pre><pre class="tool-result">183			var sessions []SessionInfo
+184			for _, fp := range files {
+185				si, err := indexFile(fp, e.Name())
+186				if err != nil {
+187					continue
+188				}
+189				sessions = append(sessions, si)
+190			}
+191			if len(sessions) == 0 {
+192				continue</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">131 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;,
+  &#34;limit&#34;: 10,
+  &#34;offset&#34;: 193
+}</pre><pre class="tool-result">193			}
+194			sort.Slice(sessions, func(i, j int) bool {
+195				return sessions[i].ModTime.After(sessions[j].ModTime)
+196			})
+197			groups = append(groups, ProjectGroup{
+198				ProjectDir:  e.Name(),
+199				ProjectPath: DecodeProjectDir(e.Name()),
+200				Sessions:    sessions,
+201			})
+202		}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="the whitespace looks identical visually — likely a trailing space issue. let me use exact text with surrounding context.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>The whitespace looks identical visually — likely a trailing space issue. Let me use exact text with surrounding context.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		groups = append(groups, ProjectGroup{</div><div class="diff-del">- 			ProjectDir:  e.Name(),</div><div class="diff-del">- 			ProjectPath: DecodeProjectDir(e.Name()),</div><div class="diff-del">- 			Sessions:    sessions,</div><div class="diff-del">- 		})</div><div class="diff-add">+ 		groups = append(groups, ProjectGroup{</div><div class="diff-add">+ 			ProjectDir:  e.Name(),</div><div class="diff-add">+ 			ProjectPath: sessions[0].ProjectPath,</div><div class="diff-add">+ 			Sessions:    sessions,</div><div class="diff-add">+ 		})</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="now let&#39;s look at the existing test file to add the new test correctly.">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let's look at the existing test file to add the new test correctly.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go&#34;
+}</pre><pre class="tool-result">1	package discovery
+2	
+3	import (
+4		&#34;os&#34;
+5		&#34;path/filepath&#34;
+6		&#34;testing&#34;
+7	)
+8	
+9	func TestEncodeDecodeRoundTrip(t *testing.T) {
+10		// NOTE: deviates from the task brief&#39;s literal fixture, which used
+11		// &#34;~/IdeaProjects/cc-what-have-i-done&#34; (this repo&#39;s own
+12		// path). That path contains a literal hyphen in the directory name
+13		// (&#34;cc-what-have-i-done&#34;), which the naive &#39;/&#39;&lt;-&gt;&#39;-&#39; replace scheme
+14		// specified below cannot round-trip: every embedded hyphen gets
+15		// decoded back into a &#39;/&#39;. This is a mathematical property of the
+16		// scheme, not an implementation bug, so a hyphen-free path is used
+17		// here instead to exercise a genuinely invertible case. See the
+18		// task report for verification (go run of the exact replace calls
+19		// against the original fixture).
+20		cwd := &#34;~/IdeaProjects/ccwhid&#34;
+21		enc := EncodeProjectDir(cwd)
+22		if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+23			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
+24		}
+25		if dec := DecodeProjectDir(enc); dec != cwd {
+26			t.Fatalf(&#34;DecodeProjectDir = %q, want %q&#34;, dec, cwd)
+27		}
+28	}
+29	
+30	// writeSession writes a minimal valid jsonl file with the given lines.
+31	func writeSession(t *testing.T, dir, id string, lines ...string) {
+32		t.Helper()
+33		if err := os.MkdirAll(dir, 0o755); err != nil {
+34			t.Fatal(err)
+35		}
+36		path := filepath.Join(dir, id+&#34;.jsonl&#34;)
+37		data := &#34;&#34;
+38		for _, l := range lines {
+39			data += l + &#34;\n&#34;
+40		}
+41		if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+42			t.Fatal(err)
+43		}
+44	}
+45	
+46	func TestScanBuildsGroups(t *testing.T) {
+47		root := t.TempDir()
+48		proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+49		writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,
+50			`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Build a parser&#34;}`,
+51			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+52			`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+53		)
+54		groups, err := Scan(root)
+55		if err != nil {
+56			t.Fatal(err)
+57		}
+58		if len(groups) != 1 {
+59			t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+60		}
+61		g := groups[0]
+62		if g.ProjectPath != &#34;/tmp/projA&#34; {
+63			t.Errorf(&#34;ProjectPath = %q&#34;, g.ProjectPath)
+64		}
+65		if len(g.Sessions) != 1 {
+66			t.Fatalf(&#34;got %d sessions, want 1&#34;, len(g.Sessions))
+67		}
+68		s := g.Sessions[0]
+69		if s.Title != &#34;Build a parser&#34; {
+70			t.Errorf(&#34;Title = %q&#34;, s.Title)
+71		}
+72		if s.MessageCount != 2 {
+73			t.Errorf(&#34;MessageCount = %d, want 2&#34;, s.MessageCount)
+74		}
+75	}
+76	
+77	func TestFindSessionByPrefix(t *testing.T) {
+78		root := t.TempDir()
+79		proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+80		writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,
+81			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+82		writeSession(t, proj, &#34; zzzz2222&#34;)
+83		got, err := FindSession(root, &#34;abcd&#34;)
+84		if err != nil {
+85			t.Fatal(err)
+86		}
+87		if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {
+88			t.Errorf(&#34;ID = %q&#34;, got.ID)
+89		}
+90	}
+91	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="the existing tests match what&#39;s expected. now append the new test.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>The existing tests match what's expected. Now append the new test.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	got, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-del">- 	if err != nil {</div><div class="diff-del">- 		t.Fatal(err)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-del">- 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ 	got, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestScanUsesTranscriptCwd(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-proj-with-hyphen&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;cccc3333-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	groups, err := Scan(root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="now run the tests.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now run the tests.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/discovery/ -v">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/discovery/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/discovery/ -v&#34;,
+  &#34;description&#34;: &#34;Run discovery package tests verbosely&#34;
+}</pre><pre class="tool-result">=== RUN   TestEncodeDecodeRoundTrip
+--- PASS: TestEncodeDecodeRoundTrip (0.00s)
+=== RUN   TestScanBuildsGroups
+--- PASS: TestScanBuildsGroups (0.00s)
+=== RUN   TestFindSessionByPrefix
+--- PASS: TestFindSessionByPrefix (0.00s)
+=== RUN   TestScanUsesTranscriptCwd
+--- PASS: TestScanUsesTranscriptCwd (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.299s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="all pass. now full test suite.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All pass. Now full test suite.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./... 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./... 2\u003e\u00261&#34;,
+  &#34;description&#34;: &#34;Run full test suite&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.157s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="all green. now commit.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All green. Now commit.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="bash git status">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status&#34;,
+  &#34;description&#34;: &#34;Check git status before staging&#34;
+}</pre><pre class="tool-result">Auf Branch feat/ccwhid-impl
+Änderungen, die nicht zum Commit vorgemerkt sind:
+  (benutzen Sie &#34;git add &lt;Datei&gt;...&#34;, um die Änderungen zum Commit vorzumerken)
+  (benutzen Sie &#34;git restore &lt;Datei&gt;...&#34;, um die Änderungen im Arbeitsverzeichnis zu verwerfen)
+	geändert:       internal/discovery/discovery.go
+	geändert:       internal/discovery/discovery_test.go
+
+keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash git add internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">236 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add internal/discovery/discovery.go internal/discovery/discovery_test.go \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: use transcript cwd for authoritative project path\n\nDecodeProjectDir is lossy for paths whose segments contain hyphens;\nprefer the true cwd carried in transcript records, decode only as fallback.\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;,
+  &#34;description&#34;: &#34;Commit the fix&#34;
+}</pre><pre class="tool-result">[feat/ccwhid-impl 159ee65] fix: use transcript cwd for authoritative project path
+ 2 files changed, 35 insertions(+), 1 deletion(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="now update the report file.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now update the report file.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261&#34;,
+  &#34;description&#34;: &#34;Check if report directory/file exists&#34;
+}</pre><pre class="tool-result">total 136
+drwxr-xr-x@ 12 markus  staff   384 11 Juli 12:02 .
+drwxr-xr-x@  3 markus  staff    96 11 Juli 11:52 ..
+-rw-r--r--@  1 markus  staff     2 11 Juli 11:59 .gitignore
+-rw-r--r--@  1 markus  staff   415 11 Juli 11:59 progress.md
+-rw-r--r--@  1 markus  staff  4648 11 Juli 11:54 review-2ff127a..c2f4251.diff
+-rw-r--r--@  1 markus  staff  3416 11 Juli 11:58 review-37ba8bc..7b11575.diff
+-rw-r--r--@  1 markus  staff  3767 11 Juli 11:52 task-1-brief.md
+-rw-r--r--@  1 markus  staff  4971 11 Juli 11:54 task-1-report.md
+-rw-r--r--@  1 markus  staff  4282 11 Juli 11:56 task-2-brief.md
+-rw-r--r--@  1 markus  staff  3422 11 Juli 11:57 task-2-report.md
+-rw-r--r--@  1 markus  staff  9420 11 Juli 11:59 task-3-brief.md
+-rw-r--r--@  1 markus  staff  9037 11 Juli 12:02 task-3-report.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">114 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;,
+  &#34;limit&#34;: 30
+}</pre><pre class="tool-result">1	# Task 3 Report: Session discovery
+2	
+3	## Summary
+4	
+5	Implemented `internal/discovery/discovery.go` and `internal/discovery/discovery_test.go`
+6	exactly per the task brief, with one documented, minimal, justified deviation to a test
+7	fixture (see &#34;Deviation&#34; below). Branch `feat/ccwhid-impl` was used throughout; no branch
+8	was created or switched.
+9	
+10	## What was implemented
+11	
+12	- `discovery.EncodeProjectDir(cwd string) string` — replaces every `/` with `-`.
+13	- `discovery.DecodeProjectDir(name string) string` — replaces every `-` with `/`.
+14	- `discovery.SessionInfo` — lightweight per-transcript index entry (ID, FilePath,
+15	  ProjectDir, ProjectPath, Title, FirstPrompt, ModTime, MessageCount, HasSubagents).
+16	- `discovery.ProjectGroup` — groups a project&#39;s sessions (ProjectDir, ProjectPath, Sessions).
+17	- `discovery.Scan(root string) ([]ProjectGroup, error)` — walks `root` (the `projects`
+18	  dir), globs `*.jsonl` per project subdirectory, indexes each file cheaply via a
+19	  line-by-line scanner (tolerating malformed JSONL lines by skipping them), and returns
+20	  groups sorted most-recent-session-first, with sessions inside each group newest-first.
+21	- `discovery.DefaultRoot() (string, error)` — `~/.claude/projects` via `os.UserHomeDir()`.
+22	- `discovery.FindSession(root, idOrPrefix string) (SessionInfo, error)` — exact ID match
+23	  wins immediately; otherwise resolves an unambiguous prefix match across all projects,
+24	  erroring on zero or multiple matches.
+25	
+26	Implementation is a byte-for-byte copy of the brief&#39;s Step 3 code block (package
+27	comment, imports, `scanLine`, `indexFile`, `firstPromptText`, `truncate`, `Scan`,
+28	`FindSession`, etc.) — no functional changes were made to `discovery.go`.
+29	
+30	## Deviation (documented, minimal)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="now let&#39;s append the new section at the end of the file.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let's append the new section at the end of the file.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="bash tail -20 ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">tail -20 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;tail -20 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;,
+  &#34;description&#34;: &#34;Preview end of report file&#34;
+}</pre><pre class="tool-result">  within a group newest-first&#34;).
+- `FindSession`: exact ID match returns immediately even if other IDs share the same
+  prefix (correct per &#34;resolves an id or unambiguous prefix&#34;); ambiguous/no-match cases
+  return descriptive errors.
+- No other internal packages are consumed (per &#34;Consumes: nothing from other internal
+  packages&#34;) — confirmed via imports in `discovery.go` (all stdlib: bufio,
+  encoding/json, fmt, os, path/filepath, sort, strings, time).
+- Package import path matches `github.com/saigyo/cc-what-have-i-done/internal/discovery`
+  (verified via `go.mod` module path + directory layout).
+
+## Concerns
+
+- The one documented test-fixture deviation above (round-trip test&#39;s `cwd` literal
+  changed from a hyphen-containing path to a hyphen-free one). No production code was
+  changed to accommodate this — only the test literal. Recommend the brief&#39;s author
+  double-check whether this lossy-round-trip edge case (real project directories with
+  hyphens in their names, which is common, e.g. this very repo) needs a smarter encoding
+  scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly
+  recover such names. That is out of scope for Task 3 as literally specified, so it was
+  not addressed here beyond flagging it.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-28" data-search="now append the new fix section.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now append the new fix section.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-29" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-   scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly</div><div class="diff-del">-   recover such names. That is out of scope for Task 3 as literally specified, so it was</div><div class="diff-del">-   not addressed here beyond flagging it.</div><div class="diff-add">+   scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly</div><div class="diff-add">+   recover such names. That is out of scope for Task 3 as literally specified, so it was</div><div class="diff-add">+   not addressed here beyond flagging it.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Fix: transcript cwd for project path</div><div class="diff-add">+ </div><div class="diff-add">+ Addressed the concern flagged above: `DecodeProjectDir` is lossy whenever a real path</div><div class="diff-add">+ segment contains a hyphen (e.g. this repo, `~/IdeaProjects/cc-what-have-i-done`,</div><div class="diff-add">+ naively decodes to `.../cc/what/have/i/done`). Since the on-disk projects directory name</div><div class="diff-add">+ is genuinely ambiguous, decoding alone cannot recover the true path — so the fix instead</div><div class="diff-add">+ sources the true path from the transcript itself.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Changes</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/discovery/discovery.go`:</div><div class="diff-add">+   - `scanLine` gained a `Cwd string `json:&#34;cwd&#34;`` field — every `user`/`assistant`</div><div class="diff-add">+     transcript record carries the true absolute cwd.</div><div class="diff-add">+   - `indexFile` still seeds `info.ProjectPath` with `DecodeProjectDir(projectDir)` as a</div><div class="diff-add">+     fallback, but now captures the first non-empty `cwd` seen on a `user`/`assistant`</div><div class="diff-add">+     line (via a local `cwdSet` flag) and overwrites `info.ProjectPath` with it, since all</div><div class="diff-add">+     sessions in one project directory share the same true cwd.</div><div class="diff-add">+   - `Scan`&#39;s `ProjectGroup` construction now sets `ProjectPath: sessions[0].ProjectPath`</div><div class="diff-add">+     (the authoritative per-session value set by `indexFile`) instead of re-decoding the</div><div class="diff-add">+     encoded directory name via `DecodeProjectDir(e.Name())`.</div><div class="diff-add">+   - `DecodeProjectDir`&#39;s doc comment now states explicitly that it is best-effort/lossy</div><div class="diff-add">+     for hyphenated path segments and that callers should prefer the transcript `cwd`,</div><div class="diff-add">+     falling back to decode only when no `cwd` record is available.</div><div class="diff-add">+ - `internal/discovery/discovery_test.go`: added `TestScanUsesTranscriptCwd`, which writes</div><div class="diff-add">+   a session under a directory name that would decode incorrectly</div><div class="diff-add">+   (`-tmp-proj-with-hyphen` → naively `/tmp/proj/with/hyphen`) but carries</div><div class="diff-add">+   `&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;` in its transcript line, and asserts both</div><div class="diff-add">+   `groups[0].ProjectPath` and `groups[0].Sessions[0].ProjectPath` equal the true</div><div class="diff-add">+   `/tmp/proj-with-hyphen`. Existing tests (`TestEncodeDecodeRoundTrip`,</div><div class="diff-add">+   `TestScanBuildsGroups`, `TestFindSessionByPrefix`) were left unchanged and still pass —</div><div class="diff-add">+   `TestScanBuildsGroups`&#39;s fixture has no `cwd` field, so it correctly exercises the</div><div class="diff-add">+   decode fallback path (`-tmp-projA` → `/tmp/projA`).</div><div class="diff-add">+ </div><div class="diff-add">+ ### Covering test run</div><div class="diff-add">+ </div><div class="diff-add">+ Command: `go test ./internal/discovery/ -v`</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestEncodeDecodeRoundTrip</div><div class="diff-add">+ --- PASS: TestEncodeDecodeRoundTrip (0.00s)</div><div class="diff-add">+ === RUN   TestScanBuildsGroups</div><div class="diff-add">+ --- PASS: TestScanBuildsGroups (0.00s)</div><div class="diff-add">+ === RUN   TestFindSessionByPrefix</div><div class="diff-add">+ --- PASS: TestFindSessionByPrefix (0.00s)</div><div class="diff-add">+ === RUN   TestScanUsesTranscriptCwd</div><div class="diff-add">+ --- PASS: TestScanUsesTranscriptCwd (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.299s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full suite</div><div class="diff-add">+ </div><div class="diff-add">+ `go test ./...` — green:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.157s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `159ee65` — &#34;fix: use transcript cwd for authoritative project path&#34;</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-30" data-search="status: done
+commit: 159ee65 — &#34;fix: use transcript cwd for authoritative project path&#34;
+test summary: `go test ./internal/discovery/ -v` (covering file: internal/discovery/discovery_test.go) — 4/4 pass, including new testscanusestranscriptcwd; `go test ./...` green across all 3 packages.
+report appended: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md (&#34;fix: transcript cwd for project path&#34; section).
+concerns: none — fix resolves the lossy-decode edge case flagged in the original task-3 report; no regressions.">
+      <div class="turn-role">Claude<span class="usage-badge">376 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>Status: DONE
+Commit: 159ee65 — &quot;fix: use transcript cwd for authoritative project path&quot;
+Test summary: <code>go test ./internal/discovery/ -v</code> (covering file: internal/discovery/discovery_test.go) — 4/4 pass, including new TestScanUsesTranscriptCwd; <code>go test ./...</code> green across all 3 packages.
+Report appended: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md (&quot;Fix: transcript cwd for project path&quot; section).
+Concerns: none — fix resolves the lossy-decode edge case flagged in the original task-3 report; no regressions.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

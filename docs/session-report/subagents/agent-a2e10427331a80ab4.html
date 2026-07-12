@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix Copilot round-2 findings · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are fixing two code-review findings on the Go CLI `ccwh…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Fix Copilot round-2 findings</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 11:00</span>
+        <span>27 turns</span>
+        <span>general-purpose · agent-a2e10427331a80ab4</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 2k in+out · ~$0.07 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-haiku-4-5</td><td>146</td><td>1k</td><td>441k</td><td>18k</td><td>$0.07</td></tr>
+          <tr class="usage-total"><td>Total</td><td>146</td><td>1k</td><td>441k</td><td>18k</td><td>$0.07</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are fixing two code-review findings on the go cli `ccwhid`. work from ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions).
+
+## fix 1 — readme flag description regression
+
+in `readme.md`, the flag table row for `--include-subagents` was reworded on this branch and dropped the disable hint. find that row and make sure it ends with the previous guidance, i.e. the description should read:
+
+`include subagent work: inline task sidechains and linked agent-session transcript pages under subagents/ (default true; --include-subagents=false to omit)`
+
+(keep the row&#39;s existing table formatting/backticks style consistent with neighboring rows.)
+
+## fix 2 — link inside &lt;summary&gt; toggles the details
+
+`internal/render/render.go` (`rendertool`) emits an `&lt;a class=&#34;agent-link&#34; href=&#34;...&#34;&gt;transcript ↗&lt;/a&gt;` inside the `&lt;summary&gt;` of the tool card, and the report template (`internal/render/assets/report.html.tmpl`) emits the same class inside `.turn-role` (that one is not inside a summary — leave it). clicking the in-summary link can toggle the `&lt;details&gt;` instead of / in addition to navigating, and keyboard behavior is unreliable.
+
+keep the link in the summary (it must stay visible while collapsed) and fix the behavior in `internal/render/assets/app.js`: add a delegated click handler that stops the event from activating the summary for `.agent-link` clicks. read app.js first and follow its existing style. e.g.:
+
+```js
+// links inside &lt;summary&gt; (agent transcript links) must navigate, not toggle
+// the surrounding &lt;details&gt;.
+document.addeventlistener(&#39;click&#39;, (e) =&gt; {
+  const link = e.target.closest(&#39;a.agent-link&#39;);
+  if (link) e.stoppropagation();
+}, true);
+```
+
+note: use capture phase (third arg `true`) so the handler runs before the summary&#39;s default activation; verify the file doesn&#39;t already have a conflicting delegated handler pattern — integrate cleanly with what&#39;s there.
+
+## verify &amp; commit
+
+there is an e2e test that asserts the link markup exists (`testsitewritessubagentpagesandlinks` in internal/render/render_e2e_test.go) — it must keep passing; the js behavior itself has no go test (fine).
+
+run: `gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./internal/render/`
+expected: gofmt silent, vet clean, package passes.
+
+commit both changes as one commit (message like &#34;fix: keep --include-subagents=false doc hint; make in-summary agent links clickable&#34;), ending with the trailer:
+`co-authored-by: claude haiku 4.5 &lt;noreply@anthropic.com&gt;`
+
+then push: `git push`
+
+## report
+
+report back with only: status, commit sha &#43; subject, one-line test summary.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are fixing two code-review findings on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
+<h2>Fix 1 — README flag description regression</h2>
+<p>In <code>README.md</code>, the flag table row for <code>--include-subagents</code> was reworded on this branch and dropped the disable hint. Find that row and make sure it ends with the previous guidance, i.e. the description should read:</p>
+<p><code>Include subagent work: inline Task sidechains and linked agent-session transcript pages under subagents/ (default true; --include-subagents=false to omit)</code></p>
+<p>(Keep the row's existing table formatting/backticks style consistent with neighboring rows.)</p>
+<h2>Fix 2 — link inside <!-- raw HTML omitted --> toggles the details</h2>
+<p><code>internal/render/render.go</code> (<code>renderTool</code>) emits an <code>&lt;a class=&quot;agent-link&quot; href=&quot;...&quot;&gt;transcript ↗&lt;/a&gt;</code> inside the <code>&lt;summary&gt;</code> of the tool card, and the report template (<code>internal/render/assets/report.html.tmpl</code>) emits the same class inside <code>.turn-role</code> (that one is NOT inside a summary — leave it). Clicking the in-summary link can toggle the <code>&lt;details&gt;</code> instead of / in addition to navigating, and keyboard behavior is unreliable.</p>
+<p>Keep the link in the summary (it must stay visible while collapsed) and fix the behavior in <code>internal/render/assets/app.js</code>: add a delegated click handler that stops the event from activating the summary for <code>.agent-link</code> clicks. Read app.js first and follow its existing style. E.g.:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#57606a">// Links inside &lt;summary&gt; (agent transcript links) must navigate, not toggle
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// the surrounding &lt;details&gt;.
+</span></span></span><span style="display:flex;"><span><span style="color:#6639ba">document</span><span style="color:#1f2328">.</span><span style="color:#1f2328">addEventListener</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#39;click&#39;</span><span style="color:#1f2328">,</span> <span style="color:#1f2328">(</span><span style="color:#1f2328">e</span><span style="color:#1f2328">)</span> <span style="color:#1f2328">=&gt;</span> <span style="color:#1f2328">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#cf222e">const</span> <span style="color:#1f2328">link</span> <span style="color:#0550ae">=</span> <span style="color:#1f2328">e</span><span style="color:#1f2328">.</span><span style="color:#1f2328">target</span><span style="color:#1f2328">.</span><span style="color:#1f2328">closest</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#39;a.agent-link&#39;</span><span style="color:#1f2328">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#cf222e">if</span> <span style="color:#1f2328">(</span><span style="color:#1f2328">link</span><span style="color:#1f2328">)</span> <span style="color:#1f2328">e</span><span style="color:#1f2328">.</span><span style="color:#1f2328">stopPropagation</span><span style="color:#1f2328">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#1f2328">},</span> <span style="color:#cf222e">true</span><span style="color:#1f2328">);</span>
+</span></span></code></pre><p>Note: use capture phase (third arg <code>true</code>) so the handler runs before the summary's default activation; verify the file doesn't already have a conflicting delegated handler pattern — integrate cleanly with what's there.</p>
+<h2>Verify &amp; commit</h2>
+<p>There is an e2e test that asserts the link markup exists (<code>TestSiteWritesSubagentPagesAndLinks</code> in internal/render/render_e2e_test.go) — it must keep passing; the JS behavior itself has no Go test (fine).</p>
+<p>Run: <code>gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./internal/render/</code>
+Expected: gofmt silent, vet clean, package passes.</p>
+<p>Commit both changes as ONE commit (message like &quot;fix: keep --include-subagents=false doc hint; make in-summary agent links clickable&quot;), ending with the trailer:
+<code>Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</code></p>
+<p>Then push: <code>git push</code></p>
+<h2>Report</h2>
+<p>Report back with ONLY: status, commit SHA + subject, one-line test summary.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll fix both code-review findings. let me start by examining the files.">
+      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>I'll fix both code-review findings. Let me start by examining the files.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
+}</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
+2	
+3	Turn a Claude Code session transcript into a browsable, self-contained static
+4	HTML report. See what you prompted and what Claude Code did — and commit the
+5	report into your repo as a documentation artifact.
+6	
+7	&gt; **Status:** under active development. See
+8	&gt; [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plan.
+9	
+10	## Preview
+11	
+12	A full example — ccwhid rendering the very session that built it — is committed
+13	at [`docs/session-report/index.html`](docs/session-report/index.html); clone the
+14	repo and open it in a browser.
+15	
+16	| Report overview | Tool calls &amp; diffs |
+17	|:---:|:---:|
+18	| [![ccwhid report overview](docs/images/report-top.png)](docs/session-report/index.html) | [![tool calls and diffs](docs/images/report-tool.png)](docs/session-report/index.html) |
+19	
+20	The report is one self-contained page: a jump-to-prompt sidebar, a live turn
+21	filter, expand/collapse-all, and a light/dark toggle — all client-side, no
+22	server.
+23	
+24	## Install
+25	
+26	```bash
+27	go install github.com/saigyo/cc-what-have-i-done/cmd/ccwhid@latest
+28	```
+29	
+30	Or build locally:
+31	
+32	```bash
+33	go build -o ccwhid ./cmd/ccwhid
+34	```
+35	
+36	## Usage
+37	
+38	```bash
+39	ccwhid                      # browse sessions in an interactive TUI
+40	ccwhid --latest             # render the most recent session
+41	ccwhid --session &lt;id&gt;       # render a specific session (id or prefix)
+42	ccwhid --session &lt;id&gt; --open
+43	```
+44	
+45	The report is written to `./ccwhid-report/&lt;session-short&gt;/` by default (override
+46	with `--out`). Open `index.html` in any browser — no server needed.
+47	
+48	### Browsing sessions
+49	
+50	Run `ccwhid` with no selector to open the interactive browser:
+51	
+52	- **Project list** — every project with sessions, most-recent first. `↑`/`↓`
+53	  to move, `enter` (or `→`) to open a project, `q` to quit.
+54	- **Session list** — the chosen project&#39;s sessions. `enter` selects, `←` (or
+55	  `esc`) returns to the project list.
+56	- Both lists **scroll** to fit any terminal size.
+57	- By default only your **interactive sessions** are shown. Claude Code writes
+58	  each Task subagent / code-review agent as its own transcript; press **`a`**
+59	  in the session list to show (and hide) those agent sessions — they&#39;re marked
+60	  with a `⟲`.
+61	- Selecting a session opens an **options screen** to toggle subagents,
+62	  redaction, and open-in-browser, and to type an output directory (blank uses
+63	  the default) before generating.
+64	
+65	`--project &lt;name&gt;` opens the browser directly on that project&#39;s session list.
+66	
+67	![ccwhid project list](docs/images/tui-projects.png)
+68	
+69	*Pick a project, then a session. Agent transcripts are hidden until you press
+70	`a`, then marked with `⟲`:*
+71	
+72	![ccwhid session list](docs/images/tui-sessions.png)
+73	
+74	### Flags
+75	
+76	| Flag | Description |
+77	|------|-------------|
+78	| `--session &lt;id&gt;` | Session id or unambiguous prefix to render |
+79	| `--project &lt;path\|name&gt;` | Scope `--latest` to a project, or open the TUI on it (matches full path, basename, or unambiguous substring) |
+80	| `--latest` | Render the most recent interactive session (skips agent transcripts) |
+81	| `--out &lt;dir&gt;` | Output directory |
+82	| `--title &lt;str&gt;` | Override the report title |
+83	| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |
+84	| `--no-redact` | Disable secret redaction |
+85	| `--force` | Overwrite a non-empty output directory |
+86	| `--open` | Open the report in a browser when done |
+87	| `--usage` | Include a token-usage &amp; estimated-cost section (default off) |
+88	
+89	## Redaction
+90	
+91	By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
+92	`KEY=[REDACTED:assignment] assignments) and rewrites your home directory to `~`.
+93	This is best-effort defense-in-depth — **review generated reports before
+94	committing them.** Disable with `--no-redact`.
+95	
+96	## What&#39;s included
+97	
+98	Your prompts, Claude&#39;s replies (rendered markdown + syntax-highlighted code),
+99	tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
+100	blocks, and — optionally — nested subagent activity. Background-agent results
+101	(e.g. a `Task` finishing) appear as their own &#34;Agent&#34; cards; linked subagent
+102	sessions — found under the transcript&#39;s `&lt;sessionId&gt;/subagents/` directory —
+103	render as separate pages under `subagents/`, linked from both the Agent tool
+104	card and the result card. With `--usage`, their cost is rolled into the
+105	totals and shown as an &#34;of which subagents&#34; line. System reminders and
+106	attachments are omitted for readability.
+107	
+108	**Known limitation:** SDK-spawned sessions without parent linkage (e.g. some
+109	review-hook runs) aren&#39;t attributed to a parent turn and so aren&#39;t included.
+110	
+111	## Token usage &amp; cost
+112	
+113	Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible
+114	**Usage** card and per-turn cost badges. Token counts come straight from the
+115	transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in
+116	Anthropic list-price table (dated in the report footnote) — unknown models show
+117	tokens with cost `n/a`, and server-tool fees are not included. Prices are
+118	embedded, so this works fully offline.
+119	
+120	These figures cover the rendered transcript plus any linked subagent sessions
+121	(shown separately as &#34;of which subagents&#34;). SDK-spawned sessions without
+122	parent linkage aren&#39;t attributed or included, which is why the total can
+123	still differ from Claude Code&#39;s `/usage` session rollup.
+124	
+125	## License
+126	
+127	[MIT](LICENSE) © 2026 Markus Ackermann
+128	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
+  &#34;limit&#34;: 100
+}</pre><pre class="tool-result">1	package render
+2	
+3	import (
+4		&#34;bytes&#34;
+5		&#34;embed&#34;
+6		&#34;fmt&#34;
+7		&#34;html&#34;
+8		&#34;html/template&#34;
+9		&#34;os&#34;
+10		&#34;path/filepath&#34;
+11		&#34;strings&#34;
+12	
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+14		&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+15	)
+16	
+17	//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+18	var assets embed.FS
+19	
+20	// Options configures a render.
+21	type Options struct {
+22		Title string
+23		Usage bool // render the token-usage &amp; cost section
+24	}
+25	
+26	// pageInfo describes where the page being rendered lives relative to outDir.
+27	type pageInfo struct {
+28		Base       string // asset prefix: &#34;&#34; on index.html, &#34;../&#34; on agent pages
+29		PagePrefix string // href prefix to agent pages: &#34;subagents/&#34; on index, &#34;&#34; on agent pages
+30		BackHref   string // back-link to the main report; empty on index
+31		Subtitle   string // agent pages: &#34;&lt;agentType&gt; · agent-&lt;ID&gt;&#34;
+32	}
+33	
+34	// agentLinks resolves tool-use ids and agent ids to agent-page hrefs.
+35	type agentLinks struct {
+36		prefix    string
+37		byToolUse map[string]string // tool_use id -&gt; agent id
+38		byAgentID map[string]bool
+39	}
+40	
+41	func newAgentLinks(agents []model.AgentSession, prefix string) *agentLinks {
+42		l := &amp;agentLinks{prefix: prefix, byToolUse: map[string]string{}, byAgentID: map[string]bool{}}
+43		for _, a := range agents {
+44			if a.ToolUseID != &#34;&#34; {
+45				l.byToolUse[a.ToolUseID] = a.ID
+46			}
+47			l.byAgentID[a.ID] = true
+48		}
+49		return l
+50	}
+51	
+52	func (l *agentLinks) forToolUse(id string) string {
+53		if aid, ok := l.byToolUse[id]; ok {
+54			return l.prefix + &#34;agent-&#34; + aid + &#34;.html&#34;
+55		}
+56		return &#34;&#34;
+57	}
+58	
+59	func (l *agentLinks) forAgent(id string) string {
+60		if l.byAgentID[id] {
+61			return l.prefix + &#34;agent-&#34; + id + &#34;.html&#34;
+62		}
+63		return &#34;&#34;
+64	}
+65	
+66	// Site renders the session into outDir as index.html + assets/, plus one page
+67	// per linked agent session under subagents/.
+68	func Site(s model.Session, outDir string, opts Options) error {
+69		title := opts.Title
+70		if title == &#34;&#34; {
+71			title = s.DisplayTitle()
+72		}
+73		tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+74		if err != nil {
+75			return err
+76		}
+77		tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+78		if err != nil {
+79			return err
+80		}
+81	
+82		if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+83			return err
+84		}
+85		for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+86			b, err := assets.ReadFile(&#34;assets/&#34; + name)
+87			if err != nil {
+88				return err
+89			}
+90			if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+91				return err
+92			}
+93		}
+94	
+95		writePage := func(path string, sess model.Session, pageTitle string, page pageInfo) error {
+96			links := newAgentLinks(s.Agents, page.PagePrefix)
+97			data := buildViewModel(sess, pageTitle, opts, page, links)
+98			var buf bytes.Buffer
+99			if err := tmpl.Execute(&amp;buf, data); err != nil {
+100				return err</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/app.js">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js&#34;
+}</pre><pre class="tool-result">1	(function () {
+2	  var filter = document.getElementById(&#39;filter&#39;);
+3	  var turns = Array.prototype.slice.call(document.querySelectorAll(&#39;.turn[data-search]&#39;));
+4	  if (filter) {
+5	    filter.addEventListener(&#39;input&#39;, function () {
+6	      var q = filter.value.toLowerCase().trim();
+7	      turns.forEach(function (t) {
+8	        var hit = q === &#39;&#39; || (t.getAttribute(&#39;data-search&#39;) || &#39;&#39;).indexOf(q) !== -1;
+9	        t.classList.toggle(&#39;filtered&#39;, !hit);
+10	      });
+11	    });
+12	  }
+13	
+14	  var toggleAll = document.getElementById(&#39;toggle-all&#39;);
+15	  var expanded = false;
+16	  if (toggleAll) {
+17	    toggleAll.addEventListener(&#39;click&#39;, function () {
+18	      expanded = !expanded;
+19	      document.querySelectorAll(&#39;details&#39;).forEach(function (d) { d.open = expanded; });
+20	      toggleAll.textContent = expanded ? &#39;Collapse all&#39; : &#39;Expand all&#39;;
+21	    });
+22	  }
+23	
+24	  var toggleTools = document.getElementById(&#39;toggle-tools&#39;);
+25	  if (toggleTools) {
+26	    toggleTools.addEventListener(&#39;click&#39;, function () {
+27	      var hidden = document.body.classList.toggle(&#39;hide-tools&#39;);
+28	      toggleTools.textContent = hidden ? &#39;Show tool detail&#39; : &#39;Hide tool detail&#39;;
+29	    });
+30	  }
+31	
+32	  var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);
+33	  if (toggleTheme) {
+34	    toggleTheme.addEventListener(&#39;click&#39;, function () {
+35	      var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);
+36	      var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);
+37	      document.documentElement.setAttribute(&#39;data-theme&#39;, next);
+38	    });
+39	  }
+40	})();
+41	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="now let me search for the rendertool function to see how the agent link is created:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let me search for the renderTool function to see how the agent link is created:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash grep -n &#34;rendertool\|agent-link&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTool\|agent-link&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;renderTool\\|agent-link\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
+}</pre><pre class="tool-result">332:			b.WriteString(renderTool(blk.Tool, links))
+338:func renderTool(tc *model.ToolCall, links *agentLinks) string {
+346:		b.WriteString(`&lt;a class=&#34;agent-link&#34; href=&#34;` + html.EscapeString(href) + `&#34;&gt;transcript ↗&lt;/a&gt;`)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;testsitewritessubagentpagesandlinks&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go -a 30">
+      <div class="turn-role">Claude<span class="usage-badge">158 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;TestSiteWritesSubagentPagesAndLinks&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go -A 30</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;TestSiteWritesSubagentPagesAndLinks\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go -A 30&#34;
+}</pre><pre class="tool-result">52:func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
+53-	agent := model.AgentSession{
+54-		ID:          &#34;abc123&#34;,
+55-		Description: &#34;Implement Task 12&#34;,
+56-		AgentType:   &#34;general-purpose&#34;,
+57-		ToolUseID:   &#34;toolu_9&#34;,
+58-		Session: model.Session{Turns: []model.Turn{
+59-			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;brief&#34;}}},
+60-			{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;agent work&#34;}}},
+61-		}},
+62-	}
+63-	s := model.Session{
+64-		Title: &#34;root&#34;,
+65-		Turns: []model.Turn{
+66-			{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+67-				ID: &#34;toolu_9&#34;, Name: &#34;Agent&#34;, Summary: &#34;Implement Task 12&#34;,
+68-			}}}},
+69-			{Kind: model.TurnAgentResult, AgentID: &#34;abc123&#34;, AgentStatus: &#34;completed&#34;,
+70-				AgentSummary: `Agent &#34;Implement Task 12&#34; finished`,
+71-				Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;done&#34;}}},
+72-		},
+73-		Agents: []model.AgentSession{agent},
+74-	}
+75-	dir := t.TempDir()
+76-	if err := render.Site(s, dir, render.Options{}); err != nil {
+77-		t.Fatal(err)
+78-	}
+79-
+80-	page, err := os.ReadFile(filepath.Join(dir, &#34;subagents&#34;, &#34;agent-abc123.html&#34;))
+81-	if err != nil {
+82-		t.Fatalf(&#34;agent page missing: %v&#34;, err)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;agent-link&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;agent-link&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;agent-link\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">133 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go&#34;,
+  &#34;limit&#34;: 100
+}</pre><pre class="tool-result">1	package render_test
+2	
+3	import (
+4		&#34;os&#34;
+5		&#34;path/filepath&#34;
+6		&#34;strings&#34;
+7		&#34;testing&#34;
+8	
+9		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+11		&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+12		&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+13	)
+14	
+15	func TestEndToEndRedactedReport(t *testing.T) {
+16		dir := t.TempDir()
+17		src := filepath.Join(dir, &#34;s.jsonl&#34;)
+18		lines := strings.Join([]string{
+19			`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;E2E&#34;}`,
+20			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;my key is [REDACTED:aws-key]&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+21			`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;ok&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;t1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;ls&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+22			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;t1&#34;,&#34;content&#34;:&#34;a.txt&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}`,
+23		}, &#34;\n&#34;)
+24		if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {
+25			t.Fatal(err)
+26		}
+27		sess, err := transcript.ParseFile(src, transcript.Options{IncludeSubagents: true})
+28		if err != nil {
+29			t.Fatal(err)
+30		}
+31		redact.Session(&amp;sess, &#34;&#34;)
+32		out := filepath.Join(dir, &#34;report&#34;)
+33		if err := render.Site(sess, out, render.Options{}); err != nil {
+34			t.Fatal(err)
+35		}
+36		html, err := os.ReadFile(filepath.Join(out, &#34;index.html&#34;))
+37		if err != nil {
+38			t.Fatal(err)
+39		}
+40		s := string(html)
+41		if strings.Contains(s, &#34;[REDACTED:aws-key]&#34;) {
+42			t.Error(&#34;secret leaked into report&#34;)
+43		}
+44		if !strings.Contains(s, &#34;REDACTED:aws-key&#34;) {
+45			t.Error(&#34;expected redaction marker in report&#34;)
+46		}
+47		if !strings.Contains(s, &#34;a.txt&#34;) {
+48			t.Error(&#34;tool result missing from report&#34;)
+49		}
+50	}
+51	
+52	func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
+53		agent := model.AgentSession{
+54			ID:          &#34;abc123&#34;,
+55			Description: &#34;Implement Task 12&#34;,
+56			AgentType:   &#34;general-purpose&#34;,
+57			ToolUseID:   &#34;toolu_9&#34;,
+58			Session: model.Session{Turns: []model.Turn{
+59				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;brief&#34;}}},
+60				{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;agent work&#34;}}},
+61			}},
+62		}
+63		s := model.Session{
+64			Title: &#34;root&#34;,
+65			Turns: []model.Turn{
+66				{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+67					ID: &#34;toolu_9&#34;, Name: &#34;Agent&#34;, Summary: &#34;Implement Task 12&#34;,
+68				}}}},
+69				{Kind: model.TurnAgentResult, AgentID: &#34;abc123&#34;, AgentStatus: &#34;completed&#34;,
+70					AgentSummary: `Agent &#34;Implement Task 12&#34; finished`,
+71					Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;done&#34;}}},
+72			},
+73			Agents: []model.AgentSession{agent},
+74		}
+75		dir := t.TempDir()
+76		if err := render.Site(s, dir, render.Options{}); err != nil {
+77			t.Fatal(err)
+78		}
+79	
+80		page, err := os.ReadFile(filepath.Join(dir, &#34;subagents&#34;, &#34;agent-abc123.html&#34;))
+81		if err != nil {
+82			t.Fatalf(&#34;agent page missing: %v&#34;, err)
+83		}
+84		for _, want := range []string{&#34;agent work&#34;, `href=&#34;../index.html&#34;`, `href=&#34;../assets/styles.css&#34;`, &#34;Implement Task 12&#34;} {
+85			if !strings.Contains(string(page), want) {
+86				t.Errorf(&#34;agent page missing %q&#34;, want)
+87			}
+88		}
+89	
+90		index, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+91		if err != nil {
+92			t.Fatal(err)
+93		}
+94		// Both the tool card and the result card link to the agent page.
+95		if got := strings.Count(string(index), `href=&#34;subagents/agent-abc123.html&#34;`); got &lt; 2 {
+96			t.Errorf(&#34;index has %d links to the agent page, want &gt;= 2&#34;, got)
+97		}
+98	}
+99	
+100	func TestSiteNoAgentsWritesNoSubagentsDir(t *testing.T) {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="now i&#39;ll fix both issues. let me start with the readme:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I'll fix both issues. Let me start with the README:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |</div><div class="diff-add">+ | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; --include-subagents=false to omit) |</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="now fix the app.js to prevent in-summary links from toggling the details:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now fix the app.js to prevent in-summary links from toggling the details:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/app.js">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-   var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);</div><div class="diff-del">-   if (toggleTheme) {</div><div class="diff-del">-     toggleTheme.addEventListener(&#39;click&#39;, function () {</div><div class="diff-del">-       var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);</div><div class="diff-del">-       var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);</div><div class="diff-del">-       document.documentElement.setAttribute(&#39;data-theme&#39;, next);</div><div class="diff-del">-     });</div><div class="diff-del">-   }</div><div class="diff-del">- })();</div><div class="diff-add">+   var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);</div><div class="diff-add">+   if (toggleTheme) {</div><div class="diff-add">+     toggleTheme.addEventListener(&#39;click&#39;, function () {</div><div class="diff-add">+       var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);</div><div class="diff-add">+       var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);</div><div class="diff-add">+       document.documentElement.setAttribute(&#39;data-theme&#39;, next);</div><div class="diff-add">+     });</div><div class="diff-add">+   }</div><div class="diff-add">+ </div><div class="diff-add">+   // Links inside &lt;summary&gt; (agent transcript links) must navigate, not toggle</div><div class="diff-add">+   // the surrounding &lt;details&gt;.</div><div class="diff-add">+   document.addEventListener(&#39;click&#39;, (e) =&gt; {</div><div class="diff-add">+     const link = e.target.closest(&#39;a.agent-link&#39;);</div><div class="diff-add">+     if (link) e.stopPropagation();</div><div class="diff-add">+   }, true);</div><div class="diff-add">+ })();</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="now let me verify the changes and run the tests:">
+      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me verify the changes and run the tests:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="bash git status">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status&#34;
+}</pre><pre class="tool-result">Auf Branch feat/subagent-sessions
+Ihr Branch ist auf demselben Stand wie &#39;origin/feat/subagent-sessions&#39;.
+
+Änderungen, die nicht zum Commit vorgemerkt sind:
+  (benutzen Sie &#34;git add &lt;Datei&gt;...&#34;, um die Änderungen zum Commit vorzumerken)
+  (benutzen Sie &#34;git restore &lt;Datei&gt;...&#34;, um die Änderungen im Arbeitsverzeichnis zu verwerfen)
+	geändert:       README.md
+	geändert:       internal/render/assets/app.js
+
+keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="bash gofmt -l .">
+      <div class="turn-role">Claude<span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l .</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l .&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash go vet ./...">
+      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./...</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go vet ./...&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="bash go test ./internal/render/">
+      <div class="turn-role">Claude<span class="usage-badge">88 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.374s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash git diff readme.md">
+      <div class="turn-role">Claude<span class="usage-badge">119 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff README.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git diff README.md&#34;
+}</pre><pre class="tool-result">diff --git a/README.md b/README.md
+index a8a1ba6..e72cf80 100644
+--- a/README.md
++++ b/README.md
+@@ -80,7 +80,7 @@ Run `ccwhid` with no selector to open the interactive browser:
+ | `--latest` | Render the most recent interactive session (skips agent transcripts) |
+ | `--out &lt;dir&gt;` | Output directory |
+ | `--title &lt;str&gt;` | Override the report title |
+-| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |
++| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; --include-subagents=false to omit) |
+ | `--no-redact` | Disable secret redaction |
+ | `--force` | Overwrite a non-empty output directory |
+ | `--open` | Open the report in a browser when done |</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="bash git diff internal/render/assets/app.js">
+      <div class="turn-role">Claude<span class="usage-badge">96 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git diff internal/render/assets/app.js&#34;
+}</pre><pre class="tool-result">diff --git a/internal/render/assets/app.js b/internal/render/assets/app.js
+index 8a168a7..efd5db0 100644
+--- a/internal/render/assets/app.js
++++ b/internal/render/assets/app.js
+@@ -37,4 +37,11 @@
+       document.documentElement.setAttribute(&#39;data-theme&#39;, next);
+     });
+   }
++
++  // Links inside &lt;summary&gt; (agent transcript links) must navigate, not toggle
++  // the surrounding &lt;details&gt;.
++  document.addEventListener(&#39;click&#39;, (e) =&gt; {
++    const link = e.target.closest(&#39;a.agent-link&#39;);
++    if (link) e.stopPropagation();
++  }, true);
+ })();</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="now commit both changes:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now commit both changes:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash git add readme.md internal/render/assets/app.js &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add README.md internal/render/assets/app.js &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add README.md internal/render/assets/app.js \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: keep --include-subagents=false doc hint; make in-summary agent links clickable\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
+}</pre><pre class="tool-result">[feat/subagent-sessions d8fddef] fix: keep --include-subagents=false doc hint; make in-summary agent links clickable
+ 2 files changed, 8 insertions(+), 1 deletion(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="bash git push">
+      <div class="turn-role">Claude<span class="usage-badge">91 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git push</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git push&#34;
+}</pre><pre class="tool-result">To https://github.com/saigyo/cc-what-have-i-done.git
+   9778609..d8fddef  feat/subagent-sessions -&gt; feat/subagent-sessions</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="bash git log -1 --oneline">
+      <div class="turn-role">Claude<span class="usage-badge">94 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --oneline&#34;
+}</pre><pre class="tool-result">d8fddef fix: keep --include-subagents=false doc hint; make in-summary agent links clickable</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/render/ -v">
+      <div class="turn-role">Claude<span class="usage-badge">108 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/ -v&#34;
+}</pre><pre class="tool-result">=== RUN   TestFormatTokens
+--- PASS: TestFormatTokens (0.00s)
+=== RUN   TestFormatCost
+--- PASS: TestFormatCost (0.00s)
+=== RUN   TestMarkdownRendersHeadingAndCode
+--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+=== RUN   TestDiffHTMLMarksLines
+--- PASS: TestDiffHTMLMarksLines (0.00s)
+=== RUN   TestStripANSI
+--- PASS: TestStripANSI (0.00s)
+=== RUN   TestRenderStripsANSIFromReport
+--- PASS: TestRenderStripsANSIFromReport (0.00s)
+=== RUN   TestPreviewRuneSafe
+--- PASS: TestPreviewRuneSafe (0.00s)
+=== RUN   TestSiteRendersUsageWhenEnabled
+--- PASS: TestSiteRendersUsageWhenEnabled (0.00s)
+=== RUN   TestSiteDropsZeroTokenModelRow
+--- PASS: TestSiteDropsZeroTokenModelRow (0.00s)
+=== RUN   TestSiteOmitsUsageByDefault
+--- PASS: TestSiteOmitsUsageByDefault (0.00s)
+=== RUN   TestSiteWritesFiles
+--- PASS: TestSiteWritesFiles (0.00s)
+=== RUN   TestAgentResultTurnRendersAsAgentCard
+--- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)
+=== RUN   TestAgentRoleLabelFallsBackWithoutQuotes
+--- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)
+=== RUN   TestUsageViewSubagentLineAndFootnote
+--- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)
+=== RUN   TestUsageViewNoSubagentLineWithoutAgents
+--- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)
+=== RUN   TestSidechainAgentResultSummaryIsEscaped
+--- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)
+=== RUN   TestEndToEndRedactedReport
+--- PASS: TestEndToEndRedactedReport (0.00s)
+=== RUN   TestSiteWritesSubagentPagesAndLinks
+--- PASS: TestSiteWritesSubagentPagesAndLinks (0.00s)
+=== RUN   TestSiteNoAgentsWritesNoSubagentsDir
+--- PASS: TestSiteNoAgentsWritesNoSubagentsDir (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.221s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="## report
+
+**status:** ✓ both fixes complete, verified, committed, and pushed.
+
+**commit:** `d8fddef` — fix: keep --include-subagents=false doc hint; make in-summary agent links clickable
+
+**test summary:** all 18 tests in `./internal/render/` pass, including `testsitewritessubagentpagesandlinks` (link markup assertion), gofmt clean, go vet clean.">
+      <div class="turn-role">Claude<span class="usage-badge">302 tok · ~$0.01</span></div>
+      <div class="turn-body"><h2>Report</h2>
+<p><strong>Status:</strong> ✓ Both fixes complete, verified, committed, and pushed.</p>
+<p><strong>Commit:</strong> <code>d8fddef</code> — fix: keep --include-subagents=false doc hint; make in-summary agent links clickable</p>
+<p><strong>Test Summary:</strong> All 18 tests in <code>./internal/render/</code> pass, including <code>TestSiteWritesSubagentPagesAndLinks</code> (link markup assertion), gofmt clean, go vet clean.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

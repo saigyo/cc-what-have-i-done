@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 5 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 5 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:14</span>
+        <span>25 turns</span>
+        <span>general-purpose · agent-ad2854fd6cb35911d</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 19k in+out · ~$0.41 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>9k</td><td>831k</td><td>53k</td><td>$0.41</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>9k</td><td>831k</td><td>53k</td><td>$0.41</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; broad review happens later. this is the core transcript-folding task — review carefully.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
+
+global constraints binding this task (verbatim):
+- package `transcript` at `internal/transcript/parse.go`; fixtures at `internal/transcript/testdata/`.
+- robustness rule: malformed jsonl lines must be skipped-and-counted (session.skippedlines), never abort.
+- folding rules: text/thinking/tool_use → model.blocks; a `tool_result` matches its `tool_use` by id and fills that toolcall.result (must not create a user turn); `ismeta` and non-user/assistant records (except `ai-title`) ignored; `ai-title` sets session.title; edit/write inputs populate toolcall.diff; sidechain records attach as subagents to the nearest preceding task tool call when includesubagents=true, else dropped.
+- produced api: `transcript.options{includesubagents bool}`, `transcript.parse(io.reader, options) (model.session, error)`, `transcript.parsefile(string, options) (model.session, error)`.
+- commit message ends with: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md
+
+## diff under review
+
+base: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2
+head: 09d5d88
+diff file (read once): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff
+
+read-only review; do not modify the tree. implementer already ran tests — do not re-run the suite; run a focused test only if a specific doubt arises (this is the one task where writing a small throwaway test to probe a real doubt is justified — delete it and leave the tree clean if you do).
+
+named risks to check specifically:
+1. **subagent slot indexing:** the sidechain branch does `sidechainowner.subagents[len(...)-1]` — confirm it cannot index an empty slice (i.e. a task tool always seeds one subagent slot before any sidechain record is processed, and a sidechain arriving with no preceding task is guarded).
+2. **tool_result never creates a user turn:** confirm a user record whose only content is tool_result blocks yields no timeline turn (buildturn returns nil) and correctly fills the matching toolcall.result.
+3. **multiple task calls / sidechain misattribution:** reason about what happens with two task calls in one session — could sidechain records attach to the wrong task? note any real ordering assumption as a finding if it can misattribute in realistic transcripts.
+4. **skippedlines accounting:** malformed lines increment skippedlines and don&#39;t abort.
+
+follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later. This is the core transcript-folding task — review carefully.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Global constraints binding this task (verbatim):</p>
+<ul>
+<li>Package <code>transcript</code> at <code>internal/transcript/parse.go</code>; fixtures at <code>internal/transcript/testdata/</code>.</li>
+<li>Robustness rule: malformed JSONL lines must be skipped-and-counted (Session.SkippedLines), never abort.</li>
+<li>Folding rules: text/thinking/tool_use → model.Blocks; a <code>tool_result</code> matches its <code>tool_use</code> by id and fills that ToolCall.Result (must NOT create a user turn); <code>isMeta</code> and non-user/assistant records (except <code>ai-title</code>) ignored; <code>ai-title</code> sets Session.Title; Edit/Write inputs populate ToolCall.Diff; sidechain records attach as Subagents to the nearest preceding Task tool call when IncludeSubagents=true, else dropped.</li>
+<li>Produced API: <code>transcript.Options{IncludeSubagents bool}</code>, <code>transcript.Parse(io.Reader, Options) (model.Session, error)</code>, <code>transcript.ParseFile(string, Options) (model.Session, error)</code>.</li>
+<li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2
+Head: 09d5d88
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</p>
+<p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; run a focused test only if a specific doubt arises (this is the one task where writing a small throwaway test to probe a real doubt is justified — delete it and leave the tree clean if you do).</p>
+<p>Named risks to check specifically:</p>
+<ol>
+<li><strong>Subagent slot indexing:</strong> the sidechain branch does <code>sidechainOwner.Subagents[len(...)-1]</code> — confirm it cannot index an empty slice (i.e. a Task tool always seeds one Subagent slot before any sidechain record is processed, and a sidechain arriving with no preceding Task is guarded).</li>
+<li><strong>tool_result never creates a user turn:</strong> confirm a user record whose only content is tool_result blocks yields no timeline turn (buildTurn returns nil) and correctly fills the matching ToolCall.Result.</li>
+<li><strong>Multiple Task calls / sidechain misattribution:</strong> reason about what happens with two Task calls in one session — could sidechain records attach to the wrong Task? Note any real ordering assumption as a finding if it can misattribute in realistic transcripts.</li>
+<li><strong>SkippedLines accounting:</strong> malformed lines increment SkippedLines and don't abort.</li>
+</ol>
+<p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 5: Fold records into a Session timeline
+2	
+3	**Files:**
+4	- Create: `internal/transcript/parse.go`
+5	- Create: `internal/transcript/parse_test.go`
+6	- Create: `internal/transcript/testdata/basic.jsonl`
+7	- Create: `internal/transcript/testdata/subagent.jsonl`
+8	
+9	**Interfaces:**
+10	- Consumes: `model.*` (Task 2); `rawRecord`, `apiBlock`, `decodeMessageContent`, `toolResultText`, `parseTime` (Task 4).
+11	- Produces:
+12	  - `transcript.Options{IncludeSubagents bool}`
+13	  - `transcript.Parse(r io.Reader, opts Options) (model.Session, error)`
+14	  - `transcript.ParseFile(path string, opts Options) (model.Session, error)`
+15	  - Folding rules: `text`/`thinking`/`tool_use` blocks become `model.Block`s in an assistant turn; a `tool_result` block matches its `tool_use` by id and fills that `ToolCall.Result` (it does NOT create a user turn); `isMeta` records and non-user/assistant records (except `ai-title`) are ignored for the timeline; `ai-title` sets `Session.Title`; `Edit`/`Write` tool inputs populate `ToolCall.Diff`; a summary string is derived per tool; sidechain records (when `IncludeSubagents`) are collected and attached to the nearest preceding `Task` tool call, else dropped.
+16	
+17	- [ ] **Step 1: Create the test fixtures**
+18	
+19	Create `internal/transcript/testdata/basic.jsonl`:
+20	```
+21	{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Say hello&#34;}
+22	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi there&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;,&#34;gitBranch&#34;:&#34;main&#34;,&#34;version&#34;:&#34;1.0.0&#34;}
+23	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;consider&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;Hello!&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo hi&#34;,&#34;description&#34;:&#34;greet&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+24	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool1&#34;,&#34;content&#34;:&#34;hi&#34;,&#34;is_error&#34;:false}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+25	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a2&#34;,&#34;parentUuid&#34;:&#34;u2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool2&#34;,&#34;name&#34;:&#34;Edit&#34;,&#34;input&#34;:{&#34;file_path&#34;:&#34;/tmp/x.txt&#34;,&#34;old_string&#34;:&#34;a&#34;,&#34;new_string&#34;:&#34;b&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+26	not valid json at all
+27	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u3&#34;,&#34;parentUuid&#34;:&#34;a2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool2&#34;,&#34;content&#34;:&#34;ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+28	```
+29	
+30	Create `internal/transcript/testdata/subagent.jsonl`:
+31	```
+32	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}
+33	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+34	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+35	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+36	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+37	```
+38	
+39	- [ ] **Step 2: Write the failing test**
+40	
+41	Create `internal/transcript/parse_test.go`:
+42	```go
+43	package transcript
+44	
+45	import (
+46		&#34;testing&#34;
+47	
+48		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+49	)
+50	
+51	func TestParseBasicTimeline(t *testing.T) {
+52		s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})
+53		if err != nil {
+54			t.Fatal(err)
+55		}
+56		if s.Title != &#34;Say hello&#34; {
+57			t.Errorf(&#34;Title = %q&#34;, s.Title)
+58		}
+59		if s.SkippedLines != 1 {
+60			t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)
+61		}
+62		if s.GitBranch != &#34;main&#34; {
+63			t.Errorf(&#34;GitBranch = %q&#34;, s.GitBranch)
+64		}
+65		// Expect: user turn, assistant turn (thinking+text+tool_use), assistant turn (Edit tool)
+66		if len(s.Turns) != 3 {
+67			t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+68		}
+69		if s.Turns[0].Kind != model.TurnUser {
+70			t.Errorf(&#34;turn0 kind = %q&#34;, s.Turns[0].Kind)
+71		}
+72		a := s.Turns[1]
+73		if len(a.Blocks) != 3 {
+74			t.Fatalf(&#34;assistant turn has %d blocks, want 3&#34;, len(a.Blocks))
+75		}
+76		tool := a.Blocks[2].Tool
+77		if tool == nil || tool.Name != &#34;Bash&#34; {
+78			t.Fatalf(&#34;expected Bash tool, got %+v&#34;, tool)
+79		}
+80		if tool.Result == nil || tool.Result.Content != &#34;hi&#34; {
+81			t.Errorf(&#34;Bash result = %+v&#34;, tool.Result)
+82		}
+83		if tool.Summary != &#34;echo hi&#34; {
+84			t.Errorf(&#34;Bash summary = %q&#34;, tool.Summary)
+85		}
+86		// Edit tool should have a diff.
+87		edit := s.Turns[2].Blocks[0].Tool
+88		if edit.Diff == nil || edit.Diff.Path != &#34;/tmp/x.txt&#34; || edit.Diff.NewText != &#34;b&#34; {
+89			t.Errorf(&#34;Edit diff = %+v&#34;, edit.Diff)
+90		}
+91	}
+92	
+93	func TestParseSubagentAttachment(t *testing.T) {
+94		s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: true})
+95		if err != nil {
+96			t.Fatal(err)
+97		}
+98		task := s.Turns[1].Blocks[0].Tool
+99		if task.Name != &#34;Task&#34; {
+100			t.Fatalf(&#34;expected Task tool, got %q&#34;, task.Name)
+101		}
+102		if len(task.Subagents) != 1 {
+103			t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))
+104		}
+105		sub := task.Subagents[0]
+106		if sub.Description != &#34;research topic&#34; {
+107			t.Errorf(&#34;subagent description = %q&#34;, sub.Description)
+108		}
+109		if len(sub.Turns) != 2 {
+110			t.Errorf(&#34;subagent turns = %d, want 2&#34;, len(sub.Turns))
+111		}
+112	}
+113	
+114	func TestParseExcludeSubagents(t *testing.T) {
+115		s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: false})
+116		if err != nil {
+117			t.Fatal(err)
+118		}
+119		task := s.Turns[1].Blocks[0].Tool
+120		if len(task.Subagents) != 0 {
+121			t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))
+122		}
+123	}
+124	```
+125	
+126	- [ ] **Step 3: Run the test to verify it fails**
+127	
+128	Run: `go test ./internal/transcript/`
+129	Expected: FAIL — `undefined: ParseFile`.
+130	
+131	- [ ] **Step 4: Write minimal implementation**
+132	
+133	Create `internal/transcript/parse.go`:
+134	```go
+135	package transcript
+136	
+137	import (
+138		&#34;bufio&#34;
+139		&#34;encoding/json&#34;
+140		&#34;io&#34;
+141		&#34;os&#34;
+142	
+143		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+144	)
+145	
+146	// Options controls how a transcript is folded into a Session.
+147	type Options struct {
+148		IncludeSubagents bool
+149	}
+150	
+151	// ParseFile parses a transcript file at path.
+152	func ParseFile(path string, opts Options) (model.Session, error) {
+153		f, err := os.Open(path)
+154		if err != nil {
+155			return model.Session{}, err
+156		}
+157		defer f.Close()
+158		s, err := Parse(f, opts)
+159		if err != nil {
+160			return model.Session{}, err
+161		}
+162		s.ID = sessionIDFromPath(path)
+163		return s, nil
+164	}
+165	
+166	func sessionIDFromPath(path string) string {
+167		base := path
+168		if i := lastSlash(path); i &gt;= 0 {
+169			base = path[i+1:]
+170		}
+171		if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+172			return base[:len(base)-len(&#34;.jsonl&#34;)]
+173		}
+174		return base
+175	}
+176	
+177	func lastSlash(s string) int {
+178		for i := len(s) - 1; i &gt;= 0; i-- {
+179			if s[i] == &#39;/&#39; {
+180				return i
+181			}
+182		}
+183		return -1
+184	}
+185	
+186	// Parse reads a transcript stream and folds it into a Session timeline.
+187	func Parse(r io.Reader, opts Options) (model.Session, error) {
+188		var s model.Session
+189		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+190		// sidechains can be attached after the fact.
+191		toolIndex := map[string]*model.ToolCall{}
+192		// lastTask tracks the most recent Task tool call for sidechain attachment.
+193		var lastTask *model.ToolCall
+194		// subByFirstUUID lets sidechain turns append to the right subagent; keyed
+195		// by the Task tool that owns them.
+196		sidechainOwner := lastTask
+197	
+198		sc := bufio.NewScanner(r)
+199		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+200		for sc.Scan() {
+201			line := sc.Bytes()
+202			if len(trimSpace(line)) == 0 {
+203				continue
+204			}
+205			var rec rawRecord
+206			if err := json.Unmarshal(line, &amp;rec); err != nil {
+207				s.SkippedLines++
+208				continue
+209			}
+210			switch rec.Type {
+211			case &#34;ai-title&#34;:
+212				if rec.AiTitle != &#34;&#34; {
+213					s.Title = rec.AiTitle
+214				}
+215				continue
+216			case &#34;user&#34;, &#34;assistant&#34;:
+217				// fallthrough to handling below
+218			default:
+219				continue // ignore mode/permission/attachment/etc. for the timeline
+220			}
+221			if rec.IsMeta {
+222				continue
+223			}
+224	
+225			// Capture session-level metadata from the first record that has it.
+226			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+227				s.GitBranch = rec.GitBranch
+228			}
+229			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+230				s.Version = rec.Version
+231			}
+232			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+233				s.ProjectPath = rec.Cwd
+234			}
+235			ts := parseTime(rec.Timestamp)
+236			if !ts.IsZero() {
+237				if s.StartedAt.IsZero() {
+238					s.StartedAt = ts
+239				}
+240				s.EndedAt = ts
+241			}
+242	
+243			_, blocks := decodeMessageContent(rec.Message)
+244	
+245			// Sidechain (subagent) records.
+246			if rec.IsSidechain {
+247				if !opts.IncludeSubagents || sidechainOwner == nil {
+248					continue
+249				}
+250				turn := buildTurn(rec, blocks, toolIndex)
+251				if turn == nil {
+252					continue
+253				}
+254				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+255				sub.Turns = append(sub.Turns, *turn)
+256				continue
+257			}
+258	
+259			// Main-chain records.
+260			turn := buildTurn(rec, blocks, toolIndex)
+261			if turn == nil {
+262				continue // e.g. a user record that only carried a tool_result
+263			}
+264			s.Turns = append(s.Turns, *turn)
+265	
+266			// After appending, register any Task tool call as the new sidechain
+267			// owner and seed its first subagent slot.
+268			for i := range turn.Blocks {
+269				b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]
+270				if b.Tool != nil {
+271					toolIndex[b.Tool.ID] = b.Tool
+272					if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {
+273						b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{
+274							Description: taskDescription(b.Tool),
+275						})
+276						lastTask = b.Tool
+277						sidechainOwner = lastTask
+278					}
+279				}
+280			}
+281		}
+282		if err := sc.Err(); err != nil {
+283			return s, err
+284		}
+285		return s, nil
+286	}
+287	
+288	// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+289	// attached to their originating ToolCall via toolIndex and do not themselves
+290	// produce turn content. Returns nil if the record yields no displayable blocks.
+291	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+292		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+293		if rec.Type == &#34;user&#34; {
+294			turn.Kind = model.TurnUser
+295		} else {
+296			turn.Kind = model.TurnAssistant
+297		}
+298		for _, b := range blocks {
+299			switch b.Type {
+300			case &#34;text&#34;:
+301				if b.Text != &#34;&#34; {
+302					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+303				}
+304			case &#34;thinking&#34;:
+305				if b.Thinking != &#34;&#34; {
+306					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+307				}
+308			case &#34;tool_use&#34;:
+309				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})
+310			case &#34;tool_result&#34;:
+311				if tc := toolIndex[b.ToolUseID]; tc != nil {
+312					tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+313				}
+314			}
+315		}
+316		if len(turn.Blocks) == 0 {
+317			return nil
+318		}
+319		return turn
+320	}
+321	
+322	func trimSpace(b []byte) []byte {
+323		start, end := 0, len(b)
+324		for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+325			start++
+326		}
+327		for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+328			end--
+329		}
+330		return b[start:end]
+331	}
+332	```
+333	
+334	- [ ] **Step 5: Add the tool-call builders**
+335	
+336	Append to `internal/transcript/parse.go`:
+337	```go
+338	// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+339	// and, for Edit/Write, a Diff.
+340	func buildToolCall(b apiBlock) *model.ToolCall {
+341		tc := &amp;model.ToolCall{
+342			ID:        b.ID,
+343			Name:      b.Name,
+344			InputJSON: prettyJSON(b.Input),
+345		}
+346		input := decodeInput(b.Input)
+347		tc.Summary = toolSummary(b.Name, input)
+348		switch b.Name {
+349		case &#34;Edit&#34;, &#34;Write&#34;:
+350			tc.Diff = buildDiff(b.Name, input)
+351		}
+352		return tc
+353	}
+354	
+355	func decodeInput(raw json.RawMessage) map[string]any {
+356		m := map[string]any{}
+357		if len(raw) &gt; 0 {
+358			_ = json.Unmarshal(raw, &amp;m)
+359		}
+360		return m
+361	}
+362	
+363	func str(m map[string]any, key string) string {
+364		if v, ok := m[key].(string); ok {
+365			return v
+366		}
+367		return &#34;&#34;
+368	}
+369	
+370	// toolSummary produces a compact one-line header for a tool card.
+371	func toolSummary(name string, in map[string]any) string {
+372		switch name {
+373		case &#34;Bash&#34;:
+374			if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+375				return firstLine(c)
+376			}
+377		case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+378			if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+379				return p
+380			}
+381		case &#34;Glob&#34;:
+382			return str(in, &#34;pattern&#34;)
+383		case &#34;Grep&#34;:
+384			return str(in, &#34;pattern&#34;)
+385		case &#34;Task&#34;:
+386			return str(in, &#34;description&#34;)
+387		case &#34;WebFetch&#34;:
+388			return str(in, &#34;url&#34;)
+389		case &#34;WebSearch&#34;:
+390			return str(in, &#34;query&#34;)
+391		}
+392		return &#34;&#34;
+393	}
+394	
+395	func buildDiff(name string, in map[string]any) *model.Diff {
+396		d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+397		if name == &#34;Write&#34; {
+398			d.NewText = str(in, &#34;content&#34;)
+399			return d
+400		}
+401		d.OldText = str(in, &#34;old_string&#34;)
+402		d.NewText = str(in, &#34;new_string&#34;)
+403		return d
+404	}
+405	
+406	func taskDescription(tc *model.ToolCall) string {
+407		if tc.Summary != &#34;&#34; {
+408			return tc.Summary
+409		}
+410		return &#34;subagent&#34;
+411	}
+412	
+413	func firstLine(s string) string {
+414		for i := 0; i &lt; len(s); i++ {
+415			if s[i] == &#39;\n&#39; {
+416				return s[:i]
+417			}
+418		}
+419		return s
+420	}
+421	
+422	func prettyJSON(raw json.RawMessage) string {
+423		if len(raw) == 0 {
+424			return &#34;&#34;
+425		}
+426		var v any
+427		if err := json.Unmarshal(raw, &amp;v); err != nil {
+428			return string(raw)
+429		}
+430		out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+431		if err != nil {
+432			return string(raw)
+433		}
+434		return string(out)
+435	}
+436	```
+437	
+438	- [ ] **Step 6: Run the tests to verify they pass**
+439	
+440	Run: `go test ./internal/transcript/`
+441	Expected: PASS (all three parse tests plus the Task 4 raw tests).
+442	
+443	- [ ] **Step 7: Commit**
+444	
+445	```bash
+446	git add internal/transcript/
+447	git commit -m &#34;$(printf &#39;feat: fold transcript records into a session timeline\n\nCo-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;&#39;)&#34;
+448	```
+449	
+450	---
+451	
+452	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 5 Report: Fold records into a Session timeline
+2	
+3	## Summary
+4	
+5	Implemented `internal/transcript/parse.go`, folding the flat JSONL `rawRecord`
+6	stream (from Task 4&#39;s `raw.go`) into an ordered `model.Session` timeline of
+7	`model.Turn`s, `model.Block`s and `model.ToolCall`s, exactly per the brief
+8	(Step 4 core `Parse`/`ParseFile`/`buildTurn` plus Step 5 tool-call builders
+9	`buildToolCall`, `toolSummary`, `buildDiff`, `taskDescription`, helpers).
+10	
+11	Followed the brief&#39;s TDD steps verbatim: fixtures first, failing test,
+12	implementation, passing test, commit.
+13	
+14	## Files changed
+15	
+16	- `internal/transcript/testdata/basic.jsonl` (new) — 6 lines: ai-title, user
+17	  turn, assistant turn (thinking+text+tool_use Bash), user tool_result,
+18	  assistant turn (Edit tool_use), one malformed line (`not valid json at
+19	  all`), user tool_result for Edit.
+20	- `internal/transcript/testdata/subagent.jsonl` (new) — 5 lines: user turn,
+21	  assistant turn with a `Task` tool_use, two sidechain records (user +
+22	  assistant), and the tool_result closing the Task call.
+23	- `internal/transcript/parse_test.go` (new) — `TestParseBasicTimeline`,
+24	  `TestParseSubagentAttachment`, `TestParseExcludeSubagents`, copied verbatim
+25	  from the brief.
+26	- `internal/transcript/parse.go` (new) — `Options`, `Parse`, `ParseFile`,
+27	  `sessionIDFromPath`, `lastSlash`, `buildTurn`, `trimSpace`,
+28	  `buildToolCall`, `decodeInput`, `str`, `toolSummary`, `buildDiff`,
+29	  `taskDescription`, `firstLine`, `prettyJSON`. Implemented exactly as
+30	  specified in the brief&#39;s Step 4 and Step 5 code blocks, with no
+31	  deviations.
+32	
+33	## TDD evidence
+34	
+35	### RED — fixtures + test written, implementation absent
+36	
+37	```
+38	$ go test ./internal/transcript/
+39	# github.com/saigyo/cc-what-have-i-done/internal/transcript [github.com/saigyo/cc-what-have-i-done/internal/transcript.test]
+40	internal/transcript/parse_test.go:10:12: undefined: ParseFile
+41	internal/transcript/parse_test.go:10:46: undefined: Options
+42	internal/transcript/parse_test.go:52:12: undefined: ParseFile
+43	internal/transcript/parse_test.go:52:49: undefined: Options
+44	internal/transcript/parse_test.go:73:12: undefined: ParseFile
+45	internal/transcript/parse_test.go:73:49: undefined: Options
+46	FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]
+47	FAIL
+48	```
+49	
+50	Matches the brief&#39;s expected failure (`undefined: ParseFile`).
+51	
+52	### GREEN — after implementing parse.go
+53	
+54	```
+55	$ go test ./internal/transcript/ -v
+56	=== RUN   TestParseBasicTimeline
+57	--- PASS: TestParseBasicTimeline (0.00s)
+58	=== RUN   TestParseSubagentAttachment
+59	--- PASS: TestParseSubagentAttachment (0.00s)
+60	=== RUN   TestParseExcludeSubagents
+61	--- PASS: TestParseExcludeSubagents (0.00s)
+62	=== RUN   TestDecodeMessageContentString
+63	--- PASS: TestDecodeMessageContentString (0.00s)
+64	=== RUN   TestDecodeMessageContentArray
+65	--- PASS: TestDecodeMessageContentArray (0.00s)
+66	=== RUN   TestToolResultTextArray
+67	--- PASS: TestToolResultTextArray (0.00s)
+68	=== RUN   TestToolResultTextString
+69	--- PASS: TestToolResultTextString (0.00s)
+70	PASS
+71	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.307s
+72	```
+73	
+74	All 3 new parse tests plus all 4 existing Task 4 raw tests pass.
+75	
+76	### Full suite
+77	
+78	```
+79	$ go test ./...
+80	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+81	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+82	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+83	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.157s
+84	```
+85	
+86	Also verified: `go build ./...`, `go vet ./...`, and `gofmt -l
+87	internal/transcript/` all clean (no output/errors).
+88	
+89	## Self-review
+90	
+91	- **Sidechain attachment bookkeeping**: reproduced the brief&#39;s
+92	  `lastTask`/`sidechainOwner` pattern exactly, including the slightly odd
+93	  `sidechainOwner := lastTask` initialization (both nil at start — a no-op
+94	  assignment, but harmless and matches the brief verbatim). When a `Task`
+95	  tool_use is folded into the main-chain timeline, its `Subagents` slice is
+96	  seeded with one `model.Subagent{Description: taskDescription(tc)}` entry,
+97	  and `sidechainOwner` is repointed to that `*model.ToolCall`. Subsequent
+98	  sidechain records append their turns to
+99	  `sidechainOwner.Subagents[len(...)-1]` — i.e. always the most recently
+100	  seeded slot on the most recent Task call. This means if two Task calls
+101	  happen before any sidechain output arrives, sidechain turns attach only to
+102	  the second (most recent) Task&#39;s subagent slot — this is &#34;nearest preceding
+103	  Task&#34; as specified, verified by `TestParseSubagentAttachment`.
+104	- **IncludeSubagents=false**: sidechain records are dropped entirely (`continue`
+105	  before building a turn), and Task tool calls never get a seeded Subagent
+106	  slot (`opts.IncludeSubagents` gated), so `Subagents` is `nil`/empty as
+107	  asserted by `TestParseExcludeSubagents`.
+108	- **tool_result folding**: a user record containing only a `tool_result`
+109	  block produces no `model.Block` (handled in the `tool_result` case of
+110	  `buildTurn`&#39;s switch, which does not append to `turn.Blocks`), so
+111	  `buildTurn` returns `nil` for such records and no spurious user turn is
+112	  added to the timeline — confirmed by `basic.jsonl` producing exactly 3
+113	  turns (not 5) despite 5 user/assistant records.
+114	- **isMeta / non-user-assistant / malformed lines**: `isMeta` records are
+115	  skipped after the `ai-title`/type switch; record types other than
+116	  `user`/`assistant`/`ai-title` are skipped via the `default: continue`
+117	  branch; JSON-malformed lines increment `SkippedLines` — `basic.jsonl`&#39;s one
+118	  malformed line (`not valid json at all`) yields `SkippedLines == 1` as
+119	  asserted.
+120	- **Edit/Write diff population**: `buildDiff` sets `OldText`/`NewText` from
+121	  `old_string`/`new_string` for Edit, and `NewText` from `content` for Write;
+122	  confirmed via the Edit case in `TestParseBasicTimeline`.
+123	- **Session metadata**: `GitBranch`/`Version`/`ProjectPath` are captured from
+124	  the first record carrying a non-empty value; `StartedAt`/`EndedAt` track
+125	  the earliest/latest parsed timestamp across all folded records.
+126	- No changes were made to Task 4&#39;s `raw.go`, `raw_test.go`, or
+127	  `internal/model`; `parse.go` is purely additive and consumes the existing
+128	  unexported helpers as specified in the brief&#39;s Interfaces section.
+129	
+130	## Concerns
+131	
+132	None. The brief&#39;s code was implemented verbatim and all specified tests
+133	(including the two Task 4 regression tests already in the package) pass. No
+134	bugs were found in the brief&#39;s logic during implementation or review.
+135	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="bash wc -l ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff&#34;
+}</pre><pre class="tool-result">     426 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2..HEAD
+2	
+3	## Commits
+4	09d5d88 feat: fold transcript records into a session timeline
+5	
+6	## Files changed
+7	 internal/transcript/parse.go                | 296 ++++++++++++++++++++++++++++
+8	 internal/transcript/parse_test.go           |  81 ++++++++
+9	 internal/transcript/testdata/basic.jsonl    |   7 +
+10	 internal/transcript/testdata/subagent.jsonl |   5 +
+11	 4 files changed, 389 insertions(+)
+12	
+13	## Diff
+14	diff --git a/internal/transcript/parse.go b/internal/transcript/parse.go
+15	new file mode 100644
+16	index 0000000..4ef2ec0
+17	--- /dev/null
+18	+++ b/internal/transcript/parse.go
+19	@@ -0,0 +1,296 @@
+20	+package transcript
+21	+
+22	+import (
+23	+	&#34;bufio&#34;
+24	+	&#34;encoding/json&#34;
+25	+	&#34;io&#34;
+26	+	&#34;os&#34;
+27	+
+28	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+29	+)
+30	+
+31	+// Options controls how a transcript is folded into a Session.
+32	+type Options struct {
+33	+	IncludeSubagents bool
+34	+}
+35	+
+36	+// ParseFile parses a transcript file at path.
+37	+func ParseFile(path string, opts Options) (model.Session, error) {
+38	+	f, err := os.Open(path)
+39	+	if err != nil {
+40	+		return model.Session{}, err
+41	+	}
+42	+	defer f.Close()
+43	+	s, err := Parse(f, opts)
+44	+	if err != nil {
+45	+		return model.Session{}, err
+46	+	}
+47	+	s.ID = sessionIDFromPath(path)
+48	+	return s, nil
+49	+}
+50	+
+51	+func sessionIDFromPath(path string) string {
+52	+	base := path
+53	+	if i := lastSlash(path); i &gt;= 0 {
+54	+		base = path[i+1:]
+55	+	}
+56	+	if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+57	+		return base[:len(base)-len(&#34;.jsonl&#34;)]
+58	+	}
+59	+	return base
+60	+}
+61	+
+62	+func lastSlash(s string) int {
+63	+	for i := len(s) - 1; i &gt;= 0; i-- {
+64	+		if s[i] == &#39;/&#39; {
+65	+			return i
+66	+		}
+67	+	}
+68	+	return -1
+69	+}
+70	+
+71	+// Parse reads a transcript stream and folds it into a Session timeline.
+72	+func Parse(r io.Reader, opts Options) (model.Session, error) {
+73	+	var s model.Session
+74	+	// toolIndex maps a tool_use id to the ToolCall pointer so results and
+75	+	// sidechains can be attached after the fact.
+76	+	toolIndex := map[string]*model.ToolCall{}
+77	+	// lastTask tracks the most recent Task tool call for sidechain attachment.
+78	+	var lastTask *model.ToolCall
+79	+	// subByFirstUUID lets sidechain turns append to the right subagent; keyed
+80	+	// by the Task tool that owns them.
+81	+	sidechainOwner := lastTask
+82	+
+83	+	sc := bufio.NewScanner(r)
+84	+	sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+85	+	for sc.Scan() {
+86	+		line := sc.Bytes()
+87	+		if len(trimSpace(line)) == 0 {
+88	+			continue
+89	+		}
+90	+		var rec rawRecord
+91	+		if err := json.Unmarshal(line, &amp;rec); err != nil {
+92	+			s.SkippedLines++
+93	+			continue
+94	+		}
+95	+		switch rec.Type {
+96	+		case &#34;ai-title&#34;:
+97	+			if rec.AiTitle != &#34;&#34; {
+98	+				s.Title = rec.AiTitle
+99	+			}
+100	+			continue
+101	+		case &#34;user&#34;, &#34;assistant&#34;:
+102	+			// fallthrough to handling below
+103	+		default:
+104	+			continue // ignore mode/permission/attachment/etc. for the timeline
+105	+		}
+106	+		if rec.IsMeta {
+107	+			continue
+108	+		}
+109	+
+110	+		// Capture session-level metadata from the first record that has it.
+111	+		if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+112	+			s.GitBranch = rec.GitBranch
+113	+		}
+114	+		if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+115	+			s.Version = rec.Version
+116	+		}
+117	+		if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+118	+			s.ProjectPath = rec.Cwd
+119	+		}
+120	+		ts := parseTime(rec.Timestamp)
+121	+		if !ts.IsZero() {
+122	+			if s.StartedAt.IsZero() {
+123	+				s.StartedAt = ts
+124	+			}
+125	+			s.EndedAt = ts
+126	+		}
+127	+
+128	+		_, blocks := decodeMessageContent(rec.Message)
+129	+
+130	+		// Sidechain (subagent) records.
+131	+		if rec.IsSidechain {
+132	+			if !opts.IncludeSubagents || sidechainOwner == nil {
+133	+				continue
+134	+			}
+135	+			turn := buildTurn(rec, blocks, toolIndex)
+136	+			if turn == nil {
+137	+				continue
+138	+			}
+139	+			sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+140	+			sub.Turns = append(sub.Turns, *turn)
+141	+			continue
+142	+		}
+143	+
+144	+		// Main-chain records.
+145	+		turn := buildTurn(rec, blocks, toolIndex)
+146	+		if turn == nil {
+147	+			continue // e.g. a user record that only carried a tool_result
+148	+		}
+149	+		s.Turns = append(s.Turns, *turn)
+150	+
+151	+		// After appending, register any Task tool call as the new sidechain
+152	+		// owner and seed its first subagent slot.
+153	+		for i := range turn.Blocks {
+154	+			b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]
+155	+			if b.Tool != nil {
+156	+				toolIndex[b.Tool.ID] = b.Tool
+157	+				if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {
+158	+					b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{
+159	+						Description: taskDescription(b.Tool),
+160	+					})
+161	+					lastTask = b.Tool
+162	+					sidechainOwner = lastTask
+163	+				}
+164	+			}
+165	+		}
+166	+	}
+167	+	if err := sc.Err(); err != nil {
+168	+		return s, err
+169	+	}
+170	+	return s, nil
+171	+}
+172	+
+173	+// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+174	+// attached to their originating ToolCall via toolIndex and do not themselves
+175	+// produce turn content. Returns nil if the record yields no displayable blocks.
+176	+func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+177	+	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+178	+	if rec.Type == &#34;user&#34; {
+179	+		turn.Kind = model.TurnUser
+180	+	} else {
+181	+		turn.Kind = model.TurnAssistant
+182	+	}
+183	+	for _, b := range blocks {
+184	+		switch b.Type {
+185	+		case &#34;text&#34;:
+186	+			if b.Text != &#34;&#34; {
+187	+				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+188	+			}
+189	+		case &#34;thinking&#34;:
+190	+			if b.Thinking != &#34;&#34; {
+191	+				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+192	+			}
+193	+		case &#34;tool_use&#34;:
+194	+			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})
+195	+		case &#34;tool_result&#34;:
+196	+			if tc := toolIndex[b.ToolUseID]; tc != nil {
+197	+				tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+198	+			}
+199	+		}
+200	+	}
+201	+	if len(turn.Blocks) == 0 {
+202	+		return nil
+203	+	}
+204	+	return turn
+205	+}
+206	+
+207	+func trimSpace(b []byte) []byte {
+208	+	start, end := 0, len(b)
+209	+	for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+210	+		start++
+211	+	}
+212	+	for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+213	+		end--
+214	+	}
+215	+	return b[start:end]
+216	+}
+217	+
+218	+// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+219	+// and, for Edit/Write, a Diff.
+220	+func buildToolCall(b apiBlock) *model.ToolCall {
+221	+	tc := &amp;model.ToolCall{
+222	+		ID:        b.ID,
+223	+		Name:      b.Name,
+224	+		InputJSON: prettyJSON(b.Input),
+225	+	}
+226	+	input := decodeInput(b.Input)
+227	+	tc.Summary = toolSummary(b.Name, input)
+228	+	switch b.Name {
+229	+	case &#34;Edit&#34;, &#34;Write&#34;:
+230	+		tc.Diff = buildDiff(b.Name, input)
+231	+	}
+232	+	return tc
+233	+}
+234	+
+235	+func decodeInput(raw json.RawMessage) map[string]any {
+236	+	m := map[string]any{}
+237	+	if len(raw) &gt; 0 {
+238	+		_ = json.Unmarshal(raw, &amp;m)
+239	+	}
+240	+	return m
+241	+}
+242	+
+243	+func str(m map[string]any, key string) string {
+244	+	if v, ok := m[key].(string); ok {
+245	+		return v
+246	+	}
+247	+	return &#34;&#34;
+248	+}
+249	+
+250	+// toolSummary produces a compact one-line header for a tool card.
+251	+func toolSummary(name string, in map[string]any) string {
+252	+	switch name {
+253	+	case &#34;Bash&#34;:
+254	+		if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+255	+			return firstLine(c)
+256	+		}
+257	+	case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+258	+		if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+259	+			return p
+260	+		}
+261	+	case &#34;Glob&#34;:
+262	+		return str(in, &#34;pattern&#34;)
+263	+	case &#34;Grep&#34;:
+264	+		return str(in, &#34;pattern&#34;)
+265	+	case &#34;Task&#34;:
+266	+		return str(in, &#34;description&#34;)
+267	+	case &#34;WebFetch&#34;:
+268	+		return str(in, &#34;url&#34;)
+269	+	case &#34;WebSearch&#34;:
+270	+		return str(in, &#34;query&#34;)
+271	+	}
+272	+	return &#34;&#34;
+273	+}
+274	+
+275	+func buildDiff(name string, in map[string]any) *model.Diff {
+276	+	d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+277	+	if name == &#34;Write&#34; {
+278	+		d.NewText = str(in, &#34;content&#34;)
+279	+		return d
+280	+	}
+281	+	d.OldText = str(in, &#34;old_string&#34;)
+282	+	d.NewText = str(in, &#34;new_string&#34;)
+283	+	return d
+284	+}
+285	+
+286	+func taskDescription(tc *model.ToolCall) string {
+287	+	if tc.Summary != &#34;&#34; {
+288	+		return tc.Summary
+289	+	}
+290	+	return &#34;subagent&#34;
+291	+}
+292	+
+293	+func firstLine(s string) string {
+294	+	for i := 0; i &lt; len(s); i++ {
+295	+		if s[i] == &#39;\n&#39; {
+296	+			return s[:i]
+297	+		}
+298	+	}
+299	+	return s
+300	+}
+301	+
+302	+func prettyJSON(raw json.RawMessage) string {
+303	+	if len(raw) == 0 {
+304	+		return &#34;&#34;
+305	+	}
+306	+	var v any
+307	+	if err := json.Unmarshal(raw, &amp;v); err != nil {
+308	+		return string(raw)
+309	+	}
+310	+	out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+311	+	if err != nil {
+312	+		return string(raw)
+313	+	}
+314	+	return string(out)
+315	+}
+316	diff --git a/internal/transcript/parse_test.go b/internal/transcript/parse_test.go
+317	new file mode 100644
+318	index 0000000..4a0a834
+319	--- /dev/null
+320	+++ b/internal/transcript/parse_test.go
+321	@@ -0,0 +1,81 @@
+322	+package transcript
+323	+
+324	+import (
+325	+	&#34;testing&#34;
+326	+
+327	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+328	+)
+329	+
+330	+func TestParseBasicTimeline(t *testing.T) {
+331	+	s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})
+332	+	if err != nil {
+333	+		t.Fatal(err)
+334	+	}
+335	+	if s.Title != &#34;Say hello&#34; {
+336	+		t.Errorf(&#34;Title = %q&#34;, s.Title)
+337	+	}
+338	+	if s.SkippedLines != 1 {
+339	+		t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)
+340	+	}
+341	+	if s.GitBranch != &#34;main&#34; {
+342	+		t.Errorf(&#34;GitBranch = %q&#34;, s.GitBranch)
+343	+	}
+344	+	// Expect: user turn, assistant turn (thinking+text+tool_use), assistant turn (Edit tool)
+345	+	if len(s.Turns) != 3 {
+346	+		t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+347	+	}
+348	+	if s.Turns[0].Kind != model.TurnUser {
+349	+		t.Errorf(&#34;turn0 kind = %q&#34;, s.Turns[0].Kind)
+350	+	}
+351	+	a := s.Turns[1]
+352	+	if len(a.Blocks) != 3 {
+353	+		t.Fatalf(&#34;assistant turn has %d blocks, want 3&#34;, len(a.Blocks))
+354	+	}
+355	+	tool := a.Blocks[2].Tool
+356	+	if tool == nil || tool.Name != &#34;Bash&#34; {
+357	+		t.Fatalf(&#34;expected Bash tool, got %+v&#34;, tool)
+358	+	}
+359	+	if tool.Result == nil || tool.Result.Content != &#34;hi&#34; {
+360	+		t.Errorf(&#34;Bash result = %+v&#34;, tool.Result)
+361	+	}
+362	+	if tool.Summary != &#34;echo hi&#34; {
+363	+		t.Errorf(&#34;Bash summary = %q&#34;, tool.Summary)
+364	+	}
+365	+	// Edit tool should have a diff.
+366	+	edit := s.Turns[2].Blocks[0].Tool
+367	+	if edit.Diff == nil || edit.Diff.Path != &#34;/tmp/x.txt&#34; || edit.Diff.NewText != &#34;b&#34; {
+368	+		t.Errorf(&#34;Edit diff = %+v&#34;, edit.Diff)
+369	+	}
+370	+}
+371	+
+372	+func TestParseSubagentAttachment(t *testing.T) {
+373	+	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: true})
+374	+	if err != nil {
+375	+		t.Fatal(err)
+376	+	}
+377	+	task := s.Turns[1].Blocks[0].Tool
+378	+	if task.Name != &#34;Task&#34; {
+379	+		t.Fatalf(&#34;expected Task tool, got %q&#34;, task.Name)
+380	+	}
+381	+	if len(task.Subagents) != 1 {
+382	+		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))
+383	+	}
+384	+	sub := task.Subagents[0]
+385	+	if sub.Description != &#34;research topic&#34; {
+386	+		t.Errorf(&#34;subagent description = %q&#34;, sub.Description)
+387	+	}
+388	+	if len(sub.Turns) != 2 {
+389	+		t.Errorf(&#34;subagent turns = %d, want 2&#34;, len(sub.Turns))
+390	+	}
+391	+}
+392	+
+393	+func TestParseExcludeSubagents(t *testing.T) {
+394	+	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: false})
+395	+	if err != nil {
+396	+		t.Fatal(err)
+397	+	}
+398	+	task := s.Turns[1].Blocks[0].Tool
+399	+	if len(task.Subagents) != 0 {
+400	+		t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))
+401	+	}
+402	+}
+403	diff --git a/internal/transcript/testdata/basic.jsonl b/internal/transcript/testdata/basic.jsonl
+404	new file mode 100644
+405	index 0000000..8f6f1e2
+406	--- /dev/null
+407	+++ b/internal/transcript/testdata/basic.jsonl
+408	@@ -0,0 +1,7 @@
+409	+{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Say hello&#34;}
+410	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi there&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;,&#34;gitBranch&#34;:&#34;main&#34;,&#34;version&#34;:&#34;1.0.0&#34;}
+411	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;consider&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;Hello!&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo hi&#34;,&#34;description&#34;:&#34;greet&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+412	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool1&#34;,&#34;content&#34;:&#34;hi&#34;,&#34;is_error&#34;:false}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+413	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a2&#34;,&#34;parentUuid&#34;:&#34;u2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool2&#34;,&#34;name&#34;:&#34;Edit&#34;,&#34;input&#34;:{&#34;file_path&#34;:&#34;/tmp/x.txt&#34;,&#34;old_string&#34;:&#34;a&#34;,&#34;new_string&#34;:&#34;b&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+414	+not valid json at all
+415	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u3&#34;,&#34;parentUuid&#34;:&#34;a2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool2&#34;,&#34;content&#34;:&#34;ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+416	diff --git a/internal/transcript/testdata/subagent.jsonl b/internal/transcript/testdata/subagent.jsonl
+417	new file mode 100644
+418	index 0000000..f63277c
+419	--- /dev/null
+420	+++ b/internal/transcript/testdata/subagent.jsonl
+421	@@ -0,0 +1,5 @@
+422	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}
+423	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+424	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+425	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+426	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+427	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la&#34;
+}</pre><pre class="tool-result">-rw-r--r--@ 1 markus  staff   629 11 Juli 11:57 internal/model/model_test.go
+-rw-r--r--@ 1 markus  staff  2021 11 Juli 11:57 internal/model/model.go
+-rw-r--r--@ 1 markus  staff  2246 11 Juli 12:12 internal/transcript/parse_test.go
+-rw-r--r--@ 1 markus  staff  7155 11 Juli 12:13 internal/transcript/parse.go
+-rw-r--r--@ 1 markus  staff  1175 11 Juli 12:08 internal/transcript/raw_test.go
+-rw-r--r--@ 1 markus  staff  2514 11 Juli 12:09 internal/transcript/raw.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model&#34;
+}</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/internal/model&#39;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude<span class="usage-badge">67 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
+}</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
+2	// Session and the timeline of Turns, Blocks and ToolCalls within it.
+3	package model
+4	
+5	import &#34;time&#34;
+6	
+7	type TurnKind string
+8	
+9	const (
+10		TurnUser      TurnKind = &#34;user&#34;
+11		TurnAssistant TurnKind = &#34;assistant&#34;
+12	)
+13	
+14	type BlockType string
+15	
+16	const (
+17		BlockText     BlockType = &#34;text&#34;
+18		BlockThinking BlockType = &#34;thinking&#34;
+19		BlockToolUse  BlockType = &#34;tool_use&#34;
+20	)
+21	
+22	// Session is one fully-parsed Claude Code transcript.
+23	type Session struct {
+24		ID           string
+25		ProjectPath  string // decoded absolute cwd
+26		Title        string
+27		GitBranch    string
+28		Version      string
+29		StartedAt    time.Time
+30		EndedAt      time.Time
+31		Turns        []Turn
+32		SkippedLines int // count of malformed lines skipped while parsing
+33	}
+34	
+35	func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+36	
+37	func (s Session) DisplayTitle() string {
+38		if s.Title != &#34;&#34; {
+39			return s.Title
+40		}
+41		return &#34;Untitled session&#34;
+42	}
+43	
+44	// Turn is a single user or assistant message, holding ordered content blocks.
+45	type Turn struct {
+46		Kind      TurnKind
+47		Timestamp time.Time
+48		Blocks    []Block
+49	}
+50	
+51	// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+52	type Block struct {
+53		Type BlockType
+54		Text string    // for BlockText and BlockThinking
+55		Tool *ToolCall // for BlockToolUse
+56	}
+57	
+58	// ToolCall is a single tool invocation and its result.
+59	type ToolCall struct {
+60		ID        string
+61		Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+62		Summary   string // one-line summary for the collapsed card header
+63		InputJSON string // pretty-printed input for generic display
+64		Result    *ToolResult
+65		Diff      *Diff      // set for Edit/Write
+66		Subagents []Subagent // set for Task calls with sidechain activity
+67	}
+68	
+69	type ToolResult struct {
+70		Content string
+71		IsError bool
+72	}
+73	
+74	type Diff struct {
+75		Path    string
+76		OldText string
+77		NewText string
+78	}
+79	
+80	// Subagent is a nested sidechain run attached to a parent Task tool call.
+81	type Subagent struct {
+82		Description string
+83		Turns       []Turn
+84	}
+85	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;encoding/json&#34;
+5		&#34;strings&#34;
+6		&#34;time&#34;
+7	)
+8	
+9	// rawRecord is one decoded line of a session .jsonl file.
+10	type rawRecord struct {
+11		Type        string          `json:&#34;type&#34;`
+12		UUID        string          `json:&#34;uuid&#34;`
+13		ParentUUID  string          `json:&#34;parentUuid&#34;`
+14		Timestamp   string          `json:&#34;timestamp&#34;`
+15		GitBranch   string          `json:&#34;gitBranch&#34;`
+16		Version     string          `json:&#34;version&#34;`
+17		Cwd         string          `json:&#34;cwd&#34;`
+18		AiTitle     string          `json:&#34;aiTitle&#34;`
+19		IsSidechain bool            `json:&#34;isSidechain&#34;`
+20		IsMeta      bool            `json:&#34;isMeta&#34;`
+21		Message     json.RawMessage `json:&#34;message&#34;`
+22	}
+23	
+24	// apiBlock is one content block of an Anthropic message.
+25	type apiBlock struct {
+26		Type      string          `json:&#34;type&#34;`
+27		Text      string          `json:&#34;text&#34;`
+28		Thinking  string          `json:&#34;thinking&#34;`
+29		ID        string          `json:&#34;id&#34;`
+30		Name      string          `json:&#34;name&#34;`
+31		Input     json.RawMessage `json:&#34;input&#34;`
+32		ToolUseID string          `json:&#34;tool_use_id&#34;`
+33		Content   json.RawMessage `json:&#34;content&#34;`
+34		IsError   bool            `json:&#34;is_error&#34;`
+35	}
+36	
+37	// decodeMessageContent extracts the role and content blocks from a raw message
+38	// object. Content may be a plain string (wrapped as a single text block) or an
+39	// array of blocks.
+40	func decodeMessageContent(raw json.RawMessage) (string, []apiBlock) {
+41		if len(raw) == 0 {
+42			return &#34;&#34;, nil
+43		}
+44		var msg struct {
+45			Role    string          `json:&#34;role&#34;`
+46			Content json.RawMessage `json:&#34;content&#34;`
+47		}
+48		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+49			return &#34;&#34;, nil
+50		}
+51		var s string
+52		if json.Unmarshal(msg.Content, &amp;s) == nil {
+53			return msg.Role, []apiBlock{{Type: &#34;text&#34;, Text: s}}
+54		}
+55		var blocks []apiBlock
+56		_ = json.Unmarshal(msg.Content, &amp;blocks) // tolerate; empty on failure
+57		return msg.Role, blocks
+58	}
+59	
+60	// toolResultText flattens a tool_result content payload to plain text.
+61	func toolResultText(raw json.RawMessage) string {
+62		if len(raw) == 0 {
+63			return &#34;&#34;
+64		}
+65		var s string
+66		if json.Unmarshal(raw, &amp;s) == nil {
+67			return s
+68		}
+69		var blocks []struct {
+70			Type string `json:&#34;type&#34;`
+71			Text string `json:&#34;text&#34;`
+72		}
+73		if json.Unmarshal(raw, &amp;blocks) == nil {
+74			var parts []string
+75			for _, b := range blocks {
+76				if b.Text != &#34;&#34; {
+77					parts = append(parts, b.Text)
+78				}
+79			}
+80			return strings.Join(parts, &#34;\n&#34;)
+81		}
+82		return &#34;&#34;
+83	}
+84	
+85	func parseTime(s string) time.Time {
+86		if s == &#34;&#34; {
+87			return time.Time{}
+88		}
+89		t, err := time.Parse(time.RFC3339, s)
+90		if err != nil {
+91			return time.Time{}
+92		}
+93		return t
+94	}
+95	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash find .superpowers -iname &#39;*.md&#39; | xargs grep -l &#34;sidechain\|task&#34; -i 2&gt;/dev/null">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find .superpowers -iname &#39;*.md&#39; | xargs grep -l &#34;sidechain\|Task&#34; -i 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;find .superpowers -iname &#39;*.md&#39; | xargs grep -l \&#34;sidechain\\|Task\&#34; -i 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">.superpowers/sdd/task-3-report.md
+.superpowers/sdd/task-1-brief.md
+.superpowers/sdd/task-5-report.md
+.superpowers/sdd/task-2-report.md
+.superpowers/sdd/progress.md
+.superpowers/sdd/task-4-report.md
+.superpowers/sdd/task-2-brief.md
+.superpowers/sdd/task-3-brief.md
+.superpowers/sdd/task-1-report.md
+.superpowers/sdd/task-5-brief.md
+.superpowers/sdd/task-4-brief.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash ls .superpowers/sdd/">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls .superpowers/sdd/</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls .superpowers/sdd/&#34;
+}</pre><pre class="tool-result">progress.md
+review-159ee65..5980a02.diff
+review-2ff127a..c2f4251.diff
+review-37ba8bc..7b11575.diff
+review-5980a02..09d5d88.diff
+review-7b11575..159ee65.diff
+task-1-brief.md
+task-1-report.md
+task-2-brief.md
+task-2-report.md
+task-3-brief.md
+task-3-report.md
+task-4-brief.md
+task-4-report.md
+task-5-brief.md
+task-5-report.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash grep -n &#34;sidechain\|task\b\|nearest preceding&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2&gt;/dev/null | head -80">
+      <div class="turn-role">Claude<span class="usage-badge">205 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;sidechain\|Task\b\|nearest preceding&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2&gt;/dev/null | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;sidechain\\|Task\\b\\|nearest preceding\&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2\u003e/dev/null | head -80&#34;
+}</pre><pre class="tool-result">.superpowers/sdd/task-4-brief.md:1:### Task 4: Raw JSONL record decoding
+.superpowers/sdd/task-4-brief.md:9:- Produces (all unexported except where noted — this file is internal to the `transcript` package, consumed by Task 5):
+.superpowers/sdd/progress.md:7:## Task status
+.superpowers/sdd/progress.md:8:Task 1: complete (commits 2ff127a..37ba8bc, review clean; Minor go.mod indirect fixed via go mod tidy)
+.superpowers/sdd/progress.md:9:Task 2: complete (commit 7b11575, review clean — spec ✅, no issues)
+.superpowers/sdd/progress.md:10:Task 3: complete (commits 9def244, 159ee65 — includes controller-directed correctness fix: transcript cwd is authoritative for ProjectPath, decode is lossy fallback. Spec ✅, approved)
+.superpowers/sdd/progress.md:11:Task 4: complete (commit 5980a02, review clean — spec ✅. Minor: null content → one empty text block, but Task 5 drops empty text blocks so harmless)
+.superpowers/sdd/progress.md:14:- [Task 3] No committed regression test for malformed-line tolerance and FindSession ambiguous-vs-not-found (both verified correct by reviewer; malformed-line tolerance is a global constraint — worth a permanent test). discovery_test.go
+.superpowers/sdd/progress.md:15:- [Task 3] cwd capture only inspects user/assistant records (consistent with model.TurnKind; fine unless a later task needs cwd from other record types). discovery.go
+.superpowers/sdd/task-2-brief.md:1:### Task 2: Domain model types
+.superpowers/sdd/task-2-brief.md:120:	Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+.superpowers/sdd/task-2-brief.md:125:	Subagents []Subagent // set for Task calls with sidechain activity
+.superpowers/sdd/task-2-brief.md:139:// Subagent is a nested sidechain run attached to a parent Task tool call.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="i want to verify a suspected bug about `toolindex` not being populated for sidechain tool_use blocks — meaning a subagent&#39;s own internal tool calls (e.g., a bash call made by a task-spawned subagent) would never get their `result` filled in. let me write a throwaway test to confirm.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>I want to verify a suspected bug about <code>toolIndex</code> not being populated for sidechain tool_use blocks — meaning a subagent's own internal tool calls (e.g., a Bash call made by a Task-spawned subagent) would never get their <code>Result</code> filled in. Let me write a throwaway test to confirm.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Throwaway probe: does a tool_use/tool_result pair *inside* a sidechain</div><div class="diff-add">+ // (subagent) correctly attach ToolCall.Result, given toolIndex registration</div><div class="diff-add">+ // only happens in the main-chain branch of Parse?</div><div class="diff-add">+ func TestProbeSidechainInternalToolResult(t *testing.T) {</div><div class="diff-add">+ 	data := `{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;innertool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo inner&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s3&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;innertool1&#34;,&#34;content&#34;:&#34;inner result&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:05Z&#34;}</div><div class="diff-add">+ `</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(data), Options{IncludeSubagents: true})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if task == nil || task.Name != &#34;Task&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected Task tool, got %+v&#34;, task)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(task.Subagents) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	sub := task.Subagents[0]</div><div class="diff-add">+ 	if len(sub.Turns) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want 1 (just the Bash tool_use turn)&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	if innerTool == nil || innerTool.Name != &#34;Bash&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected inner Bash tool, got %+v&#34;, innerTool)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	t.Logf(&#34;inner tool result = %+v&#34;, innerTool.Result)</div><div class="diff-add">+ 	if innerTool.Result == nil {</div><div class="diff-add">+ 		t.Errorf(&#34;BUG CONFIRMED: inner tool_use/tool_result inside sidechain did not attach Result (toolIndex not populated for sidechain tool_use blocks)&#34;)</div><div class="diff-add">+ 	} else if innerTool.Result.Content != &#34;inner result&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;inner tool Result.Content = %q, want %q&#34;, innerTool.Result.Content, &#34;inner result&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v">
+      <div class="turn-role">Claude<span class="usage-badge">108 tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v&#34;
+}</pre><pre class="tool-result tool-result-error">Exit code 1
+=== RUN   TestProbeSidechainInternalToolResult
+    zzz_probe_test.go:32: subagent turns = 2, want 1 (just the Bash tool_use turn)
+--- FAIL: TestProbeSidechainInternalToolResult (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.315s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="bash cat &gt; /tmp/probe2_test.go.snippet &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">418 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/probe2_test.go.snippet &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e /tmp/probe2_test.go.snippet \u003c\u003c&#39;EOF&#39;\nEOF\ngo test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -50&#34;
+}</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
+    zzz_probe_test.go:32: subagent turns = 2, want 1 (just the Bash tool_use turn)
+--- FAIL: TestProbeSidechainInternalToolResult (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.154s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">486 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	sub := task.Subagents[0]</div><div class="diff-del">- 	if len(sub.Turns) != 1 {</div><div class="diff-del">- 		t.Fatalf(&#34;subagent turns = %d, want 1 (just the Bash tool_use turn)&#34;, len(sub.Turns))</div><div class="diff-del">- 	}</div><div class="diff-del">- 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	sub := task.Subagents[0]</div><div class="diff-add">+ 	for i, tn := range sub.Turns {</div><div class="diff-add">+ 		t.Logf(&#34;subagent turn %d: kind=%s blocks=%+v&#34;, i, tn.Kind, tn.Blocks)</div><div class="diff-add">+ 		for j, blk := range tn.Blocks {</div><div class="diff-add">+ 			t.Logf(&#34;  block %d: type=%s tool=%+v&#34;, j, blk.Type, blk.Tool)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(sub.Turns) &lt; 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want at least 1&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[0].Blocks[0].Tool</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v 2&gt;&amp;1 | head -80">
+      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2&gt;&amp;1 | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -80&#34;
+}</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
+    zzz_probe_test.go:32: subagent turn 0: kind=user blocks=[{Type:text Text:go find things Tool:&lt;nil&gt;}]
+    zzz_probe_test.go:34:   block 0: type=text tool=&lt;nil&gt;
+    zzz_probe_test.go:32: subagent turn 1: kind=assistant blocks=[{Type:tool_use Text: Tool:0x11bfab4a02a0}]
+    zzz_probe_test.go:34:   block 0: type=tool_use tool=&amp;{ID:innertool1 Name:Bash Summary:echo inner InputJSON:{
+          &#34;command&#34;: &#34;echo inner&#34;
+        } Result:&lt;nil&gt; Diff:&lt;nil&gt; Subagents:[]}
+    zzz_probe_test.go:42: expected inner Bash tool, got &lt;nil&gt;
+--- FAIL: TestProbeSidechainInternalToolResult (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.274s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">802 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if len(sub.Turns) &lt; 1 {</div><div class="diff-del">- 		t.Fatalf(&#34;subagent turns = %d, want at least 1&#34;, len(sub.Turns))</div><div class="diff-del">- 	}</div><div class="diff-del">- 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	if len(sub.Turns) &lt; 2 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want at least 2&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[1].Blocks[0].Tool</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v 2&gt;&amp;1 | head -80">
+      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2&gt;&amp;1 | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -80&#34;
+}</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
+    zzz_probe_test.go:32: subagent turn 0: kind=user blocks=[{Type:text Text:go find things Tool:&lt;nil&gt;}]
+    zzz_probe_test.go:34:   block 0: type=text tool=&lt;nil&gt;
+    zzz_probe_test.go:32: subagent turn 1: kind=assistant blocks=[{Type:tool_use Text: Tool:0x63c167faa310}]
+    zzz_probe_test.go:34:   block 0: type=tool_use tool=&amp;{ID:innertool1 Name:Bash Summary:echo inner InputJSON:{
+          &#34;command&#34;: &#34;echo inner&#34;
+        } Result:&lt;nil&gt; Diff:&lt;nil&gt; Subagents:[]}
+    zzz_probe_test.go:44: inner tool result = &lt;nil&gt;
+    zzz_probe_test.go:46: BUG CONFIRMED: inner tool_use/tool_result inside sidechain did not attach Result (toolIndex not populated for sidechain tool_use blocks)
+--- FAIL: TestProbeSidechainInternalToolResult (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.248s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="bug confirmed. now cleaning up the throwaway probe test.">
+      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Bug confirmed. Now cleaning up the throwaway probe test.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go\ngit -C ~/IdeaProjects/cc-what-have-i-done status --porcelain internal/transcript/&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash git status --porcelain &amp;&amp; echo &#34;---diff---&#34; &amp;&amp; git diff --stat">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --porcelain &amp;&amp; echo &#34;---diff---&#34; &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status --porcelain \u0026\u0026 echo \&#34;---diff---\&#34; \u0026\u0026 git diff --stat&#34;
+}</pre><pre class="tool-result">---diff---</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude<span class="usage-badge">514 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;bufio&#34;
+5		&#34;encoding/json&#34;
+6		&#34;io&#34;
+7		&#34;os&#34;
+8	
+9		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+10	)
+11	
+12	// Options controls how a transcript is folded into a Session.
+13	type Options struct {
+14		IncludeSubagents bool
+15	}
+16	
+17	// ParseFile parses a transcript file at path.
+18	func ParseFile(path string, opts Options) (model.Session, error) {
+19		f, err := os.Open(path)
+20		if err != nil {
+21			return model.Session{}, err
+22		}
+23		defer f.Close()
+24		s, err := Parse(f, opts)
+25		if err != nil {
+26			return model.Session{}, err
+27		}
+28		s.ID = sessionIDFromPath(path)
+29		return s, nil
+30	}
+31	
+32	func sessionIDFromPath(path string) string {
+33		base := path
+34		if i := lastSlash(path); i &gt;= 0 {
+35			base = path[i+1:]
+36		}
+37		if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+38			return base[:len(base)-len(&#34;.jsonl&#34;)]
+39		}
+40		return base
+41	}
+42	
+43	func lastSlash(s string) int {
+44		for i := len(s) - 1; i &gt;= 0; i-- {
+45			if s[i] == &#39;/&#39; {
+46				return i
+47			}
+48		}
+49		return -1
+50	}
+51	
+52	// Parse reads a transcript stream and folds it into a Session timeline.
+53	func Parse(r io.Reader, opts Options) (model.Session, error) {
+54		var s model.Session
+55		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+56		// sidechains can be attached after the fact.
+57		toolIndex := map[string]*model.ToolCall{}
+58		// lastTask tracks the most recent Task tool call for sidechain attachment.
+59		var lastTask *model.ToolCall
+60		// subByFirstUUID lets sidechain turns append to the right subagent; keyed
+61		// by the Task tool that owns them.
+62		sidechainOwner := lastTask
+63	
+64		sc := bufio.NewScanner(r)
+65		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+66		for sc.Scan() {
+67			line := sc.Bytes()
+68			if len(trimSpace(line)) == 0 {
+69				continue
+70			}
+71			var rec rawRecord
+72			if err := json.Unmarshal(line, &amp;rec); err != nil {
+73				s.SkippedLines++
+74				continue
+75			}
+76			switch rec.Type {
+77			case &#34;ai-title&#34;:
+78				if rec.AiTitle != &#34;&#34; {
+79					s.Title = rec.AiTitle
+80				}
+81				continue
+82			case &#34;user&#34;, &#34;assistant&#34;:
+83				// fallthrough to handling below
+84			default:
+85				continue // ignore mode/permission/attachment/etc. for the timeline
+86			}
+87			if rec.IsMeta {
+88				continue
+89			}
+90	
+91			// Capture session-level metadata from the first record that has it.
+92			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+93				s.GitBranch = rec.GitBranch
+94			}
+95			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+96				s.Version = rec.Version
+97			}
+98			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+99				s.ProjectPath = rec.Cwd
+100			}
+101			ts := parseTime(rec.Timestamp)
+102			if !ts.IsZero() {
+103				if s.StartedAt.IsZero() {
+104					s.StartedAt = ts
+105				}
+106				s.EndedAt = ts
+107			}
+108	
+109			_, blocks := decodeMessageContent(rec.Message)
+110	
+111			// Sidechain (subagent) records.
+112			if rec.IsSidechain {
+113				if !opts.IncludeSubagents || sidechainOwner == nil {
+114					continue
+115				}
+116				turn := buildTurn(rec, blocks, toolIndex)
+117				if turn == nil {
+118					continue
+119				}
+120				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+121				sub.Turns = append(sub.Turns, *turn)
+122				continue
+123			}
+124	
+125			// Main-chain records.
+126			turn := buildTurn(rec, blocks, toolIndex)
+127			if turn == nil {
+128				continue // e.g. a user record that only carried a tool_result
+129			}
+130			s.Turns = append(s.Turns, *turn)
+131	
+132			// After appending, register any Task tool call as the new sidechain
+133			// owner and seed its first subagent slot.
+134			for i := range turn.Blocks {
+135				b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]
+136				if b.Tool != nil {
+137					toolIndex[b.Tool.ID] = b.Tool
+138					if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {
+139						b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{
+140							Description: taskDescription(b.Tool),
+141						})
+142						lastTask = b.Tool
+143						sidechainOwner = lastTask
+144					}
+145				}
+146			}
+147		}
+148		if err := sc.Err(); err != nil {
+149			return s, err
+150		}
+151		return s, nil
+152	}
+153	
+154	// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+155	// attached to their originating ToolCall via toolIndex and do not themselves
+156	// produce turn content. Returns nil if the record yields no displayable blocks.
+157	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+158		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+159		if rec.Type == &#34;user&#34; {
+160			turn.Kind = model.TurnUser
+161		} else {
+162			turn.Kind = model.TurnAssistant
+163		}
+164		for _, b := range blocks {
+165			switch b.Type {
+166			case &#34;text&#34;:
+167				if b.Text != &#34;&#34; {
+168					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+169				}
+170			case &#34;thinking&#34;:
+171				if b.Thinking != &#34;&#34; {
+172					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+173				}
+174			case &#34;tool_use&#34;:
+175				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})
+176			case &#34;tool_result&#34;:
+177				if tc := toolIndex[b.ToolUseID]; tc != nil {
+178					tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+179				}
+180			}
+181		}
+182		if len(turn.Blocks) == 0 {
+183			return nil
+184		}
+185		return turn
+186	}
+187	
+188	func trimSpace(b []byte) []byte {
+189		start, end := 0, len(b)
+190		for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+191			start++
+192		}
+193		for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+194			end--
+195		}
+196		return b[start:end]
+197	}
+198	
+199	// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+200	// and, for Edit/Write, a Diff.
+201	func buildToolCall(b apiBlock) *model.ToolCall {
+202		tc := &amp;model.ToolCall{
+203			ID:        b.ID,
+204			Name:      b.Name,
+205			InputJSON: prettyJSON(b.Input),
+206		}
+207		input := decodeInput(b.Input)
+208		tc.Summary = toolSummary(b.Name, input)
+209		switch b.Name {
+210		case &#34;Edit&#34;, &#34;Write&#34;:
+211			tc.Diff = buildDiff(b.Name, input)
+212		}
+213		return tc
+214	}
+215	
+216	func decodeInput(raw json.RawMessage) map[string]any {
+217		m := map[string]any{}
+218		if len(raw) &gt; 0 {
+219			_ = json.Unmarshal(raw, &amp;m)
+220		}
+221		return m
+222	}
+223	
+224	func str(m map[string]any, key string) string {
+225		if v, ok := m[key].(string); ok {
+226			return v
+227		}
+228		return &#34;&#34;
+229	}
+230	
+231	// toolSummary produces a compact one-line header for a tool card.
+232	func toolSummary(name string, in map[string]any) string {
+233		switch name {
+234		case &#34;Bash&#34;:
+235			if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+236				return firstLine(c)
+237			}
+238		case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+239			if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+240				return p
+241			}
+242		case &#34;Glob&#34;:
+243			return str(in, &#34;pattern&#34;)
+244		case &#34;Grep&#34;:
+245			return str(in, &#34;pattern&#34;)
+246		case &#34;Task&#34;:
+247			return str(in, &#34;description&#34;)
+248		case &#34;WebFetch&#34;:
+249			return str(in, &#34;url&#34;)
+250		case &#34;WebSearch&#34;:
+251			return str(in, &#34;query&#34;)
+252		}
+253		return &#34;&#34;
+254	}
+255	
+256	func buildDiff(name string, in map[string]any) *model.Diff {
+257		d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+258		if name == &#34;Write&#34; {
+259			d.NewText = str(in, &#34;content&#34;)
+260			return d
+261		}
+262		d.OldText = str(in, &#34;old_string&#34;)
+263		d.NewText = str(in, &#34;new_string&#34;)
+264		return d
+265	}
+266	
+267	func taskDescription(tc *model.ToolCall) string {
+268		if tc.Summary != &#34;&#34; {
+269			return tc.Summary
+270		}
+271		return &#34;subagent&#34;
+272	}
+273	
+274	func firstLine(s string) string {
+275		for i := 0; i &lt; len(s); i++ {
+276			if s[i] == &#39;\n&#39; {
+277				return s[:i]
+278			}
+279		}
+280		return s
+281	}
+282	
+283	func prettyJSON(raw json.RawMessage) string {
+284		if len(raw) == 0 {
+285			return &#34;&#34;
+286		}
+287		var v any
+288		if err := json.Unmarshal(raw, &amp;v); err != nil {
+289			return string(raw)
+290		}
+291		out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+292		if err != nil {
+293			return string(raw)
+294		}
+295		return string(out)
+296	}
+297	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="## task 5 review: fold transcript records into a session timeline
+
+**base:** 5980a02 **head:** 09d5d88 — `internal/transcript/parse.go`, `parse_test.go`, `testdata/basic.jsonl`, `testdata/subagent.jsonl`
+
+### spec compliance
+
+| rule | status |
+|---|---|
+| `options{includesubagents}`, `parse(io.reader, options)`, `parsefile(path, options)` | ✅ |
+| text/thinking/tool_use → `model.block`s | ✅ |
+| `tool_result` matches `tool_use` by id, fills `toolcall.result`, never creates a user turn | ⚠️ — correct for main-chain records; **broken for tool calls made inside a sidechain** (see critical below) |
+| `ismeta` and non-user/assistant records (except `ai-title`) ignored | ✅ |
+| `ai-title` sets `session.title` | ✅ |
+| edit/write inputs populate `toolcall.diff` | ✅ |
+| sidechain records attach to nearest preceding `task` call when `includesubagents`, else dropped | ⚠️ — works for the sequential case tested, but has a real misattribution risk with parallel `task` calls (see important below) |
+| malformed jsonl lines skipped-and-counted, never abort | ✅ |
+| commit trailer | ✅ (`git log -1` confirms `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`) |
+
+### strengths
+
+- clean, well-commented, idiomatic go; matches the brief&#39;s step 4/5 code essentially verbatim (confirmed by diff comparison).
+- `buildturn`&#39;s &#34;returns nil for content-free records&#34; mechanism correctly avoids creating spurious user turns for pure `tool_result` records — verified both by the shipped `testparsebasictimeline` (3 turns from 5 user/assistant records) and by re-reading the code path.
+- `sidechainowner`/`subagents` slot indexing (named risk 1) is safe: `sidechainowner` is only ever set in the same statement that appends a `subagent` to `task.subagents` (parse.go:139-143), and the sidechain branch bails out early when `sidechainowner == nil` (parse.go:113). no path exists where `subagents[len(...)-1]` runs against an empty slice.
+- `skippedlines` accounting (named risk 4) is correct: only top-level json-unmarshal failures increment the counter (parse.go:72-75); nested/message-level decode failures degrade gracefully instead of aborting, matching the &#34;skipped-and-counted, never abort&#34; rule.
+- pointer aliasing into `toolindex` is sound — `toolcall` is heap-allocated in `buildtoolcall`, so slice reallocation of `s.turns` doesn&#39;t invalidate stored pointers.
+
+### issues
+
+**critical — `internal/transcript/parse.go:112-146`: tool_use/tool_result pairs *inside* a sidechain never get `toolcall.result` filled in.**
+`toolindex[b.tool.id] = b.tool` registration only happens in the &#34;main-chain records&#34; block (parse.go:134-146), which the sidechain branch (parse.go:112-123) never reaches — it calls `buildturn` directly and returns via `continue` without ever touching `toolindex`. consequently, when a subagent itself invokes a tool (e.g. `bash`, `read`) — the overwhelmingly common case for any real task-spawned subagent — the subagent&#39;s own `tool_use` id is never registered, so the subsequent `tool_result` inside the sidechain finds `toolindex[b.tooluseid] == nil` and silently drops the result. i verified this empirically with a throwaway test (constructed a sidechain with a `bash` tool_use/tool_result pair inside it, ran `parse`, observed `innertool.result == nil`); test file was deleted afterward and the tree is clean (`git status --porcelain` empty). this directly violates the stated folding rule (&#34;a tool_result block matches its tool_use by id and fills that toolcall.result&#34;), which is stated without a main-chain-only qualifier. neither of the brief&#39;s own fixtures (`subagent.jsonl`) nor the implementer&#39;s tests exercise a tool call *inside* a sidechain, so this went uncaught. note: this code is a verbatim copy of the brief&#39;s own step 4 listing — not an implementer deviation — but it&#39;s a real functional defect in the shipped feature regardless of origin, and it will manifest in essentially any real transcript with a working subagent.
+
+**important — `internal/transcript/parse.go:134-146`: sidechain misattribution when two `task` calls precede sidechain output (named risk 3).**
+`sidechainowner` is repointed to whichever `task` tool_use is processed last within the registration loop. if an assistant turn dispatches two parallel `task` calls in one message (a supported claude code pattern for parallel subagents), or if a second `task` is issued before the first one&#39;s `tool_result`/sidechain output has fully arrived, all interleaved sidechain records — including ones that actually belong to the first task — get appended to the second task&#39;s `subagents[0]`. this is an inherent limitation of &#34;attach to nearest preceding task by file order&#34; without any id-level correlation between a sidechain conversation and its spawning `tool_use.id` (the raw record format captured by task 4&#39;s `rawrecord` has no such field). worth flagging explicitly since it&#39;s a real ordering assumption baked into the algorithm, not just a theoretical edge case — genuinely realistic with concurrent subagent dispatch.
+
+**minor — `internal/transcript/parse.go:134-136`: unnecessary re-indirection.**
+the registration loop re-fetches `b := &amp;s.turns[len(s.turns)-1].blocks[i]` instead of just using `&amp;turn.blocks[i]` (or ranging over `turn.blocks` directly) — `turn.blocks`&#39;s backing array is the same one just copied into `s.turns` via `*turn`, so this adds a layer of indirection with no functional difference. not a bug, just avoidable complexity.
+
+### assessment
+
+**task quality: needs fixes.**
+
+the implementation faithfully follows the brief and passes all specified tests, and three of the four named risks (empty-slice indexing, tool_result-not-creating-a-user-turn, skippedlines accounting) check out cleanly. however, the critical finding is a real, easily-realistic correctness gap: subagent-internal tool calls will silently lose their results in virtually any transcript where a task-spawned subagent uses a tool, which is the normal case. since this is &#34;the core transcript-folding task,&#34; this should be fixed (populate `toolindex` from sidechain `tool_use` blocks too, e.g. by moving the registration loop into a shared helper called from both branches) before this gate passes. the important sidechain-misattribution risk should at minimum be documented as a known limitation if not fixed now.">
+      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.06</span></div>
+      <div class="turn-body"><h2>Task 5 Review: Fold transcript records into a Session timeline</h2>
+<p><strong>Base:</strong> 5980a02 <strong>Head:</strong> 09d5d88 — <code>internal/transcript/parse.go</code>, <code>parse_test.go</code>, <code>testdata/basic.jsonl</code>, <code>testdata/subagent.jsonl</code></p>
+<h3>Spec Compliance</h3>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Options{IncludeSubagents}</code>, <code>Parse(io.Reader, Options)</code>, <code>ParseFile(path, Options)</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>text/thinking/tool_use → <code>model.Block</code>s</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>tool_result</code> matches <code>tool_use</code> by id, fills <code>ToolCall.Result</code>, never creates a user turn</td>
+<td>⚠️ — correct for main-chain records; <strong>broken for tool calls made inside a sidechain</strong> (see Critical below)</td>
+</tr>
+<tr>
+<td><code>isMeta</code> and non-user/assistant records (except <code>ai-title</code>) ignored</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>ai-title</code> sets <code>Session.Title</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Edit/Write inputs populate <code>ToolCall.Diff</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Sidechain records attach to nearest preceding <code>Task</code> call when <code>IncludeSubagents</code>, else dropped</td>
+<td>⚠️ — works for the sequential case tested, but has a real misattribution risk with parallel <code>Task</code> calls (see Important below)</td>
+</tr>
+<tr>
+<td>Malformed JSONL lines skipped-and-counted, never abort</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Commit trailer</td>
+<td>✅ (<code>git log -1</code> confirms <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3>Strengths</h3>
+<ul>
+<li>Clean, well-commented, idiomatic Go; matches the brief's Step 4/5 code essentially verbatim (confirmed by diff comparison).</li>
+<li><code>buildTurn</code>'s &quot;returns nil for content-free records&quot; mechanism correctly avoids creating spurious user turns for pure <code>tool_result</code> records — verified both by the shipped <code>TestParseBasicTimeline</code> (3 turns from 5 user/assistant records) and by re-reading the code path.</li>
+<li><code>sidechainOwner</code>/<code>Subagents</code> slot indexing (named risk 1) is safe: <code>sidechainOwner</code> is only ever set in the same statement that appends a <code>Subagent</code> to <code>Task.Subagents</code> (parse.go:139-143), and the sidechain branch bails out early when <code>sidechainOwner == nil</code> (parse.go:113). No path exists where <code>Subagents[len(...)-1]</code> runs against an empty slice.</li>
+<li><code>SkippedLines</code> accounting (named risk 4) is correct: only top-level JSON-unmarshal failures increment the counter (parse.go:72-75); nested/message-level decode failures degrade gracefully instead of aborting, matching the &quot;skipped-and-counted, never abort&quot; rule.</li>
+<li>Pointer aliasing into <code>toolIndex</code> is sound — <code>ToolCall</code> is heap-allocated in <code>buildToolCall</code>, so slice reallocation of <code>s.Turns</code> doesn't invalidate stored pointers.</li>
+</ul>
+<h3>Issues</h3>
+<p><strong>Critical — <code>internal/transcript/parse.go:112-146</code>: tool_use/tool_result pairs <em>inside</em> a sidechain never get <code>ToolCall.Result</code> filled in.</strong>
+<code>toolIndex[b.Tool.ID] = b.Tool</code> registration only happens in the &quot;Main-chain records&quot; block (parse.go:134-146), which the sidechain branch (parse.go:112-123) never reaches — it calls <code>buildTurn</code> directly and returns via <code>continue</code> without ever touching <code>toolIndex</code>. Consequently, when a subagent itself invokes a tool (e.g. <code>Bash</code>, <code>Read</code>) — the overwhelmingly common case for any real Task-spawned subagent — the subagent's own <code>tool_use</code> id is never registered, so the subsequent <code>tool_result</code> inside the sidechain finds <code>toolIndex[b.ToolUseID] == nil</code> and silently drops the result. I verified this empirically with a throwaway test (constructed a sidechain with a <code>Bash</code> tool_use/tool_result pair inside it, ran <code>Parse</code>, observed <code>innerTool.Result == nil</code>); test file was deleted afterward and the tree is clean (<code>git status --porcelain</code> empty). This directly violates the stated folding rule (&quot;a tool_result block matches its tool_use by id and fills that ToolCall.Result&quot;), which is stated without a main-chain-only qualifier. Neither of the brief's own fixtures (<code>subagent.jsonl</code>) nor the implementer's tests exercise a tool call <em>inside</em> a sidechain, so this went uncaught. Note: this code is a verbatim copy of the brief's own Step 4 listing — not an implementer deviation — but it's a real functional defect in the shipped feature regardless of origin, and it will manifest in essentially any real transcript with a working subagent.</p>
+<p><strong>Important — <code>internal/transcript/parse.go:134-146</code>: sidechain misattribution when two <code>Task</code> calls precede sidechain output (named risk 3).</strong>
+<code>sidechainOwner</code> is repointed to whichever <code>Task</code> tool_use is processed last within the registration loop. If an assistant turn dispatches two parallel <code>Task</code> calls in one message (a supported Claude Code pattern for parallel subagents), or if a second <code>Task</code> is issued before the first one's <code>tool_result</code>/sidechain output has fully arrived, all interleaved sidechain records — including ones that actually belong to the first Task — get appended to the second Task's <code>Subagents[0]</code>. This is an inherent limitation of &quot;attach to nearest preceding Task by file order&quot; without any id-level correlation between a sidechain conversation and its spawning <code>tool_use.id</code> (the raw record format captured by Task 4's <code>rawRecord</code> has no such field). Worth flagging explicitly since it's a real ordering assumption baked into the algorithm, not just a theoretical edge case — genuinely realistic with concurrent subagent dispatch.</p>
+<p><strong>Minor — <code>internal/transcript/parse.go:134-136</code>: unnecessary re-indirection.</strong>
+The registration loop re-fetches <code>b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]</code> instead of just using <code>&amp;turn.Blocks[i]</code> (or ranging over <code>turn.Blocks</code> directly) — <code>turn.Blocks</code>'s backing array is the same one just copied into <code>s.Turns</code> via <code>*turn</code>, so this adds a layer of indirection with no functional difference. Not a bug, just avoidable complexity.</p>
+<h3>Assessment</h3>
+<p><strong>Task quality: Needs fixes.</strong></p>
+<p>The implementation faithfully follows the brief and passes all specified tests, and three of the four named risks (empty-slice indexing, tool_result-not-creating-a-user-turn, SkippedLines accounting) check out cleanly. However, the Critical finding is a real, easily-realistic correctness gap: subagent-internal tool calls will silently lose their results in virtually any transcript where a Task-spawned subagent uses a tool, which is the normal case. Since this is &quot;the core transcript-folding task,&quot; this should be fixed (populate <code>toolIndex</code> from sidechain <code>tool_use</code> blocks too, e.g. by moving the registration loop into a shared helper called from both branches) before this gate passes. The Important sidechain-misattribution risk should at minimum be documented as a known limitation if not fixed now.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

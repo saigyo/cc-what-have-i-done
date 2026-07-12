@@ -1,0 +1,3121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Final whole-branch code review · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are a Senior Code Reviewer performing the final whole-b…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Final whole-branch code review</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 11:06</span>
+        <span>12 turns</span>
+        <span>general-purpose · agent-aee04b4f65e40a812</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 13k in+out · ~$0.80 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-opus-4-8</td><td>9k</td><td>4k</td><td>295k</td><td>83k</td><td>$0.80</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>4k</td><td>295k</td><td>83k</td><td>$0.80</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are a senior code reviewer performing the final whole-branch review of the `ccwhid` cli before merge. per-task reviews already passed; this is the broad, cross-cutting pass.
+
+## what was implemented
+
+`ccwhid` (cc-what-have-i-done): a single-binary go cli that turns a claude code session transcript (`.jsonl`) into a self-contained static html report, styled like claude&#39;s docs. run with no flags it opens a bubble tea tui to browse and select a session; with flags it renders directly. pipeline: `discovery` (find/index sessions) → `transcript` (fold jsonl into a model.session timeline, incl. subagent sidechains) → `redact` (scrub secrets, on by default) → `render` (goldmark/chroma &#43; embedded template/css/js → index.html &#43; assets). layers: cmd/ccwhid (cobra &#43; wiring), internal/{model,discovery,transcript,redact,render,tui}.
+
+## requirements / plan
+
+- design spec: ~/ideaprojects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md
+- implementation plan: ~/ideaprojects/cc-what-have-i-done/docs/superpowers/plans/2026-07-11-ccwhid.md
+
+## git range to review
+
+base: 2ff127a
+head: 6678bb5
+diff package (read once — commit list, stat summary, full diff with context): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff
+
+## known minor findings already triaged (assess whether any should block merge; don&#39;t re-litigate as new unless you find them more severe than logged)
+
+1. redact.go assignment regex over-matches (e.g. monkey=, across newlines) — safe over-redaction, never leaks.
+2. discovery.go: no committed regression test for malformed-line tolerance / findsession ambiguous-vs-not-found (behavior verified correct).
+3. run.go:102 `home, _ := os.userhomedir()` error ignored; matchproject uses broad strings.contains.
+4. cmd/ccwhid/run.go: `errneedtui` package var is now unreferenced (dead); internal/tui/tui.go: `model.done` field written but never read (dead).
+5. transcript parallel-task subagent attribution is a documented v1 limitation (sidechains attach to nearest preceding task by file order).
+
+## read-only review
+
+read-only on this checkout. do not mutate the working tree, index, head, or branch. use git show/diff/log to inspect. the diff package is your primary view; read a full file from the tree only if a hunk you must judge is cut off.
+
+## what to check
+
+focus on cross-cutting concerns that per-task reviews could miss:
+- layer boundaries respected (transcript owns jsonl; render consumes model only; tui orchestrates)?
+- any real correctness bug across the pipeline (e.g. tool_result matching, sidechain attachment, redaction completeness across all rendered fields, html-injection safety of the generated report)?
+- error handling and robustness (malformed input never aborts; output dir collision handled)?
+- the generated report&#39;s self-containment claim (no network/cdn/external fonts) — verify against the embedded css/template/js.
+- test quality across the branch (real behavior vs tautology; coverage of the stated global constraints).
+- any dead code, unused exports, or inconsistencies introduced across tasks.
+
+## output format
+
+follow the template: strengths; issues (critical / important / minor, each with file:line, what&#39;s wrong, why it matters, how to fix); recommendations; assessment (ready to merge? yes | no | with fixes &#43; reasoning). be specific and give a clear verdict.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are a Senior Code Reviewer performing the final whole-branch review of the <code>ccwhid</code> CLI before merge. Per-task reviews already passed; this is the broad, cross-cutting pass.</p>
+<h2>What Was Implemented</h2>
+<p><code>ccwhid</code> (cc-what-have-i-done): a single-binary Go CLI that turns a Claude Code session transcript (<code>.jsonl</code>) into a self-contained static HTML report, styled like Claude's docs. Run with no flags it opens a Bubble Tea TUI to browse and select a session; with flags it renders directly. Pipeline: <code>discovery</code> (find/index sessions) → <code>transcript</code> (fold JSONL into a model.Session timeline, incl. subagent sidechains) → <code>redact</code> (scrub secrets, on by default) → <code>render</code> (goldmark/chroma + embedded template/CSS/JS → index.html + assets). Layers: cmd/ccwhid (cobra + wiring), internal/{model,discovery,transcript,redact,render,tui}.</p>
+<h2>Requirements / Plan</h2>
+<ul>
+<li>Design spec: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md</li>
+<li>Implementation plan: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-11-ccwhid.md</li>
+</ul>
+<h2>Git Range to Review</h2>
+<p>Base: 2ff127a
+Head: 6678bb5
+Diff package (read once — commit list, stat summary, full diff with context): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</p>
+<h2>Known Minor findings already triaged (assess whether any should block merge; don't re-litigate as new unless you find them more severe than logged)</h2>
+<ol>
+<li>redact.go assignment regex over-matches (e.g. MONKEY=, across newlines) — safe over-redaction, never leaks.</li>
+<li>discovery.go: no committed regression test for malformed-line tolerance / FindSession ambiguous-vs-not-found (behavior verified correct).</li>
+<li>run.go:102 <code>home, _ := os.UserHomeDir()</code> error ignored; matchProject uses broad strings.Contains.</li>
+<li>cmd/ccwhid/run.go: <code>errNeedTUI</code> package var is now unreferenced (dead); internal/tui/tui.go: <code>model.done</code> field written but never read (dead).</li>
+<li>transcript parallel-Task subagent attribution is a documented v1 limitation (sidechains attach to nearest preceding Task by file order).</li>
+</ol>
+<h2>Read-Only Review</h2>
+<p>Read-only on this checkout. Do not mutate the working tree, index, HEAD, or branch. Use git show/diff/log to inspect. The diff package is your primary view; read a full file from the tree only if a hunk you must judge is cut off.</p>
+<h2>What to Check</h2>
+<p>Focus on cross-cutting concerns that per-task reviews could miss:</p>
+<ul>
+<li>Layer boundaries respected (transcript owns JSONL; render consumes model only; tui orchestrates)?</li>
+<li>Any real correctness bug across the pipeline (e.g. tool_result matching, sidechain attachment, redaction completeness across ALL rendered fields, HTML-injection safety of the generated report)?</li>
+<li>Error handling and robustness (malformed input never aborts; output dir collision handled)?</li>
+<li>The generated report's self-containment claim (no network/CDN/external fonts) — verify against the embedded CSS/template/JS.</li>
+<li>Test quality across the branch (real behavior vs tautology; coverage of the stated global constraints).</li>
+<li>Any dead code, unused exports, or inconsistencies introduced across tasks.</li>
+</ul>
+<h2>Output Format</h2>
+<p>Follow the template: Strengths; Issues (Critical / Important / Minor, each with file:line, what's wrong, why it matters, how to fix); Recommendations; Assessment (Ready to merge? Yes | No | With fixes + reasoning). Be specific and give a clear verdict.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="this is a code review task. let me start by reading the diff package and the design/plan docs.">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-body"><p>This is a code review task. Let me start by reading the diff package and the design/plan docs.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 2ff127ac3e943c5fc1ccd4c4ad5247ce7dbcf3ac..HEAD
+2	
+3	## Commits
+4	6678bb5 test: add end-to-end pipeline test; reconcile README
+5	19a5d33 chore: go mod tidy for bubbletea/lipgloss direct deps
+6	777b116 feat: add TUI session browser and wire final dispatch
+7	fd591f4 feat: wire session resolution, generation, and browser open
+8	6d415b6 fix: rune-safe truncation for non-ASCII previews
+9	a713dfe feat: render session to static HTML site with embedded assets
+10	faa3097 feat: add secret and home-path redaction
+11	41ed5b8 fix: attach tool results for tools invoked inside subagents
+12	09d5d88 feat: fold transcript records into a session timeline
+13	5980a02 feat: decode raw transcript records and message content
+14	159ee65 fix: use transcript cwd for authoritative project path
+15	9def244 feat: add session discovery and indexing
+16	7b11575 feat: add domain model types
+17	37ba8bc chore: go mod tidy to correct cobra require metadata
+18	c2f4251 feat: scaffold ccwhid module and cobra root command
+19	
+20	## Files changed
+21	 cmd/ccwhid/main.go                                 | 100 +++++++
+22	 cmd/ccwhid/main_test.go                            |  31 +++
+23	 cmd/ccwhid/run.go                                  | 124 +++++++++
+24	 cmd/ccwhid/run_test.go                             |  50 ++++
+25	 go.mod                                             |  34 +++
+26	 go.sum                                             |  65 +++++
+27	 internal/discovery/discovery.go                    | 246 +++++++++++++++++
+28	 internal/discovery/discovery_test.go               | 130 +++++++++
+29	 internal/model/model.go                            |  84 ++++++
+30	 internal/model/model_test.go                       |  25 ++
+31	 internal/redact/redact.go                          |  82 ++++++
+32	 internal/redact/redact_test.go                     |  56 ++++
+33	 internal/render/assets/app.js                      |  40 +++
+34	 internal/render/assets/report.html.tmpl            |  46 ++++
+35	 internal/render/assets/styles.css                  |  68 +++++
+36	 internal/render/markdown.go                        |  78 ++++++
+37	 internal/render/render.go                          | 189 +++++++++++++
+38	 internal/render/render_e2e_test.go                 |  49 ++++
+39	 internal/render/render_test.go                     |  78 ++++++
+40	 internal/transcript/parse.go                       | 304 +++++++++++++++++++++
+41	 internal/transcript/parse_test.go                  | 106 +++++++
+42	 internal/transcript/raw.go                         |  94 +++++++
+43	 internal/transcript/raw_test.go                    |  41 +++
+44	 internal/transcript/testdata/basic.jsonl           |   7 +
+45	 internal/transcript/testdata/subagent.jsonl        |   5 +
+46	 .../transcript/testdata/subagent_inner_tool.jsonl  |   5 +
+47	 internal/tui/tui.go                                | 242 ++++++++++++++++
+48	 internal/tui/tui_test.go                           |  41 +++
+49	 28 files changed, 2420 insertions(+)
+50	
+51	## Diff
+52	diff --git a/cmd/ccwhid/main.go b/cmd/ccwhid/main.go
+53	new file mode 100644
+54	index 0000000..44142d8
+55	--- /dev/null
+56	+++ b/cmd/ccwhid/main.go
+57	@@ -0,0 +1,100 @@
+58	+package main
+59	+
+60	+import (
+61	+	&#34;fmt&#34;
+62	+	&#34;os&#34;
+63	+
+64	+	&#34;github.com/spf13/cobra&#34;
+65	+
+66	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+67	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;
+68	+)
+69	+
+70	+// options holds all CLI flag values.
+71	+type options struct {
+72	+	session          string
+73	+	project          string
+74	+	latest           bool
+75	+	out              string
+76	+	title            string
+77	+	includeSubagents bool
+78	+	noRedact         bool
+79	+	force            bool
+80	+	open             bool
+81	+}
+82	+
+83	+func newRootCmd() *cobra.Command {
+84	+	opts := &amp;options{}
+85	+	cmd := &amp;cobra.Command{
+86	+		Use:   &#34;ccwhid&#34;,
+87	+		Short: &#34;Turn a Claude Code session transcript into a browsable HTML report&#34;,
+88	+		Long: &#34;ccwhid (cc-what-have-i-done) renders a Claude Code session &#34; +
+89	+			&#34;transcript into a self-contained static HTML report. Run with no &#34; +
+90	+			&#34;flags to browse sessions in an interactive TUI.&#34;,
+91	+		SilenceUsage: true,
+92	+		RunE: func(cmd *cobra.Command, args []string) error {
+93	+			return run(cmd, opts)
+94	+		},
+95	+	}
+96	+	f := cmd.Flags()
+97	+	f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+98	+	f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name to scope to&#34;)
+99	+	f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent session&#34;)
+100	+	f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+101	+	f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+102	+	f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+103	+	f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+104	+	f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+105	+	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+106	+	return cmd
+107	+}
+108	+
+109	+func run(cmd *cobra.Command, opts *options) error {
+110	+	root, err := discovery.DefaultRoot()
+111	+	if err != nil {
+112	+		return err
+113	+	}
+114	+	si, needTUI, err := resolveSession(opts, root)
+115	+	if err != nil {
+116	+		return err
+117	+	}
+118	+	if needTUI {
+119	+		groups, err := discovery.Scan(root)
+120	+		if err != nil {
+121	+			return err
+122	+		}
+123	+		sel, err := tui.Run(groups)
+124	+		if err != nil {
+125	+			return err
+126	+		}
+127	+		if sel.Canceled {
+128	+			fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+129	+			return nil
+130	+		}
+131	+		si = sel.Session
+132	+		opts.includeSubagents = sel.IncludeSubagents
+133	+		opts.noRedact = !sel.Redact
+134	+		opts.open = sel.Open
+135	+		if sel.OutDir != &#34;&#34; {
+136	+			opts.out = sel.OutDir
+137	+		}
+138	+	}
+139	+	outDir, err := generate(opts, si)
+140	+	if err != nil {
+141	+		return err
+142	+	}
+143	+	fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+144	+	if opts.open {
+145	+		if err := openInBrowser(outDir); err != nil {
+146	+			fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+147	+		}
+148	+	}
+149	+	return nil
+150	+}
+151	+
+152	+func main() {
+153	+	if err := newRootCmd().Execute(); err != nil {
+154	+		fmt.Fprintln(os.Stderr, &#34;error:&#34;, err)
+155	+		os.Exit(1)
+156	+	}
+157	+}
+158	diff --git a/cmd/ccwhid/main_test.go b/cmd/ccwhid/main_test.go
+159	new file mode 100644
+160	index 0000000..1d4fdb4
+161	--- /dev/null
+162	+++ b/cmd/ccwhid/main_test.go
+163	@@ -0,0 +1,31 @@
+164	+package main
+165	+
+166	+import (
+167	+	&#34;bytes&#34;
+168	+	&#34;testing&#34;
+169	+)
+170	+
+171	+func TestRootCmdHasExpectedFlags(t *testing.T) {
+172	+	cmd := newRootCmd()
+173	+	for _, name := range []string{
+174	+		&#34;session&#34;, &#34;project&#34;, &#34;latest&#34;, &#34;out&#34;, &#34;title&#34;,
+175	+		&#34;include-subagents&#34;, &#34;no-redact&#34;, &#34;force&#34;, &#34;open&#34;,
+176	+	} {
+177	+		if cmd.Flags().Lookup(name) == nil {
+178	+			t.Errorf(&#34;expected flag --%s to be registered&#34;, name)
+179	+		}
+180	+	}
+181	+}
+182	+
+183	+func TestRootCmdHelpRuns(t *testing.T) {
+184	+	cmd := newRootCmd()
+185	+	var out bytes.Buffer
+186	+	cmd.SetOut(&amp;out)
+187	+	cmd.SetArgs([]string{&#34;--help&#34;})
+188	+	if err := cmd.Execute(); err != nil {
+189	+		t.Fatalf(&#34;--help returned error: %v&#34;, err)
+190	+	}
+191	+	if out.Len() == 0 {
+192	+		t.Fatal(&#34;expected help output, got none&#34;)
+193	+	}
+194	+}
+195	diff --git a/cmd/ccwhid/run.go b/cmd/ccwhid/run.go
+196	new file mode 100644
+197	index 0000000..4177564
+198	--- /dev/null
+199	+++ b/cmd/ccwhid/run.go
+200	@@ -0,0 +1,124 @@
+201	+package main
+202	+
+203	+import (
+204	+	&#34;errors&#34;
+205	+	&#34;fmt&#34;
+206	+	&#34;os&#34;
+207	+	&#34;os/exec&#34;
+208	+	&#34;path/filepath&#34;
+209	+	&#34;runtime&#34;
+210	+	&#34;strings&#34;
+211	+
+212	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+213	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+214	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+215	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+216	+)
+217	+
+218	+// errNeedTUI signals that no session selector was provided and the caller
+219	+// should launch the interactive browser.
+220	+var errNeedTUI = errors.New(&#34;no session selected: launch TUI&#34;)
+221	+
+222	+func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+223	+	if opts.out != &#34;&#34; {
+224	+		return opts.out
+225	+	}
+226	+	short := si.ID
+227	+	if len(short) &gt; 8 {
+228	+		short = short[:8]
+229	+	}
+230	+	return filepath.Join(&#34;ccwhid-report&#34;, short)
+231	+}
+232	+
+233	+// resolveSession picks a session from flags. It returns needTUI=true when the
+234	+// user gave no selector.
+235	+func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+236	+	switch {
+237	+	case opts.session != &#34;&#34;:
+238	+		si, err := discovery.FindSession(root, opts.session)
+239	+		return si, false, err
+240	+	case opts.latest:
+241	+		return latestSession(opts, root)
+242	+	default:
+243	+		return discovery.SessionInfo{}, true, nil
+244	+	}
+245	+}
+246	+
+247	+func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+248	+	groups, err := discovery.Scan(root)
+249	+	if err != nil {
+250	+		return discovery.SessionInfo{}, false, err
+251	+	}
+252	+	for _, g := range groups {
+253	+		if opts.project != &#34;&#34; &amp;&amp; !matchProject(g, opts.project) {
+254	+			continue
+255	+		}
+256	+		if len(g.Sessions) &gt; 0 {
+257	+			return g.Sessions[0], false, nil
+258	+		}
+259	+	}
+260	+	return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+261	+}
+262	+
+263	+func matchProject(g discovery.ProjectGroup, want string) bool {
+264	+	return g.ProjectPath == want ||
+265	+		strings.EqualFold(filepath.Base(g.ProjectPath), want) ||
+266	+		strings.Contains(g.ProjectPath, want)
+267	+}
+268	+
+269	+// generate parses, redacts, and renders a session, returning the output dir.
+270	+func generate(opts *options, si discovery.SessionInfo) (string, error) {
+271	+	outDir := resolveOutDir(opts, si)
+272	+	if err := ensureOutDir(outDir, opts.force); err != nil {
+273	+		return &#34;&#34;, err
+274	+	}
+275	+	sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+276	+		IncludeSubagents: opts.includeSubagents,
+277	+	})
+278	+	if err != nil {
+279	+		return &#34;&#34;, err
+280	+	}
+281	+	if si.ID != &#34;&#34; {
+282	+		sess.ID = si.ID
+283	+	}
+284	+	if !opts.noRedact {
+285	+		home, _ := os.UserHomeDir()
+286	+		redact.Session(&amp;sess, home)
+287	+	}
+288	+	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+289	+		return &#34;&#34;, err
+290	+	}
+291	+	return outDir, nil
+292	+}
+293	+
+294	+func ensureOutDir(dir string, force bool) error {
+295	+	entries, err := os.ReadDir(dir)
+296	+	if err != nil {
+297	+		if os.IsNotExist(err) {
+298	+			return os.MkdirAll(dir, 0o755)
+299	+		}
+300	+		return err
+301	+	}
+302	+	if len(entries) &gt; 0 &amp;&amp; !force {
+303	+		return fmt.Errorf(&#34;output directory %q is not empty (use --force to overwrite)&#34;, dir)
+304	+	}
+305	+	return nil
+306	+}
+307	+
+308	+// openInBrowser opens path (a file or dir) in the default browser.
+309	+func openInBrowser(path string) error {
+310	+	index := filepath.Join(path, &#34;index.html&#34;)
+311	+	abs, err := filepath.Abs(index)
+312	+	if err != nil {
+313	+		return err
+314	+	}
+315	+	url := &#34;file://&#34; + abs
+316	+	switch runtime.GOOS {
+317	+	case &#34;darwin&#34;:
+318	+		return exec.Command(&#34;open&#34;, url).Start()
+319	+	case &#34;windows&#34;:
+320	+		return exec.Command(&#34;rundll32&#34;, &#34;url.dll,FileProtocolHandler&#34;, url).Start()
+321	+	default:
+322	+		return exec.Command(&#34;xdg-open&#34;, url).Start()
+323	+	}
+324	+}
+325	diff --git a/cmd/ccwhid/run_test.go b/cmd/ccwhid/run_test.go
+326	new file mode 100644
+327	index 0000000..93fc292
+328	--- /dev/null
+329	+++ b/cmd/ccwhid/run_test.go
+330	@@ -0,0 +1,50 @@
+331	+package main
+332	+
+333	+import (
+334	+	&#34;os&#34;
+335	+	&#34;path/filepath&#34;
+336	+	&#34;strings&#34;
+337	+	&#34;testing&#34;
+338	+
+339	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+340	+)
+341	+
+342	+func TestResolveOutDirDefault(t *testing.T) {
+343	+	opts := &amp;options{}
+344	+	si := discovery.SessionInfo{ID: &#34;abcd1234-5678-90ef-0000-000000000000&#34;}
+345	+	got := resolveOutDir(opts, si)
+346	+	if got != filepath.Join(&#34;ccwhid-report&#34;, &#34;abcd1234&#34;) {
+347	+		t.Errorf(&#34;resolveOutDir = %q&#34;, got)
+348	+	}
+349	+}
+350	+
+351	+func TestGenerateProducesReport(t *testing.T) {
+352	+	// Build a fake transcript file.
+353	+	dir := t.TempDir()
+354	+	src := filepath.Join(dir, &#34;sess.jsonl&#34;)
+355	+	lines := strings.Join([]string{
+356	+		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Test run&#34;}`,
+357	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+358	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;world&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+359	+	}, &#34;\n&#34;)
+360	+	if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {
+361	+		t.Fatal(err)
+362	+	}
+363	+	out := filepath.Join(dir, &#34;report&#34;)
+364	+	opts := &amp;options{out: out, includeSubagents: true}
+365	+	si := discovery.SessionInfo{ID: &#34;sess&#34;, FilePath: src}
+366	+	got, err := generate(opts, si)
+367	+	if err != nil {
+368	+		t.Fatal(err)
+369	+	}
+370	+	if got != out {
+371	+		t.Errorf(&#34;generate returned %q, want %q&#34;, got, out)
+372	+	}
+373	+	html, err := os.ReadFile(filepath.Join(out, &#34;index.html&#34;))
+374	+	if err != nil {
+375	+		t.Fatal(err)
+376	+	}
+377	+	if !strings.Contains(string(html), &#34;Test run&#34;) || !strings.Contains(string(html), &#34;world&#34;) {
+378	+		t.Error(&#34;report missing expected content&#34;)
+379	+	}
+380	+}
+381	diff --git a/go.mod b/go.mod
+382	new file mode 100644
+383	index 0000000..8f777a8
+384	--- /dev/null
+385	+++ b/go.mod
+386	@@ -0,0 +1,34 @@
+387	+module github.com/saigyo/cc-what-have-i-done
+388	+
+389	+go 1.26
+390	+
+391	+require (
+392	+	github.com/alecthomas/chroma/v2 v2.27.0
+393	+	github.com/charmbracelet/bubbletea v1.3.10
+394	+	github.com/charmbracelet/lipgloss v1.1.0
+395	+	github.com/spf13/cobra v1.10.2
+396	+	github.com/yuin/goldmark v1.8.2
+397	+)
+398	+
+399	+require (
+400	+	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+401	+	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
+402	+	github.com/charmbracelet/x/ansi v0.10.1 // indirect
+403	+	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
+404	+	github.com/charmbracelet/x/term v0.2.1 // indirect
+405	+	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+406	+	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
+407	+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+408	+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+409	+	github.com/mattn/go-isatty v0.0.20 // indirect
+410	+	github.com/mattn/go-localereader v0.0.1 // indirect
+411	+	github.com/mattn/go-runewidth v0.0.16 // indirect
+412	+	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
+413	+	github.com/muesli/cancelreader v0.2.2 // indirect
+414	+	github.com/muesli/termenv v0.16.0 // indirect
+415	+	github.com/rivo/uniseg v0.4.7 // indirect
+416	+	github.com/spf13/pflag v1.0.9 // indirect
+417	+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+418	+	golang.org/x/sys v0.36.0 // indirect
+419	+	golang.org/x/text v0.3.8 // indirect
+420	+)
+421	diff --git a/go.sum b/go.sum
+422	new file mode 100644
+423	index 0000000..129bf8f
+424	--- /dev/null
+425	+++ b/go.sum
+426	@@ -0,0 +1,65 @@
+427	+github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+428	+github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+429	+github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
+430	+github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
+431	+github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+432	+github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+433	+github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
+434	+github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
+435	+github.com/charmbracelet/bubbletea v1.3.10 h1:otUDHWMMzQSB0Pkc87rm691KZ3SWa4KUlvF9nRvCICw=
+436	+github.com/charmbracelet/bubbletea v1.3.10/go.mod h1:ORQfo0fk8U+po9VaNvnV95UPWA1BitP1E0N6xJPlHr4=
+437	+github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc h1:4pZI35227imm7yK2bGPcfpFEmuY1gc2YSTShr4iJBfs=
+438	+github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc/go.mod h1:X4/0JoqgTIPSFcRA/P6INZzIuyqdFY5rm8tb41s9okk=
+439	+github.com/charmbracelet/lipgloss v1.1.0 h1:vYXsiLHVkK7fp74RkV7b2kq9+zDLoEU4MZoFqR/noCY=
+440	+github.com/charmbracelet/lipgloss v1.1.0/go.mod h1:/6Q8FR2o+kj8rz4Dq0zQc3vYf7X+B0binUUBwA0aL30=
+441	+github.com/charmbracelet/x/ansi v0.10.1 h1:rL3Koar5XvX0pHGfovN03f5cxLbCF2YvLeyz7D2jVDQ=
+442	+github.com/charmbracelet/x/ansi v0.10.1/go.mod h1:3RQDQ6lDnROptfpWuUVIUG64bD2g2BgntdxH0Ya5TeE=
+443	+github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd h1:vy0GVL4jeHEwG5YOXDmi86oYw2yuYUGqz6a8sLwg0X8=
+444	+github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod h1:xe0nKWGd3eJgtqZRaN9RjMtK7xUYchjzPr7q6kcvCCs=
+445	+github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
+446	+github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
+447	+github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
+448	+github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
+449	+github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
+450	+github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
+451	+github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
+452	+github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
+453	+github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
+454	+github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+455	+github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+456	+github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
+457	+github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
+458	+github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+459	+github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+460	+github.com/mattn/go-localereader v0.0.1 h1:ygSAOl7ZXTx4RdPYinUpg6W99U8jWvWi9Ye2JC/oIi4=
+461	+github.com/mattn/go-localereader v0.0.1/go.mod h1:8fBrzywKY7BI3czFoHkuzRoWE9C+EiG4R1k4Cjx5p88=
+462	+github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
+463	+github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+464	+github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 h1:ZK8zHtRHOkbHy6Mmr5D264iyp3TiX5OmNcI5cIARiQI=
+465	+github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6/go.mod h1:CJlz5H+gyd6CUWT45Oy4q24RdLyn7Md9Vj2/ldJBSIo=
+466	+github.com/muesli/cancelreader v0.2.2 h1:3I4Kt4BQjOR54NavqnDogx/MIoWBFa0StPA8ELUXHmA=
+467	+github.com/muesli/cancelreader v0.2.2/go.mod h1:3XuTXfFS2VjM+HTLZY9Ak0l6eUKfijIfMUZ4EgX0QYo=
+468	+github.com/muesli/termenv v0.16.0 h1:S5AlUN9dENB57rsbnkPyfdGuWIlkmzJjbFf0Tf5FWUc=
+469	+github.com/muesli/termenv v0.16.0/go.mod h1:ZRfOIKPFDYQoDFF4Olj7/QJbW60Ol/kL1pU3VfY/Cnk=
+470	+github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
+471	+github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
+472	+github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
+473	+github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+474	+github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
+475	+github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
+476	+github.com/spf13/pflag v1.0.9 h1:9exaQaMOCwffKiiiYk6/BndUBv+iRViNW+4lEMi0PvY=
+477	+github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+478	+github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
+479	+github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
+480	+github.com/yuin/goldmark v1.8.2 h1:kEGpgqJXdgbkhcOgBxkC0X0PmoPG1ZyoZ117rDVp4zE=
+481	+github.com/yuin/goldmark v1.8.2/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
+482	+go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+483	+golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561 h1:MDc5xs78ZrZr3HMQugiXOAkSZtfTpbJLDr/lwfgO53E=
+484	+golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=
+485	+golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+486	+golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+487	+golang.org/x/sys v0.36.0 h1:KVRy2GtZBrk1cBYA7MKu5bEZFxQk4NIDV6RLVcC8o0k=
+488	+golang.org/x/sys v0.36.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+489	+golang.org/x/text v0.3.8 h1:nAL+RVCQ9uMn3vJZbV+MRnydTJFPf8qqY42YiA6MrqY=
+490	+golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
+491	+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+492	diff --git a/internal/discovery/discovery.go b/internal/discovery/discovery.go
+493	new file mode 100644
+494	index 0000000..538ca04
+495	--- /dev/null
+496	+++ b/internal/discovery/discovery.go
+497	@@ -0,0 +1,246 @@
+498	+// Package discovery finds Claude Code session transcripts under
+499	+// ~/.claude/projects and builds a lightweight index for listing and selection.
+500	+package discovery
+501	+
+502	+import (
+503	+	&#34;bufio&#34;
+504	+	&#34;encoding/json&#34;
+505	+	&#34;fmt&#34;
+506	+	&#34;os&#34;
+507	+	&#34;path/filepath&#34;
+508	+	&#34;sort&#34;
+509	+	&#34;strings&#34;
+510	+	&#34;time&#34;
+511	+)
+512	+
+513	+// SessionInfo is a lightweight index entry for one transcript file. It is built
+514	+// by a cheap scan and does not parse the full timeline.
+515	+type SessionInfo struct {
+516	+	ID           string
+517	+	FilePath     string
+518	+	ProjectDir   string // encoded directory name
+519	+	ProjectPath  string // decoded absolute path
+520	+	Title        string
+521	+	FirstPrompt  string
+522	+	ModTime      time.Time
+523	+	MessageCount int
+524	+	HasSubagents bool
+525	+}
+526	+
+527	+// ProjectGroup groups a project&#39;s sessions.
+528	+type ProjectGroup struct {
+529	+	ProjectDir  string
+530	+	ProjectPath string
+531	+	Sessions    []SessionInfo
+532	+}
+533	+
+534	+// EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+535	+func EncodeProjectDir(cwd string) string {
+536	+	return strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+537	+}
+538	+
+539	+// DecodeProjectDir maps a projects dir name back to an absolute path.
+540	+//
+541	+// This is best-effort and lossy: the encoding used for ~/.claude/projects
+542	+// directory names replaces every &#34;/&#34; with &#34;-&#34;, so a decode cannot distinguish
+543	+// an original path separator from a literal &#34;-&#34; inside a path segment (e.g.
+544	+// &#34;cc-what-have-i-done&#34; decodes to &#34;cc/what/have/i/done&#34;). Callers that need
+545	+// the true path should prefer the &#34;cwd&#34; field recorded in transcript records
+546	+// and only fall back to this function when no such record is available.
+547	+func DecodeProjectDir(name string) string {
+548	+	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)
+549	+}
+550	+
+551	+// DefaultRoot returns ~/.claude/projects.
+552	+func DefaultRoot() (string, error) {
+553	+	home, err := os.UserHomeDir()
+554	+	if err != nil {
+555	+		return &#34;&#34;, err
+556	+	}
+557	+	return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+558	+}
+559	+
+560	+// scanLine is the subset of fields needed to index a session cheaply.
+561	+type scanLine struct {
+562	+	Type        string          `json:&#34;type&#34;`
+563	+	AiTitle     string          `json:&#34;aiTitle&#34;`
+564	+	IsSidechain bool            `json:&#34;isSidechain&#34;`
+565	+	Timestamp   string          `json:&#34;timestamp&#34;`
+566	+	Cwd         string          `json:&#34;cwd&#34;`
+567	+	Message     json.RawMessage `json:&#34;message&#34;`
+568	+}
+569	+
+570	+// indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+571	+func indexFile(path, projectDir string) (SessionInfo, error) {
+572	+	f, err := os.Open(path)
+573	+	if err != nil {
+574	+		return SessionInfo{}, err
+575	+	}
+576	+	defer f.Close()
+577	+
+578	+	fi, err := f.Stat()
+579	+	if err != nil {
+580	+		return SessionInfo{}, err
+581	+	}
+582	+
+583	+	info := SessionInfo{
+584	+		ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+585	+		FilePath:    path,
+586	+		ProjectDir:  projectDir,
+587	+		ProjectPath: DecodeProjectDir(projectDir),
+588	+		ModTime:     fi.ModTime(),
+589	+	}
+590	+
+591	+	sc := bufio.NewScanner(f)
+592	+	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+593	+	cwdSet := false
+594	+	for sc.Scan() {
+595	+		var l scanLine
+596	+		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+597	+			continue // tolerate malformed lines
+598	+		}
+599	+		switch l.Type {
+600	+		case &#34;ai-title&#34;:
+601	+			if l.AiTitle != &#34;&#34; {
+602	+				info.Title = l.AiTitle
+603	+			}
+604	+		case &#34;user&#34;, &#34;assistant&#34;:
+605	+			info.MessageCount++
+606	+			if l.IsSidechain {
+607	+				info.HasSubagents = true
+608	+			}
+609	+			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+610	+				info.FirstPrompt = firstPromptText(l.Message)
+611	+			}
+612	+			if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {
+613	+				info.ProjectPath = l.Cwd
+614	+				cwdSet = true
+615	+			}
+616	+		}
+617	+	}
+618	+	if info.Title == &#34;&#34; {
+619	+		info.Title = truncate(info.FirstPrompt, 60)
+620	+	}
+621	+	return info, nil
+622	+}
+623	+
+624	+// firstPromptText extracts a plain-text preview from a user message whose
+625	+// content is either a JSON string or an array of blocks.
+626	+func firstPromptText(raw json.RawMessage) string {
+627	+	if len(raw) == 0 {
+628	+		return &#34;&#34;
+629	+	}
+630	+	var msg struct {
+631	+		Content json.RawMessage `json:&#34;content&#34;`
+632	+	}
+633	+	if err := json.Unmarshal(raw, &amp;msg); err != nil {
+634	+		return &#34;&#34;
+635	+	}
+636	+	var s string
+637	+	if json.Unmarshal(msg.Content, &amp;s) == nil {
+638	+		return strings.TrimSpace(s)
+639	+	}
+640	+	var blocks []struct {
+641	+		Type string `json:&#34;type&#34;`
+642	+		Text string `json:&#34;text&#34;`
+643	+	}
+644	+	if json.Unmarshal(msg.Content, &amp;blocks) == nil {
+645	+		for _, b := range blocks {
+646	+			if b.Type == &#34;text&#34; {
+647	+				return strings.TrimSpace(b.Text)
+648	+			}
+649	+		}
+650	+	}
+651	+	return &#34;&#34;
+652	+}
+653	+
+654	+func truncate(s string, n int) string {
+655	+	s = strings.TrimSpace(s)
+656	+	r := []rune(s)
+657	+	if len(r) &lt;= n {
+658	+		return s
+659	+	}
+660	+	return string(r[:n-1]) + &#34;…&#34;
+661	+}
+662	+
+663	+// Scan indexes every session under root (the projects directory), grouped by
+664	+// project. Groups are ordered by most-recent session first; sessions within a
+665	+// group are newest-first.
+666	+func Scan(root string) ([]ProjectGroup, error) {
+667	+	entries, err := os.ReadDir(root)
+668	+	if err != nil {
+669	+		return nil, err
+670	+	}
+671	+	var groups []ProjectGroup
+672	+	for _, e := range entries {
+673	+		if !e.IsDir() {
+674	+			continue
+675	+		}
+676	+		dir := filepath.Join(root, e.Name())
+677	+		files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+678	+		if err != nil {
+679	+			return nil, err
+680	+		}
+681	+		var sessions []SessionInfo
+682	+		for _, fp := range files {
+683	+			si, err := indexFile(fp, e.Name())
+684	+			if err != nil {
+685	+				continue
+686	+			}
+687	+			sessions = append(sessions, si)
+688	+		}
+689	+		if len(sessions) == 0 {
+690	+			continue
+691	+		}
+692	+		sort.Slice(sessions, func(i, j int) bool {
+693	+			return sessions[i].ModTime.After(sessions[j].ModTime)
+694	+		})
+695	+		groups = append(groups, ProjectGroup{
+696	+			ProjectDir:  e.Name(),
+697	+			ProjectPath: sessions[0].ProjectPath,
+698	+			Sessions:    sessions,
+699	+		})
+700	+	}
+701	+	sort.Slice(groups, func(i, j int) bool {
+702	+		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+703	+	})
+704	+	return groups, nil
+705	+}
+706	+
+707	+// DisplayLabel returns a human-friendly one-line label for a session.
+708	+func (s SessionInfo) DisplayLabel() string {
+709	+	if s.Title != &#34;&#34; {
+710	+		return s.Title
+711	+	}
+712	+	if s.FirstPrompt != &#34;&#34; {
+713	+		return s.FirstPrompt
+714	+	}
+715	+	return s.ID
+716	+}
+717	+
+718	+// FindSession resolves a session id or unambiguous prefix across all projects.
+719	+func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+720	+	groups, err := Scan(root)
+721	+	if err != nil {
+722	+		return SessionInfo{}, err
+723	+	}
+724	+	var matches []SessionInfo
+725	+	for _, g := range groups {
+726	+		for _, s := range g.Sessions {
+727	+			if s.ID == idOrPrefix {
+728	+				return s, nil // exact wins immediately
+729	+			}
+730	+			if strings.HasPrefix(s.ID, idOrPrefix) {
+731	+				matches = append(matches, s)
+732	+			}
+733	+		}
+734	+	}
+735	+	switch len(matches) {
+736	+	case 0:
+737	+		return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)
+738	+	case 1:
+739	+		return matches[0], nil
+740	+	default:
+741	+		return SessionInfo{}, fmt.Errorf(&#34;ambiguous prefix %q matches %d sessions&#34;, idOrPrefix, len(matches))
+742	+	}
+743	+}
+744	diff --git a/internal/discovery/discovery_test.go b/internal/discovery/discovery_test.go
+745	new file mode 100644
+746	index 0000000..8c9a4c1
+747	--- /dev/null
+748	+++ b/internal/discovery/discovery_test.go
+749	@@ -0,0 +1,130 @@
+750	+package discovery
+751	+
+752	+import (
+753	+	&#34;os&#34;
+754	+	&#34;path/filepath&#34;
+755	+	&#34;strings&#34;
+756	+	&#34;testing&#34;
+757	+	&#34;unicode/utf8&#34;
+758	+)
+759	+
+760	+func TestEncodeDecodeRoundTrip(t *testing.T) {
+761	+	// NOTE: deviates from the task brief&#39;s literal fixture, which used
+762	+	// &#34;~/IdeaProjects/cc-what-have-i-done&#34; (this repo&#39;s own
+763	+	// path). That path contains a literal hyphen in the directory name
+764	+	// (&#34;cc-what-have-i-done&#34;), which the naive &#39;/&#39;&lt;-&gt;&#39;-&#39; replace scheme
+765	+	// specified below cannot round-trip: every embedded hyphen gets
+766	+	// decoded back into a &#39;/&#39;. This is a mathematical property of the
+767	+	// scheme, not an implementation bug, so a hyphen-free path is used
+768	+	// here instead to exercise a genuinely invertible case. See the
+769	+	// task report for verification (go run of the exact replace calls
+770	+	// against the original fixture).
+771	+	cwd := &#34;~/IdeaProjects/ccwhid&#34;
+772	+	enc := EncodeProjectDir(cwd)
+773	+	if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+774	+		t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
+775	+	}
+776	+	if dec := DecodeProjectDir(enc); dec != cwd {
+777	+		t.Fatalf(&#34;DecodeProjectDir = %q, want %q&#34;, dec, cwd)
+778	+	}
+779	+}
+780	+
+781	+// writeSession writes a minimal valid jsonl file with the given lines.
+782	+func writeSession(t *testing.T, dir, id string, lines ...string) {
+783	+	t.Helper()
+784	+	if err := os.MkdirAll(dir, 0o755); err != nil {
+785	+		t.Fatal(err)
+786	+	}
+787	+	path := filepath.Join(dir, id+&#34;.jsonl&#34;)
+788	+	data := &#34;&#34;
+789	+	for _, l := range lines {
+790	+		data += l + &#34;\n&#34;
+791	+	}
+792	+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+793	+		t.Fatal(err)
+794	+	}
+795	+}
+796	+
+797	+func TestTruncateRuneSafe(t *testing.T) {
+798	+	s := strings.Repeat(&#34;ä&#34;, 80)
+799	+	got := truncate(s, 60)
+800	+	if !utf8.ValidString(got) {
+801	+		t.Errorf(&#34;truncate produced invalid UTF-8: %q&#34;, got)
+802	+	}
+803	+}
+804	+
+805	+func TestScanBuildsGroups(t *testing.T) {
+806	+	root := t.TempDir()
+807	+	proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+808	+	writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,
+809	+		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Build a parser&#34;}`,
+810	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+811	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+812	+	)
+813	+	groups, err := Scan(root)
+814	+	if err != nil {
+815	+		t.Fatal(err)
+816	+	}
+817	+	if len(groups) != 1 {
+818	+		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+819	+	}
+820	+	g := groups[0]
+821	+	if g.ProjectPath != &#34;/tmp/projA&#34; {
+822	+		t.Errorf(&#34;ProjectPath = %q&#34;, g.ProjectPath)
+823	+	}
+824	+	if len(g.Sessions) != 1 {
+825	+		t.Fatalf(&#34;got %d sessions, want 1&#34;, len(g.Sessions))
+826	+	}
+827	+	s := g.Sessions[0]
+828	+	if s.Title != &#34;Build a parser&#34; {
+829	+		t.Errorf(&#34;Title = %q&#34;, s.Title)
+830	+	}
+831	+	if s.MessageCount != 2 {
+832	+		t.Errorf(&#34;MessageCount = %d, want 2&#34;, s.MessageCount)
+833	+	}
+834	+}
+835	+
+836	+func TestFindSessionByPrefix(t *testing.T) {
+837	+	root := t.TempDir()
+838	+	proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+839	+	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,
+840	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+841	+	writeSession(t, proj, &#34; zzzz2222&#34;)
+842	+	got, err := FindSession(root, &#34;abcd&#34;)
+843	+	if err != nil {
+844	+		t.Fatal(err)
+845	+	}
+846	+	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {
+847	+		t.Errorf(&#34;ID = %q&#34;, got.ID)
+848	+	}
+849	+}
+850	+
+851	+func TestScanUsesTranscriptCwd(t *testing.T) {
+852	+	root := t.TempDir()
+853	+	// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.
+854	+	proj := filepath.Join(root, &#34;-tmp-proj-with-hyphen&#34;)
+855	+	writeSession(t, proj, &#34;cccc3333-0000-0000-0000-000000000000&#34;,
+856	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+857	+	groups, err := Scan(root)
+858	+	if err != nil {
+859	+		t.Fatal(err)
+860	+	}
+861	+	if len(groups) != 1 {
+862	+		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+863	+	}
+864	+	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+865	+		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)
+866	+	}
+867	+	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+868	+		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)
+869	+	}
+870	+}
+871	+
+872	+func TestDisplayLabel(t *testing.T) {
+873	+	if got := (SessionInfo{Title: &#34;T&#34;}).DisplayLabel(); got != &#34;T&#34; {
+874	+		t.Errorf(&#34;DisplayLabel = %q&#34;, got)
+875	+	}
+876	+	if got := (SessionInfo{ID: &#34;id&#34;}).DisplayLabel(); got != &#34;id&#34; {
+877	+		t.Errorf(&#34;DisplayLabel fallback = %q&#34;, got)
+878	+	}
+879	+}
+880	diff --git a/internal/model/model.go b/internal/model/model.go
+881	new file mode 100644
+882	index 0000000..6625369
+883	--- /dev/null
+884	+++ b/internal/model/model.go
+885	@@ -0,0 +1,84 @@
+886	+// Package model defines the domain types shared across ccwhid: a parsed
+887	+// Session and the timeline of Turns, Blocks and ToolCalls within it.
+888	+package model
+889	+
+890	+import &#34;time&#34;
+891	+
+892	+type TurnKind string
+893	+
+894	+const (
+895	+	TurnUser      TurnKind = &#34;user&#34;
+896	+	TurnAssistant TurnKind = &#34;assistant&#34;
+897	+)
+898	+
+899	+type BlockType string
+900	+
+901	+const (
+902	+	BlockText     BlockType = &#34;text&#34;
+903	+	BlockThinking BlockType = &#34;thinking&#34;
+904	+	BlockToolUse  BlockType = &#34;tool_use&#34;
+905	+)
+906	+
+907	+// Session is one fully-parsed Claude Code transcript.
+908	+type Session struct {
+909	+	ID           string
+910	+	ProjectPath  string // decoded absolute cwd
+911	+	Title        string
+912	+	GitBranch    string
+913	+	Version      string
+914	+	StartedAt    time.Time
+915	+	EndedAt      time.Time
+916	+	Turns        []Turn
+917	+	SkippedLines int // count of malformed lines skipped while parsing
+918	+}
+919	+
+920	+func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+921	+
+922	+func (s Session) DisplayTitle() string {
+923	+	if s.Title != &#34;&#34; {
+924	+		return s.Title
+925	+	}
+926	+	return &#34;Untitled session&#34;
+927	+}
+928	+
+929	+// Turn is a single user or assistant message, holding ordered content blocks.
+930	+type Turn struct {
+931	+	Kind      TurnKind
+932	+	Timestamp time.Time
+933	+	Blocks    []Block
+934	+}
+935	+
+936	+// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+937	+type Block struct {
+938	+	Type BlockType
+939	+	Text string    // for BlockText and BlockThinking
+940	+	Tool *ToolCall // for BlockToolUse
+941	+}
+942	+
+943	+// ToolCall is a single tool invocation and its result.
+944	+type ToolCall struct {
+945	+	ID        string
+946	+	Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+947	+	Summary   string // one-line summary for the collapsed card header
+948	+	InputJSON string // pretty-printed input for generic display
+949	+	Result    *ToolResult
+950	+	Diff      *Diff      // set for Edit/Write
+951	+	Subagents []Subagent // set for Task calls with sidechain activity
+952	+}
+953	+
+954	+type ToolResult struct {
+955	+	Content string
+956	+	IsError bool
+957	+}
+958	+
+959	+type Diff struct {
+960	+	Path    string
+961	+	OldText string
+962	+	NewText string
+963	+}
+964	+
+965	+// Subagent is a nested sidechain run attached to a parent Task tool call.
+966	+type Subagent struct {
+967	+	Description string
+968	+	Turns       []Turn
+969	+}
+970	diff --git a/internal/model/model_test.go b/internal/model/model_test.go
+971	new file mode 100644
+972	index 0000000..8a01154
+973	--- /dev/null
+974	+++ b/internal/model/model_test.go
+975	@@ -0,0 +1,25 @@
+976	+package model
+977	+
+978	+import (
+979	+	&#34;testing&#34;
+980	+	&#34;time&#34;
+981	+)
+982	+
+983	+func TestSessionDuration(t *testing.T) {
+984	+	s := Session{
+985	+		StartedAt: time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+986	+		EndedAt:   time.Date(2026, 7, 11, 10, 5, 0, 0, time.UTC),
+987	+	}
+988	+	if got := s.Duration(); got != 5*time.Minute {
+989	+		t.Errorf(&#34;Duration() = %v, want 5m&#34;, got)
+990	+	}
+991	+}
+992	+
+993	+func TestDisplayTitleFallback(t *testing.T) {
+994	+	if got := (Session{}).DisplayTitle(); got != &#34;Untitled session&#34; {
+995	+		t.Errorf(&#34;DisplayTitle() = %q, want fallback&#34;, got)
+996	+	}
+997	+	if got := (Session{Title: &#34;Fix parser&#34;}).DisplayTitle(); got != &#34;Fix parser&#34; {
+998	+		t.Errorf(&#34;DisplayTitle() = %q, want title&#34;, got)
+999	+	}
+1000	+}
+1001	diff --git a/internal/redact/redact.go b/internal/redact/redact.go
+1002	new file mode 100644
+1003	index 0000000..ed9c7be
+1004	--- /dev/null
+1005	+++ b/internal/redact/redact.go
+1006	@@ -0,0 +1,82 @@
+1007	+// Package redact scrubs likely secrets and the user&#39;s home path from transcript
+1008	+// text before it is rendered. It is best-effort defense-in-depth, not a
+1009	+// guarantee of complete secret removal.
+1010	+package redact
+1011	+
+1012	+import (
+1013	+	&#34;regexp&#34;
+1014	+	&#34;strings&#34;
+1015	+
+1016	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1017	+)
+1018	+
+1019	+type rule struct {
+1020	+	kind string
+1021	+	re   *regexp.Regexp
+1022	+}
+1023	+
+1024	+// Ordered: more specific patterns first.
+1025	+var rules = []rule{
+1026	+	{&#34;aws-key&#34;, regexp.MustCompile(`\bAKIA[0-9A-Z]{16}\b`)},
+1027	+	{&#34;token&#34;, regexp.MustCompile(`\b(?:sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{10,})\b`)},
+1028	+	{&#34;jwt&#34;, regexp.MustCompile(`\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b`)},
+1029	+	{&#34;assignment&#34;, regexp.MustCompile(`(?i)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\s*[=:]\s*[&#39;&#34;]?([^\s&#39;&#34;]{6,})`)},
+1030	+}
+1031	+
+1032	+// Redactor applies redaction rules and a home-directory rewrite.
+1033	+type Redactor struct {
+1034	+	homeDir string
+1035	+}
+1036	+
+1037	+func New(homeDir string) *Redactor { return &amp;Redactor{homeDir: homeDir} }
+1038	+
+1039	+// String redacts a single string.
+1040	+func (r *Redactor) String(s string) string {
+1041	+	for _, ru := range rules {
+1042	+		if ru.kind == &#34;assignment&#34; {
+1043	+			s = ru.re.ReplaceAllString(s, &#34;$1=[REDACTED:assignment]&#34;)
+1044	+			continue
+1045	+		}
+1046	+		s = ru.re.ReplaceAllString(s, &#34;[REDACTED:&#34;+ru.kind+&#34;]&#34;)
+1047	+	}
+1048	+	if r.homeDir != &#34;&#34; {
+1049	+		s = strings.ReplaceAll(s, r.homeDir, &#34;~&#34;)
+1050	+	}
+1051	+	return s
+1052	+}
+1053	+
+1054	+// Session redacts every user-visible text field of a Session in place.
+1055	+func Session(s *model.Session, homeDir string) {
+1056	+	r := New(homeDir)
+1057	+	for i := range s.Turns {
+1058	+		redactTurn(r, &amp;s.Turns[i])
+1059	+	}
+1060	+}
+1061	+
+1062	+func redactTurn(r *Redactor, t *model.Turn) {
+1063	+	for i := range t.Blocks {
+1064	+		b := &amp;t.Blocks[i]
+1065	+		b.Text = r.String(b.Text)
+1066	+		if b.Tool != nil {
+1067	+			redactTool(r, b.Tool)
+1068	+		}
+1069	+	}
+1070	+}
+1071	+
+1072	+func redactTool(r *Redactor, tc *model.ToolCall) {
+1073	+	tc.Summary = r.String(tc.Summary)
+1074	+	tc.InputJSON = r.String(tc.InputJSON)
+1075	+	if tc.Result != nil {
+1076	+		tc.Result.Content = r.String(tc.Result.Content)
+1077	+	}
+1078	+	if tc.Diff != nil {
+1079	+		tc.Diff.OldText = r.String(tc.Diff.OldText)
+1080	+		tc.Diff.NewText = r.String(tc.Diff.NewText)
+1081	+		tc.Diff.Path = r.String(tc.Diff.Path)
+1082	+	}
+1083	+	for i := range tc.Subagents {
+1084	+		for j := range tc.Subagents[i].Turns {
+1085	+			redactTurn(r, &amp;tc.Subagents[i].Turns[j])
+1086	+		}
+1087	+	}
+1088	+}
+1089	diff --git a/internal/redact/redact_test.go b/internal/redact/redact_test.go
+1090	new file mode 100644
+1091	index 0000000..9d398d9
+1092	--- /dev/null
+1093	+++ b/internal/redact/redact_test.go
+1094	@@ -0,0 +1,56 @@
+1095	+package redact
+1096	+
+1097	+import (
+1098	+	&#34;strings&#34;
+1099	+	&#34;testing&#34;
+1100	+
+1101	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1102	+)
+1103	+
+1104	+func TestRedactPatterns(t *testing.T) {
+1105	+	r := New(&#34;~&#34;)
+1106	+	cases := []struct {
+1107	+		in       string
+1108	+		wantKind string
+1109	+	}{
+1110	+		{&#34;key [REDACTED:aws-key] here&#34;, &#34;aws-key&#34;},
+1111	+		{&#34;token [REDACTED:token]&#34;, &#34;token&#34;},
+1112	+		{&#34;[REDACTED:token]&#34;, &#34;token&#34;},
+1113	+		{&#34;export API_KEY=[REDACTED:assignment]&#34;, &#34;assignment&#34;},
+1114	+	}
+1115	+	for _, c := range cases {
+1116	+		got := r.String(c.in)
+1117	+		if !strings.Contains(got, &#34;[REDACTED:&#34;+c.wantKind+&#34;]&#34;) {
+1118	+			t.Errorf(&#34;String(%q) = %q, want kind %s&#34;, c.in, got, c.wantKind)
+1119	+		}
+1120	+	}
+1121	+}
+1122	+
+1123	+func TestRedactHomeDir(t *testing.T) {
+1124	+	r := New(&#34;~&#34;)
+1125	+	if got := r.String(&#34;~/secret/file&#34;); got != &#34;~/secret/file&#34; {
+1126	+		t.Errorf(&#34;home rewrite = %q&#34;, got)
+1127	+	}
+1128	+}
+1129	+
+1130	+func TestRedactSessionWalksBlocks(t *testing.T) {
+1131	+	s := &amp;model.Session{Turns: []model.Turn{{
+1132	+		Kind: model.TurnAssistant,
+1133	+		Blocks: []model.Block{
+1134	+			{Type: model.BlockText, Text: &#34;my key [REDACTED:aws-key]&#34;},
+1135	+			{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+1136	+				Name:    &#34;Bash&#34;,
+1137	+				Summary: &#34;echo [REDACTED:aws-key]&#34;,
+1138	+				Result:  &amp;model.ToolResult{Content: &#34;[REDACTED:aws-key]&#34;},
+1139	+			}},
+1140	+		},
+1141	+	}}}
+1142	+	Session(s, &#34;~&#34;)
+1143	+	if strings.Contains(s.Turns[0].Blocks[0].Text, &#34;AKIA&#34;) {
+1144	+		t.Error(&#34;block text not redacted&#34;)
+1145	+	}
+1146	+	tool := s.Turns[0].Blocks[1].Tool
+1147	+	if strings.Contains(tool.Summary, &#34;AKIA&#34;) || strings.Contains(tool.Result.Content, &#34;AKIA&#34;) {
+1148	+		t.Error(&#34;tool fields not redacted&#34;)
+1149	+	}
+1150	+}
+1151	diff --git a/internal/render/assets/app.js b/internal/render/assets/app.js
+1152	new file mode 100644
+1153	index 0000000..8a168a7
+1154	--- /dev/null
+1155	+++ b/internal/render/assets/app.js
+1156	@@ -0,0 +1,40 @@
+1157	+(function () {
+1158	+  var filter = document.getElementById(&#39;filter&#39;);
+1159	+  var turns = Array.prototype.slice.call(document.querySelectorAll(&#39;.turn[data-search]&#39;));
+1160	+  if (filter) {
+1161	+    filter.addEventListener(&#39;input&#39;, function () {
+1162	+      var q = filter.value.toLowerCase().trim();
+1163	+      turns.forEach(function (t) {
+1164	+        var hit = q === &#39;&#39; || (t.getAttribute(&#39;data-search&#39;) || &#39;&#39;).indexOf(q) !== -1;
+1165	+        t.classList.toggle(&#39;filtered&#39;, !hit);
+1166	+      });
+1167	+    });
+1168	+  }
+1169	+
+1170	+  var toggleAll = document.getElementById(&#39;toggle-all&#39;);
+1171	+  var expanded = false;
+1172	+  if (toggleAll) {
+1173	+    toggleAll.addEventListener(&#39;click&#39;, function () {
+1174	+      expanded = !expanded;
+1175	+      document.querySelectorAll(&#39;details&#39;).forEach(function (d) { d.open = expanded; });
+1176	+      toggleAll.textContent = expanded ? &#39;Collapse all&#39; : &#39;Expand all&#39;;
+1177	+    });
+1178	+  }
+1179	+
+1180	+  var toggleTools = document.getElementById(&#39;toggle-tools&#39;);
+1181	+  if (toggleTools) {
+1182	+    toggleTools.addEventListener(&#39;click&#39;, function () {
+1183	+      var hidden = document.body.classList.toggle(&#39;hide-tools&#39;);
+1184	+      toggleTools.textContent = hidden ? &#39;Show tool detail&#39; : &#39;Hide tool detail&#39;;
+1185	+    });
+1186	+  }
+1187	+
+1188	+  var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);
+1189	+  if (toggleTheme) {
+1190	+    toggleTheme.addEventListener(&#39;click&#39;, function () {
+1191	+      var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);
+1192	+      var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);
+1193	+      document.documentElement.setAttribute(&#39;data-theme&#39;, next);
+1194	+    });
+1195	+  }
+1196	+})();
+1197	diff --git a/internal/render/assets/report.html.tmpl b/internal/render/assets/report.html.tmpl
+1198	new file mode 100644
+1199	index 0000000..c595929
+1200	--- /dev/null
+1201	+++ b/internal/render/assets/report.html.tmpl
+1202	@@ -0,0 +1,46 @@
+1203	+&lt;!DOCTYPE html&gt;
+1204	+&lt;html lang=&#34;en&#34;&gt;
+1205	+&lt;head&gt;
+1206	+&lt;meta charset=&#34;utf-8&#34;&gt;
+1207	+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&gt;
+1208	+&lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
+1209	+&lt;link rel=&#34;stylesheet&#34; href=&#34;assets/styles.css&#34;&gt;
+1210	+&lt;/head&gt;
+1211	+&lt;body&gt;
+1212	+&lt;header class=&#34;topbar&#34;&gt;
+1213	+  &lt;div class=&#34;topbar-inner&#34;&gt;
+1214	+    &lt;div class=&#34;brand&#34;&gt;ccwhid&lt;/div&gt;
+1215	+    &lt;input id=&#34;filter&#34; type=&#34;search&#34; placeholder=&#34;Filter turns…&#34; aria-label=&#34;Filter turns&#34;&gt;
+1216	+    &lt;button id=&#34;toggle-all&#34; class=&#34;btn&#34;&gt;Expand all&lt;/button&gt;
+1217	+    &lt;button id=&#34;toggle-tools&#34; class=&#34;btn&#34;&gt;Hide tool detail&lt;/button&gt;
+1218	+    &lt;button id=&#34;toggle-theme&#34; class=&#34;btn&#34; aria-label=&#34;Toggle theme&#34;&gt;◐&lt;/button&gt;
+1219	+  &lt;/div&gt;
+1220	+&lt;/header&gt;
+1221	+&lt;div class=&#34;layout&#34;&gt;
+1222	+  &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Prompts&#34;&gt;
+1223	+    &lt;div class=&#34;sidebar-title&#34;&gt;Prompts&lt;/div&gt;
+1224	+    &lt;ol class=&#34;prompt-list&#34;&gt;
+1225	+      {{ range .Prompts }}&lt;li&gt;&lt;a href=&#34;#turn-{{ .Index }}&#34;&gt;{{ .Preview }}&lt;/a&gt;&lt;/li&gt;{{ end }}
+1226	+    &lt;/ol&gt;
+1227	+  &lt;/nav&gt;
+1228	+  &lt;main class=&#34;content&#34;&gt;
+1229	+    &lt;section class=&#34;session-head&#34;&gt;
+1230	+      &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+1231	+      &lt;div class=&#34;meta&#34;&gt;
+1232	+        &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+1233	+        {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+1234	+        &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+1235	+        &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+1236	+      &lt;/div&gt;
+1237	+    &lt;/section&gt;
+1238	+    {{ range .Turns }}
+1239	+    &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+1240	+      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;
+1241	+      &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+1242	+    &lt;/article&gt;
+1243	+    {{ end }}
+1244	+  &lt;/main&gt;
+1245	+&lt;/div&gt;
+1246	+&lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+1247	+&lt;/body&gt;
+1248	+&lt;/html&gt;
+1249	diff --git a/internal/render/assets/styles.css b/internal/render/assets/styles.css
+1250	new file mode 100644
+1251	index 0000000..dd87d2d
+1252	--- /dev/null
+1253	+++ b/internal/render/assets/styles.css
+1254	@@ -0,0 +1,68 @@
+1255	+:root {
+1256	+  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+1257	+  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+1258	+  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+1259	+  --font: -apple-system, BlinkMacSystemFont, &#34;Segoe UI&#34;, Roboto, sans-serif;
+1260	+  --mono: ui-monospace, SFMono-Regular, &#34;SF Mono&#34;, Menlo, monospace;
+1261	+}
+1262	+@media (prefers-color-scheme: dark) {
+1263	+  :root {
+1264	+    --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+1265	+    --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md&#34;
+}</pre><pre class="tool-result">1	# ccwhid (cc-what-have-i-done) — Design
+2	
+3	**Date:** 2026-07-11
+4	**Status:** Approved
+5	
+6	## 1. Purpose &amp; Scope
+7	
+8	A single, self-contained Go binary that turns a Claude Code session transcript
+9	(`.jsonl`) into a browsable static HTML report styled like Claude&#39;s docs /
+10	artifacts. Run it with flags to target a specific session, or with no args to
+11	open a TUI session browser. Output is a self-contained folder that works over
+12	`file://`, needs no server, and is safe to commit into a project repo as a
+13	documentation artifact.
+14	
+15	The report answers: &#34;what did I prompt, and what did Claude Code do?&#34;
+16	
+17	## 2. Architecture (packages)
+18	
+19	```
+20	cmd/ccwhid/main.go        wiring: cobra root command, flag parsing, dispatch
+21	internal/discovery        find &amp; decode ~/.claude/projects, list sessions + metadata
+22	internal/transcript       parse JSONL into the typed domain model
+23	internal/model            domain types: Session, Turn, Message, ToolCall, Diff, Subagent
+24	internal/redact           secret/path redaction (pluggable rules)
+25	internal/render           build the HTML site from the model (html/template + goldmark + chroma)
+26	internal/assets           go:embed of templates, css, js
+27	internal/tui              Bubble Tea session browser + options screen
+28	```
+29	
+30	Boundaries: `transcript` produces a `model.Session` and is the only package that
+31	knows the JSONL wire format. `render` consumes `model.Session` and knows nothing
+32	about JSONL. `tui` orchestrates only — it calls `discovery` and `render`, and
+33	contains no parsing or HTML logic. Each package is independently testable.
+34	
+35	**External libraries:** cobra (CLI), Bubble Tea + Bubbles + Lipgloss (TUI),
+36	goldmark (markdown → HTML), chroma (syntax highlighting). All HTML/CSS/JS assets
+37	embedded via `go:embed`. No external fonts or CDNs at runtime.
+38	
+39	## 3. Transcript Format (as observed)
+40	
+41	Sessions live at `~/.claude/projects/&lt;encoded-cwd&gt;/&lt;session-id&gt;.jsonl`. The
+42	encoded directory name is the absolute cwd with `/` replaced by `-` (e.g.
+43	`-Users-markus-IdeaProjects-cc-what-have-i-done`).
+44	
+45	Each line is a JSON object with a `type`:
+46	- `user` / `assistant` — carry a `message` field in Anthropic message format
+47	  (content blocks: `text`, `thinking`, `tool_use`, `tool_result`). Threaded via
+48	  `parentUuid`/`uuid`. Metadata: `timestamp`, `cwd`, `gitBranch`, `slug`,
+49	  `version`, `isSidechain`, `isMeta`, `userType`, `toolUseResult`.
+50	- `attachment` — injected attachments.
+51	- `ai-title` — a human-readable session title (`aiTitle`).
+52	- `last-prompt`, `mode`, `permission-mode`, `file-history-snapshot` — session
+53	  state records.
+54	
+55	**Subagents:** Task-tool subagent activity appears as records with
+56	`isSidechain: true` in the *same* file, linked to the spawning tool call. These
+57	are folded into the parent `Task` tool call as nested subagent runs.
+58	
+59	**Robustness:** the parser must tolerate unknown `type` values, unknown content
+60	block kinds, and malformed lines (see §9).
+61	
+62	## 4. Data Flow
+63	
+64	1. `discovery` scans `~/.claude/projects/*/*.jsonl`, decodes project paths, and
+65	   builds a lightweight index per session: id, project path, `ai-title`, first
+66	   user prompt (fallback title), start/end timestamps, message count,
+67	   has-subagents flag. (Reads cheaply — enough for listing without full parse.)
+68	2. `transcript` parses the chosen file: folds the flat `parentUuid`-threaded
+69	   records into an ordered **timeline of turns** (user prompt → assistant
+70	   text/thinking/tool_use → tool_result). Sidechain runs attach to their parent
+71	   `Task` tool call as nested `Subagent`s. Meta/system-reminder noise is dropped
+72	   per the curated setting.
+73	3. `redact` walks user-visible text fields applying redaction rules (on by
+74	   default).
+75	4. `render` emits `index.html` + `assets/` into the output directory.
+76	
+77	## 5. Rendering Model (curated &amp; readable)
+78	
+79	- **User prompts** — rendered as markdown, visually distinct (accent-tinted
+80	  card). These are the spine of the report.
+81	- **Assistant text** — markdown → HTML via goldmark; fenced code blocks
+82	  syntax-highlighted via chroma.
+83	- **Tool calls** — a compact card per call: icon + tool name + one-line summary
+84	  (e.g. `Edit  src/foo.go`, `Bash  git status`). Full command/args/result body
+85	  is collapsible, **collapsed by default**. `Edit`/`Write` render as
+86	  syntax-highlighted diffs.
+87	- **Thinking blocks** — collapsed, muted styling, labeled &#34;thinking&#34;.
+88	- **Subagents** — nested collapsible block under the spawning `Task` call.
+89	- **Hidden by default** — `system-reminder` content, `attachment` records,
+90	  `isMeta` records. (A reveal toggle for these is out of scope for v1.)
+91	
+92	## 6. Site Structure &amp; Interactivity (light vanilla JS)
+93	
+94	```
+95	&lt;out&gt;/index.html          the session report
+96	&lt;out&gt;/assets/styles.css
+97	&lt;out&gt;/assets/app.js        collapse toggles, client-side filter/search, sidebar nav
+98	```
+99	
+100	- **Left sidebar** — jump-to-prompt list of the session&#39;s user turns (the &#34;what
+101	  did I ask&#34; index).
+102	- **Top bar** — text filter (hides non-matching turns), expand/collapse-all, and
+103	  a toggle to show/hide tool detail.
+104	- All interactivity is client-side vanilla JS, works over `file://`, no server.
+105	- Long sessions render as one page. Message virtualization/pagination is out of
+106	  scope for v1.
+107	
+108	## 7. Styling (Claude docs / artifacts vibe)
+109	
+110	Warm near-white background (≈`#F5F4EE`), high-contrast text, Claude coral/rust
+111	accent (≈`#D97757`), rounded cards with soft borders, generous whitespace,
+112	clean sans body with monospace for code. Ships **light + dark** themes
+113	(respects `prefers-color-scheme` with a manual toggle). All CSS embedded — no
+114	external fonts or CDNs (offline longevity).
+115	
+116	## 8. CLI Surface
+117	
+118	```
+119	ccwhid                         no args → TUI browser
+120	ccwhid --session &lt;id|prefix&gt;   render a specific session (id or unambiguous prefix)
+121	ccwhid --project &lt;path|name&gt;   scope to a project (with --session or --latest)
+122	ccwhid --latest                most recent session (of project, or globally)
+123	ccwhid --out &lt;dir&gt;             output folder (default: ./ccwhid-report/&lt;session-short&gt;)
+124	ccwhid --title &lt;str&gt;           override report title
+125	ccwhid --include-subagents     default true; --no-include-subagents to omit
+126	ccwhid --no-redact             disable redaction
+127	ccwhid --force                 overwrite a non-empty output directory
+128	ccwhid --open                  open the result in a browser after generating
+129	```
+130	
+131	Built with cobra. The TUI mirrors these: browse projects → sessions (grouped,
+132	current project on top), then a small options screen (output dir, include
+133	subagents, redact, open-after) before generating.
+134	
+135	## 9. Error Handling
+136	
+137	- Malformed JSONL lines are skipped with a counted warning; never abort the whole
+138	  report.
+139	- Missing `~/.claude/projects` → friendly, actionable message.
+140	- Unknown tool types / content blocks render generically (name + raw JSON in a
+141	  collapsible) rather than failing.
+142	- Output directory collision (non-empty) → refuse unless `--force`.
+143	
+144	## 10. Redaction (on by default)
+145	
+146	`internal/redact` applies rules to all rendered text:
+147	- Common secret shapes: AWS access keys, `sk-`/`ghp_`-style tokens, JWTs,
+148	  generic `KEY=…` / `TOKEN=…` / `SECRET=…` assignments, high-entropy blobs.
+149	- Rewrites the user&#39;s home directory to `~`.
+150	- Matches replaced with `[REDACTED:&lt;kind&gt;]`.
+151	
+152	`--no-redact` disables. Rules live in one file, easy to extend and tune. Redaction
+153	is best-effort defense-in-depth, not a guarantee; this is documented for users.
+154	
+155	## 11. Testing (TDD)
+156	
+157	- `transcript` — golden-file tests over small crafted `.jsonl` fixtures (normal
+158	  turn, tool call, diff, sidechain, malformed line, unknown type).
+159	- `redact` — table tests per rule (positive and negative cases).
+160	- `render` — snapshot tests asserting key HTML structure (not pixel styling).
+161	- `discovery` — tested against a temp fake `.claude` tree.
+162	- `tui` — list-building and filtering logic unit-tested; the interactive layer
+163	  kept thin.
+164	
+165	## 12. Out of Scope for v1 (YAGNI)
+166	
+167	Multi-session/combined reports, PDF export, live-follow of an active session,
+168	cross-project full-text search index, message virtualization, config files.
+169	All addable later without reworking the core model.
+170	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.24</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff&#34;,
+  &#34;limit&#34;: 1375,
+  &#34;offset&#34;: 1266
+}</pre><pre class="tool-result">1266	+    --code-bg: #201F1C; --user-bg: #2A231F;
+1267	+  }
+1268	+}
+1269	+:root[data-theme=&#34;dark&#34;] {
+1270	+  --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+1271	+  --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;
+1272	+  --code-bg: #201F1C; --user-bg: #2A231F;
+1273	+}
+1274	+:root[data-theme=&#34;light&#34;] {
+1275	+  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+1276	+  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+1277	+  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+1278	+}
+1279	+* { box-sizing: border-box; }
+1280	+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
+1281	+.topbar { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--border); }
+1282	+.topbar-inner { display: flex; gap: .75rem; align-items: center; max-width: 1100px; margin: 0 auto; padding: .6rem 1rem; }
+1283	+.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+1284	+#filter { flex: 1; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+1285	+.btn { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; font-size: .85rem; }
+1286	+.btn:hover { border-color: var(--accent); }
+1287	+.layout { display: flex; max-width: 1100px; margin: 0 auto; gap: 1.5rem; padding: 1.5rem 1rem; }
+1288	+.sidebar { flex: 0 0 220px; position: sticky; top: 4rem; align-self: flex-start; max-height: calc(100vh - 5rem); overflow: auto; }
+1289	+.sidebar-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+1290	+.prompt-list { list-style: none; padding: 0; margin: 0; counter-reset: p; }
+1291	+.prompt-list li { counter-increment: p; margin-bottom: .35rem; }
+1292	+.prompt-list a { color: var(--text); text-decoration: none; font-size: .85rem; display: block; padding: .25rem .4rem; border-radius: 6px; }
+1293	+.prompt-list a::before { content: counter(p) &#34;. &#34;; color: var(--muted); }
+1294	+.prompt-list a:hover { background: var(--accent-soft); }
+1295	+.content { flex: 1; min-width: 0; }
+1296	+.session-head h1 { margin: 0 0 .3rem; font-size: 1.6rem; }
+1297	+.meta { display: flex; flex-wrap: wrap; gap: .75rem; color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+1298	+.turn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; scroll-margin-top: 4.5rem; }
+1299	+.turn-user { background: var(--user-bg); border-color: var(--accent-soft); }
+1300	+.turn-role { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+1301	+.turn-user .turn-role { color: var(--accent); }
+1302	+.turn-body &gt; :first-child { margin-top: 0; }
+1303	+.turn-body &gt; :last-child { margin-bottom: 0; }
+1304	+.turn-body pre { background: var(--code-bg); padding: .8rem; border-radius: 8px; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
+1305	+.turn-body code { font-family: var(--mono); font-size: .9em; }
+1306	+.tool { border: 1px solid var(--border); border-radius: 8px; margin: .6rem 0; background: var(--bg); }
+1307	+.tool-head { cursor: pointer; padding: .5rem .7rem; display: flex; gap: .6rem; align-items: baseline; }
+1308	+.tool-name { font-weight: 600; color: var(--accent); font-size: .8rem; }
+1309	+.tool-summary { font-family: var(--mono); font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+1310	+.tool-body { padding: 0 .7rem .7rem; }
+1311	+.tool-result { color: var(--text); }
+1312	+.tool-result-error { border-left: 3px solid var(--accent); }
+1313	+.thinking { color: var(--muted); font-size: .9rem; margin: .5rem 0; }
+1314	+.thinking summary { cursor: pointer; }
+1315	+.subagent { margin: .6rem 0; border-left: 3px solid var(--accent-soft); padding-left: .7rem; }
+1316	+.subagent summary { cursor: pointer; color: var(--accent); font-size: .85rem; }
+1317	+.diff { font-family: var(--mono); font-size: .8rem; background: var(--code-bg); border-radius: 8px; padding: .5rem; overflow-x: auto; }
+1318	+.diff-del { color: #b23b3b; white-space: pre-wrap; }
+1319	+.diff-add { color: #2f8a4c; white-space: pre-wrap; }
+1320	+body.hide-tools .tool-body { display: none; }
+1321	+.turn.filtered { display: none; }
+1322	+@media (max-width: 760px) { .sidebar { display: none; } }
+1323	diff --git a/internal/render/markdown.go b/internal/render/markdown.go
+1324	new file mode 100644
+1325	index 0000000..ec6e38e
+1326	--- /dev/null
+1327	+++ b/internal/render/markdown.go
+1328	@@ -0,0 +1,78 @@
+1329	+package render
+1330	+
+1331	+import (
+1332	+	&#34;bytes&#34;
+1333	+	&#34;html&#34;
+1334	+	&#34;html/template&#34;
+1335	+	&#34;strings&#34;
+1336	+
+1337	+	chromahtml &#34;github.com/alecthomas/chroma/v2/formatters/html&#34;
+1338	+	&#34;github.com/alecthomas/chroma/v2/lexers&#34;
+1339	+	&#34;github.com/alecthomas/chroma/v2/styles&#34;
+1340	+	&#34;github.com/yuin/goldmark&#34;
+1341	+	&#34;github.com/yuin/goldmark/extension&#34;
+1342	+
+1343	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1344	+)
+1345	+
+1346	+var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
+1347	+
+1348	+// Markdown renders CommonMark+GFM to HTML. goldmark runs with its default
+1349	+// Unsafe=false setting, so any raw HTML embedded in the transcript text is
+1350	+// stripped (replaced with an HTML comment) rather than passed through — the
+1351	+// rendered Body is therefore safe to emit as template.HTML.
+1352	+func Markdown(src string) template.HTML {
+1353	+	var buf bytes.Buffer
+1354	+	if err := md.Convert([]byte(src), &amp;buf); err != nil {
+1355	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(src) + &#34;&lt;/pre&gt;&#34;)
+1356	+	}
+1357	+	return template.HTML(buf.String())
+1358	+}
+1359	+
+1360	+// Highlight renders a code string with chroma using inline styles (no external
+1361	+// stylesheet needed). lang may be empty for auto-detection.
+1362	+func Highlight(code, lang string) template.HTML {
+1363	+	lexer := lexers.Get(lang)
+1364	+	if lexer == nil {
+1365	+		lexer = lexers.Analyse(code)
+1366	+	}
+1367	+	if lexer == nil {
+1368	+		lexer = lexers.Fallback
+1369	+	}
+1370	+	style := styles.Get(&#34;github&#34;)
+1371	+	if style == nil {
+1372	+		style = styles.Fallback
+1373	+	}
+1374	+	formatter := chromahtml.New(chromahtml.WithClasses(false), chromahtml.TabWidth(2))
+1375	+	it, err := lexer.Tokenise(nil, code)
+1376	+	if err != nil {
+1377	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+1378	+	}
+1379	+	var buf bytes.Buffer
+1380	+	if err := formatter.Format(&amp;buf, style, it); err != nil {
+1381	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+1382	+	}
+1383	+	return template.HTML(buf.String())
+1384	+}
+1385	+
+1386	+// DiffHTML renders a simple line-based diff of a Diff&#39;s old/new text.
+1387	+func DiffHTML(d *model.Diff) template.HTML {
+1388	+	var b strings.Builder
+1389	+	b.WriteString(`&lt;div class=&#34;diff&#34;&gt;`)
+1390	+	if d.OldText != &#34;&#34; {
+1391	+		for _, line := range strings.Split(d.OldText, &#34;\n&#34;) {
+1392	+			b.WriteString(`&lt;div class=&#34;diff-del&#34;&gt;- `)
+1393	+			b.WriteString(html.EscapeString(line))
+1394	+			b.WriteString(&#34;&lt;/div&gt;&#34;)
+1395	+		}
+1396	+	}
+1397	+	if d.NewText != &#34;&#34; {
+1398	+		for _, line := range strings.Split(d.NewText, &#34;\n&#34;) {
+1399	+			b.WriteString(`&lt;div class=&#34;diff-add&#34;&gt;+ `)
+1400	+			b.WriteString(html.EscapeString(line))
+1401	+			b.WriteString(&#34;&lt;/div&gt;&#34;)
+1402	+		}
+1403	+	}
+1404	+	b.WriteString(&#34;&lt;/div&gt;&#34;)
+1405	+	return template.HTML(b.String())
+1406	+}
+1407	diff --git a/internal/render/render.go b/internal/render/render.go
+1408	new file mode 100644
+1409	index 0000000..d84d564
+1410	--- /dev/null
+1411	+++ b/internal/render/render.go
+1412	@@ -0,0 +1,189 @@
+1413	+package render
+1414	+
+1415	+import (
+1416	+	&#34;bytes&#34;
+1417	+	&#34;embed&#34;
+1418	+	&#34;html&#34;
+1419	+	&#34;html/template&#34;
+1420	+	&#34;os&#34;
+1421	+	&#34;path/filepath&#34;
+1422	+	&#34;strings&#34;
+1423	+
+1424	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1425	+)
+1426	+
+1427	+//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+1428	+var assets embed.FS
+1429	+
+1430	+// Options configures a render.
+1431	+type Options struct {
+1432	+	Title string
+1433	+}
+1434	+
+1435	+// Site renders the session into outDir as index.html + assets/.
+1436	+func Site(s model.Session, outDir string, opts Options) error {
+1437	+	title := opts.Title
+1438	+	if title == &#34;&#34; {
+1439	+		title = s.DisplayTitle()
+1440	+	}
+1441	+
+1442	+	tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+1443	+	if err != nil {
+1444	+		return err
+1445	+	}
+1446	+	tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+1447	+	if err != nil {
+1448	+		return err
+1449	+	}
+1450	+
+1451	+	data := buildViewModel(s, title)
+1452	+	var buf bytes.Buffer
+1453	+	if err := tmpl.Execute(&amp;buf, data); err != nil {
+1454	+		return err
+1455	+	}
+1456	+
+1457	+	if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+1458	+		return err
+1459	+	}
+1460	+	if err := os.WriteFile(filepath.Join(outDir, &#34;index.html&#34;), buf.Bytes(), 0o644); err != nil {
+1461	+		return err
+1462	+	}
+1463	+	for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+1464	+		b, err := assets.ReadFile(&#34;assets/&#34; + name)
+1465	+		if err != nil {
+1466	+			return err
+1467	+		}
+1468	+		if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+1469	+			return err
+1470	+		}
+1471	+	}
+1472	+	return nil
+1473	+}
+1474	+
+1475	+// view models -------------------------------------------------------------
+1476	+
+1477	+type viewData struct {
+1478	+	Title     string
+1479	+	Session   model.Session
+1480	+	StartedAt string
+1481	+	TurnCount int
+1482	+	Prompts   []promptRef
+1483	+	Turns     []turnView
+1484	+}
+1485	+
+1486	+type promptRef struct {
+1487	+	Index   int
+1488	+	Preview string
+1489	+}
+1490	+
+1491	+type turnView struct {
+1492	+	Index      int
+1493	+	Kind       string
+1494	+	RoleLabel  string
+1495	+	SearchText string
+1496	+	Body       template.HTML
+1497	+}
+1498	+
+1499	+func buildViewModel(s model.Session, title string) viewData {
+1500	+	d := viewData{
+1501	+		Title:     title,
+1502	+		Session:   s,
+1503	+		TurnCount: len(s.Turns),
+1504	+	}
+1505	+	if !s.StartedAt.IsZero() {
+1506	+		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+1507	+	}
+1508	+	for i, t := range s.Turns {
+1509	+		if t.Kind == model.TurnUser {
+1510	+			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(turnPlainText(t), 60)})
+1511	+		}
+1512	+		d.Turns = append(d.Turns, turnView{
+1513	+			Index:      i,
+1514	+			Kind:       string(t.Kind),
+1515	+			RoleLabel:  roleLabel(t.Kind),
+1516	+			SearchText: strings.ToLower(turnPlainText(t)),
+1517	+			Body:       renderTurnBody(t),
+1518	+		})
+1519	+	}
+1520	+	return d
+1521	+}
+1522	+
+1523	+func roleLabel(k model.TurnKind) string {
+1524	+	if k == model.TurnUser {
+1525	+		return &#34;You&#34;
+1526	+	}
+1527	+	return &#34;Claude&#34;
+1528	+}
+1529	+
+1530	+// renderTurnBody renders all blocks of a turn to HTML.
+1531	+func renderTurnBody(t model.Turn) template.HTML {
+1532	+	var b strings.Builder
+1533	+	for _, blk := range t.Blocks {
+1534	+		switch blk.Type {
+1535	+		case model.BlockText:
+1536	+			b.WriteString(string(Markdown(blk.Text)))
+1537	+		case model.BlockThinking:
+1538	+			b.WriteString(`&lt;details class=&#34;thinking&#34;&gt;&lt;summary&gt;thinking&lt;/summary&gt;`)
+1539	+			b.WriteString(string(Markdown(blk.Text)))
+1540	+			b.WriteString(`&lt;/details&gt;`)
+1541	+		case model.BlockToolUse:
+1542	+			b.WriteString(renderTool(blk.Tool))
+1543	+		}
+1544	+	}
+1545	+	return template.HTML(b.String())
+1546	+}
+1547	+
+1548	+func renderTool(tc *model.ToolCall) string {
+1549	+	var b strings.Builder
+1550	+	b.WriteString(`&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;`)
+1551	+	b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+1552	+	if tc.Summary != &#34;&#34; {
+1553	+		b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(tc.Summary) + `&lt;/span&gt;`)
+1554	+	}
+1555	+	b.WriteString(`&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;`)
+1556	+	if tc.Diff != nil {
+1557	+		b.WriteString(string(DiffHTML(tc.Diff)))
+1558	+	} else if tc.InputJSON != &#34;&#34; {
+1559	+		b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+1560	+	}
+1561	+	if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+1562	+		cls := &#34;tool-result&#34;
+1563	+		if tc.Result.IsError {
+1564	+			cls += &#34; tool-result-error&#34;
+1565	+		}
+1566	+		b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(tc.Result.Content) + `&lt;/pre&gt;`)
+1567	+	}
+1568	+	for _, sub := range tc.Subagents {
+1569	+		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+1570	+		for _, st := range sub.Turns {
+1571	+			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st.Kind) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+1572	+			b.WriteString(string(renderTurnBody(st)))
+1573	+			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+1574	+		}
+1575	+		b.WriteString(`&lt;/details&gt;`)
+1576	+	}
+1577	+	b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+1578	+	return b.String()
+1579	+}
+1580	+
+1581	+func turnPlainText(t model.Turn) string {
+1582	+	var parts []string
+1583	+	for _, blk := range t.Blocks {
+1584	+		switch blk.Type {
+1585	+		case model.BlockText, model.BlockThinking:
+1586	+			parts = append(parts, blk.Text)
+1587	+		case model.BlockToolUse:
+1588	+			parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
+1589	+		}
+1590	+	}
+1591	+	return strings.Join(parts, &#34; &#34;)
+1592	+}
+1593	+
+1594	+func preview(s string, n int) string {
+1595	+	s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))
+1596	+	r := []rune(s)
+1597	+	if len(r) &lt;= n {
+1598	+		return s
+1599	+	}
+1600	+	return string(r[:n-1]) + &#34;…&#34;
+1601	+}
+1602	diff --git a/internal/render/render_e2e_test.go b/internal/render/render_e2e_test.go
+1603	new file mode 100644
+1604	index 0000000..a6ff430
+1605	--- /dev/null
+1606	+++ b/internal/render/render_e2e_test.go
+1607	@@ -0,0 +1,49 @@
+1608	+package render_test
+1609	+
+1610	+import (
+1611	+	&#34;os&#34;
+1612	+	&#34;path/filepath&#34;
+1613	+	&#34;strings&#34;
+1614	+	&#34;testing&#34;
+1615	+
+1616	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+1617	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+1618	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+1619	+)
+1620	+
+1621	+func TestEndToEndRedactedReport(t *testing.T) {
+1622	+	dir := t.TempDir()
+1623	+	src := filepath.Join(dir, &#34;s.jsonl&#34;)
+1624	+	lines := strings.Join([]string{
+1625	+		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;E2E&#34;}`,
+1626	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;my key is [REDACTED:aws-key]&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+1627	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;ok&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;t1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;ls&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+1628	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;t1&#34;,&#34;content&#34;:&#34;a.txt&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}`,
+1629	+	}, &#34;\n&#34;)
+1630	+	if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {
+1631	+		t.Fatal(err)
+1632	+	}
+1633	+	sess, err := transcript.ParseFile(src, transcript.Options{IncludeSubagents: true})
+1634	+	if err != nil {
+1635	+		t.Fatal(err)
+1636	+	}
+1637	+	redact.Session(&amp;sess, &#34;&#34;)
+1638	+	out := filepath.Join(dir, &#34;report&#34;)
+1639	+	if err := render.Site(sess, out, render.Options{}); err != nil {
+1640	+		t.Fatal(err)
+1641	+	}
+1642	+	html, err := os.ReadFile(filepath.Join(out, &#34;index.html&#34;))
+1643	+	if err != nil {
+1644	+		t.Fatal(err)
+1645	+	}
+1646	+	s := string(html)
+1647	+	if strings.Contains(s, &#34;[REDACTED:aws-key]&#34;) {
+1648	+		t.Error(&#34;secret leaked into report&#34;)
+1649	+	}
+1650	+	if !strings.Contains(s, &#34;REDACTED:aws-key&#34;) {
+1651	+		t.Error(&#34;expected redaction marker in report&#34;)
+1652	+	}
+1653	+	if !strings.Contains(s, &#34;a.txt&#34;) {
+1654	+		t.Error(&#34;tool result missing from report&#34;)
+1655	+	}
+1656	+}
+1657	diff --git a/internal/render/render_test.go b/internal/render/render_test.go
+1658	new file mode 100644
+1659	index 0000000..720ea6f
+1660	--- /dev/null
+1661	+++ b/internal/render/render_test.go
+1662	@@ -0,0 +1,78 @@
+1663	+package render
+1664	+
+1665	+import (
+1666	+	&#34;os&#34;
+1667	+	&#34;path/filepath&#34;
+1668	+	&#34;strings&#34;
+1669	+	&#34;testing&#34;
+1670	+	&#34;time&#34;
+1671	+	&#34;unicode/utf8&#34;
+1672	+
+1673	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1674	+)
+1675	+
+1676	+func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+1677	+	out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+1678	+	if !strings.Contains(out, &#34;&lt;h1&#34;) {
+1679	+		t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+1680	+	}
+1681	+	if !strings.Contains(out, &#34;Println&#34;) {
+1682	+		t.Errorf(&#34;expected highlighted code in output&#34;)
+1683	+	}
+1684	+}
+1685	+
+1686	+func TestDiffHTMLMarksLines(t *testing.T) {
+1687	+	out := string(DiffHTML(&amp;model.Diff{Path: &#34;x.txt&#34;, OldText: &#34;a&#34;, NewText: &#34;b&#34;}))
+1688	+	if !strings.Contains(out, &#34;diff-del&#34;) || !strings.Contains(out, &#34;diff-add&#34;) {
+1689	+		t.Errorf(&#34;diff HTML missing add/del classes: %q&#34;, out)
+1690	+	}
+1691	+}
+1692	+
+1693	+func sampleSession() model.Session {
+1694	+	return model.Session{
+1695	+		ID:          &#34;abcd1234&#34;,
+1696	+		ProjectPath: &#34;/tmp/proj&#34;,
+1697	+		Title:       &#34;Sample&#34;,
+1698	+		StartedAt:   time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+1699	+		EndedAt:     time.Date(2026, 7, 11, 10, 1, 0, 0, time.UTC),
+1700	+		Turns: []model.Turn{
+1701	+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;do it&#34;}}},
+1702	+			{Kind: model.TurnAssistant, Blocks: []model.Block{
+1703	+				{Type: model.BlockText, Text: &#34;on it&#34;},
+1704	+				{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+1705	+					Name: &#34;Bash&#34;, Summary: &#34;ls&#34;, Result: &amp;model.ToolResult{Content: &#34;file.txt&#34;},
+1706	+				}},
+1707	+			}},
+1708	+		},
+1709	+	}
+1710	+}
+1711	+
+1712	+func TestPreviewRuneSafe(t *testing.T) {
+1713	+	s := strings.Repeat(&#34;ä&#34;, 80) // 80 two-byte runes, exceeds n=60
+1714	+	got := preview(s, 60)
+1715	+	if !utf8.ValidString(got) {
+1716	+		t.Errorf(&#34;preview produced invalid UTF-8: %q&#34;, got)
+1717	+	}
+1718	+	if []rune(got)[len([]rune(got))-1] != &#39;…&#39; {
+1719	+		t.Errorf(&#34;preview should end with ellipsis, got %q&#34;, got)
+1720	+	}
+1721	+}
+1722	+
+1723	+func TestSiteWritesFiles(t *testing.T) {
+1724	+	dir := t.TempDir()
+1725	+	if err := Site(sampleSession(), dir, Options{}); err != nil {
+1726	+		t.Fatal(err)
+1727	+	}
+1728	+	for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+1729	+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+1730	+			t.Errorf(&#34;missing %s: %v&#34;, name, err)
+1731	+		}
+1732	+	}
+1733	+	html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+1734	+	s := string(html)
+1735	+	for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+1736	+		if !strings.Contains(s, want) {
+1737	+			t.Errorf(&#34;index.html missing %q&#34;, want)
+1738	+		}
+1739	+	}
+1740	+}
+1741	diff --git a/internal/transcript/parse.go b/internal/transcript/parse.go
+1742	new file mode 100644
+1743	index 0000000..8684065
+1744	--- /dev/null
+1745	+++ b/internal/transcript/parse.go
+1746	@@ -0,0 +1,304 @@
+1747	+package transcript
+1748	+
+1749	+import (
+1750	+	&#34;bufio&#34;
+1751	+	&#34;encoding/json&#34;
+1752	+	&#34;io&#34;
+1753	+	&#34;os&#34;
+1754	+
+1755	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+1756	+)
+1757	+
+1758	+// Options controls how a transcript is folded into a Session.
+1759	+type Options struct {
+1760	+	IncludeSubagents bool
+1761	+}
+1762	+
+1763	+// ParseFile parses a transcript file at path.
+1764	+func ParseFile(path string, opts Options) (model.Session, error) {
+1765	+	f, err := os.Open(path)
+1766	+	if err != nil {
+1767	+		return model.Session{}, err
+1768	+	}
+1769	+	defer f.Close()
+1770	+	s, err := Parse(f, opts)
+1771	+	if err != nil {
+1772	+		return model.Session{}, err
+1773	+	}
+1774	+	s.ID = sessionIDFromPath(path)
+1775	+	return s, nil
+1776	+}
+1777	+
+1778	+func sessionIDFromPath(path string) string {
+1779	+	base := path
+1780	+	if i := lastSlash(path); i &gt;= 0 {
+1781	+		base = path[i+1:]
+1782	+	}
+1783	+	if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+1784	+		return base[:len(base)-len(&#34;.jsonl&#34;)]
+1785	+	}
+1786	+	return base
+1787	+}
+1788	+
+1789	+func lastSlash(s string) int {
+1790	+	for i := len(s) - 1; i &gt;= 0; i-- {
+1791	+		if s[i] == &#39;/&#39; {
+1792	+			return i
+1793	+		}
+1794	+	}
+1795	+	return -1
+1796	+}
+1797	+
+1798	+// Parse reads a transcript stream and folds it into a Session timeline.
+1799	+func Parse(r io.Reader, opts Options) (model.Session, error) {
+1800	+	var s model.Session
+1801	+	// toolIndex maps a tool_use id to the ToolCall pointer so results and
+1802	+	// sidechains can be attached after the fact.
+1803	+	toolIndex := map[string]*model.ToolCall{}
+1804	+	// lastTask tracks the most recent Task tool call for sidechain attachment.
+1805	+	var lastTask *model.ToolCall
+1806	+	// subByFirstUUID lets sidechain turns append to the right subagent; keyed
+1807	+	// by the Task tool that owns them.
+1808	+	sidechainOwner := lastTask
+1809	+
+1810	+	sc := bufio.NewScanner(r)
+1811	+	sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+1812	+	for sc.Scan() {
+1813	+		line := sc.Bytes()
+1814	+		if len(trimSpace(line)) == 0 {
+1815	+			continue
+1816	+		}
+1817	+		var rec rawRecord
+1818	+		if err := json.Unmarshal(line, &amp;rec); err != nil {
+1819	+			s.SkippedLines++
+1820	+			continue
+1821	+		}
+1822	+		switch rec.Type {
+1823	+		case &#34;ai-title&#34;:
+1824	+			if rec.AiTitle != &#34;&#34; {
+1825	+				s.Title = rec.AiTitle
+1826	+			}
+1827	+			continue
+1828	+		case &#34;user&#34;, &#34;assistant&#34;:
+1829	+			// fallthrough to handling below
+1830	+		default:
+1831	+			continue // ignore mode/permission/attachment/etc. for the timeline
+1832	+		}
+1833	+		if rec.IsMeta {
+1834	+			continue
+1835	+		}
+1836	+
+1837	+		// Capture session-level metadata from the first record that has it.
+1838	+		if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+1839	+			s.GitBranch = rec.GitBranch
+1840	+		}
+1841	+		if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+1842	+			s.Version = rec.Version
+1843	+		}
+1844	+		if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+1845	+			s.ProjectPath = rec.Cwd
+1846	+		}
+1847	+		ts := parseTime(rec.Timestamp)
+1848	+		if !ts.IsZero() {
+1849	+			if s.StartedAt.IsZero() {
+1850	+				s.StartedAt = ts
+1851	+			}
+1852	+			s.EndedAt = ts
+1853	+		}
+1854	+
+1855	+		_, blocks := decodeMessageContent(rec.Message)
+1856	+
+1857	+		// Sidechain (subagent) records.
+1858	+		if rec.IsSidechain {
+1859	+			if !opts.IncludeSubagents || sidechainOwner == nil {
+1860	+				continue
+1861	+			}
+1862	+			turn := buildTurn(rec, blocks, toolIndex)
+1863	+			if turn == nil {
+1864	+				continue
+1865	+			}
+1866	+			sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+1867	+			sub.Turns = append(sub.Turns, *turn)
+1868	+			continue
+1869	+		}
+1870	+
+1871	+		// Main-chain records.
+1872	+		turn := buildTurn(rec, blocks, toolIndex)
+1873	+		if turn == nil {
+1874	+			continue // e.g. a user record that only carried a tool_result
+1875	+		}
+1876	+		s.Turns = append(s.Turns, *turn)
+1877	+
+1878	+		// Seed a subagent slot for each Task tool call and make it the current
+1879	+		// sidechain owner. Tool-use ids are already registered in buildTurn.
+1880	+		// Note: sidechain records are attributed to the nearest preceding Task
+1881	+		// by file order. Sequential Task calls attribute correctly; multiple
+1882	+		// Task calls dispatched in parallel from one assistant message cannot be
+1883	+		// disambiguated from the raw records and will all attach to the last
+1884	+		// one — a known v1 limitation.
+1885	+		if opts.IncludeSubagents {
+1886	+			for i := range turn.Blocks {
+1887	+				tool := turn.Blocks[i].Tool
+1888	+				if tool != nil &amp;&amp; tool.Name == &#34;Task&#34; {
+1889	+					tool.Subagents = append(tool.Subagents, model.Subagent{
+1890	+						Description: taskDescription(tool),
+1891	+					})
+1892	+					lastTask = tool
+1893	+					sidechainOwner = lastTask
+1894	+				}
+1895	+			}
+1896	+		}
+1897	+	}
+1898	+	if err := sc.Err(); err != nil {
+1899	+		return s, err
+1900	+	}
+1901	+	return s, nil
+1902	+}
+1903	+
+1904	+// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+1905	+// attached to their originating ToolCall via toolIndex and do not themselves
+1906	+// produce turn content. Returns nil if the record yields no displayable blocks.
+1907	+func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+1908	+	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+1909	+	if rec.Type == &#34;user&#34; {
+1910	+		turn.Kind = model.TurnUser
+1911	+	} else {
+1912	+		turn.Kind = model.TurnAssistant
+1913	+	}
+1914	+	for _, b := range blocks {
+1915	+		switch b.Type {
+1916	+		case &#34;text&#34;:
+1917	+			if b.Text != &#34;&#34; {
+1918	+				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+1919	+			}
+1920	+		case &#34;thinking&#34;:
+1921	+			if b.Thinking != &#34;&#34; {
+1922	+				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+1923	+			}
+1924	+		case &#34;tool_use&#34;:
+1925	+			tc := buildToolCall(b)
+1926	+			// Register the tool call so a later tool_result (in this turn&#39;s
+1927	+			// chain OR inside a sidechain) can be matched back to it by id.
+1928	+			toolIndex[tc.ID] = tc
+1929	+			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
+1930	+		case &#34;tool_result&#34;:
+1931	+			if tc := toolIndex[b.ToolUseID]; tc != nil {
+1932	+				tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+1933	+			}
+1934	+		}
+1935	+	}
+1936	+	if len(turn.Blocks) == 0 {
+1937	+		return nil
+1938	+	}
+1939	+	return turn
+1940	+}
+1941	+
+1942	+func trimSpace(b []byte) []byte {
+1943	+	start, end := 0, len(b)
+1944	+	for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+1945	+		start++
+1946	+	}
+1947	+	for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+1948	+		end--
+1949	+	}
+1950	+	return b[start:end]
+1951	+}
+1952	+
+1953	+// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+1954	+// and, for Edit/Write, a Diff.
+1955	+func buildToolCall(b apiBlock) *model.ToolCall {
+1956	+	tc := &amp;model.ToolCall{
+1957	+		ID:        b.ID,
+1958	+		Name:      b.Name,
+1959	+		InputJSON: prettyJSON(b.Input),
+1960	+	}
+1961	+	input := decodeInput(b.Input)
+1962	+	tc.Summary = toolSummary(b.Name, input)
+1963	+	switch b.Name {
+1964	+	case &#34;Edit&#34;, &#34;Write&#34;:
+1965	+		tc.Diff = buildDiff(b.Name, input)
+1966	+	}
+1967	+	return tc
+1968	+}
+1969	+
+1970	+func decodeInput(raw json.RawMessage) map[string]any {
+1971	+	m := map[string]any{}
+1972	+	if len(raw) &gt; 0 {
+1973	+		_ = json.Unmarshal(raw, &amp;m)
+1974	+	}
+1975	+	return m
+1976	+}
+1977	+
+1978	+func str(m map[string]any, key string) string {
+1979	+	if v, ok := m[key].(string); ok {
+1980	+		return v
+1981	+	}
+1982	+	return &#34;&#34;
+1983	+}
+1984	+
+1985	+// toolSummary produces a compact one-line header for a tool card.
+1986	+func toolSummary(name string, in map[string]any) string {
+1987	+	switch name {
+1988	+	case &#34;Bash&#34;:
+1989	+		if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+1990	+			return firstLine(c)
+1991	+		}
+1992	+	case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+1993	+		if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+1994	+			return p
+1995	+		}
+1996	+	case &#34;Glob&#34;:
+1997	+		return str(in, &#34;pattern&#34;)
+1998	+	case &#34;Grep&#34;:
+1999	+		return str(in, &#34;pattern&#34;)
+2000	+	case &#34;Task&#34;:
+2001	+		return str(in, &#34;description&#34;)
+2002	+	case &#34;WebFetch&#34;:
+2003	+		return str(in, &#34;url&#34;)
+2004	+	case &#34;WebSearch&#34;:
+2005	+		return str(in, &#34;query&#34;)
+2006	+	}
+2007	+	return &#34;&#34;
+2008	+}
+2009	+
+2010	+func buildDiff(name string, in map[string]any) *model.Diff {
+2011	+	d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+2012	+	if name == &#34;Write&#34; {
+2013	+		d.NewText = str(in, &#34;content&#34;)
+2014	+		return d
+2015	+	}
+2016	+	d.OldText = str(in, &#34;old_string&#34;)
+2017	+	d.NewText = str(in, &#34;new_string&#34;)
+2018	+	return d
+2019	+}
+2020	+
+2021	+func taskDescription(tc *model.ToolCall) string {
+2022	+	if tc.Summary != &#34;&#34; {
+2023	+		return tc.Summary
+2024	+	}
+2025	+	return &#34;subagent&#34;
+2026	+}
+2027	+
+2028	+func firstLine(s string) string {
+2029	+	for i := 0; i &lt; len(s); i++ {
+2030	+		if s[i] == &#39;\n&#39; {
+2031	+			return s[:i]
+2032	+		}
+2033	+	}
+2034	+	return s
+2035	+}
+2036	+
+2037	+func prettyJSON(raw json.RawMessage) string {
+2038	+	if len(raw) == 0 {
+2039	+		return &#34;&#34;
+2040	+	}
+2041	+	var v any
+2042	+	if err := json.Unmarshal(raw, &amp;v); err != nil {
+2043	+		return string(raw)
+2044	+	}
+2045	+	out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+2046	+	if err != nil {
+2047	+		return string(raw)
+2048	+	}
+2049	+	return string(out)
+2050	+}
+2051	diff --git a/internal/transcript/parse_test.go b/internal/transcript/parse_test.go
+2052	new file mode 100644
+2053	index 0000000..9910079
+2054	--- /dev/null
+2055	+++ b/internal/transcript/parse_test.go
+2056	@@ -0,0 +1,106 @@
+2057	+package transcript
+2058	+
+2059	+import (
+2060	+	&#34;testing&#34;
+2061	+
+2062	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+2063	+)
+2064	+
+2065	+func TestParseBasicTimeline(t *testing.T) {
+2066	+	s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})
+2067	+	if err != nil {
+2068	+		t.Fatal(err)
+2069	+	}
+2070	+	if s.Title != &#34;Say hello&#34; {
+2071	+		t.Errorf(&#34;Title = %q&#34;, s.Title)
+2072	+	}
+2073	+	if s.SkippedLines != 1 {
+2074	+		t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)
+2075	+	}
+2076	+	if s.GitBranch != &#34;main&#34; {
+2077	+		t.Errorf(&#34;GitBranch = %q&#34;, s.GitBranch)
+2078	+	}
+2079	+	// Expect: user turn, assistant turn (thinking+text+tool_use), assistant turn (Edit tool)
+2080	+	if len(s.Turns) != 3 {
+2081	+		t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+2082	+	}
+2083	+	if s.Turns[0].Kind != model.TurnUser {
+2084	+		t.Errorf(&#34;turn0 kind = %q&#34;, s.Turns[0].Kind)
+2085	+	}
+2086	+	a := s.Turns[1]
+2087	+	if len(a.Blocks) != 3 {
+2088	+		t.Fatalf(&#34;assistant turn has %d blocks, want 3&#34;, len(a.Blocks))
+2089	+	}
+2090	+	tool := a.Blocks[2].Tool
+2091	+	if tool == nil || tool.Name != &#34;Bash&#34; {
+2092	+		t.Fatalf(&#34;expected Bash tool, got %+v&#34;, tool)
+2093	+	}
+2094	+	if tool.Result == nil || tool.Result.Content != &#34;hi&#34; {
+2095	+		t.Errorf(&#34;Bash result = %+v&#34;, tool.Result)
+2096	+	}
+2097	+	if tool.Summary != &#34;echo hi&#34; {
+2098	+		t.Errorf(&#34;Bash summary = %q&#34;, tool.Summary)
+2099	+	}
+2100	+	// Edit tool should have a diff.
+2101	+	edit := s.Turns[2].Blocks[0].Tool
+2102	+	if edit.Diff == nil || edit.Diff.Path != &#34;/tmp/x.txt&#34; || edit.Diff.NewText != &#34;b&#34; {
+2103	+		t.Errorf(&#34;Edit diff = %+v&#34;, edit.Diff)
+2104	+	}
+2105	+}
+2106	+
+2107	+func TestParseSubagentAttachment(t *testing.T) {
+2108	+	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: true})
+2109	+	if err != nil {
+2110	+		t.Fatal(err)
+2111	+	}
+2112	+	task := s.Turns[1].Blocks[0].Tool
+2113	+	if task.Name != &#34;Task&#34; {
+2114	+		t.Fatalf(&#34;expected Task tool, got %q&#34;, task.Name)
+2115	+	}
+2116	+	if len(task.Subagents) != 1 {
+2117	+		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))
+2118	+	}
+2119	+	sub := task.Subagents[0]
+2120	+	if sub.Description != &#34;research topic&#34; {
+2121	+		t.Errorf(&#34;subagent description = %q&#34;, sub.Description)
+2122	+	}
+2123	+	if len(sub.Turns) != 2 {
+2124	+		t.Errorf(&#34;subagent turns = %d, want 2&#34;, len(sub.Turns))
+2125	+	}
+2126	+}
+2127	+
+2128	+func TestParseExcludeSubagents(t *testing.T) {
+2129	+	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: false})
+2130	+	if err != nil {
+2131	+		t.Fatal(err)
+2132	+	}
+2133	+	task := s.Turns[1].Blocks[0].Tool
+2134	+	if len(task.Subagents) != 0 {
+2135	+		t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))
+2136	+	}
+2137	+}
+2138	+
+2139	+func TestParseSubagentInnerToolResult(t *testing.T) {
+2140	+	s, err := ParseFile(&#34;testdata/subagent_inner_tool.jsonl&#34;, Options{IncludeSubagents: true})
+2141	+	if err != nil {
+2142	+		t.Fatal(err)
+2143	+	}
+2144	+	task := s.Turns[1].Blocks[0].Tool
+2145	+	if len(task.Subagents) != 1 {
+2146	+		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))
+2147	+	}
+2148	+	var inner *model.ToolCall
+2149	+	for _, tn := range task.Subagents[0].Turns {
+2150	+		for _, bl := range tn.Blocks {
+2151	+			if bl.Tool != nil &amp;&amp; bl.Tool.Name == &#34;Bash&#34; {
+2152	+				inner = bl.Tool
+2153	+			}
+2154	+		}
+2155	+	}
+2156	+	if inner == nil {
+2157	+		t.Fatal(&#34;inner Bash tool not found in subagent turns&#34;)
+2158	+	}
+2159	+	if inner.Result == nil || inner.Result.Content != &#34;file.txt&#34; {
+2160	+		t.Errorf(&#34;inner tool result = %+v, want content &#39;file.txt&#39;&#34;, inner.Result)
+2161	+	}
+2162	+}
+2163	diff --git a/internal/transcript/raw.go b/internal/transcript/raw.go
+2164	new file mode 100644
+2165	index 0000000..9d86e85
+2166	--- /dev/null
+2167	+++ b/internal/transcript/raw.go
+2168	@@ -0,0 +1,94 @@
+2169	+package transcript
+2170	+
+2171	+import (
+2172	+	&#34;encoding/json&#34;
+2173	+	&#34;strings&#34;
+2174	+	&#34;time&#34;
+2175	+)
+2176	+
+2177	+// rawRecord is one decoded line of a session .jsonl file.
+2178	+type rawRecord struct {
+2179	+	Type        string          `json:&#34;type&#34;`
+2180	+	UUID        string          `json:&#34;uuid&#34;`
+2181	+	ParentUUID  string          `json:&#34;parentUuid&#34;`
+2182	+	Timestamp   string          `json:&#34;timestamp&#34;`
+2183	+	GitBranch   string          `json:&#34;gitBranch&#34;`
+2184	+	Version     string          `json:&#34;version&#34;`
+2185	+	Cwd         string          `json:&#34;cwd&#34;`
+2186	+	AiTitle     string          `json:&#34;aiTitle&#34;`
+2187	+	IsSidechain bool            `json:&#34;isSidechain&#34;`
+2188	+	IsMeta      bool            `json:&#34;isMeta&#34;`
+2189	+	Message     json.RawMessage `json:&#34;message&#34;`
+2190	+}
+2191	+
+2192	+// apiBlock is one content block of an Anthropic message.
+2193	+type apiBlock struct {
+2194	+	Type      string          `json:&#34;type&#34;`
+2195	+	Text      string          `json:&#34;text&#34;`
+2196	+	Thinking  string          `json:&#34;thinking&#34;`
+2197	+	ID        string          `json:&#34;id&#34;`
+2198	+	Name      string          `json:&#34;name&#34;`
+2199	+	Input     json.RawMessage `json:&#34;input&#34;`
+2200	+	ToolUseID string          `json:&#34;tool_use_id&#34;`
+2201	+	Content   json.RawMessage `json:&#34;content&#34;`
+2202	+	IsError   bool            `json:&#34;is_error&#34;`
+2203	+}
+2204	+
+2205	+// decodeMessageContent extracts the role and content blocks from a raw message
+2206	+// object. Content may be a plain string (wrapped as a single text block) or an
+2207	+// array of blocks.
+2208	+func decodeMessageContent(raw json.RawMessage) (string, []apiBlock) {
+2209	+	if len(raw) == 0 {
+2210	+		return &#34;&#34;, nil
+2211	+	}
+2212	+	var msg struct {
+2213	+		Role    string          `json:&#34;role&#34;`
+2214	+		Content json.RawMessage `json:&#34;content&#34;`
+2215	+	}
+2216	+	if err := json.Unmarshal(raw, &amp;msg); err != nil {
+2217	+		return &#34;&#34;, nil
+2218	+	}
+2219	+	var s string
+2220	+	if json.Unmarshal(msg.Content, &amp;s) == nil {
+2221	+		return msg.Role, []apiBlock{{Type: &#34;text&#34;, Text: s}}
+2222	+	}
+2223	+	var blocks []apiBlock
+2224	+	_ = json.Unmarshal(msg.Content, &amp;blocks) // tolerate; empty on failure
+2225	+	return msg.Role, blocks
+2226	+}
+2227	+
+2228	+// toolResultText flattens a tool_result content payload to plain text.
+2229	+func toolResultText(raw json.RawMessage) string {
+2230	+	if len(raw) == 0 {
+2231	+		return &#34;&#34;
+2232	+	}
+2233	+	var s string
+2234	+	if json.Unmarshal(raw, &amp;s) == nil {
+2235	+		return s
+2236	+	}
+2237	+	var blocks []struct {
+2238	+		Type string `json:&#34;type&#34;`
+2239	+		Text string `json:&#34;text&#34;`
+2240	+	}
+2241	+	if json.Unmarshal(raw, &amp;blocks) == nil {
+2242	+		var parts []string
+2243	+		for _, b := range blocks {
+2244	+			if b.Text != &#34;&#34; {
+2245	+				parts = append(parts, b.Text)
+2246	+			}
+2247	+		}
+2248	+		return strings.Join(parts, &#34;\n&#34;)
+2249	+	}
+2250	+	return &#34;&#34;
+2251	+}
+2252	+
+2253	+func parseTime(s string) time.Time {
+2254	+	if s == &#34;&#34; {
+2255	+		return time.Time{}
+2256	+	}
+2257	+	t, err := time.Parse(time.RFC3339, s)
+2258	+	if err != nil {
+2259	+		return time.Time{}
+2260	+	}
+2261	+	return t
+2262	+}
+2263	diff --git a/internal/transcript/raw_test.go b/internal/transcript/raw_test.go
+2264	new file mode 100644
+2265	index 0000000..e136924
+2266	--- /dev/null
+2267	+++ b/internal/transcript/raw_test.go
+2268	@@ -0,0 +1,41 @@
+2269	+package transcript
+2270	+
+2271	+import &#34;testing&#34;
+2272	+
+2273	+func TestDecodeMessageContentString(t *testing.T) {
+2274	+	role, blocks := decodeMessageContent([]byte(`{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello world&#34;}`))
+2275	+	if role != &#34;user&#34; {
+2276	+		t.Errorf(&#34;role = %q&#34;, role)
+2277	+	}
+2278	+	if len(blocks) != 1 || blocks[0].Type != &#34;text&#34; || blocks[0].Text != &#34;hello world&#34; {
+2279	+		t.Fatalf(&#34;blocks = %+v&#34;, blocks)
+2280	+	}
+2281	+}
+2282	+
+2283	+func TestDecodeMessageContentArray(t *testing.T) {
+2284	+	raw := `{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[
+2285	+		{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;hmm&#34;},
+2286	+		{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;done&#34;},
+2287	+		{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;t1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;ls&#34;}}
+2288	+	]}`
+2289	+	_, blocks := decodeMessageContent([]byte(raw))
+2290	+	if len(blocks) != 3 {
+2291	+		t.Fatalf(&#34;got %d blocks&#34;, len(blocks))
+2292	+	}
+2293	+	if blocks[2].Name != &#34;Bash&#34; {
+2294	+		t.Errorf(&#34;tool name = %q&#34;, blocks[2].Name)
+2295	+	}
+2296	+}
+2297	+
+2298	+func TestToolResultTextArray(t *testing.T) {
+2299	+	got := toolResultText([]byte(`[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;line1&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;line2&#34;}]`))
+2300	+	if got != &#34;line1\nline2&#34; {
+2301	+		t.Errorf(&#34;toolResultText = %q&#34;, got)
+2302	+	}
+2303	+}
+2304	+
+2305	+func TestToolResultTextString(t *testing.T) {
+2306	+	if got := toolResultText([]byte(`&#34;just text&#34;`)); got != &#34;just text&#34; {
+2307	+		t.Errorf(&#34;toolResultText = %q&#34;, got)
+2308	+	}
+2309	+}
+2310	diff --git a/internal/transcript/testdata/basic.jsonl b/internal/transcript/testdata/basic.jsonl
+2311	new file mode 100644
+2312	index 0000000..8f6f1e2
+2313	--- /dev/null
+2314	+++ b/internal/transcript/testdata/basic.jsonl
+2315	@@ -0,0 +1,7 @@
+2316	+{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Say hello&#34;}
+2317	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi there&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;,&#34;gitBranch&#34;:&#34;main&#34;,&#34;version&#34;:&#34;1.0.0&#34;}
+2318	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;consider&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;Hello!&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo hi&#34;,&#34;description&#34;:&#34;greet&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+2319	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool1&#34;,&#34;content&#34;:&#34;hi&#34;,&#34;is_error&#34;:false}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+2320	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a2&#34;,&#34;parentUuid&#34;:&#34;u2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool2&#34;,&#34;name&#34;:&#34;Edit&#34;,&#34;input&#34;:{&#34;file_path&#34;:&#34;/tmp/x.txt&#34;,&#34;old_string&#34;:&#34;a&#34;,&#34;new_string&#34;:&#34;b&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+2321	+not valid json at all
+2322	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u3&#34;,&#34;parentUuid&#34;:&#34;a2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool2&#34;,&#34;content&#34;:&#34;ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+2323	diff --git a/internal/transcript/testdata/subagent.jsonl b/internal/transcript/testdata/subagent.jsonl
+2324	new file mode 100644
+2325	index 0000000..f63277c
+2326	--- /dev/null
+2327	+++ b/internal/transcript/testdata/subagent.jsonl
+2328	@@ -0,0 +1,5 @@
+2329	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}
+2330	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+2331	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+2332	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+2333	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+2334	diff --git a/internal/transcript/testdata/subagent_inner_tool.jsonl b/internal/transcript/testdata/subagent_inner_tool.jsonl
+2335	new file mode 100644
+2336	index 0000000..5ed23bb
+2337	--- /dev/null
+2338	+++ b/internal/transcript/testdata/subagent_inner_tool.jsonl
+2339	@@ -0,0 +1,5 @@
+2340	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}
+2341	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+2342	+{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;inner1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;ls&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+2343	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s3&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;inner1&#34;,&#34;content&#34;:&#34;file.txt&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+2344	+{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;done&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+2345	diff --git a/internal/tui/tui.go b/internal/tui/tui.go
+2346	new file mode 100644
+2347	index 0000000..26e0896
+2348	--- /dev/null
+2349	+++ b/internal/tui/tui.go
+2350	@@ -0,0 +1,242 @@
+2351	+// Package tui provides an interactive session browser used when ccwhid is run
+2352	+// with no selector flags.
+2353	+package tui
+2354	+
+2355	+import (
+2356	+	&#34;fmt&#34;
+2357	+	&#34;strings&#34;
+2358	+
+2359	+	tea &#34;github.com/charmbracelet/bubbletea&#34;
+2360	+	&#34;github.com/charmbracelet/lipgloss&#34;
+2361	+
+2362	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+2363	+)
+2364	+
+2365	+// Row is one line in the browser: either a project header or a session.
+2366	+type Row struct {
+2367	+	IsHeader bool
+2368	+	Label    string
+2369	+	Session  discovery.SessionInfo
+2370	+}
+2371	+
+2372	+// Selection is the result of running the browser.
+2373	+type Selection struct {
+2374	+	Session          discovery.SessionInfo
+2375	+	IncludeSubagents bool
+2376	+	Redact           bool
+2377	+	Open             bool
+2378	+	OutDir           string
+2379	+	Canceled         bool
+2380	+}
+2381	+
+2382	+func flattenRows(groups []discovery.ProjectGroup) []Row {
+2383	+	var rows []Row
+2384	+	for _, g := range groups {
+2385	+		rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})
+2386	+		for _, s := range g.Sessions {
+2387	+			rows = append(rows, Row{Session: s})
+2388	+		}
+2389	+	}
+2390	+	return rows
+2391	+}
+2392	+
+2393	+func firstSelectable(rows []Row) int {
+2394	+	for i, r := range rows {
+2395	+		if !r.IsHeader {
+2396	+			return i
+2397	+		}
+2398	+	}
+2399	+	return 0
+2400	+}
+2401	+
+2402	+var (
+2403	+	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;)).MarginTop(1)
+2404	+	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+2405	+	mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+2406	+	optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+2407	+)
+2408	+
+2409	+type screen int
+2410	+
+2411	+const (
+2412	+	screenList screen = iota
+2413	+	screenOptions
+2414	+)
+2415	+
+2416	+type model struct {
+2417	+	rows      []Row
+2418	+	cursor    int
+2419	+	screen    screen
+2420	+	sel       Selection
+2421	+	optCursor int
+2422	+	done      bool
+2423	+}
+2424	+
+2425	+func newModel(groups []discovery.ProjectGroup) model {
+2426	+	rows := flattenRows(groups)
+2427	+	return model{
+2428	+		rows:   rows,
+2429	+		cursor: firstSelectable(rows),
+2430	+		sel: Selection{
+2431	+			IncludeSubagents: true,
+2432	+			Redact:           true,
+2433	+		},
+2434	+	}
+2435	+}
+2436	+
+2437	+func (m model) Init() tea.Cmd { return nil }
+2438	+
+2439	+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+2440	+	key, ok := msg.(tea.KeyMsg)
+2441	+	if !ok {
+2442	+		return m, nil
+2443	+	}
+2444	+	switch m.screen {
+2445	+	case screenList:
+2446	+		return m.updateList(key)
+2447	+	default:
+2448	+		return m.updateOptions(key)
+2449	+	}
+2450	+}
+2451	+
+2452	+func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+2453	+	switch key.String() {
+2454	+	case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+2455	+		m.sel.Canceled = true
+2456	+		m.done = true
+2457	+		return m, tea.Quit
+2458	+	case &#34;up&#34;, &#34;k&#34;:
+2459	+		m.moveCursor(-1)
+2460	+	case &#34;down&#34;, &#34;j&#34;:
+2461	+		m.moveCursor(1)
+2462	+	case &#34;enter&#34;:
+2463	+		if !m.rows[m.cursor].IsHeader {
+2464	+			m.sel.Session = m.rows[m.cursor].Session
+2465	+			m.screen = screenOptions
+2466	+		}
+2467	+	}
+2468	+	return m, nil
+2469	+}
+2470	+
+2471	+func (m *model) moveCursor(delta int) {
+2472	+	i := m.cursor
+2473	+	for {
+2474	+		i += delta
+2475	+		if i &lt; 0 || i &gt;= len(m.rows) {
+2476	+			return // out of bounds; keep current
+2477	+		}
+2478	+		if !m.rows[i].IsHeader {
+2479	+			m.cursor = i
+2480	+			return
+2481	+		}
+2482	+	}
+2483	+}
+2484	+
+2485	+// optionCount is the number of toggle rows plus the Generate action.
+2486	+const optionCount = 4 // subagents, redact, open, generate
+2487	+
+2488	+func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+2489	+	switch key.String() {
+2490	+	case &#34;ctrl+c&#34;, &#34;q&#34;:
+2491	+		m.sel.Canceled = true
+2492	+		m.done = true
+2493	+		return m, tea.Quit
+2494	+	case &#34;esc&#34;:
+2495	+		m.screen = screenList
+2496	+	case &#34;up&#34;, &#34;k&#34;:
+2497	+		if m.optCursor &gt; 0 {
+2498	+			m.optCursor--
+2499	+		}
+2500	+	case &#34;down&#34;, &#34;j&#34;:
+2501	+		if m.optCursor &lt; optionCount-1 {
+2502	+			m.optCursor++
+2503	+		}
+2504	+	case &#34; &#34;, &#34;enter&#34;:
+2505	+		switch m.optCursor {
+2506	+		case 0:
+2507	+			m.sel.IncludeSubagents = !m.sel.IncludeSubagents
+2508	+		case 1:
+2509	+			m.sel.Redact = !m.sel.Redact
+2510	+		case 2:
+2511	+			m.sel.Open = !m.sel.Open
+2512	+		case 3:
+2513	+			m.done = true
+2514	+			return m, tea.Quit
+2515	+		}
+2516	+	}
+2517	+	return m, nil
+2518	+}
+2519	+
+2520	+func (m model) View() string {
+2521	+	if m.screen == screenOptions {
+2522	+		return m.viewOptions()
+2523	+	}
+2524	+	return m.viewList()
+2525	+}
+2526	+
+2527	+func (m model) viewList() string {
+2528	+	var b strings.Builder
+2529	+	b.WriteString(&#34;Select a session  ↑/↓ move · enter select · q quit\n&#34;)
+2530	+	for i, r := range m.rows {
+2531	+		if r.IsHeader {
+2532	+			b.WriteString(headerStyle.Render(r.Label) + &#34;\n&#34;)
+2533	+			continue
+2534	+		}
+2535	+		line := fmt.Sprintf(&#34;  %s  %s&#34;, r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))
+2536	+		if i == m.cursor {
+2537	+			line = selectedStyle.Render(&#34;▸ &#34; + strings.TrimLeft(line, &#34; &#34;))
+2538	+		}
+2539	+		b.WriteString(line + &#34;\n&#34;)
+2540	+	}
+2541	+	return b.String()
+2542	+}
+2543	+
+2544	+func (m model) viewOptions() string {
+2545	+	var b strings.Builder
+2546	+	b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+2547	+	toggles := []struct {
+2548	+		label string
+2549	+		on    bool
+2550	+	}{
+2551	+		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+2552	+		{&#34;Redact secrets&#34;, m.sel.Redact},
+2553	+		{&#34;Open in browser when done&#34;, m.sel.Open},
+2554	+	}
+2555	+	for i, t := range toggles {
+2556	+		check := &#34;[ ]&#34;
+2557	+		if t.on {
+2558	+			check = &#34;[x]&#34;
+2559	+		}
+2560	+		line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+2561	+		if m.optCursor == i {
+2562	+			line = optionStyle.Render(&#34;▸ &#34; + line)
+2563	+		} else {
+2564	+			line = &#34;  &#34; + line
+2565	+		}
+2566	+		b.WriteString(line + &#34;\n&#34;)
+2567	+	}
+2568	+	gen := &#34;Generate report&#34;
+2569	+	if m.optCursor == 3 {
+2570	+		gen = optionStyle.Render(&#34;▸ &#34; + gen)
+2571	+	} else {
+2572	+		gen = &#34;  &#34; + gen
+2573	+	}
+2574	+	b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+2575	+	b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)
+2576	+	return b.String()
+2577	+}
+2578	+
+2579	+// Run launches the browser and returns the user&#39;s selection.
+2580	+func Run(groups []discovery.ProjectGroup) (Selection, error) {
+2581	+	if len(groups) == 0 {
+2582	+		return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+2583	+	}
+2584	+	m := newModel(groups)
+2585	+	p := tea.NewProgram(m)
+2586	+	res, err := p.Run()
+2587	+	if err != nil {
+2588	+		return Selection{}, err
+2589	+	}
+2590	+	fm := res.(model)
+2591	+	return fm.sel, nil
+2592	+}
+2593	diff --git a/internal/tui/tui_test.go b/internal/tui/tui_test.go
+2594	new file mode 100644
+2595	index 0000000..c47bef4
+2596	--- /dev/null
+2597	+++ b/internal/tui/tui_test.go
+2598	@@ -0,0 +1,41 @@
+2599	+package tui
+2600	+
+2601	+import (
+2602	+	&#34;testing&#34;
+2603	+
+2604	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+2605	+)
+2606	+
+2607	+func TestFlattenRowsBuildsHeadersAndSessions(t *testing.T) {
+2608	+	groups := []discovery.ProjectGroup{
+2609	+		{
+2610	+			ProjectPath: &#34;/tmp/projA&#34;,
+2611	+			Sessions: []discovery.SessionInfo{
+2612	+				{ID: &#34;s1&#34;, Title: &#34;First&#34;},
+2613	+				{ID: &#34;s2&#34;, Title: &#34;Second&#34;},
+2614	+			},
+2615	+		},
+2616	+		{
+2617	+			ProjectPath: &#34;/tmp/projB&#34;,
+2618	+			Sessions:    []discovery.SessionInfo{{ID: &#34;s3&#34;, Title: &#34;Third&#34;}},
+2619	+		},
+2620	+	}
+2621	+	rows := flattenRows(groups)
+2622	+	// 2 headers + 3 sessions
+2623	+	if len(rows) != 5 {
+2624	+		t.Fatalf(&#34;got %d rows, want 5&#34;, len(rows))
+2625	+	}
+2626	+	if !rows[0].IsHeader || rows[0].Label != &#34;/tmp/projA&#34; {
+2627	+		t.Errorf(&#34;row0 = %+v&#34;, rows[0])
+2628	+	}
+2629	+	if rows[1].IsHeader || rows[1].Session.ID != &#34;s1&#34; {
+2630	+		t.Errorf(&#34;row1 = %+v&#34;, rows[1])
+2631	+	}
+2632	+}
+2633	+
+2634	+func TestFirstSelectableRow(t *testing.T) {
+2635	+	rows := []Row{{IsHeader: true}, {IsHeader: false, Session: discovery.SessionInfo{ID: &#34;x&#34;}}}
+2636	+	if got := firstSelectable(rows); got != 1 {
+2637	+		t.Errorf(&#34;firstSelectable = %d, want 1&#34;, got)
+2638	+	}
+2639	+}
+2640	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="let me verify my analysis by building and running the tests, and check the readme reconciliation mentioned in the last commit.">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.20</span></div>
+      <div class="turn-body"><p>Let me verify my analysis by building and running the tests, and check the README reconciliation mentioned in the last commit.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash go build ./... 2&gt;&amp;1 | head -30 &amp;&amp; echo &#34;---build done---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | head -40 &amp;&amp; echo &#34;---vet done---&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 | head -30 &amp;&amp; echo &#34;---BUILD DONE---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | head -40 &amp;&amp; echo &#34;---VET DONE---&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 | head -30 \u0026\u0026 echo \&#34;---BUILD DONE---\&#34; \u0026\u0026 go vet ./... 2\u003e\u00261 | head -40 \u0026\u0026 echo \&#34;---VET DONE---\&#34;&#34;,
+  &#34;description&#34;: &#34;Build and vet the module&#34;
+}</pre><pre class="tool-result">---BUILD DONE---
+---VET DONE---</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash go test ./... 2&gt;&amp;1 | tail -40">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -40</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -40&#34;,
+  &#34;description&#34;: &#34;Run all tests&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="build, vet, and tests all pass. let me confirm the two key findings precisely.">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.08</span></div>
+      <div class="turn-body"><p>Build, vet, and tests all pass. Let me confirm the two key findings precisely.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash echo &#34;=== highlight callers ===&#34; &amp;&amp; grep -rn &#34;highlight(&#34; --include=*.go | grep -v &#34;func highlight&#34; &amp;&amp; echo &#34;(none above = unused)&#34;; echo &#34;=== projectpath in redact ===&#34; &amp;&amp; grep -n &#34;projectpath\|title\|gitbranch&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== sub.description in redact ===&#34; &amp;&amp; grep -n &#34;description&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== skippedlines surfaced ===&#34; &amp;&amp; grep -rn &#34;skippedlines&#34; --include=*.go | grep -v &#34;_test.go\|model.go&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== Highlight callers ===&#34; &amp;&amp; grep -rn &#34;Highlight(&#34; --include=*.go | grep -v &#34;func Highlight&#34; &amp;&amp; echo &#34;(none above = unused)&#34;; echo &#34;=== ProjectPath in redact ===&#34; &amp;&amp; grep -n &#34;ProjectPath\|Title\|GitBranch&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== sub.Description in redact ===&#34; &amp;&amp; grep -n &#34;Description&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== SkippedLines surfaced ===&#34; &amp;&amp; grep -rn &#34;SkippedLines&#34; --include=*.go | grep -v &#34;_test.go\|model.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;echo \&#34;=== Highlight callers ===\&#34; \u0026\u0026 grep -rn \&#34;Highlight(\&#34; --include=*.go | grep -v \&#34;func Highlight\&#34; \u0026\u0026 echo \&#34;(none above = unused)\&#34;; echo \&#34;=== ProjectPath in redact ===\&#34; \u0026\u0026 grep -n \&#34;ProjectPath\\|Title\\|GitBranch\&#34; internal/redact/redact.go || echo \&#34;(none = not redacted)\&#34;; echo \&#34;=== sub.Description in redact ===\&#34; \u0026\u0026 grep -n \&#34;Description\&#34; internal/redact/redact.go || echo \&#34;(none = not redacted)\&#34;; echo \&#34;=== SkippedLines surfaced ===\&#34; \u0026\u0026 grep -rn \&#34;SkippedLines\&#34; --include=*.go | grep -v \&#34;_test.go\\|model.go\&#34;&#34;,
+  &#34;description&#34;: &#34;Confirm findings on Highlight, ProjectPath, Description redaction&#34;
+}</pre><pre class="tool-result">=== Highlight callers ===
+(eval):1: no matches found: --include=*.go
+=== ProjectPath in redact ===
+(none = not redacted)
+=== sub.Description in redact ===
+(none = not redacted)
+=== SkippedLines surfaced ===
+(eval):1: no matches found: --include=*.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash cd ~/ideaprojects/cc-what-have-i-done; echo &#34;=== highlight callers (excluding def) ===&#34;; grep -rn &#34;highlight&#34; --include=&#34;*.go&#34; . | grep -v &#34;func highlight&#34;; echo &#34;=== skippedlines usage ===&#34;; grep -rn &#34;skippedlines&#34; --include=&#34;*.go&#34; .; echo &#34;=== chroma import usage in render.go ===&#34;; grep -n &#34;chroma\|highlight&#34; internal/render/render.go || echo &#34;render.go does not call highlight/chroma&#34;">
+      <div class="turn-role">Claude<span class="usage-badge">266 tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done; echo &#34;=== Highlight callers (excluding def) ===&#34;; grep -rn &#34;Highlight&#34; --include=&#34;*.go&#34; . | grep -v &#34;func Highlight&#34;; echo &#34;=== SkippedLines usage ===&#34;; grep -rn &#34;SkippedLines&#34; --include=&#34;*.go&#34; .; echo &#34;=== chroma import usage in render.go ===&#34;; grep -n &#34;chroma\|Highlight&#34; internal/render/render.go || echo &#34;render.go does not call Highlight/chroma&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done; echo \&#34;=== Highlight callers (excluding def) ===\&#34;; grep -rn \&#34;Highlight\&#34; --include=\&#34;*.go\&#34; . | grep -v \&#34;func Highlight\&#34;; echo \&#34;=== SkippedLines usage ===\&#34;; grep -rn \&#34;SkippedLines\&#34; --include=\&#34;*.go\&#34; .; echo \&#34;=== chroma import usage in render.go ===\&#34;; grep -n \&#34;chroma\\|Highlight\&#34; internal/render/render.go || echo \&#34;render.go does not call Highlight/chroma\&#34;&#34;,
+  &#34;description&#34;: &#34;Confirm Highlight and SkippedLines usage&#34;
+}</pre><pre class="tool-result">=== Highlight callers (excluding def) ===
+internal/render/markdown.go:32:// Highlight renders a code string with chroma using inline styles (no external
+=== SkippedLines usage ===
+internal/transcript/parse_test.go:17:	if s.SkippedLines != 1 {
+internal/transcript/parse_test.go:18:		t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)
+internal/transcript/parse.go:73:			s.SkippedLines++
+internal/model/model.go:32:	SkippedLines int // count of malformed lines skipped while parsing
+=== chroma import usage in render.go ===
+render.go does not call Highlight/chroma</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="confirmed all findings against the tree. build, `go vet`, and all tests pass. here is the whole-branch review.
+
+---
+
+# whole-branch review: `ccwhid` cli (2ff127a..6678bb5)
+
+## strengths
+
+- **clean layer boundaries.** `transcript` is the sole owner of the jsonl wire format (`raw.go`/`parse.go`); `render` consumes only `model.session` and never imports transcript/discovery; `tui` orchestrates (`discovery` &#43; returns a `selection`) and contains no parsing or html logic. the design&#39;s stated boundaries hold in the code.
+- **html-injection safety is solid.** `html/template` auto-escapes every `{{ }}` field (including the `data-search` attribute context). the one hand-built html path (`rendertool`, `diffhtml`) routes every dynamic value through `html.escapestring`. markdown bodies go through goldmark with the default `unsafe=false`, so raw html in transcript text is stripped before being wrapped as `template.html`. this is documented at the `markdown` function and is correct.
+- **self-containment claim verified.** the template references only `assets/styles.css` and `assets/app.js` (both written locally). css uses system font stacks (`-apple-system`, `ui-monospace`) with no `@font-face`, no `url()`, no cdn/import. `app.js` is dependency-free vanilla js. nothing reaches the network — the `file://` offline claim is real.
+- **tool_result matching is correct across the main chain and sidechains.** a single `toolindex` keyed by globally-unique `tool_use` id lets results (including those emitted inside a subagent) attach to the originating `toolcall`; `testdata/subagent_inner_tool.jsonl` exercises exactly this and passes. the pointer aliasing between `s.turns[...].blocks[i].tool` and the `lasttask`/`sidechainowner` pointer is sound (block.tool is a pointer, so `subagents` appends are visible in the rendered output).
+- **real behavioral tests**, not tautologies: the e2e test (`render_e2e_test.go`) drives parse→redact→render and asserts the secret is absent and the redaction marker present and the tool result survives; rune-safe truncation is checked for validity and ellipsis.
+
+## issues
+
+### important
+
+**1. home-path redaction is bypassed for the project path in the report header.** `internal/redact/redact.go:55` (`session`) only walks `s.turns`; it never touches `s.projectpath`, `s.title`, or `s.gitbranch`. the template renders `internal/render/assets/report.html.tmpl:31` `&lt;span&gt;{{ .session.projectpath }}&lt;/span&gt;` prominently in the session-head meta. since `projectpath` is the transcript `cwd` (e.g. `~/ideaprojects/...`), the os username is printed verbatim in every report even with redaction on — defeating the design&#39;s headline &#34;rewrites the user&#39;s home directory to `~`&#34; (spec §10) for the most visible path in the whole page. *why it matters:* redaction is default-on and advertised; a user committing the report to a repo leaks their home path anyway. *fix:* in `redact.session`, run `r.string()` (or at least the home-dir rewrite) over `s.projectpath`, `s.title`, and `s.gitbranch` before rendering.
+
+### minor
+
+**2. `subagent.description` is rendered but never redacted.** `rendertool` emits `internal/render/render.go:1569` `... subagent: `&#43;`html.escapestring(sub.description)`. `sub.description` is set at parse time from the task tool&#39;s summary (`taskdescription` → `str(in,&#34;description&#34;)`). `redacttool` redacts `tc.summary` and the subagent *turns*, but not `tc.subagents[i].description` (`redact.go:1083`). so the same text is redacted in the tool header yet emitted raw in the subagent summary. low leak likelihood (task descriptions rarely hold secrets), but it is a genuine gap in the &#34;all rendered fields&#34; claim. *fix:* redact `tc.subagents[i].description` in `redacttool`.
+
+**3. chroma syntax highlighting is never wired in; `highlight` is dead code.** `render.highlight` (`internal/render/markdown.go:32`) has zero callers — `renderturnbody` sends code through `markdown` (plain goldmark), which emits `&lt;pre&gt;&lt;code class=&#34;language-…&#34;&gt;` with no colorization. so spec §5 (&#34;fenced code blocks syntax-highlighted via chroma&#34;) is unfulfilled, and the entire `chroma` direct dependency exists only to service an unused exported function. `testmarkdownrendersheadingandcode` only asserts the code *text* is present, so it doesn&#39;t catch this. *fix:* either register a goldmark chroma highlighting extension so code blocks are actually highlighted, or drop `highlight` &#43; the chroma dependency and update the design note.
+
+**4. `skippedlines` is counted but never surfaced.** `parse.go:73` increments `s.skippedlines`, and `model.go:32` stores it, but neither `run.go`/`generate` nor the template ever reads it. spec §9 promises malformed lines are &#34;skipped with a counted warning&#34; — the count exists but no warning is ever shown. *fix:* print `warning: skipped n malformed line(s)` from `generate` when `sess.skippedlines &gt; 0`, or render it in the report meta.
+
+**5. an over-long line aborts the whole parse (robustness edge).** `parse.go` sets a 64 mib scanner cap and returns `sc.err()`; a single line exceeding it yields `bufio.errtoolong` and fails the entire report, contradicting &#34;never abort the whole report.&#34; `discovery.indexfile` (16 mib) silently ignores its scanner error, so the two layers also disagree. rare in practice; worth a follow-up rather than a blocker.
+
+**6. stale comment.** `parse.go` line ~1807: the comment `// subbyfirstuuid lets sidechain turns append…` names a variable that does not exist (the actual var is `sidechainowner`). cosmetic.
+
+## on the pre-triaged findings
+re-assessed items 1–5: none rise to blocking. the `redact` assignment over-match is safe (over-redaction only). the dead `errneedtui` var and unread `model.done` field (item 4) are confirmed but harmless — fold them into the same cleanup pass as finding #3. the parallel-task attribution limitation (item 5) is clearly documented at the attachment site and is an acceptable v1 scope call.
+
+## recommendations
+- fix #1 before merge (small, and it undercuts a default-on advertised feature). bundle #2 into the same redaction change — both are one-line additions to `redacttool`/`session`.
+- decide #3 deliberately: wire chroma in or remove it. shipping an unused syntax-highlighting dependency plus an unmet spec line is the kind of drift that per-task reviews miss.
+- sweep the confirmed dead symbols (`highlight`, `errneedtui`, `model.done`, stale comment) and surface `skippedlines` in one small housekeeping commit.
+
+## assessment
+
+**ready to merge? with fixes.**
+
+the architecture is clean, the pipeline is correct on the paths that matter (tool-result matching, sidechain attachment, html-escaping, self-containment), and the whole suite builds and passes. the one item i&#39;d gate on is **#1** — home-path redaction silently doesn&#39;t cover the project-path header, so the default-on redaction promise is materially incomplete for every report. it&#39;s a two-line fix. findings #2–#6 are non-blocking and can land in the same or a follow-up cleanup commit. with #1 (and ideally #2) addressed, this is good to merge.">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.13</span></div>
+      <div class="turn-body"><p>Confirmed all findings against the tree. Build, <code>go vet</code>, and all tests pass. Here is the whole-branch review.</p>
+<hr>
+<h1>Whole-Branch Review: <code>ccwhid</code> CLI (2ff127a..6678bb5)</h1>
+<h2>Strengths</h2>
+<ul>
+<li><strong>Clean layer boundaries.</strong> <code>transcript</code> is the sole owner of the JSONL wire format (<code>raw.go</code>/<code>parse.go</code>); <code>render</code> consumes only <code>model.Session</code> and never imports transcript/discovery; <code>tui</code> orchestrates (<code>discovery</code> + returns a <code>Selection</code>) and contains no parsing or HTML logic. The design's stated boundaries hold in the code.</li>
+<li><strong>HTML-injection safety is solid.</strong> <code>html/template</code> auto-escapes every <code>{{ }}</code> field (including the <code>data-search</code> attribute context). The one hand-built HTML path (<code>renderTool</code>, <code>DiffHTML</code>) routes every dynamic value through <code>html.EscapeString</code>. Markdown bodies go through goldmark with the default <code>Unsafe=false</code>, so raw HTML in transcript text is stripped before being wrapped as <code>template.HTML</code>. This is documented at the <code>Markdown</code> function and is correct.</li>
+<li><strong>Self-containment claim verified.</strong> The template references only <code>assets/styles.css</code> and <code>assets/app.js</code> (both written locally). CSS uses system font stacks (<code>-apple-system</code>, <code>ui-monospace</code>) with no <code>@font-face</code>, no <code>url()</code>, no CDN/import. <code>app.js</code> is dependency-free vanilla JS. Nothing reaches the network — the <code>file://</code> offline claim is real.</li>
+<li><strong>tool_result matching is correct across the main chain and sidechains.</strong> A single <code>toolIndex</code> keyed by globally-unique <code>tool_use</code> id lets results (including those emitted inside a subagent) attach to the originating <code>ToolCall</code>; <code>testdata/subagent_inner_tool.jsonl</code> exercises exactly this and passes. The pointer aliasing between <code>s.Turns[...].Blocks[i].Tool</code> and the <code>lastTask</code>/<code>sidechainOwner</code> pointer is sound (Block.Tool is a pointer, so <code>Subagents</code> appends are visible in the rendered output).</li>
+<li><strong>Real behavioral tests</strong>, not tautologies: the e2e test (<code>render_e2e_test.go</code>) drives parse→redact→render and asserts the secret is absent AND the redaction marker present AND the tool result survives; rune-safe truncation is checked for validity and ellipsis.</li>
+</ul>
+<h2>Issues</h2>
+<h3>Important</h3>
+<p><strong>1. Home-path redaction is bypassed for the project path in the report header.</strong> <code>internal/redact/redact.go:55</code> (<code>Session</code>) only walks <code>s.Turns</code>; it never touches <code>s.ProjectPath</code>, <code>s.Title</code>, or <code>s.GitBranch</code>. The template renders <code>internal/render/assets/report.html.tmpl:31</code> <code>&lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;</code> prominently in the session-head meta. Since <code>ProjectPath</code> is the transcript <code>cwd</code> (e.g. <code>~/IdeaProjects/...</code>), the OS username is printed verbatim in every report even with redaction on — defeating the design's headline &quot;rewrites the user's home directory to <code>~</code>&quot; (spec §10) for the most visible path in the whole page. <em>Why it matters:</em> redaction is default-on and advertised; a user committing the report to a repo leaks their home path anyway. <em>Fix:</em> in <code>redact.Session</code>, run <code>r.String()</code> (or at least the home-dir rewrite) over <code>s.ProjectPath</code>, <code>s.Title</code>, and <code>s.GitBranch</code> before rendering.</p>
+<h3>Minor</h3>
+<p><strong>2. <code>Subagent.Description</code> is rendered but never redacted.</strong> <code>renderTool</code> emits <code>internal/render/render.go:1569</code> <code>... subagent: </code>+<code>html.EscapeString(sub.Description)</code>. <code>sub.Description</code> is set at parse time from the Task tool's summary (<code>taskDescription</code> → <code>str(in,&quot;description&quot;)</code>). <code>redactTool</code> redacts <code>tc.Summary</code> and the subagent <em>Turns</em>, but not <code>tc.Subagents[i].Description</code> (<code>redact.go:1083</code>). So the same text is redacted in the tool header yet emitted raw in the subagent summary. Low leak likelihood (task descriptions rarely hold secrets), but it is a genuine gap in the &quot;all rendered fields&quot; claim. <em>Fix:</em> redact <code>tc.Subagents[i].Description</code> in <code>redactTool</code>.</p>
+<p><strong>3. Chroma syntax highlighting is never wired in; <code>Highlight</code> is dead code.</strong> <code>render.Highlight</code> (<code>internal/render/markdown.go:32</code>) has zero callers — <code>renderTurnBody</code> sends code through <code>Markdown</code> (plain goldmark), which emits <code>&lt;pre&gt;&lt;code class=&quot;language-…&quot;&gt;</code> with no colorization. So spec §5 (&quot;fenced code blocks syntax-highlighted via chroma&quot;) is unfulfilled, and the entire <code>chroma</code> direct dependency exists only to service an unused exported function. <code>TestMarkdownRendersHeadingAndCode</code> only asserts the code <em>text</em> is present, so it doesn't catch this. <em>Fix:</em> either register a goldmark chroma highlighting extension so code blocks are actually highlighted, or drop <code>Highlight</code> + the chroma dependency and update the design note.</p>
+<p><strong>4. <code>SkippedLines</code> is counted but never surfaced.</strong> <code>parse.go:73</code> increments <code>s.SkippedLines</code>, and <code>model.go:32</code> stores it, but neither <code>run.go</code>/<code>generate</code> nor the template ever reads it. Spec §9 promises malformed lines are &quot;skipped with a counted warning&quot; — the count exists but no warning is ever shown. <em>Fix:</em> print <code>warning: skipped N malformed line(s)</code> from <code>generate</code> when <code>sess.SkippedLines &gt; 0</code>, or render it in the report meta.</p>
+<p><strong>5. An over-long line aborts the whole parse (robustness edge).</strong> <code>parse.go</code> sets a 64 MiB scanner cap and returns <code>sc.Err()</code>; a single line exceeding it yields <code>bufio.ErrTooLong</code> and fails the entire report, contradicting &quot;never abort the whole report.&quot; <code>discovery.indexFile</code> (16 MiB) silently ignores its scanner error, so the two layers also disagree. Rare in practice; worth a follow-up rather than a blocker.</p>
+<p><strong>6. Stale comment.</strong> <code>parse.go</code> line ~1807: the comment <code>// subByFirstUUID lets sidechain turns append…</code> names a variable that does not exist (the actual var is <code>sidechainOwner</code>). Cosmetic.</p>
+<h2>On the pre-triaged findings</h2>
+<p>Re-assessed items 1–5: none rise to blocking. The <code>redact</code> assignment over-match is safe (over-redaction only). The dead <code>errNeedTUI</code> var and unread <code>model.done</code> field (item 4) are confirmed but harmless — fold them into the same cleanup pass as finding #3. The parallel-Task attribution limitation (item 5) is clearly documented at the attachment site and is an acceptable v1 scope call.</p>
+<h2>Recommendations</h2>
+<ul>
+<li>Fix #1 before merge (small, and it undercuts a default-on advertised feature). Bundle #2 into the same redaction change — both are one-line additions to <code>redactTool</code>/<code>Session</code>.</li>
+<li>Decide #3 deliberately: wire chroma in or remove it. Shipping an unused syntax-highlighting dependency plus an unmet spec line is the kind of drift that per-task reviews miss.</li>
+<li>Sweep the confirmed dead symbols (<code>Highlight</code>, <code>errNeedTUI</code>, <code>model.done</code>, stale comment) and surface <code>SkippedLines</code> in one small housekeeping commit.</li>
+</ul>
+<h2>Assessment</h2>
+<p><strong>Ready to merge? With fixes.</strong></p>
+<p>The architecture is clean, the pipeline is correct on the paths that matter (tool-result matching, sidechain attachment, HTML-escaping, self-containment), and the whole suite builds and passes. The one item I'd gate on is <strong>#1</strong> — home-path redaction silently doesn't cover the project-path header, so the default-on redaction promise is materially incomplete for every report. It's a two-line fix. Findings #2–#6 are non-blocking and can land in the same or a follow-up cleanup commit. With #1 (and ideally #2) addressed, this is good to merge.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 1 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 1 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 09:18</span>
+        <span>9 turns</span>
+        <span>general-purpose · agent-a72c1702495c21e82</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 16k in+out · ~$0.24 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>6k</td><td>184k</td><td>48k</td><td>$0.24</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>6k</td><td>184k</td><td>48k</td><td>$0.24</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
+
+global constraints from the spec/design that bind this task:
+- the task-notification fix is unconditional — independent of `--include-subagents` and `--usage`.
+- a malformed notification must never fail the run; it falls back to a plain user turn, content untouched.
+- the parsed body must be the `&lt;result&gt;` payload only (summary as fallback when result is empty), never the raw envelope.
+- the brief allows dropping the two one-line wrappers (`trimleftspace`/`hasprefix`) in favor of direct `strings` calls; the controller instructed the implementer to drop them.
+- `gofmt -l .` must print nothing.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md
+
+## diff under review
+
+**base:** 608d700
+**head:** b1bc70e
+**diff file:** ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff
+
+read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. the diff&#39;s context lines are the changed files: do not read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. do not re-run git commands. do not crawl the broader codebase. inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report.
+
+your review is read-only on this checkout. do not mutate the working tree, the index, head, or branch state in any way.
+
+## do not trust the report
+
+treat the implementer&#39;s report as unverified claims about the code. verify the claims against the diff. design rationales in the report are claims too. judge the code on its merits.
+
+## tests
+
+the implementer already ran the tests and reported results with tdd evidence for exactly this code. do not re-run the suite to confirm their report. run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. warnings or other noise in the reported test output are findings — test output should be pristine.
+
+## part 1: spec compliance
+
+compare the diff against what was requested: missing / extra / misunderstood. if a requirement cannot be verified from this diff alone, report it as a ⚠️ item.
+
+## part 2: code quality
+
+code quality (separation of concerns, error handling, dry, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan&#39;s file structure followed).
+
+point at evidence: file:line references for every finding. your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.
+
+## calibration
+
+categorize by actual severity. important = task cannot be trusted until fixed. &#34;coverage could be broader&#34; and polish are minor. if the plan/brief explicitly mandates something this rubric calls a defect, report it as important, labeled plan-mandated. acknowledge what was done well before listing issues.
+
+## output format
+
+### spec compliance
+- ✅ / ❌ / ⚠️ items
+
+### strengths
+
+### issues
+#### critical (must fix)
+#### important (should fix)
+#### minor (nice to have)
+
+### assessment
+**task quality:** [approved | needs fixes]
+**reasoning:** [1-2 sentences]">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+<p>Global constraints from the spec/design that bind this task:</p>
+<ul>
+<li>The task-notification fix is unconditional — independent of <code>--include-subagents</code> and <code>--usage</code>.</li>
+<li>A malformed notification must never fail the run; it falls back to a plain user turn, content untouched.</li>
+<li>The parsed body must be the <code>&lt;result&gt;</code> payload only (summary as fallback when result is empty), never the raw envelope.</li>
+<li>The brief allows dropping the two one-line wrappers (<code>trimLeftSpace</code>/<code>hasPrefix</code>) in favor of direct <code>strings</code> calls; the controller instructed the implementer to drop them.</li>
+<li><code>gofmt -l .</code> must print nothing.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
+<h2>Diff Under Review</h2>
+<p><strong>Base:</strong> 608d700
+<strong>Head:</strong> b1bc70e
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff</p>
+<p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report.</p>
+<p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
+<h2>Do Not Trust the Report</h2>
+<p>Treat the implementer's report as unverified claims about the code. Verify the claims against the diff. Design rationales in the report are claims too. Judge the code on its merits.</p>
+<h2>Tests</h2>
+<p>The implementer already ran the tests and reported results with TDD evidence for exactly this code. Do not re-run the suite to confirm their report. Run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. Warnings or other noise in the reported test output are findings — test output should be pristine.</p>
+<h2>Part 1: Spec Compliance</h2>
+<p>Compare the diff against What Was Requested: Missing / Extra / Misunderstood. If a requirement cannot be verified from this diff alone, report it as a ⚠️ item.</p>
+<h2>Part 2: Code Quality</h2>
+<p>Code quality (separation of concerns, error handling, DRY, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan's file structure followed).</p>
+<p>Point at evidence: file:line references for every finding. Your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.</p>
+<h2>Calibration</h2>
+<p>Categorize by actual severity. Important = task cannot be trusted until fixed. &quot;Coverage could be broader&quot; and polish are Minor. If the plan/brief explicitly mandates something this rubric calls a defect, report it as Important, labeled plan-mandated. Acknowledge what was done well before listing issues.</p>
+<h2>Output Format</h2>
+<h3>Spec Compliance</h3>
+<ul>
+<li>✅ / ❌ / ⚠️ items</li>
+</ul>
+<h3>Strengths</h3>
+<h3>Issues</h3>
+<h4>Critical (Must Fix)</h4>
+<h4>Important (Should Fix)</h4>
+<h4>Minor (Nice to Have)</h4>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> [Approved | Needs fixes]
+<strong>Reasoning:</strong> [1-2 sentences]</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 1: Parse `&lt;task-notification&gt;` records into agent-result turns
+2	
+3	**Files:**
+4	- Modify: `internal/model/model.go`
+5	- Modify: `internal/transcript/parse.go`
+6	- Modify: `internal/redact/redact.go` (redact the new summary field)
+7	- Test: `internal/transcript/notification_test.go` (new)
+8	
+9	**Interfaces:**
+10	- Consumes: existing `buildTurn`, `apiBlock`, `model.Turn`.
+11	- Produces: `model.TurnAgentResult TurnKind = &#34;agent-result&#34;`; `model.Turn` fields `AgentID, AgentStatus, AgentSummary string`; unexported `parseTaskNotification(s string) (taskNotification, bool)` with `taskNotification{TaskID, ToolUseID, Status, Summary, Result string}`. Task 4 renders turns of this kind; Task 5 links via `Turn.AgentID`.
+12	
+13	- [ ] **Step 1: Write the failing test**
+14	
+15	Create `internal/transcript/notification_test.go`:
+16	
+17	```go
+18	package transcript
+19	
+20	import (
+21		&#34;strings&#34;
+22		&#34;testing&#34;
+23	
+24		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+25	)
+26	
+27	const notifBody = `&lt;task-notification&gt;
+28	&lt;task-id&gt;acb6584f99f2f81fd&lt;/task-id&gt;
+29	&lt;tool-use-id&gt;toolu_0112a19E&lt;/tool-use-id&gt;
+30	&lt;output-file&gt;/tmp/tasks/acb6584f99f2f81fd.output&lt;/output-file&gt;
+31	&lt;status&gt;completed&lt;/status&gt;
+32	&lt;summary&gt;Agent &#34;Implement Task 12: Profiles view&#34; finished&lt;/summary&gt;
+33	&lt;note&gt;may notify more than once&lt;/note&gt;
+34	&lt;result&gt;Both items fixed.
+35	
+36	## Status: Complete&lt;/result&gt;
+37	&lt;/task-notification&gt;`
+38	
+39	func notifLine(t *testing.T, body string) string {
+40		t.Helper()
+41		b, err := jsonMarshalString(body)
+42		if err != nil {
+43			t.Fatal(err)
+44		}
+45		return `{&#34;type&#34;:&#34;user&#34;,&#34;timestamp&#34;:&#34;2026-07-05T18:26:08.000Z&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:` + b + `}}`
+46	}
+47	
+48	func TestParseTaskNotificationTurn(t *testing.T) {
+49		s, err := Parse(strings.NewReader(notifLine(t, notifBody)), Options{})
+50		if err != nil {
+51			t.Fatal(err)
+52		}
+53		if len(s.Turns) != 1 {
+54			t.Fatalf(&#34;got %d turns, want 1&#34;, len(s.Turns))
+55		}
+56		turn := s.Turns[0]
+57		if turn.Kind != model.TurnAgentResult {
+58			t.Fatalf(&#34;kind = %q, want %q&#34;, turn.Kind, model.TurnAgentResult)
+59		}
+60		if turn.AgentID != &#34;acb6584f99f2f81fd&#34; {
+61			t.Errorf(&#34;AgentID = %q&#34;, turn.AgentID)
+62		}
+63		if turn.AgentStatus != &#34;completed&#34; {
+64			t.Errorf(&#34;AgentStatus = %q&#34;, turn.AgentStatus)
+65		}
+66		if want := `Agent &#34;Implement Task 12: Profiles view&#34; finished`; turn.AgentSummary != want {
+67			t.Errorf(&#34;AgentSummary = %q&#34;, turn.AgentSummary)
+68		}
+69		if len(turn.Blocks) != 1 || !strings.Contains(turn.Blocks[0].Text, &#34;## Status: Complete&#34;) {
+70			t.Errorf(&#34;body block wrong: %+v&#34;, turn.Blocks)
+71		}
+72		if strings.Contains(turn.Blocks[0].Text, &#34;&lt;task-id&gt;&#34;) {
+73			t.Error(&#34;body must be the &lt;result&gt; payload only, not the raw envelope&#34;)
+74		}
+75	}
+76	
+77	func TestParseTaskNotificationEmptyResultFallsBackToSummary(t *testing.T) {
+78		body := &#34;&lt;task-notification&gt;\n&lt;task-id&gt;a1&lt;/task-id&gt;\n&lt;status&gt;completed&lt;/status&gt;\n&lt;summary&gt;Agent \&#34;x\&#34; finished&lt;/summary&gt;\n&lt;result&gt;&lt;/result&gt;\n&lt;/task-notification&gt;&#34;
+79		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+80		if err != nil {
+81			t.Fatal(err)
+82		}
+83		if len(s.Turns) != 1 || s.Turns[0].Blocks[0].Text != `Agent &#34;x&#34; finished` {
+84			t.Fatalf(&#34;want summary as body, got %+v&#34;, s.Turns)
+85		}
+86	}
+87	
+88	func TestParseMalformedNotificationStaysUserTurn(t *testing.T) {
+89		// No &lt;task-id&gt; -&gt; must stay a plain user turn, content untouched.
+90		body := &#34;&lt;task-notification&gt;\nbroken payload\n&lt;/task-notification&gt;&#34;
+91		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+92		if err != nil {
+93			t.Fatal(err)
+94		}
+95		if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+96			t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+97		}
+98	}
+99	
+100	func TestUserTextMentioningNotificationMidStringStaysUserTurn(t *testing.T) {
+101		body := &#34;please explain what a &lt;task-notification&gt; record is&#34;
+102		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+103		if err != nil {
+104			t.Fatal(err)
+105		}
+106		if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+107			t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+108		}
+109	}
+110	
+111	func TestRepeatNotificationsEachProduceATurn(t *testing.T) {
+112		line := notifLine(t, notifBody)
+113		s, err := Parse(strings.NewReader(line+&#34;\n&#34;+line), Options{})
+114		if err != nil {
+115			t.Fatal(err)
+116		}
+117		if len(s.Turns) != 2 {
+118			t.Fatalf(&#34;got %d turns, want 2 (no dedup)&#34;, len(s.Turns))
+119		}
+120	}
+121	```
+122	
+123	Add the small helper at the bottom of the same test file:
+124	
+125	```go
+126	// jsonMarshalString wraps a string as a JSON string literal.
+127	func jsonMarshalString(s string) (string, error) {
+128		b, err := json.Marshal(s)
+129		return string(b), err
+130	}
+131	```
+132	
+133	with `&#34;encoding/json&#34;` added to the test file&#39;s imports.
+134	
+135	- [ ] **Step 2: Run tests to verify they fail**
+136	
+137	Run: `go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v`
+138	Expected: FAIL — `model.TurnAgentResult` undefined (compile error).
+139	
+140	- [ ] **Step 3: Add model fields**
+141	
+142	In `internal/model/model.go`, extend the turn-kind consts:
+143	
+144	```go
+145	const (
+146		TurnUser        TurnKind = &#34;user&#34;
+147		TurnAssistant   TurnKind = &#34;assistant&#34;
+148		TurnAgentResult TurnKind = &#34;agent-result&#34; // background-agent completion fed back into the session
+149	)
+150	```
+151	
+152	Extend `Turn` (after the `Usage` field):
+153	
+154	```go
+155		// Agent-result fields, set only when Kind == TurnAgentResult.
+156		AgentID      string // task/agent id from the notification
+157		AgentStatus  string // e.g. &#34;completed&#34;
+158		AgentSummary string // e.g. `Agent &#34;Implement Task 12&#34; finished`
+159	```
+160	
+161	- [ ] **Step 4: Implement notification parsing**
+162	
+163	In `internal/transcript/parse.go`, add (near `buildTurn`):
+164	
+165	```go
+166	// taskNotification is the parsed payload of a &lt;task-notification&gt; user record —
+167	// the message a background agent&#39;s completion injects into the parent session.
+168	type taskNotification struct {
+169		TaskID    string
+170		ToolUseID string
+171		Status    string
+172		Summary   string
+173		Result    string
+174	}
+175	
+176	// parseTaskNotification extracts fields from a &lt;task-notification&gt; payload with
+177	// tolerant string scanning (the payload is pseudo-XML with unescaped markdown
+178	// inside &lt;result&gt;). ok is false unless both task-id and summary are present.
+179	func parseTaskNotification(s string) (taskNotification, bool) {
+180		t := trimLeftSpace(s)
+181		if !hasPrefix(t, &#34;&lt;task-notification&gt;&#34;) {
+182			return taskNotification{}, false
+183		}
+184		n := taskNotification{
+185			TaskID:    tagContent(t, &#34;task-id&#34;),
+186			ToolUseID: tagContent(t, &#34;tool-use-id&#34;),
+187			Status:    tagContent(t, &#34;status&#34;),
+188			Summary:   tagContent(t, &#34;summary&#34;),
+189			Result:    tagContent(t, &#34;result&#34;),
+190		}
+191		if n.TaskID == &#34;&#34; || n.Summary == &#34;&#34; {
+192			return taskNotification{}, false
+193		}
+194		return n, true
+195	}
+196	
+197	// tagContent returns the text between the first &lt;name&gt; and the last &lt;/name&gt;,
+198	// trimmed. The last closing tag guards &lt;result&gt; bodies that themselves contain
+199	// XML-looking text.
+200	func tagContent(s, name string) string {
+201		open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;
+202		i := strings.Index(s, open)
+203		if i &lt; 0 {
+204			return &#34;&#34;
+205		}
+206		rest := s[i+len(open):]
+207		j := strings.LastIndex(rest, close)
+208		if j &lt; 0 {
+209			return &#34;&#34;
+210		}
+211		return strings.TrimSpace(rest[:j])
+212	}
+213	
+214	func trimLeftSpace(s string) string { return strings.TrimLeft(s, &#34; \t\r\n&#34;) }
+215	
+216	func hasPrefix(s, p string) bool { return strings.HasPrefix(s, p) }
+217	```
+218	
+219	Add `&#34;strings&#34;` to `parse.go`&#39;s imports. (If you prefer, call `strings.HasPrefix`/`strings.TrimLeft` directly and drop the two one-line wrappers — either is fine; do not add other helpers.)
+220	
+221	In `buildTurn`, immediately after the `turn.Kind` assignment block, add:
+222	
+223	```go
+224		// A background agent&#39;s completion arrives as a user record whose content is
+225		// a single &lt;task-notification&gt; text payload. Surface it as an agent-result
+226		// turn so the report attributes it to the agent, not to the user.
+227		if turn.Kind == model.TurnUser &amp;&amp; len(blocks) == 1 &amp;&amp; blocks[0].Type == &#34;text&#34; {
+228			if n, ok := parseTaskNotification(blocks[0].Text); ok {
+229				turn.Kind = model.TurnAgentResult
+230				turn.AgentID = n.TaskID
+231				turn.AgentStatus = n.Status
+232				turn.AgentSummary = n.Summary
+233				body := n.Result
+234				if body == &#34;&#34; {
+235					body = n.Summary
+236				}
+237				turn.Blocks = []model.Block{{Type: model.BlockText, Text: body}}
+238				return turn
+239			}
+240		}
+241	```
+242	
+243	- [ ] **Step 5: Redact the new field**
+244	
+245	In `internal/redact/redact.go`, function `redactTurn`, add alongside the existing per-turn string fields:
+246	
+247	```go
+248		t.AgentSummary = r.String(t.AgentSummary)
+249	```
+250	
+251	(Open the file first and place it with the other `r.String` rewrites at the top of `redactTurn`; the result body is a normal text block and is already covered.)
+252	
+253	- [ ] **Step 6: Run the tests**
+254	
+255	Run: `go test ./internal/transcript/ ./internal/redact/ -v`
+256	Expected: all PASS, including the five new tests.
+257	
+258	- [ ] **Step 7: Run the full suite and commit**
+259	
+260	Run: `gofmt -l . &amp;&amp; go test ./...`
+261	Expected: gofmt prints nothing; all packages pass.
+262	
+263	```bash
+264	git add internal/model/model.go internal/transcript/parse.go internal/transcript/notification_test.go internal/redact/redact.go
+265	git commit -m &#34;feat: parse task-notification records as agent-result turns&#34;
+266	```
+267	
+268	---
+269	
+270	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 1 Report: Parse `&lt;task-notification&gt;` records into agent-result turns
+2	
+3	## Implementation Summary
+4	
+5	Successfully implemented task-notification parsing to surface agent-result turns in the ccwhid transcript parser. Background agent completion notifications (arriving as user records with `&lt;task-notification&gt;` payloads) are now parsed and converted to a new `TurnAgentResult` turn kind with AgentID, AgentStatus, and AgentSummary fields.
+6	
+7	## TDD Evidence
+8	
+9	### RED (Tests Fail)
+10	
+11	**Command:** `go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v`
+12	
+13	**Output (before implementation):**
+14	```
+15	internal/transcript/notification_test.go:41:24: undefined: model.TurnAgentResult
+16	internal/transcript/notification_test.go:42:51: undefined: model.TurnAgentResult
+17	internal/transcript/notification_test.go:44:10: turn.AgentID undefined (type model.Turn has no field or method AgentID)
+18	internal/transcript/notification_test.go:45:33: turn.AgentID undefined (type model.Turn has no field or method AgentID)
+19	internal/transcript/notification_test.go:47:10: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)
+20	internal/transcript/notification_test.go:48:37: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)
+21	internal/transcript/notification_test.go:50:71: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)
+22	internal/transcript/notification_test.go:51:38: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)
+23	FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]
+24	```
+25	
+26	### GREEN (Tests Pass)
+27	
+28	**Command:** `go test ./internal/transcript/ ./internal/redact/ -v`
+29	
+30	**Output (after implementation):**
+31	```
+32	=== RUN   TestParseTaskNotificationTurn
+33	--- PASS: TestParseTaskNotificationTurn (0.00s)
+34	=== RUN   TestParseTaskNotificationEmptyResultFallsBackToSummary
+35	--- PASS: TestParseTaskNotificationEmptyResultFallsBackToSummary (0.00s)
+36	=== RUN   TestParseMalformedNotificationStaysUserTurn
+37	--- PASS: TestParseMalformedNotificationStaysUserTurn (0.00s)
+38	=== RUN   TestUserTextMentioningNotificationMidStringStaysUserTurn
+39	--- PASS: TestUserTextMentioningNotificationMidStringStaysUserTurn (0.00s)
+40	=== RUN   TestRepeatNotificationsEachProduceATurn
+41	--- PASS: TestRepeatNotificationsEachProduceATurn (0.00s)
+42	... (all other tests also pass)
+43	PASS
+44	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.549s
+45	PASS
+46	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.314s
+47	```
+48	
+49	**Full Suite:**
+50	```
+51	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.324s
+52	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+53	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.915s
+54	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.675s
+55	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	1.208s
+56	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.305s
+57	ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+58	ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.553s
+59	```
+60	
+61	**Formatting Check:**
+62	`gofmt -l .` returned no output (all files properly formatted).
+63	
+64	## Files Changed
+65	
+66	1. **internal/model/model.go**
+67	   - Added `TurnAgentResult TurnKind = &#34;agent-result&#34;` constant
+68	   - Added three new fields to `Turn` struct:
+69	     - `AgentID string` - task/agent id from the notification
+70	     - `AgentStatus string` - e.g. &#34;completed&#34;
+71	     - `AgentSummary string` - e.g. `Agent &#34;Implement Task 12&#34; finished`
+72	
+73	2. **internal/transcript/parse.go**
+74	   - Added `import &#34;strings&#34;`
+75	   - Added `taskNotification` struct to hold parsed notification fields
+76	   - Added `parseTaskNotification(s string) (taskNotification, bool)` function to extract and validate notification payloads
+77	   - Added `tagContent(s, name string) string` helper to extract content between XML-like tags (using strings.Index and strings.LastIndex)
+78	   - Added notification detection and conversion logic in `buildTurn` function:
+79	     - Checks if user turn with single text block contains a `&lt;task-notification&gt;` payload
+80	     - Converts qualified notifications to `TurnAgentResult` with extracted fields
+81	     - Uses result as body, falls back to summary if result is empty
+82	     - Returns early without processing other blocks
+83	
+84	3. **internal/redact/redact.go**
+85	   - Added `t.AgentSummary = r.String(t.AgentSummary)` in `redactTurn` function to redact potentially sensitive information from agent summaries
+86	
+87	4. **internal/transcript/notification_test.go** (new file)
+88	   - Created comprehensive test suite with 5 tests:
+89	     1. TestParseTaskNotificationTurn - Verifies basic notification parsing and field extraction
+90	     2. TestParseTaskNotificationEmptyResultFallsBackToSummary - Verifies fallback behavior when result is empty
+91	     3. TestParseMalformedNotificationStaysUserTurn - Verifies graceful degradation for malformed payloads (no &lt;task-id&gt;)
+92	     4. TestUserTextMentioningNotificationMidStringStaysUserTurn - Verifies normal user text isn&#39;t falsely detected as notification
+93	     5. TestRepeatNotificationsEachProduceATurn - Verifies no deduplication across repeated notifications
+94	   - Added `jsonMarshalString` helper for constructing test JSONL records
+95	
+96	## Commit
+97	
+98	**SHA:** b1bc70e
+99	**Message:** `feat: parse task-notification records as agent-result turns`
+100	**Trailer:** `Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;`
+101	
+102	## Self-Review Findings
+103	
+104	### Verification Checklist
+105	
+106	✅ **Unconditional fix** - Notification parsing is always enabled, no Options flag required
+107	
+108	✅ **Malformed handling** - Implementation gracefully falls back to plain user turns:
+109	- Missing `&lt;task-id&gt;` -&gt; notification detection returns false, turn remains user turn
+110	- Missing `&lt;summary&gt;` -&gt; same fallback behavior
+111	- Other malformed XML (broken tags, missing closing tags) -&gt; graceful string extraction returns &#34;&#34;
+112	
+113	✅ **Test coverage** - Five new tests cover:
+114	- Happy path (full notification with result)
+115	- Empty result fallback to summary
+116	- Malformed notification fallback
+117	- Mid-string mention of `&lt;task-notification&gt;` text
+118	- No deduplication of repeated notifications
+119	
+120	✅ **Code quality**:
+121	- Used `strings.TrimLeft` and `strings.HasPrefix` directly as permitted by brief (no wrapper helpers)
+122	- Helpful comments for each function
+123	- Tolerant parsing using string scanning (not regex)
+124	- Last index lookup guards result bodies containing XML-like text
+125	
+126	✅ **Redaction** - AgentSummary field properly redacted along with other turn-level text fields
+127	
+128	✅ **Formatting** - All code passes `gofmt -l .`
+129	
+130	✅ **Architecture** - Implementation follows existing patterns:
+131	- Parsing happens in `buildTurn` before general block processing
+132	- New turn kind properly extends model constants
+133	- Redaction integrated into existing Session-level walk
+134	
+135	### No Concerns
+136	
+137	All requirements met, all tests passing, no edge cases unhandled. Implementation is minimal and focused.
+138	
+139	## Next Steps
+140	
+141	This task is a foundation for later tasks:
+142	- Task 2: Load linked agent-session files (will use AgentID to link)
+143	- Task 4: Render agent-result cards (will use new turn kind and AgentSummary)
+144	- Task 5: Subagent pages and linking
+145	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 608d700..HEAD
+2	
+3	## Commits
+4	b1bc70e feat: parse task-notification records as agent-result turns
+5	
+6	## Files changed
+7	 internal/model/model.go                  |   9 ++-
+8	 internal/redact/redact.go                |   1 +
+9	 internal/transcript/notification_test.go | 110 +++++++++++++++++++++++++++++++
+10	 internal/transcript/parse.go             |  66 +++++++++++++++++++
+11	 4 files changed, 184 insertions(+), 2 deletions(-)
+12	
+13	## Diff
+14	diff --git a/internal/model/model.go b/internal/model/model.go
+15	index e3164ac..36a8544 100644
+16	--- a/internal/model/model.go
+17	+++ b/internal/model/model.go
+18	@@ -1,21 +1,22 @@
+19	 // Package model defines the domain types shared across ccwhid: a parsed
+20	 // Session and the timeline of Turns, Blocks and ToolCalls within it.
+21	 package model
+22	 
+23	 import &#34;time&#34;
+24	 
+25	 type TurnKind string
+26	 
+27	 const (
+28	-	TurnUser      TurnKind = &#34;user&#34;
+29	-	TurnAssistant TurnKind = &#34;assistant&#34;
+30	+	TurnUser        TurnKind = &#34;user&#34;
+31	+	TurnAssistant   TurnKind = &#34;assistant&#34;
+32	+	TurnAgentResult TurnKind = &#34;agent-result&#34; // background-agent completion fed back into the session
+33	 )
+34	 
+35	 type BlockType string
+36	 
+37	 const (
+38	 	BlockText     BlockType = &#34;text&#34;
+39	 	BlockThinking BlockType = &#34;thinking&#34;
+40	 	BlockToolUse  BlockType = &#34;tool_use&#34;
+41	 )
+42	 
+43	@@ -41,20 +42,24 @@ func (s Session) DisplayTitle() string {
+44	 	return &#34;Untitled session&#34;
+45	 }
+46	 
+47	 // Turn is a single user or assistant message, holding ordered content blocks.
+48	 type Turn struct {
+49	 	Kind      TurnKind
+50	 	Timestamp time.Time
+51	 	Blocks    []Block
+52	 	Model     string // assistant model id (empty for user turns / when absent)
+53	 	Usage     *Usage // token usage for this assistant turn; nil when absent
+54	+	// Agent-result fields, set only when Kind == TurnAgentResult.
+55	+	AgentID      string // task/agent id from the notification
+56	+	AgentStatus  string // e.g. &#34;completed&#34;
+57	+	AgentSummary string // e.g. `Agent &#34;Implement Task 12&#34; finished`
+58	 }
+59	 
+60	 // Usage holds the token counts reported for one assistant message. Cache writes
+61	 // keep the 5-minute / 1-hour split because they are priced differently.
+62	 type Usage struct {
+63	 	Input        int
+64	 	Output       int
+65	 	CacheRead    int
+66	 	CacheWrite5m int
+67	 	CacheWrite1h int
+68	diff --git a/internal/redact/redact.go b/internal/redact/redact.go
+69	index 918ec80..a2eb30e 100644
+70	--- a/internal/redact/redact.go
+71	+++ b/internal/redact/redact.go
+72	@@ -52,20 +52,21 @@ func Session(s *model.Session, homeDir string) {
+73	 	// scrubbed too (ProjectPath in particular carries the home path/username).
+74	 	s.ProjectPath = r.String(s.ProjectPath)
+75	 	s.Title = r.String(s.Title)
+76	 	s.GitBranch = r.String(s.GitBranch)
+77	 	for i := range s.Turns {
+78	 		redactTurn(r, &amp;s.Turns[i])
+79	 	}
+80	 }
+81	 
+82	 func redactTurn(r *Redactor, t *model.Turn) {
+83	+	t.AgentSummary = r.String(t.AgentSummary)
+84	 	for i := range t.Blocks {
+85	 		b := &amp;t.Blocks[i]
+86	 		b.Text = r.String(b.Text)
+87	 		if b.Tool != nil {
+88	 			redactTool(r, b.Tool)
+89	 		}
+90	 	}
+91	 }
+92	 
+93	 func redactTool(r *Redactor, tc *model.ToolCall) {
+94	diff --git a/internal/transcript/notification_test.go b/internal/transcript/notification_test.go
+95	new file mode 100644
+96	index 0000000..07a7918
+97	--- /dev/null
+98	+++ b/internal/transcript/notification_test.go
+99	@@ -0,0 +1,110 @@
+100	+package transcript
+101	+
+102	+import (
+103	+	&#34;encoding/json&#34;
+104	+	&#34;strings&#34;
+105	+	&#34;testing&#34;
+106	+
+107	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+108	+)
+109	+
+110	+const notifBody = `&lt;task-notification&gt;
+111	+&lt;task-id&gt;acb6584f99f2f81fd&lt;/task-id&gt;
+112	+&lt;tool-use-id&gt;toolu_0112a19E&lt;/tool-use-id&gt;
+113	+&lt;output-file&gt;/tmp/tasks/acb6584f99f2f81fd.output&lt;/output-file&gt;
+114	+&lt;status&gt;completed&lt;/status&gt;
+115	+&lt;summary&gt;Agent &#34;Implement Task 12: Profiles view&#34; finished&lt;/summary&gt;
+116	+&lt;note&gt;may notify more than once&lt;/note&gt;
+117	+&lt;result&gt;Both items fixed.
+118	+
+119	+## Status: Complete&lt;/result&gt;
+120	+&lt;/task-notification&gt;`
+121	+
+122	+func notifLine(t *testing.T, body string) string {
+123	+	t.Helper()
+124	+	b, err := jsonMarshalString(body)
+125	+	if err != nil {
+126	+		t.Fatal(err)
+127	+	}
+128	+	return `{&#34;type&#34;:&#34;user&#34;,&#34;timestamp&#34;:&#34;2026-07-05T18:26:08.000Z&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:` + b + `}}`
+129	+}
+130	+
+131	+func TestParseTaskNotificationTurn(t *testing.T) {
+132	+	s, err := Parse(strings.NewReader(notifLine(t, notifBody)), Options{})
+133	+	if err != nil {
+134	+		t.Fatal(err)
+135	+	}
+136	+	if len(s.Turns) != 1 {
+137	+		t.Fatalf(&#34;got %d turns, want 1&#34;, len(s.Turns))
+138	+	}
+139	+	turn := s.Turns[0]
+140	+	if turn.Kind != model.TurnAgentResult {
+141	+		t.Fatalf(&#34;kind = %q, want %q&#34;, turn.Kind, model.TurnAgentResult)
+142	+	}
+143	+	if turn.AgentID != &#34;acb6584f99f2f81fd&#34; {
+144	+		t.Errorf(&#34;AgentID = %q&#34;, turn.AgentID)
+145	+	}
+146	+	if turn.AgentStatus != &#34;completed&#34; {
+147	+		t.Errorf(&#34;AgentStatus = %q&#34;, turn.AgentStatus)
+148	+	}
+149	+	if want := `Agent &#34;Implement Task 12: Profiles view&#34; finished`; turn.AgentSummary != want {
+150	+		t.Errorf(&#34;AgentSummary = %q&#34;, turn.AgentSummary)
+151	+	}
+152	+	if len(turn.Blocks) != 1 || !strings.Contains(turn.Blocks[0].Text, &#34;## Status: Complete&#34;) {
+153	+		t.Errorf(&#34;body block wrong: %+v&#34;, turn.Blocks)
+154	+	}
+155	+	if strings.Contains(turn.Blocks[0].Text, &#34;&lt;task-id&gt;&#34;) {
+156	+		t.Error(&#34;body must be the &lt;result&gt; payload only, not the raw envelope&#34;)
+157	+	}
+158	+}
+159	+
+160	+func TestParseTaskNotificationEmptyResultFallsBackToSummary(t *testing.T) {
+161	+	body := &#34;&lt;task-notification&gt;\n&lt;task-id&gt;a1&lt;/task-id&gt;\n&lt;status&gt;completed&lt;/status&gt;\n&lt;summary&gt;Agent \&#34;x\&#34; finished&lt;/summary&gt;\n&lt;result&gt;&lt;/result&gt;\n&lt;/task-notification&gt;&#34;
+162	+	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+163	+	if err != nil {
+164	+		t.Fatal(err)
+165	+	}
+166	+	if len(s.Turns) != 1 || s.Turns[0].Blocks[0].Text != `Agent &#34;x&#34; finished` {
+167	+		t.Fatalf(&#34;want summary as body, got %+v&#34;, s.Turns)
+168	+	}
+169	+}
+170	+
+171	+func TestParseMalformedNotificationStaysUserTurn(t *testing.T) {
+172	+	// No &lt;task-id&gt; -&gt; must stay a plain user turn, content untouched.
+173	+	body := &#34;&lt;task-notification&gt;\nbroken payload\n&lt;/task-notification&gt;&#34;
+174	+	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+175	+	if err != nil {
+176	+		t.Fatal(err)
+177	+	}
+178	+	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+179	+		t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+180	+	}
+181	+}
+182	+
+183	+func TestUserTextMentioningNotificationMidStringStaysUserTurn(t *testing.T) {
+184	+	body := &#34;please explain what a &lt;task-notification&gt; record is&#34;
+185	+	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+186	+	if err != nil {
+187	+		t.Fatal(err)
+188	+	}
+189	+	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+190	+		t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+191	+	}
+192	+}
+193	+
+194	+func TestRepeatNotificationsEachProduceATurn(t *testing.T) {
+195	+	line := notifLine(t, notifBody)
+196	+	s, err := Parse(strings.NewReader(line+&#34;\n&#34;+line), Options{})
+197	+	if err != nil {
+198	+		t.Fatal(err)
+199	+	}
+200	+	if len(s.Turns) != 2 {
+201	+		t.Fatalf(&#34;got %d turns, want 2 (no dedup)&#34;, len(s.Turns))
+202	+	}
+203	+}
+204	+
+205	+// jsonMarshalString wraps a string as a JSON string literal.
+206	+func jsonMarshalString(s string) (string, error) {
+207	+	b, err := json.Marshal(s)
+208	+	return string(b), err
+209	+}
+210	diff --git a/internal/transcript/parse.go b/internal/transcript/parse.go
+211	index bf3d7c1..bb011a6 100644
+212	--- a/internal/transcript/parse.go
+213	+++ b/internal/transcript/parse.go
+214	@@ -1,18 +1,19 @@
+215	 package transcript
+216	 
+217	 import (
+218	 	&#34;bufio&#34;
+219	 	&#34;encoding/json&#34;
+220	 	&#34;errors&#34;
+221	 	&#34;io&#34;
+222	 	&#34;os&#34;
+223	+	&#34;strings&#34;
+224	 
+225	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+226	 )
+227	 
+228	 // Options controls how a transcript is folded into a Session.
+229	 type Options struct {
+230	 	IncludeSubagents bool
+231	 }
+232	 
+233	 // ParseFile parses a transcript file at path.
+234	@@ -180,30 +181,95 @@ func messageMeta(raw json.RawMessage) (msgID, modelID string, usage *model.Usage
+235	 	}
+236	 	return id, mdl, &amp;model.Usage{
+237	 		Input:        u.InputTokens,
+238	 		Output:       u.OutputTokens,
+239	 		CacheRead:    u.CacheReadInputTokens,
+240	 		CacheWrite5m: w5,
+241	 		CacheWrite1h: w1,
+242	 	}
+243	 }
+244	 
+245	+// taskNotification is the parsed payload of a &lt;task-notification&gt; user record —
+246	+// the message a background agent&#39;s completion injects into the parent session.
+247	+type taskNotification struct {
+248	+	TaskID    string
+249	+	ToolUseID string
+250	+	Status    string
+251	+	Summary   string
+252	+	Result    string
+253	+}
+254	+
+255	+// parseTaskNotification extracts fields from a &lt;task-notification&gt; payload with
+256	+// tolerant string scanning (the payload is pseudo-XML with unescaped markdown
+257	+// inside &lt;result&gt;). ok is false unless both task-id and summary are present.
+258	+func parseTaskNotification(s string) (taskNotification, bool) {
+259	+	t := strings.TrimLeft(s, &#34; \t\r\n&#34;)
+260	+	if !strings.HasPrefix(t, &#34;&lt;task-notification&gt;&#34;) {
+261	+		return taskNotification{}, false
+262	+	}
+263	+	n := taskNotification{
+264	+		TaskID:    tagContent(t, &#34;task-id&#34;),
+265	+		ToolUseID: tagContent(t, &#34;tool-use-id&#34;),
+266	+		Status:    tagContent(t, &#34;status&#34;),
+267	+		Summary:   tagContent(t, &#34;summary&#34;),
+268	+		Result:    tagContent(t, &#34;result&#34;),
+269	+	}
+270	+	if n.TaskID == &#34;&#34; || n.Summary == &#34;&#34; {
+271	+		return taskNotification{}, false
+272	+	}
+273	+	return n, true
+274	+}
+275	+
+276	+// tagContent returns the text between the first &lt;name&gt; and the last &lt;/name&gt;,
+277	+// trimmed. The last closing tag guards &lt;result&gt; bodies that themselves contain
+278	+// XML-looking text.
+279	+func tagContent(s, name string) string {
+280	+	open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;
+281	+	i := strings.Index(s, open)
+282	+	if i &lt; 0 {
+283	+		return &#34;&#34;
+284	+	}
+285	+	rest := s[i+len(open):]
+286	+	j := strings.LastIndex(rest, close)
+287	+	if j &lt; 0 {
+288	+		return &#34;&#34;
+289	+	}
+290	+	return strings.TrimSpace(rest[:j])
+291	+}
+292	+
+293	 // buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+294	 // attached to their originating ToolCall via toolIndex and do not themselves
+295	 // produce turn content. Returns nil if the record yields no displayable blocks.
+296	 func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {
+297	 	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+298	 	if rec.Type == &#34;user&#34; {
+299	 		turn.Kind = model.TurnUser
+300	 	} else {
+301	 		turn.Kind = model.TurnAssistant
+302	 	}
+303	+	// A background agent&#39;s completion arrives as a user record whose content is
+304	+	// a single &lt;task-notification&gt; text payload. Surface it as an agent-result
+305	+	// turn so the report attributes it to the agent, not to the user.
+306	+	if turn.Kind == model.TurnUser &amp;&amp; len(blocks) == 1 &amp;&amp; blocks[0].Type == &#34;text&#34; {
+307	+		if n, ok := parseTaskNotification(blocks[0].Text); ok {
+308	+			turn.Kind = model.TurnAgentResult
+309	+			turn.AgentID = n.TaskID
+310	+			turn.AgentStatus = n.Status
+311	+			turn.AgentSummary = n.Summary
+312	+			body := n.Result
+313	+			if body == &#34;&#34; {
+314	+				body = n.Summary
+315	+			}
+316	+			turn.Blocks = []model.Block{{Type: model.BlockText, Text: body}}
+317	+			return turn
+318	+		}
+319	+	}
+320	 	for _, b := range blocks {
+321	 		switch b.Type {
+322	 		case &#34;text&#34;:
+323	 			if b.Text != &#34;&#34; {
+324	 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+325	 			}
+326	 		case &#34;thinking&#34;:
+327	 			if b.Thinking != &#34;&#34; {
+328	 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+329	 			}
+330	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="bash wc -l internal/transcript/parse.go &amp;&amp; grep -n &#34;buildturn\|options\|includesubagents\|seenusage\|func parse&#34; internal/transcript/parse.go">
+      <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.09</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l internal/transcript/parse.go &amp;&amp; grep -n &#34;buildTurn\|Options\|IncludeSubagents\|seenUsage\|func Parse&#34; internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;wc -l internal/transcript/parse.go \u0026\u0026 grep -n \&#34;buildTurn\\|Options\\|IncludeSubagents\\|seenUsage\\|func Parse\&#34; internal/transcript/parse.go&#34;
+}</pre><pre class="tool-result">     418 internal/transcript/parse.go
+14:// Options controls how a transcript is folded into a Session.
+15:type Options struct {
+16:	IncludeSubagents bool
+20:func ParseFile(path string, opts Options) (model.Session, error) {
+55:func Parse(r io.Reader, opts Options) (model.Session, error) {
+60:	// seenUsage tracks message ids whose usage has already been counted, so an
+62:	seenUsage := map[string]bool{}
+117:			if !opts.IncludeSubagents || sidechainOwner == nil {
+120:			turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+130:		turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+137:		// sidechain owner. Tool-use ids are already registered in buildTurn.
+143:		if opts.IncludeSubagents {
+239:// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+242:func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {
+299:			if seenUsage[msgID] {
+302:				seenUsage[msgID] = true</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude<span class="usage-badge">196 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;,
+  &#34;limit&#34;: 150,
+  &#34;offset&#34;: 55
+}</pre><pre class="tool-result">55	func Parse(r io.Reader, opts Options) (model.Session, error) {
+56		var s model.Session
+57		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+58		// sidechains can be attached after the fact.
+59		toolIndex := map[string]*model.ToolCall{}
+60		// seenUsage tracks message ids whose usage has already been counted, so an
+61		// assistant message split across multiple records is not counted per-record.
+62		seenUsage := map[string]bool{}
+63		// lastTask tracks the most recent Task tool call; sidechainOwner is the Task
+64		// whose Subagents any subsequent sidechain turns are appended to.
+65		var lastTask *model.ToolCall
+66		sidechainOwner := lastTask
+67	
+68		sc := bufio.NewScanner(r)
+69		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+70		for sc.Scan() {
+71			line := sc.Bytes()
+72			if len(trimSpace(line)) == 0 {
+73				continue
+74			}
+75			var rec rawRecord
+76			if err := json.Unmarshal(line, &amp;rec); err != nil {
+77				s.SkippedLines++
+78				continue
+79			}
+80			switch rec.Type {
+81			case &#34;ai-title&#34;:
+82				if rec.AiTitle != &#34;&#34; {
+83					s.Title = rec.AiTitle
+84				}
+85				continue
+86			case &#34;user&#34;, &#34;assistant&#34;:
+87				// fallthrough to handling below
+88			default:
+89				continue // ignore mode/permission/attachment/etc. for the timeline
+90			}
+91			if rec.IsMeta {
+92				continue
+93			}
+94	
+95			// Capture session-level metadata from the first record that has it.
+96			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+97				s.GitBranch = rec.GitBranch
+98			}
+99			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+100				s.Version = rec.Version
+101			}
+102			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+103				s.ProjectPath = rec.Cwd
+104			}
+105			ts := parseTime(rec.Timestamp)
+106			if !ts.IsZero() {
+107				if s.StartedAt.IsZero() {
+108					s.StartedAt = ts
+109				}
+110				s.EndedAt = ts
+111			}
+112	
+113			_, blocks := decodeMessageContent(rec.Message)
+114	
+115			// Sidechain (subagent) records.
+116			if rec.IsSidechain {
+117				if !opts.IncludeSubagents || sidechainOwner == nil {
+118					continue
+119				}
+120				turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+121				if turn == nil {
+122					continue
+123				}
+124				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+125				sub.Turns = append(sub.Turns, *turn)
+126				continue
+127			}
+128	
+129			// Main-chain records.
+130			turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+131			if turn == nil {
+132				continue // e.g. a user record that only carried a tool_result
+133			}
+134			s.Turns = append(s.Turns, *turn)
+135	
+136			// Seed a subagent slot for each Task tool call and make it the current
+137			// sidechain owner. Tool-use ids are already registered in buildTurn.
+138			// Note: sidechain records are attributed to the nearest preceding Task
+139			// by file order. Sequential Task calls attribute correctly; multiple
+140			// Task calls dispatched in parallel from one assistant message cannot be
+141			// disambiguated from the raw records and will all attach to the last
+142			// one — a known v1 limitation.
+143			if opts.IncludeSubagents {
+144				for i := range turn.Blocks {
+145					tool := turn.Blocks[i].Tool
+146					if tool != nil &amp;&amp; tool.Name == &#34;Task&#34; {
+147						tool.Subagents = append(tool.Subagents, model.Subagent{
+148							Description: taskDescription(tool),
+149						})
+150						lastTask = tool
+151						sidechainOwner = lastTask
+152					}
+153				}
+154			}
+155		}
+156		if err := sc.Err(); err != nil {
+157			// A single over-long line (bufio.ErrTooLong) is a pathological record,
+158			// not a reason to discard the whole report: count it and return what we
+159			// parsed so far.
+160			if errors.Is(err, bufio.ErrTooLong) {
+161				s.SkippedLines++
+162				return s, nil
+163			}
+164			return s, err
+165		}
+166		return s, nil
+167	}
+168	
+169	// messageMeta converts a record&#39;s message model/usage into turn fields, also
+170	// returning the message id for deduplication. Only assistant records carry
+171	// usage; the aggregate cache_creation figure (with no 5m/1h split) is attributed
+172	// to the cheaper 5-minute write.
+173	func messageMeta(raw json.RawMessage) (msgID, modelID string, usage *model.Usage) {
+174		id, mdl, u := decodeMessageMeta(raw)
+175		if u == nil {
+176			return id, mdl, nil
+177		}
+178		w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+179		if w5 == 0 &amp;&amp; w1 == 0 &amp;&amp; u.CacheCreationInputTokens &gt; 0 {
+180			w5 = u.CacheCreationInputTokens
+181		}
+182		return id, mdl, &amp;model.Usage{
+183			Input:        u.InputTokens,
+184			Output:       u.OutputTokens,
+185			CacheRead:    u.CacheReadInputTokens,
+186			CacheWrite5m: w5,
+187			CacheWrite1h: w1,
+188		}
+189	}
+190	
+191	// taskNotification is the parsed payload of a &lt;task-notification&gt; user record —
+192	// the message a background agent&#39;s completion injects into the parent session.
+193	type taskNotification struct {
+194		TaskID    string
+195		ToolUseID string
+196		Status    string
+197		Summary   string
+198		Result    string
+199	}
+200	
+201	// parseTaskNotification extracts fields from a &lt;task-notification&gt; payload with
+202	// tolerant string scanning (the payload is pseudo-XML with unescaped markdown
+203	// inside &lt;result&gt;). ok is false unless both task-id and summary are present.
+204	func parseTaskNotification(s string) (taskNotification, bool) {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash gofmt -l . &amp;&amp; echo &#34;---gofmt clean---&#34;">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;---gofmt clean---&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;---gofmt clean---\&#34;&#34;
+}</pre><pre class="tool-result">---gofmt clean---</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude<span class="usage-badge">199 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
+}</pre><pre class="tool-result">1	// Package redact scrubs likely secrets and the user&#39;s home path from transcript
+2	// text before it is rendered. It is best-effort defense-in-depth, not a
+3	// guarantee of complete secret removal.
+4	package redact
+5	
+6	import (
+7		&#34;regexp&#34;
+8		&#34;strings&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+11	)
+12	
+13	type rule struct {
+14		kind string
+15		re   *regexp.Regexp
+16	}
+17	
+18	// Ordered: more specific patterns first.
+19	var rules = []rule{
+20		{&#34;aws-key&#34;, regexp.MustCompile(`\bAKIA[0-9A-Z]{16}\b`)},
+21		{&#34;token&#34;, regexp.MustCompile(`\b(?:sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{10,})\b`)},
+22		{&#34;jwt&#34;, regexp.MustCompile(`\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b`)},
+23		{&#34;assignment&#34;, regexp.MustCompile(`(?i)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\s*[=:]\s*[&#39;&#34;]?([^\s&#39;&#34;]{6,})`)},
+24	}
+25	
+26	// Redactor applies redaction rules and a home-directory rewrite.
+27	type Redactor struct {
+28		homeDir string
+29	}
+30	
+31	func New(homeDir string) *Redactor { return &amp;Redactor{homeDir: homeDir} }
+32	
+33	// String redacts a single string.
+34	func (r *Redactor) String(s string) string {
+35		for _, ru := range rules {
+36			if ru.kind == &#34;assignment&#34; {
+37				s = ru.re.ReplaceAllString(s, &#34;$1=[REDACTED:assignment]&#34;)
+38				continue
+39			}
+40			s = ru.re.ReplaceAllString(s, &#34;[REDACTED:&#34;+ru.kind+&#34;]&#34;)
+41		}
+42		if r.homeDir != &#34;&#34; {
+43			s = strings.ReplaceAll(s, r.homeDir, &#34;~&#34;)
+44		}
+45		return s
+46	}
+47	
+48	// Session redacts every user-visible text field of a Session in place.
+49	func Session(s *model.Session, homeDir string) {
+50		r := New(homeDir)
+51		// Session-level fields are rendered in the report header, so they must be
+52		// scrubbed too (ProjectPath in particular carries the home path/username).
+53		s.ProjectPath = r.String(s.ProjectPath)
+54		s.Title = r.String(s.Title)
+55		s.GitBranch = r.String(s.GitBranch)
+56		for i := range s.Turns {
+57			redactTurn(r, &amp;s.Turns[i])
+58		}
+59	}
+60	
+61	func redactTurn(r *Redactor, t *model.Turn) {
+62		t.AgentSummary = r.String(t.AgentSummary)
+63		for i := range t.Blocks {
+64			b := &amp;t.Blocks[i]
+65			b.Text = r.String(b.Text)
+66			if b.Tool != nil {
+67				redactTool(r, b.Tool)
+68			}
+69		}
+70	}
+71	
+72	func redactTool(r *Redactor, tc *model.ToolCall) {
+73		tc.Summary = r.String(tc.Summary)
+74		tc.InputJSON = r.String(tc.InputJSON)
+75		if tc.Result != nil {
+76			tc.Result.Content = r.String(tc.Result.Content)
+77		}
+78		if tc.Diff != nil {
+79			tc.Diff.OldText = r.String(tc.Diff.OldText)
+80			tc.Diff.NewText = r.String(tc.Diff.NewText)
+81			tc.Diff.Path = r.String(tc.Diff.Path)
+82		}
+83		for i := range tc.Subagents {
+84			tc.Subagents[i].Description = r.String(tc.Subagents[i].Description)
+85			for j := range tc.Subagents[i].Turns {
+86				redactTurn(r, &amp;tc.Subagents[i].Turns[j])
+87			}
+88		}
+89	}
+90	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="this matches the brief exactly and follows the existing pattern. everything checks out. implementation is small, focused, and well-tested.
+
+## spec compliance
+
+- ✅ **unconditional fix** — verified by reading the full `parse()` loop (parse.go:80-155, not just the diff context): main-chain (`!rec.issidechain`) records call `buildturn` unconditionally at line 130, with no `opts.includesubagents` or usage-flag gating anywhere near the notification-detection branch. task-notifications arrive as ordinary parent-session user records, so this always fires.
+- ✅ **malformed notification falls back to plain user turn, content untouched** — `parsetasknotification` requires non-empty `taskid` and `summary`; on failure `buildturn` falls through to the pre-existing block loop, which processes the original `blocks` slice verbatim. `testparsemalformednotificationstaysuserturn` and the mid-string-mention test both confirm this.
+- ✅ **parsed body is `&lt;result&gt;` payload only, summary as fallback** — parse.go:311-316 sets `body := n.result; if body == &#34;&#34; { body = n.summary }`, and `testparsetasknotificationturn` explicitly asserts the raw envelope (`&lt;task-id&gt;`) is absent from the body block.
+- ✅ **wrappers dropped per brief** — implementer used `strings.trimleft`/`strings.hasprefix` directly (parse.go:259-260), matching the controller&#39;s instruction to drop `trimleftspace`/`hasprefix`.
+- ✅ **`gofmt -l .` clean** — re-ran it myself (read-only, non-mutating): no output.
+- ✅ **redaction** — `redactturn` adds `t.agentsummary = r.string(t.agentsummary)` (redact.go:62), placed with the other per-turn string fields as instructed; the result/summary body text still flows through the existing `b.text = r.string(b.text)` loop, so it&#39;s covered twice via different fields as intended.
+- ✅ **model/interface shape matches brief** — `turnagentresult`, `turn.agentid/agentstatus/agentsummary`, and `tasknotification{taskid, tooluseid, status, summary, result}` all present exactly as specified (model.go:32,55-57; parse.go:193-199).
+
+## strengths
+
+- test suite (5 cases) directly exercises every global constraint called out in the task: unconditional-ness (implicitly, no options passed), malformed fallback, result-only body, empty-result fallback, and no-dedup on repeats — this is exactly the right shape of tdd evidence for this task.
+- `tagcontent`&#39;s use of `lastindex` for the closing tag is a deliberate, documented tradeoff to avoid truncating `&lt;result&gt;` bodies that contain markdown/xml-looking text (parse.go:203-204, 209-210) — a real edge case in this data (agent summaries routinely contain code fences or angle brackets) handled thoughtfully rather than papered over.
+- early-return in `buildturn` on notification match (parse.go:317) cleanly avoids falling into the generic block-processing loop, keeping the two code paths from interacting.
+
+## issues
+
+### critical (must fix)
+none.
+
+### important (should fix)
+none.
+
+### minor (nice to have)
+- `tagcontent`&#39;s `lastindex`-based closing-tag search means a `&lt;result&gt;` body that itself contains a literal `&lt;/result&gt;` substring (e.g., in a code block pasted verbatim by the agent) would over-capture up to the last occurrence, potentially swallowing the `&lt;/task-notification&gt;` wrapper into the visible body. this is an inherent heuristic tradeoff of tolerant string-scanning (not real xml parsing) and is explicitly called out in the code comment, so it&#39;s a known, accepted limitation rather than an oversight — flagging only for awareness in case downstream tasks hit it with real transcripts.
+- `tasknotification.tooluseid` is parsed but never consumed in this task (reserved for task 5&#39;s linking per the brief) — correct per the interface contract, just noting it&#39;s currently dead weight until that task lands.
+
+### assessment
+**task quality:** approved
+**reasoning:** the implementation matches the brief&#39;s interface and behavior contracts precisely, including the subtle &#34;unconditional regardless of flags&#34; requirement (verified by reading the full parse loop, not just the diff), the result-vs-summary fallback, and safe degradation on malformed input. tests are well-targeted at the stated global constraints, gofmt is clean, and redaction is wired correctly.">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><p>This matches the brief exactly and follows the existing pattern. Everything checks out. Implementation is small, focused, and well-tested.</p>
+<h2>Spec Compliance</h2>
+<ul>
+<li>✅ <strong>Unconditional fix</strong> — verified by reading the full <code>Parse()</code> loop (parse.go:80-155, not just the diff context): main-chain (<code>!rec.IsSidechain</code>) records call <code>buildTurn</code> unconditionally at line 130, with no <code>opts.IncludeSubagents</code> or usage-flag gating anywhere near the notification-detection branch. Task-notifications arrive as ordinary parent-session user records, so this always fires.</li>
+<li>✅ <strong>Malformed notification falls back to plain user turn, content untouched</strong> — <code>parseTaskNotification</code> requires non-empty <code>TaskID</code> and <code>Summary</code>; on failure <code>buildTurn</code> falls through to the pre-existing block loop, which processes the original <code>blocks</code> slice verbatim. <code>TestParseMalformedNotificationStaysUserTurn</code> and the mid-string-mention test both confirm this.</li>
+<li>✅ <strong>Parsed body is <code>&lt;result&gt;</code> payload only, summary as fallback</strong> — parse.go:311-316 sets <code>body := n.Result; if body == &quot;&quot; { body = n.Summary }</code>, and <code>TestParseTaskNotificationTurn</code> explicitly asserts the raw envelope (<code>&lt;task-id&gt;</code>) is absent from the body block.</li>
+<li>✅ <strong>Wrappers dropped per brief</strong> — implementer used <code>strings.TrimLeft</code>/<code>strings.HasPrefix</code> directly (parse.go:259-260), matching the controller's instruction to drop <code>trimLeftSpace</code>/<code>hasPrefix</code>.</li>
+<li>✅ <strong><code>gofmt -l .</code> clean</strong> — re-ran it myself (read-only, non-mutating): no output.</li>
+<li>✅ <strong>Redaction</strong> — <code>redactTurn</code> adds <code>t.AgentSummary = r.String(t.AgentSummary)</code> (redact.go:62), placed with the other per-turn string fields as instructed; the result/summary body text still flows through the existing <code>b.Text = r.String(b.Text)</code> loop, so it's covered twice via different fields as intended.</li>
+<li>✅ <strong>Model/interface shape matches brief</strong> — <code>TurnAgentResult</code>, <code>Turn.AgentID/AgentStatus/AgentSummary</code>, and <code>taskNotification{TaskID, ToolUseID, Status, Summary, Result}</code> all present exactly as specified (model.go:32,55-57; parse.go:193-199).</li>
+</ul>
+<h2>Strengths</h2>
+<ul>
+<li>Test suite (5 cases) directly exercises every global constraint called out in the task: unconditional-ness (implicitly, no options passed), malformed fallback, result-only body, empty-result fallback, and no-dedup on repeats — this is exactly the right shape of TDD evidence for this task.</li>
+<li><code>tagContent</code>'s use of <code>LastIndex</code> for the closing tag is a deliberate, documented tradeoff to avoid truncating <code>&lt;result&gt;</code> bodies that contain markdown/XML-looking text (parse.go:203-204, 209-210) — a real edge case in this data (agent summaries routinely contain code fences or angle brackets) handled thoughtfully rather than papered over.</li>
+<li>Early-return in <code>buildTurn</code> on notification match (parse.go:317) cleanly avoids falling into the generic block-processing loop, keeping the two code paths from interacting.</li>
+</ul>
+<h2>Issues</h2>
+<h3>Critical (Must Fix)</h3>
+<p>None.</p>
+<h3>Important (Should Fix)</h3>
+<p>None.</p>
+<h3>Minor (Nice to Have)</h3>
+<ul>
+<li><code>tagContent</code>'s <code>LastIndex</code>-based closing-tag search means a <code>&lt;result&gt;</code> body that itself contains a literal <code>&lt;/result&gt;</code> substring (e.g., in a code block pasted verbatim by the agent) would over-capture up to the last occurrence, potentially swallowing the <code>&lt;/task-notification&gt;</code> wrapper into the visible body. This is an inherent heuristic tradeoff of tolerant string-scanning (not real XML parsing) and is explicitly called out in the code comment, so it's a known, accepted limitation rather than an oversight — flagging only for awareness in case downstream tasks hit it with real transcripts.</li>
+<li><code>taskNotification.ToolUseID</code> is parsed but never consumed in this task (reserved for Task 5's linking per the brief) — correct per the interface contract, just noting it's currently dead weight until that task lands.</li>
+</ul>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> Approved
+<strong>Reasoning:</strong> The implementation matches the brief's interface and behavior contracts precisely, including the subtle &quot;unconditional regardless of flags&quot; requirement (verified by reading the full Parse loop, not just the diff), the result-vs-summary fallback, and safe degradation on malformed input. Tests are well-targeted at the stated global constraints, gofmt is clean, and redaction is wired correctly.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

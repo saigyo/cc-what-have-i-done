@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 4 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 4 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:20</span>
+        <span>13 turns</span>
+        <span>general-purpose · agent-a4a0f2c1a18950550</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 17k in+out · ~$0.26 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>10k</td><td>8k</td><td>319k</td><td>40k</td><td>$0.26</td></tr>
+          <tr class="usage-total"><td>Total</td><td>10k</td><td>8k</td><td>319k</td><td>40k</td><td>$0.26</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. task-scoped gate.
+
+## what was requested
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md
+
+global constraints that bind this task:
+- opt-in: the usage card/badges render only when `options.usage` is true; absent otherwise. existing render tests (no usage option) must still pass with no card.
+- self-contained/offline: the css added to styles.css must have no external refs (no http/cdn, no url(), no @font-face).
+- collapsed headline counts input&#43;output only (&#34;in&#43;out&#34;); expanded shows token breakdown &#43; per-model table &#43; footnote with &#34;prices as of &lt;pricesasof&gt;&#34; and, when hasunknownmodel, a note that totals exclude unpriced models.
+- per-turn badge only on turns that have usage; unpriced turns show tokens with no cost.
+- redaction is untouched by this task.
+
+## implementer&#39;s report (unverified — verify against the diff). note the implementer deviated from the brief.
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md
+
+## diff under review
+base: 4140bfb  head: 4de9666
+diff file: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff
+read the diff file once. do not re-run git. read-only. inspect outside the diff only for a concrete named risk.
+
+## priority: scrutinize the deviation
+the brief specified `usageview.headline string` and `usagemodel.tokens string` (plain strings, auto-escaped by html/template). the implementer changed both to `template.html` built via `html.escapestring(...)`, because html/template escapes the literal `&#43;` in &#34;in&#43;out&#34; to `&amp;#43;`, which broke the `strings.contains(html, &#34;in&#43;out&#34;)` test.
+
+judge this rigorously:
+1. **xss/injection safety:** for each value now typed `template.html`, trace every input that composes it. does any session-derived / user-controlled data (model id, or anything from the transcript) flow into a `template.html` field without `html.escapestring`? the model id (`usagemodel.model`) is session-derived — confirm it stays a plain `string` (auto-escaped) and is not concatenated into the `template.html` tokens/headline. numbers from formattokens/formatcost are digits/`.`/`k`/`m`/`$`/`&lt;` — confirm they cannot carry markup. flag as critical any path where transcript data reaches raw template.html unescaped.
+2. **was a simpler/safer fix available?** e.g. keeping plain strings and changing the headline text to avoid `&#43;` (like &#34;in/out&#34;), or asserting the escaped form in the test. note it as a minor suggestion if the template.html approach is safe but heavier than necessary. do not block on this if the deviation is safe.
+
+## also verify
+- card is gated on options.usage (absent when false) — confirm both the template `{{ with .usage }}` guard and that buildviewmodel only sets d.usage when opts.usage. confirm testsiteomitsusagebydefault asserts absence.
+- per-turn badge only set when opts.usage &amp;&amp; t.usage != nil.
+- css additions have no external refs (grep the diff for `http`, `url(`, `@font-face`, `@import`).
+- buildviewmodel signature change is consistent with the site call site; no other callers.
+- the no-data case (hasanyusage false) renders the note, not an empty broken card.
+- tests assert real behavior (card present with usage, absent without, badge present, model id present, &#34;prices as of&#34; present).
+
+## tests
+implementer ran the full suite green. don&#39;t re-run the whole suite; a focused test only for a specific doubt, else name it. non-pristine output is a finding.
+
+## output format
+follow the reviewer template exactly: spec compliance verdict (✅/❌/⚠️) first, then strengths, then issues (critical/important/minor) with file:line, then assessment with **task quality:** approved | needs fixes. be decisive about the deviation: is it safe (approved) or a real injection risk (needs fixes)?">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+<p>Global constraints that bind this task:</p>
+<ul>
+<li>Opt-in: the usage card/badges render ONLY when <code>Options.Usage</code> is true; absent otherwise. Existing render tests (no usage option) must still pass with no card.</li>
+<li>Self-contained/offline: the CSS added to styles.css must have NO external refs (no http/CDN, no url(), no @font-face).</li>
+<li>Collapsed headline counts input+output only (&quot;in+out&quot;); expanded shows token breakdown + per-model table + footnote with &quot;prices as of <!-- raw HTML omitted -->&quot; and, when HasUnknownModel, a note that totals exclude unpriced models.</li>
+<li>Per-turn badge only on turns that have usage; unpriced turns show tokens with no cost.</li>
+<li>Redaction is untouched by this task.</li>
+</ul>
+<h2>Implementer's Report (unverified — verify against the diff). Note the implementer DEVIATED from the brief.</h2>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: 4140bfb  Head: 4de9666
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff
+Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff only for a concrete named risk.</p>
+<h2>PRIORITY: scrutinize the deviation</h2>
+<p>The brief specified <code>usageView.Headline string</code> and <code>usageModel.Tokens string</code> (plain strings, auto-escaped by html/template). The implementer changed BOTH to <code>template.HTML</code> built via <code>html.EscapeString(...)</code>, because html/template escapes the literal <code>+</code> in &quot;in+out&quot; to <code>&amp;#43;</code>, which broke the <code>strings.Contains(html, &quot;in+out&quot;)</code> test.</p>
+<p>Judge this rigorously:</p>
+<ol>
+<li><strong>XSS/injection safety:</strong> For EACH value now typed <code>template.HTML</code>, trace every input that composes it. Does any session-derived / user-controlled data (model id, or anything from the transcript) flow into a <code>template.HTML</code> field WITHOUT <code>html.EscapeString</code>? The model id (<code>usageModel.Model</code>) is session-derived — confirm it stays a plain <code>string</code> (auto-escaped) and is NOT concatenated into the <code>template.HTML</code> Tokens/Headline. Numbers from formatTokens/formatCost are digits/<code>.</code>/<code>k</code>/<code>M</code>/<code>$</code>/<code>&lt;</code> — confirm they cannot carry markup. Flag as Critical any path where transcript data reaches raw template.HTML unescaped.</li>
+<li><strong>Was a simpler/safer fix available?</strong> e.g. keeping plain strings and changing the headline text to avoid <code>+</code> (like &quot;in/out&quot;), or asserting the escaped form in the test. Note it as a Minor suggestion if the template.HTML approach is safe but heavier than necessary. Do NOT block on this if the deviation is safe.</li>
+</ol>
+<h2>Also verify</h2>
+<ul>
+<li>Card is gated on Options.Usage (absent when false) — confirm both the template <code>{{ with .Usage }}</code> guard AND that buildViewModel only sets d.Usage when opts.Usage. Confirm TestSiteOmitsUsageByDefault asserts absence.</li>
+<li>Per-turn badge only set when opts.Usage &amp;&amp; t.Usage != nil.</li>
+<li>CSS additions have no external refs (grep the diff for <code>http</code>, <code>url(</code>, <code>@font-face</code>, <code>@import</code>).</li>
+<li>buildViewModel signature change is consistent with the Site call site; no other callers.</li>
+<li>The no-data case (HasAnyUsage false) renders the note, not an empty broken card.</li>
+<li>Tests assert real behavior (card present with usage, absent without, badge present, model id present, &quot;prices as of&quot; present).</li>
+</ul>
+<h2>Tests</h2>
+<p>Implementer ran the full suite green. Don't re-run the whole suite; a focused test only for a specific doubt, else name it. Non-pristine output is a finding.</p>
+<h2>Output Format</h2>
+<p>Follow the reviewer template exactly: Spec Compliance verdict (✅/❌/⚠️) first, then Strengths, then Issues (Critical/Important/Minor) with file:line, then Assessment with <strong>Task quality:</strong> Approved | Needs fixes. Be decisive about the deviation: is it safe (Approved) or a real injection risk (Needs fixes)?</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 4: Render the usage card and per-turn badges
+2	
+3	**Files:**
+4	- Create: `internal/render/format.go`
+5	- Modify: `internal/render/render.go`
+6	- Modify: `internal/render/assets/report.html.tmpl`
+7	- Modify: `internal/render/assets/styles.css`
+8	- Test: `internal/render/format_test.go`
+9	- Test: `internal/render/render_test.go`
+10	
+11	**Interfaces:**
+12	- Consumes: `usage.Compute`, `usage.Report`, `usage.ModelUsage` from Task 3; `model.Session` with per-turn `Usage`/`Model` from Task 1.
+13	- Produces: `render.Options.Usage bool` (new field); usage card + per-turn badges in output.
+14	
+15	- [ ] **Step 1: Write the failing formatting test**
+16	
+17	Create `internal/render/format_test.go`:
+18	
+19	```go
+20	package render
+21	
+22	import &#34;testing&#34;
+23	
+24	func TestFormatTokens(t *testing.T) {
+25		cases := map[int]string{0: &#34;0&#34;, 192: &#34;192&#34;, 12300: &#34;12k&#34;, 973000: &#34;973k&#34;, 1_200_000: &#34;1.2M&#34;}
+26		for n, want := range cases {
+27			if got := formatTokens(n); got != want {
+28				t.Errorf(&#34;formatTokens(%d) = %q, want %q&#34;, n, got, want)
+29			}
+30		}
+31	}
+32	
+33	func TestFormatCost(t *testing.T) {
+34		if got := formatCost(12.4); got != &#34;$12.40&#34; {
+35			t.Errorf(&#34;formatCost(12.4) = %q, want $12.40&#34;, got)
+36		}
+37		if got := formatCost(0.001); got != &#34;&lt;$0.01&#34; {
+38			t.Errorf(&#34;formatCost(0.001) = %q, want &lt;$0.01&#34;, got)
+39		}
+40	}
+41	```
+42	
+43	- [ ] **Step 2: Run test to verify it fails**
+44	
+45	Run: `go test ./internal/render/ -run TestFormat -v`
+46	Expected: FAIL — `formatTokens`/`formatCost` undefined.
+47	
+48	- [ ] **Step 3: Implement format.go**
+49	
+50	Create `internal/render/format.go`:
+51	
+52	```go
+53	package render
+54	
+55	import (
+56		&#34;fmt&#34;
+57		&#34;strconv&#34;
+58	)
+59	
+60	// formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M.
+61	func formatTokens(n int) string {
+62		switch {
+63		case n &gt;= 1_000_000:
+64			return fmt.Sprintf(&#34;%.1fM&#34;, float64(n)/1e6)
+65		case n &gt;= 1_000:
+66			return fmt.Sprintf(&#34;%.0fk&#34;, float64(n)/1e3)
+67		default:
+68			return strconv.Itoa(n)
+69		}
+70	}
+71	
+72	// formatCost renders a USD cost as $X.XX, or &lt;$0.01 for tiny non-zero amounts.
+73	func formatCost(c float64) string {
+74		if c &gt; 0 &amp;&amp; c &lt; 0.005 {
+75			return &#34;&lt;$0.01&#34;
+76		}
+77		return fmt.Sprintf(&#34;$%.2f&#34;, c)
+78	}
+79	```
+80	
+81	- [ ] **Step 4: Run formatting test to verify it passes**
+82	
+83	Run: `go test ./internal/render/ -run TestFormat -v`
+84	Expected: PASS.
+85	
+86	- [ ] **Step 5: Add the render view model and option**
+87	
+88	In `internal/render/render.go`:
+89	
+90	(a) Add the import for the usage package to the existing import block:
+91	
+92	```go
+93		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+94		&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+95	```
+96	
+97	(b) Extend `Options`:
+98	
+99	```go
+100	// Options configures a render.
+101	type Options struct {
+102		Title string
+103		Usage bool // render the token-usage &amp; cost section
+104	}
+105	```
+106	
+107	(c) Add `Badge` to `turnView` and `Usage` to `viewData`:
+108	
+109	```go
+110	type viewData struct {
+111		Title     string
+112		Session   model.Session
+113		StartedAt string
+114		TurnCount int
+115		Prompts   []promptRef
+116		Turns     []turnView
+117		Usage     *usageView
+118	}
+119	
+120	type turnView struct {
+121		Index      int
+122		Kind       string
+123		RoleLabel  string
+124		SearchText string
+125		Body       template.HTML
+126		Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;
+127	}
+128	```
+129	
+130	(d) Add the usage view model types (near the other view types):
+131	
+132	```go
+133	type usageView struct {
+134		HasAny   bool
+135		Headline string       // collapsed one-line summary
+136		Rows     []usageRow   // token breakdown
+137		Models   []usageModel // per-model table rows
+138		Footnote string
+139	}
+140	
+141	type usageRow struct {
+142		Label string
+143		Value string
+144	}
+145	
+146	type usageModel struct {
+147		Model  string
+148		Tokens string
+149		Cost   string // &#34;$1.23&#34; or &#34;n/a&#34;
+150	}
+151	```
+152	
+153	(e) Change `Site` to pass `opts` into `buildViewModel`:
+154	
+155	```go
+156		data := buildViewModel(s, title, opts)
+157	```
+158	
+159	(f) Update `buildViewModel`&#39;s signature and body. Replace the whole function with:
+160	
+161	```go
+162	func buildViewModel(s model.Session, title string, opts Options) viewData {
+163		d := viewData{
+164			Title:     title,
+165			Session:   s,
+166			TurnCount: len(s.Turns),
+167		}
+168		if !s.StartedAt.IsZero() {
+169			d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+170		}
+171	
+172		var rep usage.Report
+173		if opts.Usage {
+174			rep = usage.Compute(s)
+175			d.Usage = buildUsageView(rep)
+176		}
+177	
+178		for i, t := range s.Turns {
+179			plain := turnPlainText(t)
+180			if t.Kind == model.TurnUser {
+181				d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+182			}
+183			tv := turnView{
+184				Index:      i,
+185				Kind:       string(t.Kind),
+186				RoleLabel:  roleLabel(t.Kind),
+187				SearchText: strings.ToLower(plain),
+188				Body:       renderTurnBody(t),
+189			}
+190			if opts.Usage &amp;&amp; t.Usage != nil {
+191				tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+192			}
+193			d.Turns = append(d.Turns, tv)
+194		}
+195		return d
+196	}
+197	
+198	// turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.
+199	func turnBadge(u model.Usage, costUSD *float64) string {
+200		b := formatTokens(u.Input+u.Output) + &#34; tok&#34;
+201		if costUSD != nil {
+202			b += &#34; · ~&#34; + formatCost(*costUSD)
+203		}
+204		return b
+205	}
+206	
+207	// buildUsageView turns a usage.Report into the template-facing view model.
+208	func buildUsageView(r usage.Report) *usageView {
+209		v := &amp;usageView{HasAny: r.HasAnyUsage}
+210		if !r.HasAnyUsage {
+211			v.Headline = &#34;Usage · no token-usage data&#34;
+212			return v
+213		}
+214		headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;
+215		if r.TotalCostUSD != nil {
+216			headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;
+217		}
+218		v.Headline = headline
+219	
+220		v.Rows = []usageRow{
+221			{&#34;input&#34;, formatTokens(r.Total.Input)},
+222			{&#34;output&#34;, formatTokens(r.Total.Output)},
+223			{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},
+224			{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
+225		}
+226		for _, m := range r.ByModel {
+227			row := usageModel{Model: m.Model, Tokens: formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;, Cost: &#34;n/a&#34;}
+228			if m.CostUSD != nil {
+229				row.Cost = formatCost(*m.CostUSD)
+230			}
+231			v.Models = append(v.Models, row)
+232		}
+233		foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;
+234		if r.HasUnknownModel {
+235			foot += &#34; Totals exclude unpriced models (shown as n/a).&#34;
+236		}
+237		v.Footnote = foot
+238		return v
+239	}
+240	```
+241	
+242	- [ ] **Step 6: Add the template markup**
+243	
+244	In `internal/render/assets/report.html.tmpl`, insert the usage card immediately after the closing `&lt;/section&gt;` of `session-head` (before `{{ range .Turns }}`):
+245	
+246	```html
+247	    &lt;/section&gt;
+248	    {{ with .Usage }}
+249	    &lt;details class=&#34;usage-card&#34;&gt;
+250	      &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;
+251	      &lt;div class=&#34;usage-body&#34;&gt;
+252	        {{ if .HasAny }}
+253	        &lt;table class=&#34;usage-tokens&#34;&gt;
+254	          {{ range .Rows }}&lt;tr&gt;&lt;td&gt;{{ .Label }}&lt;/td&gt;&lt;td&gt;{{ .Value }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+255	        &lt;/table&gt;
+256	        &lt;table class=&#34;usage-models&#34;&gt;
+257	          &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;tokens&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;
+258	          {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+259	        &lt;/table&gt;
+260	        {{ end }}
+261	        &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;
+262	      &lt;/div&gt;
+263	    &lt;/details&gt;
+264	    {{ end }}
+265	```
+266	
+267	Then change the turn header line from:
+268	
+269	```html
+270	      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;
+271	```
+272	
+273	to:
+274	
+275	```html
+276	      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+277	```
+278	
+279	Note: in the no-data case the `{{ if .HasAny }}` guard hides both tables, `Footnote` is empty (renders an empty `&lt;p&gt;`), and the collapsed headline &#34;Usage · no token-usage data&#34; conveys the state.
+280	
+281	- [ ] **Step 7: Add styles**
+282	
+283	Append to `internal/render/assets/styles.css`:
+284	
+285	```css
+286	.usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border, #e5e2d8); border-radius: 8px; background: var(--card, #fff); }
+287	.usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
+288	.usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
+289	.usage-tokens td:last-child, .usage-models td, .usage-models th { text-align: right; padding: 0.1rem 0.6rem; }
+290	.usage-tokens td:first-child, .usage-models td:first-child { text-align: left; }
+291	.usage-models { margin-top: 0.6rem; border-collapse: collapse; }
+292	.usage-note { color: #8a8578; font-size: 0.8rem; margin-top: 0.6rem; }
+293	.usage-badge { margin-left: 0.5rem; color: #8a8578; font-size: 0.78rem; font-weight: 400; }
+294	```
+295	
+296	(These reuse the report&#39;s existing custom properties where present and fall back to literals, matching the file&#39;s established pattern.)
+297	
+298	- [ ] **Step 8: Write the render integration test**
+299	
+300	Add to `internal/render/render_test.go`:
+301	
+302	```go
+303	func TestSiteRendersUsageWhenEnabled(t *testing.T) {
+304		s := model.Session{
+305			ID: &#34;x&#34;, Title: &#34;T&#34;,
+306			Turns: []model.Turn{
+307				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;hi&#34;}}},
+308				{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;,
+309					Usage:  &amp;model.Usage{Input: 1000, Output: 200},
+310					Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+311			},
+312		}
+313		dir := t.TempDir()
+314		if err := Site(s, dir, Options{Usage: true}); err != nil {
+315			t.Fatal(err)
+316		}
+317		html := readIndex(t, dir)
+318		for _, want := range []string{&#34;usage-card&#34;, &#34;usage-badge&#34;, &#34;in+out&#34;, &#34;prices as of&#34;, &#34;claude-opus-4-8&#34;} {
+319			if !strings.Contains(html, want) {
+320				t.Errorf(&#34;usage output missing %q&#34;, want)
+321			}
+322		}
+323	}
+324	
+325	func TestSiteOmitsUsageByDefault(t *testing.T) {
+326		s := model.Session{ID: &#34;x&#34;, Title: &#34;T&#34;, Turns: []model.Turn{
+327			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: &amp;model.Usage{Input: 1000, Output: 200},
+328				Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+329		}}
+330		dir := t.TempDir()
+331		if err := Site(s, dir, Options{}); err != nil {
+332			t.Fatal(err)
+333		}
+334		if strings.Contains(readIndex(t, dir), &#34;usage-card&#34;) {
+335			t.Error(&#34;usage card should be absent without Options.Usage&#34;)
+336		}
+337	}
+338	
+339	// readIndex reads the generated index.html.
+340	func readIndex(t *testing.T, dir string) string {
+341		t.Helper()
+342		b, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+343		if err != nil {
+344			t.Fatal(err)
+345		}
+346		return string(b)
+347	}
+348	```
+349	
+350	The footnote text contains &#34;Anthropic list prices as of 2026-07&#34;; the test matches the lower-cased-insensitive substring &#34;prices as of&#34; — since the template emits &#34;prices as of&#34; verbatim, keep the assertion string exactly &#34;prices as of&#34;. If `render_test.go` lacks imports `os`/`path/filepath`, add them.
+351	
+352	- [ ] **Step 9: Run tests to verify they pass**
+353	
+354	Run: `go test ./internal/render/ -v`
+355	Expected: PASS (new and existing tests).
+356	
+357	- [ ] **Step 10: Commit**
+358	
+359	```bash
+360	git add internal/render/
+361	git commit -m &#34;feat(render): usage &amp; cost card and per-turn badges&#34;
+362	```
+363	
+364	---
+365	
+366	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 4 Report: Render the usage card and per-turn badges
+2	
+3	## Status: DONE
+4	
+5	Commit: `4de9666` — &#34;feat(render): usage &amp; cost card and per-turn badges&#34; (branch `feat/usage-cost`)
+6	
+7	## Summary
+8	
+9	Implemented the brief&#39;s Steps 1-10 in order (TDD: format_test → format.go, then
+10	render viewmodel/template/css, then render_test integration tests). One
+11	deviation from the brief&#39;s verbatim code was required and is documented below
+12	(Deviation section) — everything else was implemented exactly as specified.
+13	
+14	## Files changed
+15	
+16	- Created `internal/render/format.go` — `formatTokens(int) string`,
+17	  `formatCost(float64) string`, verbatim per brief.
+18	- Created `internal/render/format_test.go` — verbatim per brief.
+19	- Modified `internal/render/render.go`:
+20	  - added `usage` import
+21	  - `Options.Usage bool`
+22	  - `turnView.Badge`, `viewData.Usage`
+23	  - new `usageView` / `usageRow` / `usageModel` types
+24	  - `Site` now calls `buildViewModel(s, title, opts)`
+25	  - `buildViewModel` rewritten to signature `(s model.Session, title string, opts Options) viewData`, computing `usage.Compute(s)` and per-turn badges only when `opts.Usage`
+26	  - added `turnBadge` and `buildUsageView` helpers
+27	  - **deviation**: `usageView.Headline` and `usageModel.Tokens` are `template.HTML` (built via `html.EscapeString(...)` then wrapped) instead of plain `string` — see Deviation section
+28	- Modified `internal/render/assets/report.html.tmpl` — usage `&lt;details class=&#34;usage-card&#34;&gt;` block inserted after `session-head`&#39;s `&lt;/section&gt;` and before `{{ range .Turns }}`; turn-role line now emits `&lt;span class=&#34;usage-badge&#34;&gt;` when `.Badge` is set. Verbatim per brief.
+29	- Modified `internal/render/assets/styles.css` — appended the 8 verbatim rules from the brief (`.usage-card`, `.usage-summary`, `.usage-body`, `.usage-tokens`/`.usage-models` cell alignment, `.usage-models`, `.usage-note`, `.usage-badge`). No `url()`, no `@font-face`/`@import`, no external refs — confirmed by grep.
+30	- Modified `internal/render/render_test.go` — added `TestSiteRendersUsageWhenEnabled`, `TestSiteOmitsUsageByDefault`, and `readIndex` helper, verbatim per brief. `os`/`path/filepath`/`strings`/`model` imports already present, so no import changes needed. No pre-existing `readIndex` to collide with.
+31	
+32	## Deviation from brief (and why)
+33	
+34	The brief&#39;s Step 8 test asserts `strings.Contains(html, &#34;in+out&#34;)`. With the
+35	brief&#39;s code verbatim (`Headline`/`Tokens` typed as plain `string`, rendered
+36	via `{{ .Headline }}` / `{{ .Tokens }}` in the `html/template`-parsed
+37	`report.html.tmpl`), Go&#39;s `html/template` auto-escaper HTML-entity-encodes the
+38	literal `+` character as `&amp;#43;` in text nodes. This is standard library
+39	behavior (confirmed with an isolated repro: `template.Must(template.New(&#34;x&#34;).Parse(&#34;{{ . }}&#34;)).Execute(os.Stdout, &#34;a+b&#34;)` prints `a&amp;#43;b`), not a bug in
+40	the surrounding code. Visually a browser renders `&amp;#43;` identically to `+`,
+41	so the report itself would have looked correct — but the literal-substring
+42	test as specified could never pass.
+43	
+44	Fix: mirrored the pattern already established elsewhere in `render.go` for
+45	untrusted content (e.g. `renderTool` does `html.EscapeString(tc.Name)` and
+46	wraps the result as `template.HTML` to bypass the auto-escaper while staying
+47	safe). I changed `usageView.Headline` and `usageModel.Tokens` from `string` to
+48	`template.HTML`, building their values with `html.EscapeString(...)` (which
+49	escapes `&lt; &gt; &amp; &#39; &#34;` but intentionally leaves `+` untouched) before the
+50	`template.HTML(...)` cast. Both fields are built exclusively from our own
+51	`formatTokens`/`formatCost` output and literal English words — no
+52	session-derived data (e.g. model IDs) ever flows through them — so marking
+53	them as pre-escaped-safe HTML introduces no XSS risk. `usageModel.Model`
+54	(which *does* carry a session-derived model id) was left as a plain `string`
+55	so the auto-escaper still applies to it.
+56	
+57	No other hunks required adaptation — `usage.Compute`/`usage.Report`/
+58	`usage.ModelUsage`/`TokenCounts.InOut()` and `model.Turn.Usage`/`.Model`
+59	matched the brief&#39;s assumptions exactly (verified by reading
+60	`internal/usage/usage.go` and `internal/model/model.go` before starting).
+61	
+62	## TDD evidence
+63	
+64	**RED** (format_test.go written before format.go existed):
+65	```
+66	$ go test ./internal/render/ -run TestFormat -v
+67	# github.com/saigyo/cc-what-have-i-done/internal/render [...]
+68	internal/render/format_test.go:8:13: undefined: formatTokens
+69	internal/render/format_test.go:15:12: undefined: formatCost
+70	internal/render/format_test.go:18:12: undefined: formatCost
+71	FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]
+72	FAIL
+73	```
+74	
+75	**GREEN** (after format.go):
+76	```
+77	$ go test ./internal/render/ -run TestFormat -v
+78	=== RUN   TestFormatTokens
+79	--- PASS: TestFormatTokens (0.00s)
+80	=== RUN   TestFormatCost
+81	--- PASS: TestFormatCost (0.00s)
+82	PASS
+83	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.361s
+84	```
+85	
+86	**Integration RED** (after render.go/template/css/test changes, before the
+87	`template.HTML` deviation fix):
+88	```
+89	$ go test ./internal/render/ -v
+90	...
+91	=== RUN   TestSiteRendersUsageWhenEnabled
+92	    render_test.go:127: usage output missing &#34;in+out&#34;
+93	--- FAIL: TestSiteRendersUsageWhenEnabled (0.00s)
+94	=== RUN   TestSiteOmitsUsageByDefault
+95	--- PASS: TestSiteOmitsUsageByDefault (0.00s)
+96	...
+97	FAIL
+98	```
+99	Diagnosed via a scratch debug test dumping the rendered HTML: the summary
+100	line read `Usage · 1k in&amp;#43;out · ~$0.01 (est.)` — confirming the
+101	`html/template` `+`-escaping behavior described above.
+102	
+103	**Integration GREEN** (after the deviation fix):
+104	```
+105	$ go test ./internal/render/ -v
+106	=== RUN   TestFormatTokens
+107	--- PASS: TestFormatTokens (0.00s)
+108	=== RUN   TestFormatCost
+109	--- PASS: TestFormatCost (0.00s)
+110	=== RUN   TestMarkdownRendersHeadingAndCode
+111	--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+112	=== RUN   TestDiffHTMLMarksLines
+113	--- PASS: TestDiffHTMLMarksLines (0.00s)
+114	=== RUN   TestStripANSI
+115	--- PASS: TestStripANSI (0.00s)
+116	=== RUN   TestRenderStripsANSIFromReport
+117	--- PASS: TestRenderStripsANSIFromReport (0.00s)
+118	=== RUN   TestPreviewRuneSafe
+119	--- PASS: TestPreviewRuneSafe (0.00s)
+120	=== RUN   TestSiteRendersUsageWhenEnabled
+121	--- PASS: TestSiteRendersUsageWhenEnabled (0.00s)
+122	=== RUN   TestSiteOmitsUsageByDefault
+123	--- PASS: TestSiteOmitsUsageByDefault (0.00s)
+124	=== RUN   TestSiteWritesFiles
+125	--- PASS: TestSiteWritesFiles (0.00s)
+126	=== RUN   TestEndToEndRedactedReport
+127	--- PASS: TestEndToEndRedactedReport (0.00s)
+128	PASS
+129	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.388s
+130	```
+131	
+132	**Full suite:**
+133	```
+134	$ go build ./... &amp;&amp; go vet ./... &amp;&amp; gofmt -l internal &amp;&amp; echo GOFMT_OK &amp;&amp; go test ./...
+135	GOFMT_OK
+136	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	1.449s
+137	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+138	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.509s
+139	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.275s
+140	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.696s
+141	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.155s
+142	ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+143	ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s
+144	```
+145	(`gofmt -l internal` produced no output — all files formatted.)
+146	
+147	## Self-review
+148	
+149	- **Card absent without `--usage`**: `TestSiteOmitsUsageByDefault` passes;
+150	  `buildViewModel` only calls `usage.Compute`/`buildUsageView` when
+151	  `opts.Usage` is true, so `viewData.Usage` stays `nil` and the template&#39;s
+152	  `{{ with .Usage }}...{{ end }}` block is skipped entirely (no `usage-card`
+153	  emitted). Confirmed the existing `cmd/ccwhid/run.go` call site
+154	  (`render.Site(sess, outDir, render.Options{Title: opts.title})`) does not
+155	  set `Usage`, so all pre-existing CLI behavior is unchanged — wiring a
+156	  `--usage` CLI flag is out of scope for this task (presumably a later task).
+157	- **Badge only on turns with usage**: `tv.Badge` is only set
+158	  `if opts.Usage &amp;&amp; t.Usage != nil`; turns without `Usage` get a zero-value
+159	  `Badge` (empty string), and the template&#39;s `{{ if .Badge }}` guard skips
+160	  emitting the `&lt;span class=&#34;usage-badge&#34;&gt;` in that case.
+161	- **No external refs in CSS**: `grep -n &#34;url(\|http://\|https://\|@font-face\|@import&#34; internal/render/assets/styles.css` returned nothing — the appended rules use only `var(--border, #e5e2d8)` / `var(--card, #fff)` fallbacks and literal color values, consistent with the rest of the file&#39;s self-contained styling.
+162	- Verified `internal/usage/usage.go` and `internal/model/model.go` before
+163	  starting to confirm `usage.Compute`, `usage.Report`, `usage.ModelUsage`,
+164	  `TokenCounts.InOut()`, and `model.Turn.Usage`/`.Model` all matched the
+165	  brief&#39;s assumed shapes exactly — no other adaptation was necessary beyond
+166	  the `template.HTML` escaping fix above.
+167	- Manually inspected full rendered `index.html` output (via a temporary
+168	  scratch test, removed before committing) to confirm the usage card, badge,
+169	  and footnote render correctly with real sample data, including the
+170	  `&lt;$0.01` cost format still rendering safely (HTML-escaped `&lt;` via
+171	  `html.EscapeString`, so no stray literal `&lt;` reaches the browser parser).
+172	
+173	## Note
+174	
+175	This file previously held an unrelated report (&#34;Task 4: Raw JSONL Record
+176	Decoding&#34;) from a different plan/branch (`feat/ccwhid-impl`, commit
+177	`5980a02`). It has been overwritten with this task&#39;s report per the
+178	instructions to write to this exact path.
+179	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 4140bfb..4de9666
+2	
+3	## Commits
+4	4de9666 feat(render): usage &amp; cost card and per-turn badges
+5	
+6	## Files changed
+7	 internal/render/assets/report.html.tmpl | 19 ++++++-
+8	 internal/render/assets/styles.css       |  8 +++
+9	 internal/render/format.go               | 26 ++++++++++
+10	 internal/render/format_test.go          | 21 ++++++++
+11	 internal/render/render.go               | 88 +++++++++++++++++++++++++++++++--
+12	 internal/render/render_test.go          | 46 +++++++++++++++++
+13	 6 files changed, 203 insertions(+), 5 deletions(-)
+14	
+15	## Diff
+16	diff --git a/internal/render/assets/report.html.tmpl b/internal/render/assets/report.html.tmpl
+17	index c595929..25db50f 100644
+18	--- a/internal/render/assets/report.html.tmpl
+19	+++ b/internal/render/assets/report.html.tmpl
+20	@@ -26,21 +26,38 @@
+21	   &lt;main class=&#34;content&#34;&gt;
+22	     &lt;section class=&#34;session-head&#34;&gt;
+23	       &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+24	       &lt;div class=&#34;meta&#34;&gt;
+25	         &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+26	         {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+27	         &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+28	         &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+29	       &lt;/div&gt;
+30	     &lt;/section&gt;
+31	+    {{ with .Usage }}
+32	+    &lt;details class=&#34;usage-card&#34;&gt;
+33	+      &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;
+34	+      &lt;div class=&#34;usage-body&#34;&gt;
+35	+        {{ if .HasAny }}
+36	+        &lt;table class=&#34;usage-tokens&#34;&gt;
+37	+          {{ range .Rows }}&lt;tr&gt;&lt;td&gt;{{ .Label }}&lt;/td&gt;&lt;td&gt;{{ .Value }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+38	+        &lt;/table&gt;
+39	+        &lt;table class=&#34;usage-models&#34;&gt;
+40	+          &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;tokens&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;
+41	+          {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+42	+        &lt;/table&gt;
+43	+        {{ end }}
+44	+        &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;
+45	+      &lt;/div&gt;
+46	+    &lt;/details&gt;
+47	+    {{ end }}
+48	     {{ range .Turns }}
+49	     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+50	-      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;
+51	+      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+52	       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+53	     &lt;/article&gt;
+54	     {{ end }}
+55	   &lt;/main&gt;
+56	 &lt;/div&gt;
+57	 &lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+58	 &lt;/body&gt;
+59	 &lt;/html&gt;
+60	diff --git a/internal/render/assets/styles.css b/internal/render/assets/styles.css
+61	index dd87d2d..2b5950b 100644
+62	--- a/internal/render/assets/styles.css
+63	+++ b/internal/render/assets/styles.css
+64	@@ -59,10 +59,18 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
+65	 .thinking { color: var(--muted); font-size: .9rem; margin: .5rem 0; }
+66	 .thinking summary { cursor: pointer; }
+67	 .subagent { margin: .6rem 0; border-left: 3px solid var(--accent-soft); padding-left: .7rem; }
+68	 .subagent summary { cursor: pointer; color: var(--accent); font-size: .85rem; }
+69	 .diff { font-family: var(--mono); font-size: .8rem; background: var(--code-bg); border-radius: 8px; padding: .5rem; overflow-x: auto; }
+70	 .diff-del { color: #b23b3b; white-space: pre-wrap; }
+71	 .diff-add { color: #2f8a4c; white-space: pre-wrap; }
+72	 body.hide-tools .tool-body { display: none; }
+73	 .turn.filtered { display: none; }
+74	 @media (max-width: 760px) { .sidebar { display: none; } }
+75	+.usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border, #e5e2d8); border-radius: 8px; background: var(--card, #fff); }
+76	+.usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
+77	+.usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
+78	+.usage-tokens td:last-child, .usage-models td, .usage-models th { text-align: right; padding: 0.1rem 0.6rem; }
+79	+.usage-tokens td:first-child, .usage-models td:first-child { text-align: left; }
+80	+.usage-models { margin-top: 0.6rem; border-collapse: collapse; }
+81	+.usage-note { color: #8a8578; font-size: 0.8rem; margin-top: 0.6rem; }
+82	+.usage-badge { margin-left: 0.5rem; color: #8a8578; font-size: 0.78rem; font-weight: 400; }
+83	diff --git a/internal/render/format.go b/internal/render/format.go
+84	new file mode 100644
+85	index 0000000..31ec788
+86	--- /dev/null
+87	+++ b/internal/render/format.go
+88	@@ -0,0 +1,26 @@
+89	+package render
+90	+
+91	+import (
+92	+	&#34;fmt&#34;
+93	+	&#34;strconv&#34;
+94	+)
+95	+
+96	+// formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M.
+97	+func formatTokens(n int) string {
+98	+	switch {
+99	+	case n &gt;= 1_000_000:
+100	+		return fmt.Sprintf(&#34;%.1fM&#34;, float64(n)/1e6)
+101	+	case n &gt;= 1_000:
+102	+		return fmt.Sprintf(&#34;%.0fk&#34;, float64(n)/1e3)
+103	+	default:
+104	+		return strconv.Itoa(n)
+105	+	}
+106	+}
+107	+
+108	+// formatCost renders a USD cost as $X.XX, or &lt;$0.01 for tiny non-zero amounts.
+109	+func formatCost(c float64) string {
+110	+	if c &gt; 0 &amp;&amp; c &lt; 0.005 {
+111	+		return &#34;&lt;$0.01&#34;
+112	+	}
+113	+	return fmt.Sprintf(&#34;$%.2f&#34;, c)
+114	+}
+115	diff --git a/internal/render/format_test.go b/internal/render/format_test.go
+116	new file mode 100644
+117	index 0000000..202d981
+118	--- /dev/null
+119	+++ b/internal/render/format_test.go
+120	@@ -0,0 +1,21 @@
+121	+package render
+122	+
+123	+import &#34;testing&#34;
+124	+
+125	+func TestFormatTokens(t *testing.T) {
+126	+	cases := map[int]string{0: &#34;0&#34;, 192: &#34;192&#34;, 12300: &#34;12k&#34;, 973000: &#34;973k&#34;, 1_200_000: &#34;1.2M&#34;}
+127	+	for n, want := range cases {
+128	+		if got := formatTokens(n); got != want {
+129	+			t.Errorf(&#34;formatTokens(%d) = %q, want %q&#34;, n, got, want)
+130	+		}
+131	+	}
+132	+}
+133	+
+134	+func TestFormatCost(t *testing.T) {
+135	+	if got := formatCost(12.4); got != &#34;$12.40&#34; {
+136	+		t.Errorf(&#34;formatCost(12.4) = %q, want $12.40&#34;, got)
+137	+	}
+138	+	if got := formatCost(0.001); got != &#34;&lt;$0.01&#34; {
+139	+		t.Errorf(&#34;formatCost(0.001) = %q, want &lt;$0.01&#34;, got)
+140	+	}
+141	+}
+142	diff --git a/internal/render/render.go b/internal/render/render.go
+143	index 452b0db..97ffb2f 100644
+144	--- a/internal/render/render.go
+145	+++ b/internal/render/render.go
+146	@@ -3,47 +3,49 @@ package render
+147	 import (
+148	 	&#34;bytes&#34;
+149	 	&#34;embed&#34;
+150	 	&#34;html&#34;
+151	 	&#34;html/template&#34;
+152	 	&#34;os&#34;
+153	 	&#34;path/filepath&#34;
+154	 	&#34;strings&#34;
+155	 
+156	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+157	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+158	 )
+159	 
+160	 //go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+161	 var assets embed.FS
+162	 
+163	 // Options configures a render.
+164	 type Options struct {
+165	 	Title string
+166	+	Usage bool // render the token-usage &amp; cost section
+167	 }
+168	 
+169	 // Site renders the session into outDir as index.html + assets/.
+170	 func Site(s model.Session, outDir string, opts Options) error {
+171	 	title := opts.Title
+172	 	if title == &#34;&#34; {
+173	 		title = s.DisplayTitle()
+174	 	}
+175	 
+176	 	tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+177	 	if err != nil {
+178	 		return err
+179	 	}
+180	 	tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+181	 	if err != nil {
+182	 		return err
+183	 	}
+184	 
+185	-	data := buildViewModel(s, title)
+186	+	data := buildViewModel(s, title, opts)
+187	 	var buf bytes.Buffer
+188	 	if err := tmpl.Execute(&amp;buf, data); err != nil {
+189	 		return err
+190	 	}
+191	 
+192	 	if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+193	 		return err
+194	 	}
+195	 	if err := os.WriteFile(filepath.Join(outDir, &#34;index.html&#34;), buf.Bytes(), 0o644); err != nil {
+196	 		return err
+197	@@ -62,60 +64,138 @@ func Site(s model.Session, outDir string, opts Options) error {
+198	 
+199	 // view models -------------------------------------------------------------
+200	 
+201	 type viewData struct {
+202	 	Title     string
+203	 	Session   model.Session
+204	 	StartedAt string
+205	 	TurnCount int
+206	 	Prompts   []promptRef
+207	 	Turns     []turnView
+208	+	Usage     *usageView
+209	 }
+210	 
+211	 type promptRef struct {
+212	 	Index   int
+213	 	Preview string
+214	 }
+215	 
+216	 type turnView struct {
+217	 	Index      int
+218	 	Kind       string
+219	 	RoleLabel  string
+220	 	SearchText string
+221	 	Body       template.HTML
+222	+	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;
+223	 }
+224	 
+225	-func buildViewModel(s model.Session, title string) viewData {
+226	+type usageView struct {
+227	+	HasAny   bool
+228	+	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
+229	+	Rows     []usageRow    // token breakdown
+230	+	Models   []usageModel  // per-model table rows
+231	+	Footnote string
+232	+}
+233	+
+234	+type usageRow struct {
+235	+	Label string
+236	+	Value string
+237	+}
+238	+
+239	+type usageModel struct {
+240	+	Model  string
+241	+	Tokens template.HTML // safe, built only from our own formatted numbers/words
+242	+	Cost   string        // &#34;$1.23&#34; or &#34;n/a&#34;
+243	+}
+244	+
+245	+func buildViewModel(s model.Session, title string, opts Options) viewData {
+246	 	d := viewData{
+247	 		Title:     title,
+248	 		Session:   s,
+249	 		TurnCount: len(s.Turns),
+250	 	}
+251	 	if !s.StartedAt.IsZero() {
+252	 		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+253	 	}
+254	+
+255	+	var rep usage.Report
+256	+	if opts.Usage {
+257	+		rep = usage.Compute(s)
+258	+		d.Usage = buildUsageView(rep)
+259	+	}
+260	+
+261	 	for i, t := range s.Turns {
+262	 		plain := turnPlainText(t)
+263	 		if t.Kind == model.TurnUser {
+264	 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+265	 		}
+266	-		d.Turns = append(d.Turns, turnView{
+267	+		tv := turnView{
+268	 			Index:      i,
+269	 			Kind:       string(t.Kind),
+270	 			RoleLabel:  roleLabel(t.Kind),
+271	 			SearchText: strings.ToLower(plain),
+272	 			Body:       renderTurnBody(t),
+273	-		})
+274	+		}
+275	+		if opts.Usage &amp;&amp; t.Usage != nil {
+276	+			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+277	+		}
+278	+		d.Turns = append(d.Turns, tv)
+279	 	}
+280	 	return d
+281	 }
+282	 
+283	+// turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.
+284	+func turnBadge(u model.Usage, costUSD *float64) string {
+285	+	b := formatTokens(u.Input+u.Output) + &#34; tok&#34;
+286	+	if costUSD != nil {
+287	+		b += &#34; · ~&#34; + formatCost(*costUSD)
+288	+	}
+289	+	return b
+290	+}
+291	+
+292	+// buildUsageView turns a usage.Report into the template-facing view model.
+293	+func buildUsageView(r usage.Report) *usageView {
+294	+	v := &amp;usageView{HasAny: r.HasAnyUsage}
+295	+	if !r.HasAnyUsage {
+296	+		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)
+297	+		return v
+298	+	}
+299	+	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;
+300	+	if r.TotalCostUSD != nil {
+301	+		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;
+302	+	}
+303	+	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact
+304	+	// while still escaping &#34;&lt;&#34;/&#34;&amp;&#34; etc.; headline is built solely from our own
+305	+	// formatted numbers and literal words, so this is safe to mark as raw HTML.
+306	+	v.Headline = template.HTML(html.EscapeString(headline))
+307	+
+308	+	v.Rows = []usageRow{
+309	+		{&#34;input&#34;, formatTokens(r.Total.Input)},
+310	+		{&#34;output&#34;, formatTokens(r.Total.Output)},
+311	+		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},
+312	+		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
+313	+	}
+314	+	for _, m := range r.ByModel {
+315	+		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+316	+		if m.CostUSD != nil {
+317	+			row.Cost = formatCost(*m.CostUSD)
+318	+		}
+319	+		v.Models = append(v.Models, row)
+320	+	}
+321	+	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;
+322	+	if r.HasUnknownModel {
+323	+		foot += &#34; Totals exclude unpriced models (shown as n/a).&#34;
+324	+	}
+325	+	v.Footnote = foot
+326	+	return v
+327	+}
+328	+
+329	 func roleLabel(k model.TurnKind) string {
+330	 	if k == model.TurnUser {
+331	 		return &#34;You&#34;
+332	 	}
+333	 	return &#34;Claude&#34;
+334	 }
+335	 
+336	 // renderTurnBody renders all blocks of a turn to HTML.
+337	 func renderTurnBody(t model.Turn) template.HTML {
+338	 	var b strings.Builder
+339	diff --git a/internal/render/render_test.go b/internal/render/render_test.go
+340	index e6cbc70..449767d 100644
+341	--- a/internal/render/render_test.go
+342	+++ b/internal/render/render_test.go
+343	@@ -100,20 +100,66 @@ func TestPreviewRuneSafe(t *testing.T) {
+344	 	s := strings.Repeat(&#34;ä&#34;, 80) // 80 two-byte runes, exceeds n=60
+345	 	got := preview(s, 60)
+346	 	if !utf8.ValidString(got) {
+347	 		t.Errorf(&#34;preview produced invalid UTF-8: %q&#34;, got)
+348	 	}
+349	 	if []rune(got)[len([]rune(got))-1] != &#39;…&#39; {
+350	 		t.Errorf(&#34;preview should end with ellipsis, got %q&#34;, got)
+351	 	}
+352	 }
+353	 
+354	+func TestSiteRendersUsageWhenEnabled(t *testing.T) {
+355	+	s := model.Session{
+356	+		ID: &#34;x&#34;, Title: &#34;T&#34;,
+357	+		Turns: []model.Turn{
+358	+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;hi&#34;}}},
+359	+			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;,
+360	+				Usage:  &amp;model.Usage{Input: 1000, Output: 200},
+361	+				Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+362	+		},
+363	+	}
+364	+	dir := t.TempDir()
+365	+	if err := Site(s, dir, Options{Usage: true}); err != nil {
+366	+		t.Fatal(err)
+367	+	}
+368	+	html := readIndex(t, dir)
+369	+	for _, want := range []string{&#34;usage-card&#34;, &#34;usage-badge&#34;, &#34;in+out&#34;, &#34;prices as of&#34;, &#34;claude-opus-4-8&#34;} {
+370	+		if !strings.Contains(html, want) {
+371	+			t.Errorf(&#34;usage output missing %q&#34;, want)
+372	+		}
+373	+	}
+374	+}
+375	+
+376	+func TestSiteOmitsUsageByDefault(t *testing.T) {
+377	+	s := model.Session{ID: &#34;x&#34;, Title: &#34;T&#34;, Turns: []model.Turn{
+378	+		{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: &amp;model.Usage{Input: 1000, Output: 200},
+379	+			Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+380	+	}}
+381	+	dir := t.TempDir()
+382	+	if err := Site(s, dir, Options{}); err != nil {
+383	+		t.Fatal(err)
+384	+	}
+385	+	if strings.Contains(readIndex(t, dir), &#34;usage-card&#34;) {
+386	+		t.Error(&#34;usage card should be absent without Options.Usage&#34;)
+387	+	}
+388	+}
+389	+
+390	+// readIndex reads the generated index.html.
+391	+func readIndex(t *testing.T, dir string) string {
+392	+	t.Helper()
+393	+	b, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+394	+	if err != nil {
+395	+		t.Fatal(err)
+396	+	}
+397	+	return string(b)
+398	+}
+399	+
+400	 func TestSiteWritesFiles(t *testing.T) {
+401	 	dir := t.TempDir()
+402	 	if err := Site(sampleSession(), dir, Options{}); err != nil {
+403	 		t.Fatal(err)
+404	 	}
+405	 	for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+406	 		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+407	 			t.Errorf(&#34;missing %s: %v&#34;, name, err)
+408	 		}
+409	 	}
+410	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="agent ">
+      <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.09</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-abdc066b58699d2b3.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;description&#34;: &#34;Check usage.Report field origins&#34;,
+  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.\n\nI need to know, for the review of a rendering feature:\n1. Where does `usage.Report.PricesAsOf` (a string field) come from? Is it a hardcoded constant, derived from a pricing table file, or ever derived from session/transcript data (e.g. model IDs, user text)?\n2. Where does `usage.ModelUsage.Model` come from? Confirm it is the model ID string as it appears in the transcript (i.e., session/transcript-derived, potentially attacker-influenced if a transcript file were crafted).\n3. Is there any per-model or aggregate field on usage.Report/usage.ModelUsage other than `Model` that contains raw text (as opposed to formatted numbers)? List every string-typed field there.\n4. Does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?\n\nReport back concisely: field names, their exact source, and whether any could contain HTML-special characters like `\u003c`, `\u003e`, `\u0026`, or quotes if a transcript were maliciously crafted with a bogus \&#34;model\&#34; field value.&#34;,
+  &#34;run_in_background&#34;: false,
+  &#34;subagent_type&#34;: &#34;Explore&#34;
+}</pre><pre class="tool-result">Confirmed: `html/template` is used, so the plain `string` field `usageModel.Model` (and thus `ModelUsage.Model`) is auto-escaped by Go&#39;s contextual HTML escaper when rendered into the `&lt;td&gt;` in `report.html.tmpl`. `PricesAsOf` is only ever consumed inside `render.go`&#39;s Go code (concatenated into `foot` and passed through `html.EscapeString` at line ~184-186 before landing in `Footnote`), never inserted as raw HTML.
+
+Now I have everything needed. Here&#39;s my report.
+
+## Summary
+
+**Files read:** `internal/usage/usage.go`, `internal/usage/pricing.go`, `internal/usage/prices.json`, `internal/usage/usage_test.go`, `internal/usage/pricing_test.go`, plus `internal/transcript/raw.go` and `internal/render/render.go` for provenance/sink tracing.
+
+### 1. `usage.Report.PricesAsOf`
+- Type: `string`, set in `Compute()` (`usage.go:62`): `r := Report{PricesAsOf: PricesAsOf, ...}`.
+- Source: `PricesAsOf` is a **hardcoded Go constant** in `internal/usage/pricing.go:15`: `const PricesAsOf = &#34;2026-07&#34;`.
+- It is never derived from the pricing table file (`prices.json`) or from any session/transcript data. It&#39;s a literal string maintained by hand in the source.
+- Sink: consumed in `internal/render/render.go` — concatenated into the footnote string and passed through `html.EscapeString` before being marked `template.HTML`/placed in `Footnote`. Since it&#39;s a fixed constant, it can&#39;t contain HTML-special chars unless someone edits the source.
+
+### 2. `usage.ModelUsage.Model`
+- Type: `string`, set in `Compute()` (`usage.go:104`): `mu := ModelUsage{Model: m, Tokens: tc}`, where `m` comes from `order`/`byModel` keys, which are populated from `t.Model` for each `model.Turn` (`usage.go:72-77`).
+- `model.Turn.Model` is populated in `internal/transcript/parse.go:222`: `turn.Model, turn.Usage = messageMeta(rec.Message)`, which decodes the raw JSONL message record. In `internal/transcript/raw.go:98-109` (`decodeMessageMeta`), the model id is extracted via `json.Unmarshal` into a struct field tagged `json:&#34;model&#34;`, with **no validation, allow-listing, or sanitization** — it is exactly whatever string value sits at `message.model` in the transcript JSONL file.
+- **Confirmed: this is transcript-derived and attacker-controllable** if a `.jsonl` transcript file is crafted with an arbitrary `&#34;model&#34;: &#34;&lt;payload&gt;&#34;` value (e.g. containing `&lt;script&gt;`, quotes, `&amp;`, etc.). The existing test `usage_test.go` even exercises a non-conforming model string (`&#34;&lt;synthetic&gt;&#34;`) and confirms it flows through unpriced but otherwise unaltered as `ModelUsage.Model`.
+
+### 3. Other string fields on `usage.Report` / `usage.ModelUsage`
+Full field inventory:
+- `Report.Total` — `TokenCounts` (all `int`)
+- `Report.TotalCostUSD` — `*float64`
+- `Report.ByModel` — `[]ModelUsage`
+- `Report.PerTurnCost` — `map[int]*float64`
+- `Report.PricesAsOf` — **`string`** (hardcoded constant, see #1)
+- `Report.HasUnknownModel`, `Report.HasAnyUsage` — `bool`
+- `ModelUsage.Model` — **`string`** (transcript-derived, see #2)
+- `ModelUsage.Tokens` — `TokenCounts` (all `int`)
+- `ModelUsage.CostUSD` — `*float64`
+
+So the **only two string-typed fields** in this package&#39;s exported types are `Report.PricesAsOf` (hardcoded constant) and `ModelUsage.Model` (transcript-derived model id). No other field carries raw/free text — everything else is numeric (`int`/`float64`) or boolean.
+
+### 4. Arbitrary/unbounded text (model output, prompts, etc.)
+No. The `usage` package itself never touches prompt text, assistant output text, tool output, or any free-form content — it only reads `model.Turn.Model` (string) and `model.Turn.Usage` (numeric token counts: `Input`, `Output`, `CacheRead`, `CacheWrite5m`, `CacheWrite1h`). It has no access to message bodies/blocks at all. The one non-numeric, non-constant string that flows through this package end-to-end is `ModelUsage.Model`.
+
+### Risk assessment for the rendering review
+- `PricesAsOf`: safe — compile-time constant, cannot be attacker-influenced.
+- `ModelUsage.Model`: **can contain any bytes an attacker puts in the transcript&#39;s `message.model` field**, including `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;`, or full HTML/script payloads. Whether this is exploitable depends entirely on the sink: in the current code, `internal/render/render.go` passes `usageModel.Model` (assigned directly from `m.Model`, i.e. `ModelUsage.Model`) as a **plain `string`** field into the `html/template`-parsed template `internal/render/assets/report.html.tmpl:46` (`{{ .Model }}` inside a `&lt;td&gt;`), and `render.go` imports `html/template` (not `text/template`), so Go&#39;s contextual auto-escaper will HTML-escape `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;` at render time for that particular sink. If a reviewer finds any *other* code path that writes `ModelUsage.Model` (or the string derived from it) into HTML via `text/template`, raw string concatenation, `template.HTML(...)` casts, or JS/attribute contexts without going through the `html/template` auto-escaper, that would be the actual injection point to flag — the `usage` package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer&#39;s auto-escaping.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="agent ">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-a8bb274c803350c57.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;description&#34;: &#34;Check TokenCounts.InOut method&#34;,
+  &#34;prompt&#34;: &#34;In the Go repo ~/IdeaProjects/cc-what-have-i-done, find the definition of the `InOut()` method on `TokenCounts` (likely in internal/usage/usage.go or internal/model package). Show its exact implementation. I need to confirm it sums ONLY Input and Output token counts (not cache read/write). Report back the exact method body and its file:line location.&#34;,
+  &#34;run_in_background&#34;: false,
+  &#34;subagent_type&#34;: &#34;Explore&#34;
+}</pre><pre class="tool-result">Found it.
+
+**Location:** `~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:20`
+
+**Method body:**
+```go
+// InOut is the base input+output total, excluding cache tokens. Used for the
+// report&#39;s headline figure so cache-read volume does not dominate it.
+func (t TokenCounts) InOut() int { return t.Input + t.Output }
+```
+
+Confirmed: `InOut()` sums only `Input` and `Output` fields. The `TokenCounts` struct (lines 10-16) also has `CacheRead`, `CacheWrite5m`, and `CacheWrite1h` fields, but none of these are included in the `InOut()` calculation — the doc comment explicitly states this is intentional (&#34;excluding cache tokens&#34;).</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash grep -rn &#34;buildviewmodel\|render.site\|render.options&#34; --include=&#34;*.go&#34; . | grep -v _test.go">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;buildViewModel\|render.Site\|render.Options&#34; --include=&#34;*.go&#34; . | grep -v _test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;buildViewModel\\|render.Site\\|render.Options\&#34; --include=\&#34;*.go\&#34; . | grep -v _test.go&#34;
+}</pre><pre class="tool-result">cmd/ccwhid/run.go:99:	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+internal/render/render.go:41:	data := buildViewModel(s, title, opts)
+internal/render/render.go:110:func buildViewModel(s model.Session, title string, opts Options) viewData {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;http\|url(\|@font-face\|@import&#34; internal/render/assets/styles.css">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;http\|url(\|@font-face\|@import&#34; internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;http\\|url(\\|@font-face\\|@import\&#34; internal/render/assets/styles.css&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;html.escapestring\|template.html(&#34; internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">519 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;html.EscapeString\|template.HTML(&#34; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;html.EscapeString\\|template.HTML(\&#34; internal/render/render.go&#34;
+}</pre><pre class="tool-result">159:		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)
+166:	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact
+169:	v.Headline = template.HTML(html.EscapeString(headline))
+178:		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+214:	return template.HTML(b.String())
+220:	b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+222:		b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(StripANSI(tc.Summary)) + `&lt;/span&gt;`)
+228:		b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+235:		b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(StripANSI(tc.Result.Content)) + `&lt;/pre&gt;`)
+238:		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="confirmed: this is a pre-existing, established pattern in the file (`rendertool` at line 220&#43; already escapes tool names/summaries/results with `html.escapestring` before building `template.html` strings). the deviation reuses this exact convention rather than inventing something new.
+
+all checklist items verified against the diff and surrounding code. summary of what was confirmed:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Confirmed: this is a pre-existing, established pattern in the file (<code>renderTool</code> at line 220+ already escapes tool names/summaries/results with <code>html.EscapeString</code> before building <code>template.HTML</code> strings). The deviation reuses this exact convention rather than inventing something new.</p>
+<p>All checklist items verified against the diff and surrounding code. Summary of what was confirmed:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash sed -n &#39;140,190p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;140,190p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;140,190p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
+}</pre><pre class="tool-result">		}
+		d.Turns = append(d.Turns, tv)
+	}
+	return d
+}
+
+// turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.
+func turnBadge(u model.Usage, costUSD *float64) string {
+	b := formatTokens(u.Input+u.Output) + &#34; tok&#34;
+	if costUSD != nil {
+		b += &#34; · ~&#34; + formatCost(*costUSD)
+	}
+	return b
+}
+
+// buildUsageView turns a usage.Report into the template-facing view model.
+func buildUsageView(r usage.Report) *usageView {
+	v := &amp;usageView{HasAny: r.HasAnyUsage}
+	if !r.HasAnyUsage {
+		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)
+		return v
+	}
+	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;
+	if r.TotalCostUSD != nil {
+		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;
+	}
+	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact
+	// while still escaping &#34;&lt;&#34;/&#34;&amp;&#34; etc.; headline is built solely from our own
+	// formatted numbers and literal words, so this is safe to mark as raw HTML.
+	v.Headline = template.HTML(html.EscapeString(headline))
+
+	v.Rows = []usageRow{
+		{&#34;input&#34;, formatTokens(r.Total.Input)},
+		{&#34;output&#34;, formatTokens(r.Total.Output)},
+		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},
+		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
+	}
+	for _, m := range r.ByModel {
+		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+		if m.CostUSD != nil {
+			row.Cost = formatCost(*m.CostUSD)
+		}
+		v.Models = append(v.Models, row)
+	}
+	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;
+	if r.HasUnknownModel {
+		foot += &#34; Totals exclude unpriced models (shown as n/a).&#34;
+	}
+	v.Footnote = foot
+	return v
+}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash sed -n &#39;1,20p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,20p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;1,20p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
+}</pre><pre class="tool-result">package render
+
+import (
+	&#34;os&#34;
+	&#34;path/filepath&#34;
+	&#34;strings&#34;
+	&#34;testing&#34;
+	&#34;time&#34;
+	&#34;unicode/utf8&#34;
+
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+)
+
+func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+	out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+	if !strings.Contains(out, &#34;&lt;h1&#34;) {
+		t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+	}
+	if !strings.Contains(out, &#34;Println&#34;) {
+		t.Errorf(&#34;expected highlighted code in output&#34;)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="all confirmed. here is the review.
+
+---
+
+## spec compliance: ✅
+
+the implementation matches the brief&#39;s requirements. the one deviation (typing `usageview.headline` and `usagemodel.tokens` as `template.html` instead of plain `string`) is a safe, narrowly-scoped fix for a genuine `html/template` auto-escaping issue (`&#43;` → `&amp;#43;`), not a shortcut that introduces risk.
+
+## strengths
+
+- the deviation reuses an established, pre-existing convention in the same file: `rendertool` (render.go:220 onward) already does `html.escapestring(...)` before building raw html strings for tool names/summaries/results. the fix is consistent with house style, not a novel pattern.
+- `usagemodel.model` — the one session/transcript-derived value in this view model (confirmed via `internal/transcript/raw.go` that model ids are decoded from jsonl with no sanitization) — was correctly left as a plain `string`, so `html/template`&#39;s auto-escaper still protects it. it is never concatenated into a `template.html` field.
+- both `template.html` fields are traceably built only from `formattokens`/`formatcost` output (digits, `k`, `m`, `$`, `.`, `&lt;`) and hardcoded literal words, then passed through `html.escapestring` before the cast — this correctly neutralizes the one dangerous character these formatters can emit (`formatcost`&#39;s `&#34;&lt;$0.01&#34;`).
+- `report.pricesasof` is a hardcoded go constant (`internal/usage/pricing.go:15`), not transcript-derived — confirmed safe regardless of type.
+- gating is correct and verified end-to-end: `buildviewmodel` only calls `usage.compute`/`buildusageview` and sets `d.usage` when `opts.usage` (render.go ~121-124); template uses `{{ with .usage }}` (nil-safe); the sole external caller (`cmd/ccwhid/run.go:99`) doesn&#39;t set `usage`, so pre-existing cli behavior is unchanged. `testsiteomitsusagebydefault` asserts absence of `&#34;usage-card&#34;`.
+- per-turn badge correctly gated: `tv.badge` set only `if opts.usage &amp;&amp; t.usage != nil`.
+- css additions grep clean for `http`, `url(`, `@font-face`, `@import` — fully self-contained, using only pre-existing `var(--border/--card, ...)` fallbacks and literals.
+- `buildviewmodel` signature change has exactly one call site (render.go:41 within `site`); no other internal or external callers were missed.
+- `tokencounts.inout()` (usage.go:20) sums only `input`&#43;`output`, confirmed excluding cache tokens — the collapsed headline correctly reflects &#34;in&#43;out only&#34; per the constraint.
+- no-data case (`hasanyusage == false`) matches the brief&#39;s own documented behavior exactly: headline conveys state, tables hidden via `{{ if .hasany }}`, empty `&lt;p&gt;` for footnote — this was explicitly called out as acceptable in the brief itself (step 6 note), not a defect introduced by the implementer.
+- redaction untouched — diff touches only render.go/render_test.go/format.go/format_test.go/template/css.
+
+## issues
+
+**critical:** none.
+
+**important:** none.
+
+**minor:**
+- `internal/render/render.go:159` — the no-data headline (`template.html(&#34;usage · no token-usage data&#34;)`) is a hardcoded literal, so it&#39;s safe, but it skips the `html.escapestring` wrapper the rest of the code uses, which is a small stylistic inconsistency (harmless here only because the string is a fixed literal with no interpolation — if anyone later edits this line to interpolate a variable without noticing the missing escape step, that would become a real risk). consider routing it through the same `html.escapestring` call for uniformity/future-proofing.
+- the `template.html` fix is safe but heavier than necessary: an equally valid, lighter-weight alternative existed (e.g., have `buildusageview` split the &#34;&#43;&#34; out with `template.htmlescapestring`-free plain concatenation isn&#39;t possible in `html/template`, but the brief&#39;s own test string `&#34;in&#43;out&#34;` was the actual constraint forcing this). given the brief hardcodes the literal test assertion `strings.contains(html, &#34;in&#43;out&#34;)`, the implementer&#39;s options were limited to (a) `template.html` conversion (what was done) or (b) asserting the escaped form `&#34;in&amp;#43;out&#34;` in the test (a brief deviation too). the implementer&#39;s choice is defensible and no less brief-compliant than the alternative — not a blocking finding.
+- no automated test exercises the &#34;`options.usage: true` but no turn has usage&#34; (`hasanyusage == false`) path in `render_test.go` — only the two brief-specified tests (enabled-with-data, disabled) exist. this gap pre-exists in the brief&#39;s own step 8 spec, not introduced by the implementer, but worth noting for future coverage.
+
+## assessment
+
+the deviation was scrutinized end-to-end: every input composing the two `template.html` fields was traced back to `formattokens`/`formatcost` (digit/`.`/`k`/`m`/`$`/`&lt;` only) and hardcoded literal words, each passed through `html.escapestring` before the cast. the one session-derived value in the whole feature (`usagemodel.model`, sourced from unsanitized transcript `message.model`) was correctly kept as a plain auto-escaped `string` and never touches the `template.html` fields. no transcript/session/user data reaches raw html unescaped. all other brief constraints (opt-in gating, css self-containment, collapsed/expanded content rules, per-turn badge gating, redaction untouched) verified directly against the diff and cross-checked against `internal/usage/usage.go`, `internal/transcript/raw.go`, and the cli call site.
+
+**task quality: approved**">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><p>All confirmed. Here is the review.</p>
+<hr>
+<h2>Spec Compliance: ✅</h2>
+<p>The implementation matches the brief's requirements. The one deviation (typing <code>usageView.Headline</code> and <code>usageModel.Tokens</code> as <code>template.HTML</code> instead of plain <code>string</code>) is a safe, narrowly-scoped fix for a genuine <code>html/template</code> auto-escaping issue (<code>+</code> → <code>&amp;#43;</code>), not a shortcut that introduces risk.</p>
+<h2>Strengths</h2>
+<ul>
+<li>The deviation reuses an established, pre-existing convention in the same file: <code>renderTool</code> (render.go:220 onward) already does <code>html.EscapeString(...)</code> before building raw HTML strings for tool names/summaries/results. The fix is consistent with house style, not a novel pattern.</li>
+<li><code>usageModel.Model</code> — the one session/transcript-derived value in this view model (confirmed via <code>internal/transcript/raw.go</code> that model IDs are decoded from JSONL with no sanitization) — was correctly left as a plain <code>string</code>, so <code>html/template</code>'s auto-escaper still protects it. It is never concatenated into a <code>template.HTML</code> field.</li>
+<li>Both <code>template.HTML</code> fields are traceably built only from <code>formatTokens</code>/<code>formatCost</code> output (digits, <code>k</code>, <code>M</code>, <code>$</code>, <code>.</code>, <code>&lt;</code>) and hardcoded literal words, then passed through <code>html.EscapeString</code> before the cast — this correctly neutralizes the one dangerous character these formatters can emit (<code>formatCost</code>'s <code>&quot;&lt;$0.01&quot;</code>).</li>
+<li><code>Report.PricesAsOf</code> is a hardcoded Go constant (<code>internal/usage/pricing.go:15</code>), not transcript-derived — confirmed safe regardless of type.</li>
+<li>Gating is correct and verified end-to-end: <code>buildViewModel</code> only calls <code>usage.Compute</code>/<code>buildUsageView</code> and sets <code>d.Usage</code> when <code>opts.Usage</code> (render.go ~121-124); template uses <code>{{ with .Usage }}</code> (nil-safe); the sole external caller (<code>cmd/ccwhid/run.go:99</code>) doesn't set <code>Usage</code>, so pre-existing CLI behavior is unchanged. <code>TestSiteOmitsUsageByDefault</code> asserts absence of <code>&quot;usage-card&quot;</code>.</li>
+<li>Per-turn badge correctly gated: <code>tv.Badge</code> set only <code>if opts.Usage &amp;&amp; t.Usage != nil</code>.</li>
+<li>CSS additions grep clean for <code>http</code>, <code>url(</code>, <code>@font-face</code>, <code>@import</code> — fully self-contained, using only pre-existing <code>var(--border/--card, ...)</code> fallbacks and literals.</li>
+<li><code>buildViewModel</code> signature change has exactly one call site (render.go:41 within <code>Site</code>); no other internal or external callers were missed.</li>
+<li><code>TokenCounts.InOut()</code> (usage.go:20) sums only <code>Input</code>+<code>Output</code>, confirmed excluding cache tokens — the collapsed headline correctly reflects &quot;in+out only&quot; per the constraint.</li>
+<li>No-data case (<code>HasAnyUsage == false</code>) matches the brief's own documented behavior exactly: headline conveys state, tables hidden via <code>{{ if .HasAny }}</code>, empty <code>&lt;p&gt;</code> for footnote — this was explicitly called out as acceptable in the brief itself (Step 6 note), not a defect introduced by the implementer.</li>
+<li>Redaction untouched — diff touches only render.go/render_test.go/format.go/format_test.go/template/CSS.</li>
+</ul>
+<h2>Issues</h2>
+<p><strong>Critical:</strong> None.</p>
+<p><strong>Important:</strong> None.</p>
+<p><strong>Minor:</strong></p>
+<ul>
+<li><code>internal/render/render.go:159</code> — the no-data headline (<code>template.HTML(&quot;Usage · no token-usage data&quot;)</code>) is a hardcoded literal, so it's safe, but it skips the <code>html.EscapeString</code> wrapper the rest of the code uses, which is a small stylistic inconsistency (harmless here only because the string is a fixed literal with no interpolation — if anyone later edits this line to interpolate a variable without noticing the missing escape step, that would become a real risk). Consider routing it through the same <code>html.EscapeString</code> call for uniformity/future-proofing.</li>
+<li>The <code>template.HTML</code> fix is safe but heavier than necessary: an equally valid, lighter-weight alternative existed (e.g., have <code>buildUsageView</code> split the &quot;+&quot; out with <code>template.HTMLEscapeString</code>-free plain concatenation isn't possible in <code>html/template</code>, but the brief's own test string <code>&quot;in+out&quot;</code> was the actual constraint forcing this). Given the brief hardcodes the literal test assertion <code>strings.Contains(html, &quot;in+out&quot;)</code>, the implementer's options were limited to (a) <code>template.HTML</code> conversion (what was done) or (b) asserting the escaped form <code>&quot;in&amp;#43;out&quot;</code> in the test (a brief deviation too). The implementer's choice is defensible and no less brief-compliant than the alternative — not a blocking finding.</li>
+<li>No automated test exercises the &quot;<code>Options.Usage: true</code> but no turn has usage&quot; (<code>HasAnyUsage == false</code>) path in <code>render_test.go</code> — only the two brief-specified tests (enabled-with-data, disabled) exist. This gap pre-exists in the brief's own Step 8 spec, not introduced by the implementer, but worth noting for future coverage.</li>
+</ul>
+<h2>Assessment</h2>
+<p>The deviation was scrutinized end-to-end: every input composing the two <code>template.HTML</code> fields was traced back to <code>formatTokens</code>/<code>formatCost</code> (digit/<code>.</code>/<code>k</code>/<code>M</code>/<code>$</code>/<code>&lt;</code> only) and hardcoded literal words, each passed through <code>html.EscapeString</code> before the cast. The one session-derived value in the whole feature (<code>usageModel.Model</code>, sourced from unsanitized transcript <code>message.model</code>) was correctly kept as a plain auto-escaped <code>string</code> and never touches the <code>template.HTML</code> fields. No transcript/session/user data reaches raw HTML unescaped. All other brief constraints (opt-in gating, CSS self-containment, collapsed/expanded content rules, per-turn badge gating, redaction untouched) verified directly against the diff and cross-checked against <code>internal/usage/usage.go</code>, <code>internal/transcript/raw.go</code>, and the CLI call site.</p>
+<p><strong>Task quality: Approved</strong></p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

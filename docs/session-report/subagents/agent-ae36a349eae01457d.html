@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix final-review findings · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are applying the final-review fixes on the Go CLI `ccwh…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Fix final-review findings</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 10:35</span>
+        <span>33 turns</span>
+        <span>general-purpose · agent-ae36a349eae01457d</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 5k in+out · ~$0.14 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-haiku-4-5</td><td>210</td><td>5k</td><td>707k</td><td>37k</td><td>$0.14</td></tr>
+          <tr class="usage-total"><td>Total</td><td>210</td><td>5k</td><td>707k</td><td>37k</td><td>$0.14</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are applying the final-review fixes on the go cli `ccwhid`. work from ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions).
+
+two fixes, one commit:
+
+## fix 1 (important — escaping regression)
+
+in `internal/render/render.go`, inside `rendertool`, the inline-sidechain rendering loop writes the role label raw:
+
+```go
+b.writestring(`&lt;article class=&#34;turn turn-` &#43; string(st.kind) &#43; `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` &#43; rolelabel(st) &#43; `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+```
+
+`rolelabel(st)` can now return `agentrolelabel(t.agentsummary)` which embeds transcript-derived text (`agent · &lt;name&gt;`), so it must be escaped like every sibling sink in this function:
+
+```go
+... &#43; html.escapestring(rolelabel(st)) &#43; ...
+```
+
+then add a regression test in `internal/render/render_test.go` that locks the invariant. follow the file&#39;s existing test style:
+
+```go
+func testsidechainagentresultsummaryisescaped(t *testing.t) {
+	tc := &amp;model.toolcall{name: &#34;task&#34;, subagents: []model.subagent{{
+		description: &#34;d&#34;,
+		turns: []model.turn{{
+			kind:         model.turnagentresult,
+			agentsummary: `agent &#34;&lt;img src=x onerror=alert(1)&gt;&#34; finished`,
+			blocks:       []model.block{{type: model.blocktext, text: &#34;x&#34;}},
+		}},
+	}}}
+	out := rendertool(tc, newagentlinks(nil, &#34;&#34;))
+	if strings.contains(out, &#34;&lt;img&#34;) {
+		t.fatal(&#34;agent summary must be html-escaped in sidechain rendering&#34;)
+	}
+	if !strings.contains(out, &#34;&amp;lt;img&#34;) {
+		t.error(&#34;escaped summary not found in output&#34;)
+	}
+}
+```
+
+tdd: add the test first, run `go test ./internal/render/ -run sidechainagentresultsummaryisescaped -v`, verify it fails (contains raw `&lt;img`), then apply the one-line fix, verify it passes.
+
+## fix 2 (minor — stale doc comment)
+
+in `internal/usage/usage.go`, the `compute` doc comment still reads:
+
+```go
+// compute aggregates token usage and estimated cost for a session. totals and
+// per-model figures include nested subagent turns; per-turn costs are recorded
+// for top-level turns only.
+```
+
+update it to also mention linked agent sessions, e.g.:
+
+```go
+// compute aggregates token usage and estimated cost for a session. totals and
+// per-model figures include nested subagent turns and linked agent sessions
+// (s.agents), tracked separately in the subagents subtotal; per-turn costs are
+// recorded for top-level main-session turns only.
+```
+
+## verify &amp; commit
+
+run: `gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./internal/render/ ./internal/usage/`
+expected: gofmt silent, vet clean, both packages pass. (no need for the full suite — these are the covering packages.)
+
+commit both changes as one commit, message ending with the trailer:
+`co-authored-by: claude haiku 4.5 &lt;noreply@anthropic.com&gt;`
+
+## report
+
+append a short fix report (what changed, red/green evidence for the escaping test, commands &#43; output for the verify step) to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md under a heading &#34;## final-review fixes&#34;.
+
+then report back with only: status, commit sha &#43; subject, one-line test summary.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are applying the final-review fixes on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
+<p>Two fixes, one commit:</p>
+<h2>Fix 1 (Important — escaping regression)</h2>
+<p>In <code>internal/render/render.go</code>, inside <code>renderTool</code>, the inline-sidechain rendering loop writes the role label raw:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#1f2328">b</span><span style="color:#1f2328">.</span><span style="color:#6639ba">WriteString</span><span style="color:#1f2328">(</span><span style="color:#0a3069">`&lt;article class=&#34;turn turn-`</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#6639ba">string</span><span style="color:#1f2328">(</span><span style="color:#1f2328">st</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Kind</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#0a3069">`&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;`</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#6639ba">roleLabel</span><span style="color:#1f2328">(</span><span style="color:#1f2328">st</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#0a3069">`&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span></code></pre><p><code>roleLabel(st)</code> can now return <code>agentRoleLabel(t.AgentSummary)</code> which embeds transcript-derived text (<code>Agent · &lt;name&gt;</code>), so it must be escaped like every sibling sink in this function:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#0550ae">...</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#1f2328">html</span><span style="color:#1f2328">.</span><span style="color:#6639ba">EscapeString</span><span style="color:#1f2328">(</span><span style="color:#6639ba">roleLabel</span><span style="color:#1f2328">(</span><span style="color:#1f2328">st</span><span style="color:#1f2328">))</span><span style="color:#fff"> </span><span style="color:#0550ae">+</span><span style="color:#fff"> </span><span style="color:#0550ae">...</span><span style="color:#fff">
+</span></span></span></code></pre><p>Then add a regression test in <code>internal/render/render_test.go</code> that locks the invariant. Follow the file's existing test style:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">func</span><span style="color:#fff"> </span><span style="color:#6639ba">TestSidechainAgentResultSummaryIsEscaped</span><span style="color:#1f2328">(</span><span style="color:#1f2328">t</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#1f2328">testing</span><span style="color:#1f2328">.</span><span style="color:#1f2328">T</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">tc</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#0550ae">&amp;</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ToolCall</span><span style="color:#1f2328">{</span><span style="color:#1f2328">Name</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;Task&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">Subagents</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Subagent</span><span style="color:#1f2328">{{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">Description</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;d&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">Turns</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Turn</span><span style="color:#1f2328">{{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">Kind</span><span style="color:#1f2328">:</span><span style="color:#fff">         </span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">TurnAgentResult</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">AgentSummary</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">`Agent &#34;&lt;img src=x onerror=alert(1)&gt;&#34; finished`</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">Blocks</span><span style="color:#1f2328">:</span><span style="color:#fff">       </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Block</span><span style="color:#1f2328">{{</span><span style="color:#1f2328">Type</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">BlockText</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">Text</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;x&#34;</span><span style="color:#1f2328">}},</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">}},</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}}}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">out</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#6639ba">renderTool</span><span style="color:#1f2328">(</span><span style="color:#1f2328">tc</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#6639ba">newAgentLinks</span><span style="color:#1f2328">(</span><span style="color:#cf222e">nil</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;&#34;</span><span style="color:#1f2328">))</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">strings</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Contains</span><span style="color:#1f2328">(</span><span style="color:#1f2328">out</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;&lt;img&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Fatal</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;agent summary must be HTML-escaped in sidechain rendering&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">!</span><span style="color:#1f2328">strings</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Contains</span><span style="color:#1f2328">(</span><span style="color:#1f2328">out</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;&amp;lt;img&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Error</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;escaped summary not found in output&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span></code></pre><p>TDD: add the test first, run <code>go test ./internal/render/ -run SidechainAgentResultSummaryIsEscaped -v</code>, verify it FAILS (contains raw <code>&lt;img</code>), then apply the one-line fix, verify it PASSES.</p>
+<h2>Fix 2 (Minor — stale doc comment)</h2>
+<p>In <code>internal/usage/usage.go</code>, the <code>Compute</code> doc comment still reads:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#57606a">// Compute aggregates token usage and estimated cost for a session. Totals and</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// per-model figures include nested subagent turns; per-turn costs are recorded</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// for top-level turns only.</span><span style="color:#fff">
+</span></span></span></code></pre><p>Update it to also mention linked agent sessions, e.g.:</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#57606a">// Compute aggregates token usage and estimated cost for a session. Totals and</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// per-model figures include nested subagent turns and linked agent sessions</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// (s.Agents), tracked separately in the Subagents subtotal; per-turn costs are</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#57606a">// recorded for top-level main-session turns only.</span><span style="color:#fff">
+</span></span></span></code></pre><h2>Verify &amp; commit</h2>
+<p>Run: <code>gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./internal/render/ ./internal/usage/</code>
+Expected: gofmt silent, vet clean, both packages pass. (No need for the full suite — these are the covering packages.)</p>
+<p>Commit both changes as one commit, message ending with the trailer:
+<code>Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</code></p>
+<h2>Report</h2>
+<p>Append a short fix report (what changed, RED/GREEN evidence for the escaping test, commands + output for the verify step) to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md under a heading &quot;## Final-review fixes&quot;.</p>
+<p>Then report back with ONLY: status, commit SHA + subject, one-line test summary.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll work through these fixes methodically. let me start by examining the current state of the files.">
+      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>I'll work through these fixes methodically. Let me start by examining the current state of the files.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
+  &#34;limit&#34;: 150
+}</pre><pre class="tool-result">1	package render
+2	
+3	import (
+4		&#34;bytes&#34;
+5		&#34;embed&#34;
+6		&#34;fmt&#34;
+7		&#34;html&#34;
+8		&#34;html/template&#34;
+9		&#34;os&#34;
+10		&#34;path/filepath&#34;
+11		&#34;strings&#34;
+12	
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+14		&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+15	)
+16	
+17	//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+18	var assets embed.FS
+19	
+20	// Options configures a render.
+21	type Options struct {
+22		Title string
+23		Usage bool // render the token-usage &amp; cost section
+24	}
+25	
+26	// pageInfo describes where the page being rendered lives relative to outDir.
+27	type pageInfo struct {
+28		Base       string // asset prefix: &#34;&#34; on index.html, &#34;../&#34; on agent pages
+29		PagePrefix string // href prefix to agent pages: &#34;subagents/&#34; on index, &#34;&#34; on agent pages
+30		BackHref   string // back-link to the main report; empty on index
+31		Subtitle   string // agent pages: &#34;&lt;agentType&gt; · agent-&lt;ID&gt;&#34;
+32	}
+33	
+34	// agentLinks resolves tool-use ids and agent ids to agent-page hrefs.
+35	type agentLinks struct {
+36		prefix    string
+37		byToolUse map[string]string // tool_use id -&gt; agent id
+38		byAgentID map[string]bool
+39	}
+40	
+41	func newAgentLinks(agents []model.AgentSession, prefix string) *agentLinks {
+42		l := &amp;agentLinks{prefix: prefix, byToolUse: map[string]string{}, byAgentID: map[string]bool{}}
+43		for _, a := range agents {
+44			if a.ToolUseID != &#34;&#34; {
+45				l.byToolUse[a.ToolUseID] = a.ID
+46			}
+47			l.byAgentID[a.ID] = true
+48		}
+49		return l
+50	}
+51	
+52	func (l *agentLinks) forToolUse(id string) string {
+53		if aid, ok := l.byToolUse[id]; ok {
+54			return l.prefix + &#34;agent-&#34; + aid + &#34;.html&#34;
+55		}
+56		return &#34;&#34;
+57	}
+58	
+59	func (l *agentLinks) forAgent(id string) string {
+60		if l.byAgentID[id] {
+61			return l.prefix + &#34;agent-&#34; + id + &#34;.html&#34;
+62		}
+63		return &#34;&#34;
+64	}
+65	
+66	// Site renders the session into outDir as index.html + assets/, plus one page
+67	// per linked agent session under subagents/.
+68	func Site(s model.Session, outDir string, opts Options) error {
+69		title := opts.Title
+70		if title == &#34;&#34; {
+71			title = s.DisplayTitle()
+72		}
+73		tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+74		if err != nil {
+75			return err
+76		}
+77		tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+78		if err != nil {
+79			return err
+80		}
+81	
+82		if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+83			return err
+84		}
+85		for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+86			b, err := assets.ReadFile(&#34;assets/&#34; + name)
+87			if err != nil {
+88				return err
+89			}
+90			if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+91				return err
+92			}
+93		}
+94	
+95		writePage := func(path string, sess model.Session, pageTitle string, page pageInfo) error {
+96			links := newAgentLinks(s.Agents, page.PagePrefix)
+97			data := buildViewModel(sess, pageTitle, opts, page, links)
+98			var buf bytes.Buffer
+99			if err := tmpl.Execute(&amp;buf, data); err != nil {
+100				return err
+101			}
+102			return os.WriteFile(path, buf.Bytes(), 0o644)
+103		}
+104	
+105		if err := writePage(filepath.Join(outDir, &#34;index.html&#34;), s, title,
+106			pageInfo{Base: &#34;&#34;, PagePrefix: &#34;subagents/&#34;}); err != nil {
+107			return err
+108		}
+109		if len(s.Agents) == 0 {
+110			return nil
+111		}
+112		subDir := filepath.Join(outDir, &#34;subagents&#34;)
+113		if err := os.MkdirAll(subDir, 0o755); err != nil {
+114			return err
+115		}
+116		for _, a := range s.Agents {
+117			sub := &#34;agent-&#34; + a.ID
+118			if a.AgentType != &#34;&#34; {
+119				sub = a.AgentType + &#34; · &#34; + sub
+120			}
+121			if err := writePage(filepath.Join(subDir, &#34;agent-&#34;+a.ID+&#34;.html&#34;), a.Session, a.Description,
+122				pageInfo{Base: &#34;../&#34;, PagePrefix: &#34;&#34;, BackHref: &#34;../index.html&#34;, Subtitle: sub}); err != nil {
+123				return err
+124			}
+125		}
+126		return nil
+127	}
+128	
+129	// view models -------------------------------------------------------------
+130	
+131	type viewData struct {
+132		Title     string
+133		Session   model.Session
+134		StartedAt string
+135		TurnCount int
+136		Prompts   []promptRef
+137		Turns     []turnView
+138		Usage     *usageView
+139		Base      string
+140		BackHref  string
+141		Subtitle  string
+142	}
+143	
+144	type promptRef struct {
+145		Index   int
+146		Preview string
+147	}
+148	
+149	type turnView struct {
+150		Index      int</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="bash grep -n &#34;rendertool&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
+      <div class="turn-role">Claude<span class="usage-badge">130 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTool&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;renderTool\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
+}</pre><pre class="tool-result">332:			b.WriteString(renderTool(blk.Tool, links))
+338:func renderTool(tc *model.ToolCall, links *agentLinks) string {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">144 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
+  &#34;limit&#34;: 80,
+  &#34;offset&#34;: 338
+}</pre><pre class="tool-result">338	func renderTool(tc *model.ToolCall, links *agentLinks) string {
+339		var b strings.Builder
+340		b.WriteString(`&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;`)
+341		b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+342		if tc.Summary != &#34;&#34; {
+343			b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(StripANSI(tc.Summary)) + `&lt;/span&gt;`)
+344		}
+345		if href := links.forToolUse(tc.ID); href != &#34;&#34; {
+346			b.WriteString(`&lt;a class=&#34;agent-link&#34; href=&#34;` + html.EscapeString(href) + `&#34;&gt;transcript ↗&lt;/a&gt;`)
+347		}
+348		b.WriteString(`&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;`)
+349		if tc.Diff != nil {
+350			b.WriteString(string(DiffHTML(tc.Diff)))
+351		} else if tc.InputJSON != &#34;&#34; {
+352			b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+353		}
+354		if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+355			cls := &#34;tool-result&#34;
+356			if tc.Result.IsError {
+357				cls += &#34; tool-result-error&#34;
+358			}
+359			b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(StripANSI(tc.Result.Content)) + `&lt;/pre&gt;`)
+360		}
+361		for _, sub := range tc.Subagents {
+362			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+363			for _, st := range sub.Turns {
+364				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+365				b.WriteString(string(renderTurnBody(st, links)))
+366				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+367			}
+368			b.WriteString(`&lt;/details&gt;`)
+369		}
+370		b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+371		return b.String()
+372	}
+373	
+374	func turnPlainText(t model.Turn) string {
+375		var parts []string
+376		for _, blk := range t.Blocks {
+377			switch blk.Type {
+378			case model.BlockText, model.BlockThinking:
+379				parts = append(parts, blk.Text)
+380			case model.BlockToolUse:
+381				parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
+382			}
+383		}
+384		// Strip ANSI so previews and the search index carry clean text.
+385		return StripANSI(strings.Join(parts, &#34; &#34;))
+386	}
+387	
+388	func preview(s string, n int) string {
+389		s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))
+390		r := []rune(s)
+391		if len(r) &lt;= n {
+392			return s
+393		}
+394		return string(r[:n-1]) + &#34;…&#34;
+395	}
+396	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;func rolelabel&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">197 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func roleLabel&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;func roleLabel\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
+}</pre><pre class="tool-result">298:func roleLabel(t model.Turn) string {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">145 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
+  &#34;limit&#34;: 20,
+  &#34;offset&#34;: 298
+}</pre><pre class="tool-result">298	func roleLabel(t model.Turn) string {
+299		switch t.Kind {
+300		case model.TurnUser:
+301			return &#34;You&#34;
+302		case model.TurnAgentResult:
+303			return agentRoleLabel(t.AgentSummary)
+304		default:
+305			return &#34;Claude&#34;
+306		}
+307	}
+308	
+309	// agentRoleLabel derives `Agent · &lt;name&gt;` from a notification summary like
+310	// `Agent &#34;Implement Task 12&#34; finished`; plain &#34;Agent&#34; when no quoted name.
+311	func agentRoleLabel(summary string) string {
+312		if i := strings.Index(summary, `&#34;`); i &gt;= 0 {
+313			if j := strings.Index(summary[i+1:], `&#34;`); j &gt; 0 {
+314				return &#34;Agent · &#34; + summary[i+1:i+1+j]
+315			}
+316		}
+317		return &#34;Agent&#34;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">196 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
+}</pre><pre class="tool-result">1	package render
+2	
+3	import (
+4		&#34;os&#34;
+5		&#34;path/filepath&#34;
+6		&#34;strings&#34;
+7		&#34;testing&#34;
+8		&#34;time&#34;
+9		&#34;unicode/utf8&#34;
+10	
+11		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+12		&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+13	)
+14	
+15	func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+16		out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+17		if !strings.Contains(out, &#34;&lt;h1&#34;) {
+18			t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+19		}
+20		if !strings.Contains(out, &#34;Println&#34;) {
+21			t.Errorf(&#34;expected highlighted code in output&#34;)
+22		}
+23		if !strings.Contains(out, &#34;&lt;span&#34;) {
+24			t.Errorf(&#34;expected chroma-highlighted &lt;span&gt; tokens in code output, got %q&#34;, out)
+25		}
+26	}
+27	
+28	func TestDiffHTMLMarksLines(t *testing.T) {
+29		out := string(DiffHTML(&amp;model.Diff{Path: &#34;x.txt&#34;, OldText: &#34;a&#34;, NewText: &#34;b&#34;}))
+30		if !strings.Contains(out, &#34;diff-del&#34;) || !strings.Contains(out, &#34;diff-add&#34;) {
+31			t.Errorf(&#34;diff HTML missing add/del classes: %q&#34;, out)
+32		}
+33	}
+34	
+35	func TestStripANSI(t *testing.T) {
+36		cases := []struct{ in, want string }{
+37			{&#34;\x1b[1mOpus 4.8\x1b[22m&#34;, &#34;Opus 4.8&#34;},   // SGR bold on/off
+38			{&#34;\x1b[0;31mred\x1b[0m text&#34;, &#34;red text&#34;}, // colour codes
+39			{&#34;plain text&#34;, &#34;plain text&#34;},              // fast path, unchanged
+40			{&#34;array[1m] index&#34;, &#34;array[1m] index&#34;},    // literal, no ESC → kept
+41			{&#34;\x1b]0;title\x07done&#34;, &#34;done&#34;},          // OSC + BEL
+42			{&#34;a\x1b[Kb&#34;, &#34;ab&#34;},                        // erase-line CSI
+43		}
+44		for _, c := range cases {
+45			if got := StripANSI(c.in); got != c.want {
+46				t.Errorf(&#34;StripANSI(%q) = %q, want %q&#34;, c.in, got, c.want)
+47			}
+48		}
+49	}
+50	
+51	func TestRenderStripsANSIFromReport(t *testing.T) {
+52		s := model.Session{
+53			ID:    &#34;x&#34;,
+54			Title: &#34;T&#34;,
+55			Turns: []model.Turn{
+56				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;set model to \x1b[1mOpus\x1b[22m now&#34;}}},
+57				{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+58					Name: &#34;Bash&#34;, Summary: &#34;echo hi&#34;, Result: &amp;model.ToolResult{Content: &#34;\x1b[32mgreen\x1b[0m output&#34;},
+59				}}}},
+60			},
+61		}
+62		dir := t.TempDir()
+63		if err := Site(s, dir, Options{}); err != nil {
+64			t.Fatal(err)
+65		}
+66		html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+67		body := string(html)
+68		if strings.ContainsRune(body, 0x1b) {
+69			t.Error(&#34;report still contains a raw ESC byte&#34;)
+70		}
+71		for _, want := range []string{&#34;set model to Opus now&#34;, &#34;green output&#34;} {
+72			if !strings.Contains(body, want) {
+73				t.Errorf(&#34;report missing cleaned text %q&#34;, want)
+74			}
+75		}
+76		if strings.Contains(body, &#34;[1m&#34;) || strings.Contains(body, &#34;[22m&#34;) || strings.Contains(body, &#34;[32m&#34;) {
+77			t.Error(&#34;report still shows leaked ANSI parameter text&#34;)
+78		}
+79	}
+80	
+81	func sampleSession() model.Session {
+82		return model.Session{
+83			ID:          &#34;abcd1234&#34;,
+84			ProjectPath: &#34;/tmp/proj&#34;,
+85			Title:       &#34;Sample&#34;,
+86			StartedAt:   time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+87			EndedAt:     time.Date(2026, 7, 11, 10, 1, 0, 0, time.UTC),
+88			Turns: []model.Turn{
+89				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;do it&#34;}}},
+90				{Kind: model.TurnAssistant, Blocks: []model.Block{
+91					{Type: model.BlockText, Text: &#34;on it&#34;},
+92					{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+93						Name: &#34;Bash&#34;, Summary: &#34;ls&#34;, Result: &amp;model.ToolResult{Content: &#34;file.txt&#34;},
+94					}},
+95				}},
+96			},
+97		}
+98	}
+99	
+100	func TestPreviewRuneSafe(t *testing.T) {
+101		s := strings.Repeat(&#34;ä&#34;, 80) // 80 two-byte runes, exceeds n=60
+102		got := preview(s, 60)
+103		if !utf8.ValidString(got) {
+104			t.Errorf(&#34;preview produced invalid UTF-8: %q&#34;, got)
+105		}
+106		if []rune(got)[len([]rune(got))-1] != &#39;…&#39; {
+107			t.Errorf(&#34;preview should end with ellipsis, got %q&#34;, got)
+108		}
+109	}
+110	
+111	func TestSiteRendersUsageWhenEnabled(t *testing.T) {
+112		s := model.Session{
+113			ID: &#34;x&#34;, Title: &#34;T&#34;,
+114			Turns: []model.Turn{
+115				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;hi&#34;}}},
+116				{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;,
+117					Usage:  &amp;model.Usage{Input: 1000, Output: 200},
+118					Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+119			},
+120		}
+121		dir := t.TempDir()
+122		if err := Site(s, dir, Options{Usage: true}); err != nil {
+123			t.Fatal(err)
+124		}
+125		html := readIndex(t, dir)
+126		for _, want := range []string{
+127			&#34;usage-card&#34;, &#34;usage-badge&#34;, &#34;in+out&#34;, &#34;prices as of&#34;, &#34;claude-opus-4-8&#34;,
+128			// per-model table carries the full breakdown + a Total row
+129			&#34;&lt;th&gt;input&lt;/th&gt;&#34;, &#34;&lt;th&gt;output&lt;/th&gt;&#34;, &#34;&lt;th&gt;cache read&lt;/th&gt;&#34;, &#34;&lt;th&gt;cache write&lt;/th&gt;&#34;,
+130			&#34;usage-total&#34;, &#34;Total&#34;,
+131		} {
+132			if !strings.Contains(html, want) {
+133				t.Errorf(&#34;usage output missing %q&#34;, want)
+134			}
+135		}
+136	}
+137	
+138	func TestSiteDropsZeroTokenModelRow(t *testing.T) {
+139		s := model.Session{
+140			ID: &#34;x&#34;, Title: &#34;T&#34;,
+141			Turns: []model.Turn{
+142				{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;,
+143					Usage:  &amp;model.Usage{Input: 1000, Output: 200},
+144					Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+145				{Kind: model.TurnAssistant, Model: &#34;&lt;synthetic&gt;&#34;,
+146					Usage:  &amp;model.Usage{}, // all-zero
+147					Blocks: []model.Block{{Type: model.BlockText, Text: &#34;x&#34;}}},
+148			},
+149		}
+150		dir := t.TempDir()
+151		if err := Site(s, dir, Options{Usage: true}); err != nil {
+152			t.Fatal(err)
+153		}
+154		html := readIndex(t, dir)
+155		if strings.Contains(html, &#34;synthetic&#34;) {
+156			t.Error(&#34;all-zero &lt;synthetic&gt; row should be dropped from the usage table&#34;)
+157		}
+158		if strings.Contains(html, &#34;unpriced models&#34;) {
+159			t.Error(&#34;footnote should not mention unpriced models when the only unpriced model was dropped&#34;)
+160		}
+161		if !strings.Contains(html, &#34;sub-agent sessions&#34;) {
+162			t.Error(&#34;footnote should note sub-agent sessions are excluded&#34;)
+163		}
+164	}
+165	
+166	func TestSiteOmitsUsageByDefault(t *testing.T) {
+167		s := model.Session{ID: &#34;x&#34;, Title: &#34;T&#34;, Turns: []model.Turn{
+168			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: &amp;model.Usage{Input: 1000, Output: 200},
+169				Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},
+170		}}
+171		dir := t.TempDir()
+172		if err := Site(s, dir, Options{}); err != nil {
+173			t.Fatal(err)
+174		}
+175		if strings.Contains(readIndex(t, dir), &#34;usage-card&#34;) {
+176			t.Error(&#34;usage card should be absent without Options.Usage&#34;)
+177		}
+178	}
+179	
+180	// readIndex reads the generated index.html.
+181	func readIndex(t *testing.T, dir string) string {
+182		t.Helper()
+183		b, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+184		if err != nil {
+185			t.Fatal(err)
+186		}
+187		return string(b)
+188	}
+189	
+190	func TestSiteWritesFiles(t *testing.T) {
+191		dir := t.TempDir()
+192		if err := Site(sampleSession(), dir, Options{}); err != nil {
+193			t.Fatal(err)
+194		}
+195		for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+196			if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+197				t.Errorf(&#34;missing %s: %v&#34;, name, err)
+198			}
+199		}
+200		html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+201		s := string(html)
+202		for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+203			if !strings.Contains(s, want) {
+204				t.Errorf(&#34;index.html missing %q&#34;, want)
+205			}
+206		}
+207	}
+208	
+209	func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
+210		s := model.Session{Turns: []model.Turn{{
+211			Kind:         model.TurnAgentResult,
+212			AgentStatus:  &#34;completed&#34;,
+213			AgentSummary: `Agent &#34;Implement Task 12: Profiles view&#34; finished`,
+214			Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;All done.&#34;}},
+215		}}}
+216		d := buildViewModel(s, &#34;t&#34;, Options{}, pageInfo{}, newAgentLinks(nil, &#34;&#34;))
+217		tv := d.Turns[0]
+218		if tv.RoleLabel != &#34;Agent · Implement Task 12: Profiles view&#34; {
+219			t.Errorf(&#34;RoleLabel = %q&#34;, tv.RoleLabel)
+220		}
+221		if tv.Status != &#34;completed&#34; {
+222			t.Errorf(&#34;Status = %q&#34;, tv.Status)
+223		}
+224		if tv.Kind != &#34;agent-result&#34; {
+225			t.Errorf(&#34;Kind = %q&#34;, tv.Kind)
+226		}
+227		if tv.RoleLabel == &#34;You&#34; {
+228			t.Error(&#34;agent result must never be attributed to the user&#34;)
+229		}
+230	}
+231	
+232	func TestAgentRoleLabelFallsBackWithoutQuotes(t *testing.T) {
+233		if got := agentRoleLabel(&#34;something finished&#34;); got != &#34;Agent&#34; {
+234			t.Errorf(&#34;agentRoleLabel = %q, want Agent&#34;, got)
+235		}
+236		if got := agentRoleLabel(&#34;&#34;); got != &#34;Agent&#34; {
+237			t.Errorf(&#34;agentRoleLabel(empty) = %q, want Agent&#34;, got)
+238		}
+239	}
+240	
+241	func TestUsageViewSubagentLineAndFootnote(t *testing.T) {
+242		c := 5.0
+243		r := usage.Report{
+244			HasAnyUsage:   true,
+245			Total:         usage.TokenCounts{Input: 2_000_000},
+246			Subagents:     usage.TokenCounts{Input: 1_000_000},
+247			SubagentsCost: &amp;c,
+248			AgentSessions: 3,
+249			PricesAsOf:    &#34;2026-07&#34;,
+250		}
+251		v := buildUsageView(r)
+252		if v.SubLine != &#34;of which subagents: 1.0M in+out · ~$5.00 (3 sessions)&#34; {
+253			t.Errorf(&#34;SubLine = %q&#34;, v.SubLine)
+254		}
+255		if !strings.Contains(v.Footnote, &#34;Includes 3 linked subagent session(s)&#34;) {
+256			t.Errorf(&#34;footnote = %q&#34;, v.Footnote)
+257		}
+258		if strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files&#34;) {
+259			t.Errorf(&#34;old exclusion wording must go when agents are included: %q&#34;, v.Footnote)
+260		}
+261	}
+262	
+263	func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {
+264		r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}
+265		v := buildUsageView(r)
+266		if v.SubLine != &#34;&#34; {
+267			t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)
+268		}
+269		if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {
+270			t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)
+271		}
+272	}
+273	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="now let me check the current git status and add the regression test first:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let me check the current git status and add the regression test first:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash git status">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status&#34;
+}</pre><pre class="tool-result">Auf Branch feat/subagent-sessions
+nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">751 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</div><div class="diff-del">- 	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}</div><div class="diff-del">- 	v := buildUsageView(r)</div><div class="diff-del">- 	if v.SubLine != &#34;&#34; {</div><div class="diff-del">- 		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {</div><div class="diff-del">- 		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</div><div class="diff-add">+ 	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}</div><div class="diff-add">+ 	v := buildUsageView(r)</div><div class="diff-add">+ 	if v.SubLine != &#34;&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSidechainAgentResultSummaryIsEscaped(t *testing.T) {</div><div class="diff-add">+ 	tc := &amp;model.ToolCall{Name: &#34;Task&#34;, Subagents: []model.Subagent{{</div><div class="diff-add">+ 		Description: &#34;d&#34;,</div><div class="diff-add">+ 		Turns: []model.Turn{{</div><div class="diff-add">+ 			Kind:         model.TurnAgentResult,</div><div class="diff-add">+ 			AgentSummary: `Agent &#34;&lt;img src=x onerror=alert(1)&gt;&#34; finished`,</div><div class="diff-add">+ 			Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;x&#34;}},</div><div class="diff-add">+ 		}},</div><div class="diff-add">+ 	}}}</div><div class="diff-add">+ 	out := renderTool(tc, newAgentLinks(nil, &#34;&#34;))</div><div class="diff-add">+ 	if strings.Contains(out, &#34;&lt;img&#34;) {</div><div class="diff-add">+ 		t.Fatal(&#34;agent summary must be HTML-escaped in sidechain rendering&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(out, &#34;&amp;lt;img&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;escaped summary not found in output&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./internal/render/ -run testsidechainagentresultsummaryisescaped -v">
+      <div class="turn-role">Claude<span class="usage-badge">134 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v&#34;
+}</pre><pre class="tool-result tool-result-error">Exit code 1
+=== RUN   TestSidechainAgentResultSummaryIsEscaped
+    render_test.go:285: agent summary must be HTML-escaped in sidechain rendering
+--- FAIL: TestSidechainAgentResultSummaryIsEscaped (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/render	0.367s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="now i&#39;ll apply the escaping fix to render.go:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I'll apply the escaping fix to render.go:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		for _, sub := range tc.Subagents {</div><div class="diff-del">- 			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-del">- 			for _, st := range sub.Turns {</div><div class="diff-del">- 				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-del">- 				b.WriteString(string(renderTurnBody(st, links)))</div><div class="diff-del">- 				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-del">- 			}</div><div class="diff-del">- 			b.WriteString(`&lt;/details&gt;`)</div><div class="diff-del">- 		}</div><div class="diff-add">+ 		for _, sub := range tc.Subagents {</div><div class="diff-add">+ 			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-add">+ 			for _, st := range sub.Turns {</div><div class="diff-add">+ 				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + html.EscapeString(roleLabel(st)) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ 				b.WriteString(string(renderTurnBody(st, links)))</div><div class="diff-add">+ 				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			b.WriteString(`&lt;/details&gt;`)</div><div class="diff-add">+ 		}</div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;String to replace not found in file.
+String: 		for _, sub := range tc.Subagents {
+			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+			for _, st := range sub.Turns {
+				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+				b.WriteString(string(renderTurnBody(st, links)))
+				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+			}
+			b.WriteString(`&lt;/details&gt;`)
+		}&lt;/tool_use_error&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">150 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
+  &#34;limit&#34;: 10,
+  &#34;offset&#34;: 361
+}</pre><pre class="tool-result">361		for _, sub := range tc.Subagents {
+362			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+363			for _, st := range sub.Turns {
+364				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+365				b.WriteString(string(renderTurnBody(st, links)))
+366				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+367			}
+368			b.WriteString(`&lt;/details&gt;`)
+369		}
+370		b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">285 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + html.EscapeString(roleLabel(st)) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="bash go test ./internal/render/ -run testsidechainagentresultsummaryisescaped -v">
+      <div class="turn-role">Claude<span class="usage-badge">110 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v&#34;
+}</pre><pre class="tool-result">=== RUN   TestSidechainAgentResultSummaryIsEscaped
+--- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.332s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="now let me update the doc comment in the usage package:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me update the doc comment in the usage package:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;,
+  &#34;limit&#34;: 50
+}</pre><pre class="tool-result">1	package usage
+2	
+3	import (
+4		&#34;sort&#34;
+5	
+6		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+7	)
+8	
+9	// TokenCounts is a bucket of token totals by billing category.
+10	type TokenCounts struct {
+11		Input        int
+12		Output       int
+13		CacheRead    int
+14		CacheWrite5m int
+15		CacheWrite1h int
+16	}
+17	
+18	// InOut is the base input+output total, excluding cache tokens. Used for the
+19	// report&#39;s headline figure so cache-read volume does not dominate it.
+20	func (t TokenCounts) InOut() int { return t.Input + t.Output }
+21	
+22	func (t *TokenCounts) add(u model.Usage) {
+23		t.Input += u.Input
+24		t.Output += u.Output
+25		t.CacheRead += u.CacheRead
+26		t.CacheWrite5m += u.CacheWrite5m
+27		t.CacheWrite1h += u.CacheWrite1h
+28	}
+29	
+30	// ModelUsage is the token total and cost for one model in a session.
+31	type ModelUsage struct {
+32		Model   string
+33		Tokens  TokenCounts
+34		CostUSD *float64 // nil when the model is unpriced
+35	}
+36	
+37	// Report is the computed usage for a session.
+38	type Report struct {
+39		Total           TokenCounts
+40		TotalCostUSD    *float64         // nil only when nothing was priced
+41		ByModel         []ModelUsage     // sorted, highest in+out first
+42		PerTurnCost     map[int]*float64 // top-level turn index -&gt; cost (nil = unpriced)
+43		PricesAsOf      string
+44		HasUnknownModel bool        // some tokens came from an unpriced model
+45		HasAnyUsage     bool        // at least one turn carried usage
+46		Subagents       TokenCounts // tokens from linked agent sessions
+47		SubagentsCost   *float64    // nil when nothing in them was priced
+48		AgentSessions   int         // number of linked agent sessions
+49	}
+50	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash grep -n &#34;func compute&#34; ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
+      <div class="turn-role">Claude<span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func Compute&#34; ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;func Compute\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
+}</pre><pre class="tool-result">64:func Compute(s model.Session) Report {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
+      <div class="turn-role">Claude<span class="usage-badge">140 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;,
+  &#34;limit&#34;: 15,
+  &#34;offset&#34;: 51
+}</pre><pre class="tool-result">51	// cost returns the USD cost of a token bucket at a model&#39;s price.
+52	func cost(t TokenCounts, p Price) float64 {
+53		inRate := p.Input / 1e6
+54		return float64(t.Input)*inRate +
+55			float64(t.Output)*(p.Output/1e6) +
+56			float64(t.CacheWrite5m)*inRate*cacheWrite5mMult +
+57			float64(t.CacheWrite1h)*inRate*cacheWrite1hMult +
+58			float64(t.CacheRead)*inRate*cacheReadMult
+59	}
+60	
+61	// Compute aggregates token usage and estimated cost for a session. Totals and
+62	// per-model figures include nested subagent turns; per-turn costs are recorded
+63	// for top-level turns only.
+64	func Compute(s model.Session) Report {
+65		r := Report{PricesAsOf: PricesAsOf, PerTurnCost: map[int]*float64{}}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
+      <div class="turn-role">Claude<span class="usage-badge">292 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // Compute aggregates token usage and estimated cost for a session. Totals and</div><div class="diff-del">- // per-model figures include nested subagent turns; per-turn costs are recorded</div><div class="diff-del">- // for top-level turns only.</div><div class="diff-add">+ // Compute aggregates token usage and estimated cost for a session. Totals and</div><div class="diff-add">+ // per-model figures include nested subagent turns and linked agent sessions</div><div class="diff-add">+ // (s.Agents), tracked separately in the Subagents subtotal; per-turn costs are</div><div class="diff-add">+ // recorded for top-level main-session turns only.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="now let me verify with gofmt, vet, and tests:">
+      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me verify with gofmt, vet, and tests:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="bash gofmt -l . &amp;&amp; echo &#34;gofmt: ok&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;gofmt: OK&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;gofmt: OK\&#34;&#34;
+}</pre><pre class="tool-result">gofmt: OK</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="bash go vet ./...">
+      <div class="turn-role">Claude<span class="usage-badge">87 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./...</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go vet ./...&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/render/ ./internal/usage/ -v">
+      <div class="turn-role">Claude<span class="usage-badge">101 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ ./internal/usage/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/ ./internal/usage/ -v&#34;
+}</pre><pre class="tool-result">=== RUN   TestFormatTokens
+--- PASS: TestFormatTokens (0.00s)
+=== RUN   TestFormatCost
+--- PASS: TestFormatCost (0.00s)
+=== RUN   TestMarkdownRendersHeadingAndCode
+--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+=== RUN   TestDiffHTMLMarksLines
+--- PASS: TestDiffHTMLMarksLines (0.00s)
+=== RUN   TestStripANSI
+--- PASS: TestStripANSI (0.00s)
+=== RUN   TestRenderStripsANSIFromReport
+--- PASS: TestRenderStripsANSIFromReport (0.00s)
+=== RUN   TestPreviewRuneSafe
+--- PASS: TestPreviewRuneSafe (0.00s)
+=== RUN   TestSiteRendersUsageWhenEnabled
+--- PASS: TestSiteRendersUsageWhenEnabled (0.00s)
+=== RUN   TestSiteDropsZeroTokenModelRow
+--- PASS: TestSiteDropsZeroTokenModelRow (0.00s)
+=== RUN   TestSiteOmitsUsageByDefault
+--- PASS: TestSiteOmitsUsageByDefault (0.00s)
+=== RUN   TestSiteWritesFiles
+--- PASS: TestSiteWritesFiles (0.00s)
+=== RUN   TestAgentResultTurnRendersAsAgentCard
+--- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)
+=== RUN   TestAgentRoleLabelFallsBackWithoutQuotes
+--- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)
+=== RUN   TestUsageViewSubagentLineAndFootnote
+--- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)
+=== RUN   TestUsageViewNoSubagentLineWithoutAgents
+--- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)
+=== RUN   TestSidechainAgentResultSummaryIsEscaped
+--- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)
+=== RUN   TestEndToEndRedactedReport
+--- PASS: TestEndToEndRedactedReport (0.00s)
+=== RUN   TestSiteWritesSubagentPagesAndLinks
+--- PASS: TestSiteWritesSubagentPagesAndLinks (0.00s)
+=== RUN   TestSiteNoAgentsWritesNoSubagentsDir
+--- PASS: TestSiteNoAgentsWritesNoSubagentsDir (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.555s
+=== RUN   TestLookupKnownModel
+--- PASS: TestLookupKnownModel (0.00s)
+=== RUN   TestLookupStripsDateSuffix
+--- PASS: TestLookupStripsDateSuffix (0.00s)
+=== RUN   TestLookupUnknownAndSynthetic
+--- PASS: TestLookupUnknownAndSynthetic (0.00s)
+=== RUN   TestPricesAsOfSet
+--- PASS: TestPricesAsOfSet (0.00s)
+=== RUN   TestComputeTotalsAndCost
+--- PASS: TestComputeTotalsAndCost (0.00s)
+=== RUN   TestComputeCountsSubagentTurnsInTotals
+--- PASS: TestComputeCountsSubagentTurnsInTotals (0.00s)
+=== RUN   TestComputeGroupsDatedAndUndatedModelIDs
+--- PASS: TestComputeGroupsDatedAndUndatedModelIDs (0.00s)
+=== RUN   TestComputeLabelsMissingModelID
+--- PASS: TestComputeLabelsMissingModelID (0.00s)
+=== RUN   TestComputeNoUsage
+--- PASS: TestComputeNoUsage (0.00s)
+=== RUN   TestComputeRollsUpLinkedAgentSessions
+--- PASS: TestComputeRollsUpLinkedAgentSessions (0.00s)
+=== RUN   TestComputeUnpricedAgentSessionHasNilSubagentsCost
+--- PASS: TestComputeUnpricedAgentSessionHasNilSubagentsCost (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.265s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="now let me commit both fixes:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me commit both fixes:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="bash git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-28" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">239 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nFix escaping regression in sidechain rendering and update Compute doc\n\nFix 1: Escape roleLabel output in renderTool&#39;s sidechain loop. The\nagentRoleLabel function now returns transcript-derived text (\&#34;Agent · \u003cname\u003e\&#34;)\nwhich must be HTML-escaped like all other dynamic content sinks in the function.\n\nFix 2: Update Compute() doc comment to clarify that linked agent sessions\n(s.Agents) are included in totals and tracked in the Subagents subtotal.\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
+}</pre><pre class="tool-result">[feat/subagent-sessions 92f3646] Fix escaping regression in sidechain rendering and update Compute doc
+ 3 files changed, 22 insertions(+), 3 deletions(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-29" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">162 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 5 report: Subagent pages, links, and wiring
+2	
+3	## Summary
+4	
+5	Implemented multi-page rendering: `render.Site` now writes `index.html` plus
+6	one page per linked agent session under `outDir/subagents/agent-&lt;ID&gt;.html`.
+7	Agent/Task tool cards link to the matching agent page via `ToolUseID`;
+8	agent-result cards link via `AgentID`. Agent pages reference shared assets
+9	via `../assets/...` and carry a `← main session` back-link to `../index.html`.
+10	Link resolution always uses the root session&#39;s agent set, so depth-2 agent
+11	references inside an agent page resolve to sibling files (verified against
+12	real transcript data, see Manual smoke below).
+13	
+14	Wired `transcript.LoadAgentSessions` into `cmd/ccwhid/run.go`&#39;s `generate()`,
+15	gated on `opts.includeSubagents`; updated the `--include-subagents` flag help
+16	text, the TUI toggle label (`&#34;Include subagents&#34;` → `&#34;Include subagent
+17	work&#34;`), and README (flag table, &#34;What&#39;s included&#34; section, &#34;Token usage &amp;
+18	cost&#34; section, and a new known-limitation note about SDK-spawned sessions
+19	without parent linkage).
+20	
+21	## TDD evidence
+22	
+23	**RED** — `go test ./internal/render/ -run &#39;SubagentPages|NoSubagentsDir&#39; -v`:
+24	
+25	```
+26	=== RUN   TestSiteWritesSubagentPagesAndLinks
+27	    render_e2e_test.go:82: agent page missing: open .../subagents/agent-abc123.html: no such file or directory
+28	--- FAIL: TestSiteWritesSubagentPagesAndLinks (0.00s)
+29	=== RUN   TestSiteNoAgentsWritesNoSubagentsDir
+30	--- PASS: TestSiteNoAgentsWritesNoSubagentsDir (0.00s)
+31	FAIL
+32	```
+33	
+34	(`TestSiteNoAgentsWritesNoSubagentsDir` passed trivially pre-implementation
+35	since no `subagents/` dir was ever created; the meaningful RED signal is the
+36	first test failing on the missing agent page.)
+37	
+38	**GREEN** — `go test ./internal/render/... -v` after implementation: all 18
+39	tests pass, including both new e2e tests and the updated
+40	`TestAgentResultTurnRendersAsAgentCard`.
+41	
+42	## Files changed
+43	
+44	- `internal/render/render.go` — added `pageInfo`, `agentLinks`/`newAgentLinks`/
+45	  `forToolUse`/`forAgent`; restructured `Site` to write index + per-agent
+46	  pages; threaded `links *agentLinks` through `buildViewModel`,
+47	  `renderTurnBody`, `renderTool` (including the recursive inline-sidechain
+48	  call); added `Base`/`BackHref`/`Subtitle` to `viewData` and `AgentHref` to
+49	  `turnView`.
+50	- `internal/render/assets/report.html.tmpl` — asset hrefs prefixed with
+51	  `{{ .Base }}`; back-link and `Subtitle` span added to `session-head`;
+52	  `AgentHref` transcript link added to the turn header.
+53	- `internal/render/assets/styles.css` — appended `.agent-link` and
+54	  `.back-link` rules.
+55	- `cmd/ccwhid/run.go` — `generate()` now calls `transcript.LoadAgentSessions`
+56	  after `ParseFile`/skipped-line warning and before redaction, gated on
+57	  `opts.includeSubagents`.
+58	- `cmd/ccwhid/main.go` — updated `--include-subagents` flag help text.
+59	- `internal/tui/tui.go` — toggle label `&#34;Include subagents&#34;` →
+60	  `&#34;Include subagent work&#34;`.
+61	- `README.md` — flag table row, &#34;What&#39;s included&#34; paragraph (background-agent
+62	  cards, linked subagent pages, usage rollup), new known-limitation note, and
+63	  rewrote the stale &#34;Token usage &amp; cost&#34; paragraph that still claimed
+64	  sub-agent tokens were never included (that behavior changed in an earlier
+65	  task on this branch but README was never updated until now).
+66	- `internal/render/render_e2e_test.go` — appended
+67	  `TestSiteWritesSubagentPagesAndLinks` and
+68	  `TestSiteNoAgentsWritesNoSubagentsDir` (from the brief verbatim, using the
+69	  `render.`/`model.` qualified forms required by the `render_test` package).
+70	- `internal/render/render_test.go` — updated the pre-existing 3-arg
+71	  `buildViewModel` call in `TestAgentResultTurnRendersAsAgentCard` to
+72	  `buildViewModel(s, &#34;t&#34;, Options{}, pageInfo{}, newAgentLinks(nil, &#34;&#34;))`;
+73	  assertions unchanged.
+74	
+75	## Verification
+76	
+77	- `gofmt -l .` → silent.
+78	- `go vet ./...` → clean.
+79	- `go test ./...` → all packages pass (`cmd/ccwhid`, `internal/discovery`,
+80	  `internal/model`, `internal/redact`, `internal/render`, `internal/transcript`,
+81	  `internal/tui`, `internal/usage`).
+82	- Manual smoke against real transcript data (a session on this machine with
+83	  50+ linked agent sessions under `&lt;sessionId&gt;/subagents/`):
+84	  `go run ./cmd/ccwhid --session &lt;id&gt; --usage --force --out /tmp/ccwhid-smoke`
+85	  produced `subagents/agent-*.html` for every linked agent; `index.html`
+86	  contained 48 `href=&#34;subagents/agent-...html&#34;` links and 50 &#34;transcript ↗&#34;
+87	  anchors; agent pages correctly resolved `../assets/styles.css` and
+88	  `../index.html`; and depth-2 links between sibling agent pages resolved as
+89	  bare `agent-&lt;id&gt;.html` (no prefix), confirming the root-agent-set resolver
+90	  works as designed for nested agent references. Removed the smoke output
+91	  afterward.
+92	
+93	## Self-review findings
+94	
+95	- No correctness issues found. Verified the only call site of
+96	  `buildViewModel`/`renderTurnBody`/`renderTool` outside render.go itself is
+97	  the one test updated (repo-wide grep).
+98	- Confirmed no other code or test depends on the old TUI toggle string
+99	  `&#34;Include subagents&#34;`.
+100	- Confirmed the CSP/escaping constraint: the one Go-constructed href
+101	  (`renderTool`&#39;s `agent-link`) is passed through `html.EscapeString`; the
+102	  template-side hrefs (`BackHref`, `AgentHref`, `Base` used in `href`/`src`
+103	  attributes) go through `html/template`&#39;s automatic contextual escaping
+104	  since the template is parsed with `html/template`, not `text/template`.
+105	- The README&#39;s &#34;Token usage &amp; cost&#34; section was stale relative to behavior
+106	  already shipped earlier in this branch (subagent token rollup, task
+107	  a6bc8fb) — folded that fix into this task&#39;s README pass since the brief&#39;s
+108	  instructions for this paragraph directly required correcting it.
+109	
+110	## Concerns
+111	
+112	None. Work matches the brief&#39;s exact code/structure; all steps completed and
+113	verified end-to-end against synthetic and real transcript data.
+114	
+115	## Commits
+116	
+117	- `b703c81` — feat: subagent transcript pages linked from the report
+118	
+119	(Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a
+120	different milestone/branch (`feat/usage-cost`) that previously occupied this
+121	path — that content is preserved in git history if needed.)
+122	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-30" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">956 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- ## Commits</div><div class="diff-del">- </div><div class="diff-del">- - `b703c81` — feat: subagent transcript pages linked from the report</div><div class="diff-del">- </div><div class="diff-del">- (Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a</div><div class="diff-del">- different milestone/branch (`feat/usage-cost`) that previously occupied this</div><div class="diff-del">- path — that content is preserved in git history if needed.)</div><div class="diff-add">+ ## Commits</div><div class="diff-add">+ </div><div class="diff-add">+ - `b703c81` — feat: subagent transcript pages linked from the report</div><div class="diff-add">+ </div><div class="diff-add">+ (Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a</div><div class="diff-add">+ different milestone/branch (`feat/usage-cost`) that previously occupied this</div><div class="diff-add">+ path — that content is preserved in git history if needed.)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Final-review fixes</div><div class="diff-add">+ </div><div class="diff-add">+ **Fix 1 — Escaping regression in sidechain rendering (security)**</div><div class="diff-add">+ </div><div class="diff-add">+ The `renderTool` function at line 364 in `internal/render/render.go` was writing</div><div class="diff-add">+ the role label raw without HTML escaping:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Since `roleLabel(st)` can now return `agentRoleLabel(t.AgentSummary)` which</div><div class="diff-add">+ embeds transcript-derived text (`Agent · &lt;name&gt;`), the output must be escaped.</div><div class="diff-add">+ </div><div class="diff-add">+ Applied one-line fix: `html.EscapeString(roleLabel(st))`</div><div class="diff-add">+ </div><div class="diff-add">+ **Test evidence:**</div><div class="diff-add">+ </div><div class="diff-add">+ RED (before fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+     render_test.go:285: agent summary must be HTML-escaped in sidechain rendering</div><div class="diff-add">+ --- FAIL: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ GREEN (after fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+ --- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Fix 2 — Stale doc comment (documentation)**</div><div class="diff-add">+ </div><div class="diff-add">+ Updated the `Compute()` function doc comment in `internal/usage/usage.go` to</div><div class="diff-add">+ clarify that linked agent sessions (s.Agents) are included in totals and</div><div class="diff-add">+ tracked separately in the Subagents subtotal.</div><div class="diff-add">+ </div><div class="diff-add">+ **Verification:**</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ gofmt -l .</div><div class="diff-add">+ (silent)</div><div class="diff-add">+ </div><div class="diff-add">+ $ go vet ./...</div><div class="diff-add">+ (clean)</div><div class="diff-add">+ </div><div class="diff-add">+ $ go test ./internal/render/ ./internal/usage/ -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+ --- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.555s</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.265s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Commit:**</div><div class="diff-add">+ </div><div class="diff-add">+ - `92f3646` — Fix escaping regression in sidechain rendering and update Compute doc</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-31" data-search="bash git log -1 --oneline &amp;&amp; git show --stat head">
+      <div class="turn-role">Claude<span class="usage-badge">301 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline &amp;&amp; git show --stat HEAD</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --oneline \u0026\u0026 git show --stat HEAD&#34;
+}</pre><pre class="tool-result">92f3646 Fix escaping regression in sidechain rendering and update Compute doc
+commit 92f364630a30ad00f14e18ef30cd301dc695cc1b
+Author: Markus Ackermann &lt;markus@kaixo.de&gt;
+Date:   Sun Jul 12 12:37:04 2026 +0200
+
+    Fix escaping regression in sidechain rendering and update Compute doc
+    
+    Fix 1: Escape roleLabel output in renderTool&#39;s sidechain loop. The
+    agentRoleLabel function now returns transcript-derived text (&#34;Agent · &lt;name&gt;&#34;)
+    which must be HTML-escaped like all other dynamic content sinks in the function.
+    
+    Fix 2: Update Compute() doc comment to clarify that linked agent sessions
+    (s.Agents) are included in totals and tracked in the Subagents subtotal.
+    
+    Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;
+
+ internal/render/render.go      |  2 +-
+ internal/render/render_test.go | 18 ++++++++++++++++++
+ internal/usage/usage.go        |  5 +++--
+ 3 files changed, 22 insertions(+), 3 deletions(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-32" data-search="**status:** all fixes applied and verified.
+
+**commit:** `92f3646` — fix escaping regression in sidechain rendering and update compute doc
+
+**test summary:** regression test `testsidechainagentresultsummaryisescaped` now passes (green); all 28 tests across `internal/render/` and `internal/usage/` pass. verification: gofmt silent, go vet clean, both packages pass.">
+      <div class="turn-role">Claude<span class="usage-badge">137 tok · ~$0.01</span></div>
+      <div class="turn-body"><p><strong>Status:</strong> All fixes applied and verified.</p>
+<p><strong>Commit:</strong> <code>92f3646</code> — Fix escaping regression in sidechain rendering and update Compute doc</p>
+<p><strong>Test summary:</strong> Regression test <code>TestSidechainAgentResultSummaryIsEscaped</code> now passes (GREEN); all 28 tests across <code>internal/render/</code> and <code>internal/usage/</code> pass. Verification: gofmt silent, go vet clean, both packages pass.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

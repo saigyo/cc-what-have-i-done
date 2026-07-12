@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 2 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 2 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:05</span>
+        <span>5 turns</span>
+        <span>general-purpose · agent-abdd3de6a5bfdbdb8</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 16k in+out · ~$0.13 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>7k</td><td>29k</td><td>15k</td><td>$0.13</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>7k</td><td>29k</td><td>15k</td><td>$0.13</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. task-scoped gate, not a merge review.
+
+## what was requested
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md
+
+global constraints that bind this task:
+- self-contained/offline: the price table is embedded (`go:embed prices.json`); no runtime network access; no new dependencies.
+- cost is an estimate from a dated table: `pricesasof` must be a non-empty date string (&#34;2026-07&#34;).
+- cache pricing multipliers are universal: `cachewrite5mmult=1.25`, `cachewrite1hmult=2.0`, `cachereadmult=0.1`.
+- unknown / `&lt;synthetic&gt;` models must resolve as unpriced (lookup returns ok=false).
+- prices are the real anthropic list prices from the brief — verify the json values match the brief exactly (no altered numbers).
+
+## implementer&#39;s report (unverified claims — verify against the diff)
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md
+
+## diff under review
+base: 1753ede  head: 08d3928
+diff file: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff
+read the diff file once (commit list &#43; stat &#43; full diff). do not re-run git. read-only; do not mutate the tree. inspect outside the diff only for a concrete named risk.
+
+## tests
+implementer already ran tests with tdd evidence. don&#39;t re-run the suite; run a focused test only for a specific doubt, else name it. non-pristine output is a finding.
+
+verify specifically by reading the diff:
+- every price in prices.json matches the brief&#39;s table exactly (opus-4-8 5/25, opus-4-1 15/75, sonnet-5 2/10, sonnet-4-6/4-5 3/15, haiku-4-5 1/5, fable-5 10/50, opus-4-7/4-6/4-5 5/25).
+- `stripdatesuffix` correctly requires a leading &#39;-&#39; and 8 digits, and is only applied on a lookup miss (must not corrupt a normal id like &#34;claude-opus-4-8&#34;, whose tail &#34;us-4-8&#34; is not &#34;-&#34;&#43;8digits).
+- `init()` panics on invalid embedded json (fail-fast) rather than silently leaving prices nil.
+- the cache multiplier consts exist with the exact values, for task 3 to consume.
+- `&lt;synthetic&gt;` is absent from prices.json so it resolves unpriced.
+
+## output format
+follow the reviewer template exactly: start with the spec compliance verdict (✅/❌/⚠️), then strengths, then issues (critical/important/minor) with file:line each, then assessment with **task quality:** approved | needs fixes. every line a verdict, a finding with file:line, or a check you ran.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate, not a merge review.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+<p>Global constraints that bind this task:</p>
+<ul>
+<li>Self-contained/offline: the price table is embedded (<code>go:embed prices.json</code>); no runtime network access; no new dependencies.</li>
+<li>Cost is an estimate from a dated table: <code>PricesAsOf</code> must be a non-empty date string (&quot;2026-07&quot;).</li>
+<li>Cache pricing multipliers are universal: <code>cacheWrite5mMult=1.25</code>, <code>cacheWrite1hMult=2.0</code>, <code>cacheReadMult=0.1</code>.</li>
+<li>Unknown / <code>&lt;synthetic&gt;</code> models MUST resolve as unpriced (Lookup returns ok=false).</li>
+<li>Prices are the real Anthropic list prices from the brief — verify the JSON values match the brief EXACTLY (no altered numbers).</li>
+</ul>
+<h2>Implementer's Report (unverified claims — verify against the diff)</h2>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: 1753ede  Head: 08d3928
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff
+Read the diff file once (commit list + stat + full diff). Do not re-run git. Read-only; do not mutate the tree. Inspect outside the diff only for a concrete named risk.</p>
+<h2>Tests</h2>
+<p>Implementer already ran tests with TDD evidence. Don't re-run the suite; run a focused test only for a specific doubt, else name it. Non-pristine output is a finding.</p>
+<p>Verify specifically by reading the diff:</p>
+<ul>
+<li>Every price in prices.json matches the brief's table exactly (opus-4-8 5/25, opus-4-1 15/75, sonnet-5 2/10, sonnet-4-6/4-5 3/15, haiku-4-5 1/5, fable-5 10/50, opus-4-7/4-6/4-5 5/25).</li>
+<li><code>stripDateSuffix</code> correctly requires a leading '-' and 8 digits, and is only applied on a lookup miss (must not corrupt a normal id like &quot;claude-opus-4-8&quot;, whose tail &quot;us-4-8&quot; is not &quot;-&quot;+8digits).</li>
+<li><code>init()</code> panics on invalid embedded JSON (fail-fast) rather than silently leaving prices nil.</li>
+<li>The cache multiplier consts exist with the exact values, for Task 3 to consume.</li>
+<li><code>&lt;synthetic&gt;</code> is absent from prices.json so it resolves unpriced.</li>
+</ul>
+<h2>Output Format</h2>
+<p>Follow the reviewer template exactly: start with the Spec Compliance verdict (✅/❌/⚠️), then Strengths, then Issues (Critical/Important/Minor) with file:line each, then Assessment with <strong>Task quality:</strong> Approved | Needs fixes. Every line a verdict, a finding with file:line, or a check you ran.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 2: Embedded price table
+2	
+3	**Files:**
+4	- Create: `internal/usage/pricing.go`
+5	- Create: `internal/usage/prices.json`
+6	- Test: `internal/usage/pricing_test.go`
+7	
+8	**Interfaces:**
+9	- Produces: `usage.Price{ Input, Output float64 }`; `usage.Lookup(modelID string) (Price, bool)`; `usage.PricesAsOf` (const string); unexported cache multiplier consts `cacheWrite5mMult=1.25`, `cacheWrite1hMult=2.0`, `cacheReadMult=0.1`.
+10	
+11	- [ ] **Step 1: Create the price data**
+12	
+13	Create `internal/usage/prices.json` (base per-million-token USD rates; cache rates are derived from `input` via the universal multipliers). Values are Anthropic list prices captured 2026-07:
+14	
+15	```json
+16	{
+17	  &#34;claude-opus-4-8&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+18	  &#34;claude-opus-4-7&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+19	  &#34;claude-opus-4-6&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+20	  &#34;claude-opus-4-5&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+21	  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },
+22	  &#34;claude-sonnet-5&#34;:   { &#34;input&#34;: 2,  &#34;output&#34;: 10 },
+23	  &#34;claude-sonnet-4-6&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+24	  &#34;claude-sonnet-4-5&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+25	  &#34;claude-haiku-4-5&#34;:  { &#34;input&#34;: 1,  &#34;output&#34;: 5 },
+26	  &#34;claude-fable-5&#34;:    { &#34;input&#34;: 10, &#34;output&#34;: 50 }
+27	}
+28	```
+29	
+30	- [ ] **Step 2: Write the failing test**
+31	
+32	Create `internal/usage/pricing_test.go`:
+33	
+34	```go
+35	package usage
+36	
+37	import &#34;testing&#34;
+38	
+39	func TestLookupKnownModel(t *testing.T) {
+40		p, ok := Lookup(&#34;claude-opus-4-8&#34;)
+41		if !ok {
+42			t.Fatal(&#34;claude-opus-4-8 not found&#34;)
+43		}
+44		if p.Input != 5 || p.Output != 25 {
+45			t.Errorf(&#34;price = %+v, want {5 25}&#34;, p)
+46		}
+47	}
+48	
+49	func TestLookupStripsDateSuffix(t *testing.T) {
+50		if _, ok := Lookup(&#34;claude-haiku-4-5-20251001&#34;); !ok {
+51			t.Error(&#34;dated model id should resolve after stripping the date suffix&#34;)
+52		}
+53	}
+54	
+55	func TestLookupUnknownAndSynthetic(t *testing.T) {
+56		if _, ok := Lookup(&#34;&lt;synthetic&gt;&#34;); ok {
+57			t.Error(&#34;&lt;synthetic&gt; should not be priced&#34;)
+58		}
+59		if _, ok := Lookup(&#34;gpt-4&#34;); ok {
+60			t.Error(&#34;unknown model should not be priced&#34;)
+61		}
+62	}
+63	
+64	func TestPricesAsOfSet(t *testing.T) {
+65		if PricesAsOf == &#34;&#34; {
+66			t.Error(&#34;PricesAsOf must be set&#34;)
+67		}
+68	}
+69	```
+70	
+71	- [ ] **Step 3: Run test to verify it fails**
+72	
+73	Run: `go test ./internal/usage/ -v`
+74	Expected: FAIL — package/functions do not exist.
+75	
+76	- [ ] **Step 4: Implement pricing.go**
+77	
+78	Create `internal/usage/pricing.go`:
+79	
+80	```go
+81	// Package usage computes token totals and estimated cost for a rendered
+82	// session from the per-turn usage data attached by the transcript parser.
+83	package usage
+84	
+85	import (
+86		_ &#34;embed&#34;
+87		&#34;encoding/json&#34;
+88	)
+89	
+90	//go:embed prices.json
+91	var pricesJSON []byte
+92	
+93	// PricesAsOf is the month the embedded list prices were captured. Surfaced in
+94	// the report so readers know how current the cost estimate is.
+95	const PricesAsOf = &#34;2026-07&#34;
+96	
+97	// Cache pricing multipliers relative to a model&#39;s base input price. These are
+98	// universal across Claude models (Anthropic prompt-caching pricing).
+99	const (
+100		cacheWrite5mMult = 1.25
+101		cacheWrite1hMult = 2.0
+102		cacheReadMult    = 0.1
+103	)
+104	
+105	// Price holds a model&#39;s per-million-token USD rates for base input and output.
+106	type Price struct {
+107		Input  float64 `json:&#34;input&#34;`
+108		Output float64 `json:&#34;output&#34;`
+109	}
+110	
+111	var prices map[string]Price
+112	
+113	func init() {
+114		if err := json.Unmarshal(pricesJSON, &amp;prices); err != nil {
+115			panic(&#34;usage: invalid embedded prices.json: &#34; + err.Error())
+116		}
+117	}
+118	
+119	// Lookup returns the price for a model id and whether it is known. A trailing
+120	// &#34;-YYYYMMDD&#34; date suffix (used by some model ids) is stripped on a miss.
+121	func Lookup(modelID string) (Price, bool) {
+122		if p, ok := prices[modelID]; ok {
+123			return p, true
+124		}
+125		if norm := stripDateSuffix(modelID); norm != modelID {
+126			if p, ok := prices[norm]; ok {
+127				return p, true
+128			}
+129		}
+130		return Price{}, false
+131	}
+132	
+133	// stripDateSuffix removes a trailing &#34;-YYYYMMDD&#34; (dash + 8 digits) from id.
+134	func stripDateSuffix(id string) string {
+135		if len(id) &lt; 9 {
+136			return id
+137		}
+138		tail := id[len(id)-9:]
+139		if tail[0] != &#39;-&#39; {
+140			return id
+141		}
+142		for _, c := range tail[1:] {
+143			if c &lt; &#39;0&#39; || c &gt; &#39;9&#39; {
+144				return id
+145			}
+146		}
+147		return id[:len(id)-9]
+148	}
+149	```
+150	
+151	- [ ] **Step 5: Run tests to verify they pass**
+152	
+153	Run: `go test ./internal/usage/ -v`
+154	Expected: PASS.
+155	
+156	- [ ] **Step 6: Commit**
+157	
+158	```bash
+159	git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go
+160	git commit -m &#34;feat(usage): embedded model price table with lookup&#34;
+161	```
+162	
+163	---
+164	
+165	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 2: Embedded Price Table — Implementation Report
+2	
+3	## Status
+4	**COMPLETE** — All steps executed per brief spec. TDD cycle complete (RED → GREEN), build passes, formatting verified.
+5	
+6	## Implementation Summary
+7	
+8	### Files Created
+9	1. `internal/usage/prices.json` — Embedded price data for 10 Claude models (Anthropic list prices 2026-07)
+10	2. `internal/usage/pricing.go` — Price lookup implementation with date-suffix stripping
+11	3. `internal/usage/pricing_test.go` — Four test cases covering lookup, date-suffix handling, unknown models
+12	
+13	### Exported Interfaces
+14	- `type Price struct { Input, Output float64 }` — Per-million-token USD rates
+15	- `func Lookup(modelID string) (Price, bool)` — Model price lookup with date-suffix fallback
+16	- `const PricesAsOf = &#34;2026-07&#34;` — Pricing data month for reporting
+17	- Unexported constants: `cacheWrite5mMult=1.25`, `cacheWrite1hMult=2.0`, `cacheReadMult=0.1`
+18	
+19	## TDD Lifecycle Evidence
+20	
+21	### Step 1-2: Data + Tests (Before Implementation)
+22	Created `prices.json` with 10 models and exact prices from brief.
+23	Created `pricing_test.go` with 4 test cases.
+24	
+25	### Step 3: RED Phase
+26	```
+27	go test ./internal/usage/ -v
+28	```
+29	
+30	**Output (FAIL — Expected):**
+31	```
+32	# github.com/saigyo/cc-what-have-i-done/internal/usage [github.com/saigyo/cc-what-have-i-done/internal/usage.test]
+33	internal/usage/pricing_test.go:6:11: undefined: Lookup
+34	internal/usage/pricing_test.go:16:14: undefined: Lookup
+35	internal/usage/pricing_test.go:22:14: undefined: Lookup
+36	internal/usage/pricing_test.go:25:14: undefined: Lookup
+37	internal/usage/pricing_test.go:31:5: undefined: PricesAsOf
+38	FAIL	github.com/saigyo/cc-what-have-i-done/internal/usage [build failed]
+39	```
+40	
+41	### Step 4: Implementation
+42	Created `pricing.go` with:
+43	- Package doc comment (computes token totals and estimated cost)
+44	- Embedded `prices.json` via `go:embed`
+45	- `PricesAsOf` constant set to &#34;2026-07&#34;
+46	- Cache multiplier constants (unexported)
+47	- `Price` struct with JSON tags
+48	- `init()` function to unmarshal prices
+49	- `Lookup(modelID string)` function with date-suffix stripping fallback
+50	- Helper `stripDateSuffix(id string)` function
+51	
+52	### Step 5: GREEN Phase
+53	```
+54	go test ./internal/usage/ -v
+55	```
+56	
+57	**Output (PASS — Verified):**
+58	```
+59	=== RUN   TestLookupKnownModel
+60	--- PASS: TestLookupKnownModel (0.00s)
+61	=== RUN   TestLookupStripsDateSuffix
+62	--- PASS: TestLookupStripsDateSuffix (0.00s)
+63	=== RUN   TestLookupUnknownAndSynthetic
+64	--- PASS: TestLookupUnknownAndSynthetic (0.00s)
+65	=== RUN   TestPricesAsOfSet
+66	--- PASS: TestPricesAsOfSet (0.00s)
+67	PASS
+68	ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.300s
+69	```
+70	
+71	### Step 6: Build &amp; Format Verification
+72	```
+73	go build ./... &amp;&amp; gofmt -l internal
+74	```
+75	
+76	**Output:** (No output — build succeeds, no formatting issues)
+77	
+78	## Commit
+79	
+80	```
+81	git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go
+82	git commit -m &#34;feat(usage): embedded model price table with lookup&#34;
+83	```
+84	
+85	**Commit Details:**
+86	```
+87	Commit: 08d3928a798e799f564e200e94f9584f189c70be
+88	Author: Markus Ackermann &lt;markus@kaixo.de&gt;
+89	Date:   Sun Jul 12 08:03:24 2026 +0200
+90	
+91	 internal/usage/prices.json     | 12 +++
+92	 internal/usage/pricing.go      | 68 ++++++++++++++++++
+93	 internal/usage/pricing_test.go | 34 +++++++++
+94	 3 files changed, 114 insertions(+)
+95	```
+96	
+97	## Self-Review
+98	
+99	✓ **Data Accuracy:** All 10 models and prices match brief exactly (e.g., claude-opus-4-8: input=5, output=25)
+100	
+101	✓ **Interface Compliance:**
+102	  - `Price{Input, Output float64}` ✓
+103	  - `Lookup(modelID string) (Price, bool)` ✓
+104	  - `const PricesAsOf` ✓
+105	  - Unexported cache multipliers (`cacheWrite5mMult`, `cacheWrite1hMult`, `cacheReadMult`) ✓
+106	
+107	✓ **Date-Suffix Stripping:** `stripDateSuffix` correctly:
+108	  - Checks minimum length (9 chars for &#34;-YYYYMMDD&#34;)
+109	  - Validates leading dash at position `len(id)-9`
+110	  - Validates all 8 trailing chars are digits
+111	  - Returns original id if pattern doesn&#39;t match
+112	  - Strips correctly when valid (verified by TestLookupStripsDateSuffix)
+113	
+114	✓ **Unpriced Models:** `&lt;synthetic&gt;` and unknown models (e.g., &#34;gpt-4&#34;) return `(Price{}, false)` ✓
+115	
+116	✓ **Package Style:**
+117	  - Package doc comment present and descriptive
+118	  - Code follows Go idioms (error handling, variable naming, structure)
+119	  - All code formatted per gofmt
+120	
+121	✓ **Embedding:** `//go:embed prices.json` correctly embeds prices.json for distribution without external file dependency
+122	
+123	✓ **Test Coverage:** All four test cases pass:
+124	  - Known model lookup
+125	  - Date-suffix stripping fallback
+126	  - Unknown/synthetic rejection
+127	  - PricesAsOf constant presence
+128	
+129	## No Concerns
+130	
+131	- All steps completed per brief specification
+132	- No ambiguities encountered
+133	- No blocking issues
+134	- Ready for Task 3 (cost computation) which will depend on these exported types and functions
+135	
+136	---
+137	
+138	**Task 2 Complete** — 2026-07-12
+139	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 1753ede..08d3928
+2	
+3	## Commits
+4	08d3928 feat(usage): embedded model price table with lookup
+5	
+6	## Files changed
+7	 internal/usage/prices.json     | 12 ++++++++
+8	 internal/usage/pricing.go      | 68 ++++++++++++++++++++++++++++++++++++++++++
+9	 internal/usage/pricing_test.go | 34 +++++++++++++++++++++
+10	 3 files changed, 114 insertions(+)
+11	
+12	## Diff
+13	diff --git a/internal/usage/prices.json b/internal/usage/prices.json
+14	new file mode 100644
+15	index 0000000..7ebcc72
+16	--- /dev/null
+17	+++ b/internal/usage/prices.json
+18	@@ -0,0 +1,12 @@
+19	+{
+20	+  &#34;claude-opus-4-8&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+21	+  &#34;claude-opus-4-7&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+22	+  &#34;claude-opus-4-6&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+23	+  &#34;claude-opus-4-5&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+24	+  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },
+25	+  &#34;claude-sonnet-5&#34;:   { &#34;input&#34;: 2,  &#34;output&#34;: 10 },
+26	+  &#34;claude-sonnet-4-6&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+27	+  &#34;claude-sonnet-4-5&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+28	+  &#34;claude-haiku-4-5&#34;:  { &#34;input&#34;: 1,  &#34;output&#34;: 5 },
+29	+  &#34;claude-fable-5&#34;:    { &#34;input&#34;: 10, &#34;output&#34;: 50 }
+30	+}
+31	diff --git a/internal/usage/pricing.go b/internal/usage/pricing.go
+32	new file mode 100644
+33	index 0000000..a401e78
+34	--- /dev/null
+35	+++ b/internal/usage/pricing.go
+36	@@ -0,0 +1,68 @@
+37	+// Package usage computes token totals and estimated cost for a rendered
+38	+// session from the per-turn usage data attached by the transcript parser.
+39	+package usage
+40	+
+41	+import (
+42	+	_ &#34;embed&#34;
+43	+	&#34;encoding/json&#34;
+44	+)
+45	+
+46	+//go:embed prices.json
+47	+var pricesJSON []byte
+48	+
+49	+// PricesAsOf is the month the embedded list prices were captured. Surfaced in
+50	+// the report so readers know how current the cost estimate is.
+51	+const PricesAsOf = &#34;2026-07&#34;
+52	+
+53	+// Cache pricing multipliers relative to a model&#39;s base input price. These are
+54	+// universal across Claude models (Anthropic prompt-caching pricing).
+55	+const (
+56	+	cacheWrite5mMult = 1.25
+57	+	cacheWrite1hMult = 2.0
+58	+	cacheReadMult    = 0.1
+59	+)
+60	+
+61	+// Price holds a model&#39;s per-million-token USD rates for base input and output.
+62	+type Price struct {
+63	+	Input  float64 `json:&#34;input&#34;`
+64	+	Output float64 `json:&#34;output&#34;`
+65	+}
+66	+
+67	+var prices map[string]Price
+68	+
+69	+func init() {
+70	+	if err := json.Unmarshal(pricesJSON, &amp;prices); err != nil {
+71	+		panic(&#34;usage: invalid embedded prices.json: &#34; + err.Error())
+72	+	}
+73	+}
+74	+
+75	+// Lookup returns the price for a model id and whether it is known. A trailing
+76	+// &#34;-YYYYMMDD&#34; date suffix (used by some model ids) is stripped on a miss.
+77	+func Lookup(modelID string) (Price, bool) {
+78	+	if p, ok := prices[modelID]; ok {
+79	+		return p, true
+80	+	}
+81	+	if norm := stripDateSuffix(modelID); norm != modelID {
+82	+		if p, ok := prices[norm]; ok {
+83	+			return p, true
+84	+		}
+85	+	}
+86	+	return Price{}, false
+87	+}
+88	+
+89	+// stripDateSuffix removes a trailing &#34;-YYYYMMDD&#34; (dash + 8 digits) from id.
+90	+func stripDateSuffix(id string) string {
+91	+	if len(id) &lt; 9 {
+92	+		return id
+93	+	}
+94	+	tail := id[len(id)-9:]
+95	+	if tail[0] != &#39;-&#39; {
+96	+		return id
+97	+	}
+98	+	for _, c := range tail[1:] {
+99	+		if c &lt; &#39;0&#39; || c &gt; &#39;9&#39; {
+100	+			return id
+101	+		}
+102	+	}
+103	+	return id[:len(id)-9]
+104	+}
+105	diff --git a/internal/usage/pricing_test.go b/internal/usage/pricing_test.go
+106	new file mode 100644
+107	index 0000000..3b1fd92
+108	--- /dev/null
+109	+++ b/internal/usage/pricing_test.go
+110	@@ -0,0 +1,34 @@
+111	+package usage
+112	+
+113	+import &#34;testing&#34;
+114	+
+115	+func TestLookupKnownModel(t *testing.T) {
+116	+	p, ok := Lookup(&#34;claude-opus-4-8&#34;)
+117	+	if !ok {
+118	+		t.Fatal(&#34;claude-opus-4-8 not found&#34;)
+119	+	}
+120	+	if p.Input != 5 || p.Output != 25 {
+121	+		t.Errorf(&#34;price = %+v, want {5 25}&#34;, p)
+122	+	}
+123	+}
+124	+
+125	+func TestLookupStripsDateSuffix(t *testing.T) {
+126	+	if _, ok := Lookup(&#34;claude-haiku-4-5-20251001&#34;); !ok {
+127	+		t.Error(&#34;dated model id should resolve after stripping the date suffix&#34;)
+128	+	}
+129	+}
+130	+
+131	+func TestLookupUnknownAndSynthetic(t *testing.T) {
+132	+	if _, ok := Lookup(&#34;&lt;synthetic&gt;&#34;); ok {
+133	+		t.Error(&#34;&lt;synthetic&gt; should not be priced&#34;)
+134	+	}
+135	+	if _, ok := Lookup(&#34;gpt-4&#34;); ok {
+136	+		t.Error(&#34;unknown model should not be priced&#34;)
+137	+	}
+138	+}
+139	+
+140	+func TestPricesAsOfSet(t *testing.T) {
+141	+	if PricesAsOf == &#34;&#34; {
+142	+		t.Error(&#34;PricesAsOf must be set&#34;)
+143	+	}
+144	+}
+145	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="# task 2 review: embedded price table
+
+## spec compliance: ✅ fully compliant
+
+## strengths
+- `internal/usage/prices.json:1-31` — all 10 models match the brief&#39;s table exactly, entry-for-entry (opus-4-8/4-7/4-6/4-5 = 5/25, opus-4-1 = 15/75, sonnet-5 = 2/10, sonnet-4-6/4-5 = 3/15, haiku-4-5 = 1/5, fable-5 = 10/50). no `&lt;synthetic&gt;` key present, so it correctly falls through to unpriced.
+- `internal/usage/pricing.go:99-103` — cache multiplier consts present with exact required values (`cachewrite5mmult=1.25`, `cachewrite1hmult=2.0`, `cachereadmult=0.1`), unexported as specified, ready for task 3 to consume.
+- `internal/usage/pricing.go:113-117` — `init()` panics on `json.unmarshal` failure rather than leaving `prices` nil, satisfying the fail-fast requirement.
+- `internal/usage/pricing.go:133-148` — `stripdatesuffix` requires a leading `-` at `tail[0]` plus 8 all-digit characters; traced against `&#34;claude-opus-4-8&#34;` (last-9 = `&#34;-opus-4-8&#34;`, second char `&#39;o&#39;` fails the digit check → returned unchanged) and `&#34;claude-haiku-4-5-20251001&#34;` (last-9 = `&#34;-20251001&#34;`, all digits → correctly stripped to `&#34;claude-haiku-4-5&#34;`). no corruption of undated ids.
+- `internal/usage/pricing.go:51` — `const pricesasof = &#34;2026-07&#34;`, a non-empty date string as required.
+- no `go.mod` changes in the diff — only stdlib `embed`/`encoding/json` used; self-contained, offline, no new dependencies.
+- `pricing.go` and `pricing_test.go` are verbatim transcriptions of the brief&#39;s step 2/step 4 code blocks — checked character-for-character, no drift.
+
+## issues
+none found — critical: none. important: none. minor: none.
+
+(noted but not a defect: `cachewrite5mmult`/`cachewrite1hmult`/`cachereadmult` are unused within this package&#39;s diff — expected, since task 3 is the intended consumer, and go does not flag unused package-level consts.)
+
+## checks run
+- read the full diff and cross-compared every json price entry and every line of `pricing.go`/`pricing_test.go` against the brief&#39;s step 1/step 2/step 4 code blocks — identical.
+- manually traced `stripdatesuffix` against both a normal id (`claude-opus-4-8`) and a dated id (`claude-haiku-4-5-20251001`) to confirm the 9-char/leading-dash/8-digit boundary logic behaves as intended.
+- manually traced `&lt;synthetic&gt;` through `stripdatesuffix` (11 chars, `tail[0]=&#39;y&#39;`) confirming no accidental match.
+- confirmed `go.mod` is untouched in the diff (no new dependencies introduced).
+- did not re-run `go test`/`go build` — implementer&#39;s report already shows red→green tdd evidence and a clean `gofmt -l`, and the code read verbatim-matches the brief, so no specific doubt warranted a rerun.
+
+## assessment
+**task quality: approved**">
+      <div class="turn-role">Claude<span class="usage-badge">10k tok · ~$0.11</span></div>
+      <div class="turn-body"><h1>Task 2 Review: Embedded Price Table</h1>
+<h2>Spec Compliance: ✅ Fully compliant</h2>
+<h2>Strengths</h2>
+<ul>
+<li><code>internal/usage/prices.json:1-31</code> — all 10 models match the brief's table exactly, entry-for-entry (opus-4-8/4-7/4-6/4-5 = 5/25, opus-4-1 = 15/75, sonnet-5 = 2/10, sonnet-4-6/4-5 = 3/15, haiku-4-5 = 1/5, fable-5 = 10/50). No <code>&lt;synthetic&gt;</code> key present, so it correctly falls through to unpriced.</li>
+<li><code>internal/usage/pricing.go:99-103</code> — cache multiplier consts present with exact required values (<code>cacheWrite5mMult=1.25</code>, <code>cacheWrite1hMult=2.0</code>, <code>cacheReadMult=0.1</code>), unexported as specified, ready for Task 3 to consume.</li>
+<li><code>internal/usage/pricing.go:113-117</code> — <code>init()</code> panics on <code>json.Unmarshal</code> failure rather than leaving <code>prices</code> nil, satisfying the fail-fast requirement.</li>
+<li><code>internal/usage/pricing.go:133-148</code> — <code>stripDateSuffix</code> requires a leading <code>-</code> at <code>tail[0]</code> plus 8 all-digit characters; traced against <code>&quot;claude-opus-4-8&quot;</code> (last-9 = <code>&quot;-opus-4-8&quot;</code>, second char <code>'o'</code> fails the digit check → returned unchanged) and <code>&quot;claude-haiku-4-5-20251001&quot;</code> (last-9 = <code>&quot;-20251001&quot;</code>, all digits → correctly stripped to <code>&quot;claude-haiku-4-5&quot;</code>). No corruption of undated ids.</li>
+<li><code>internal/usage/pricing.go:51</code> — <code>const PricesAsOf = &quot;2026-07&quot;</code>, a non-empty date string as required.</li>
+<li>No <code>go.mod</code> changes in the diff — only stdlib <code>embed</code>/<code>encoding/json</code> used; self-contained, offline, no new dependencies.</li>
+<li><code>pricing.go</code> and <code>pricing_test.go</code> are verbatim transcriptions of the brief's Step 2/Step 4 code blocks — checked character-for-character, no drift.</li>
+</ul>
+<h2>Issues</h2>
+<p>None found — Critical: none. Important: none. Minor: none.</p>
+<p>(Noted but not a defect: <code>cacheWrite5mMult</code>/<code>cacheWrite1hMult</code>/<code>cacheReadMult</code> are unused within this package's diff — expected, since Task 3 is the intended consumer, and Go does not flag unused package-level consts.)</p>
+<h2>Checks Run</h2>
+<ul>
+<li>Read the full diff and cross-compared every JSON price entry and every line of <code>pricing.go</code>/<code>pricing_test.go</code> against the brief's Step 1/Step 2/Step 4 code blocks — identical.</li>
+<li>Manually traced <code>stripDateSuffix</code> against both a normal id (<code>claude-opus-4-8</code>) and a dated id (<code>claude-haiku-4-5-20251001</code>) to confirm the 9-char/leading-dash/8-digit boundary logic behaves as intended.</li>
+<li>Manually traced <code>&lt;synthetic&gt;</code> through <code>stripDateSuffix</code> (11 chars, <code>tail[0]='y'</code>) confirming no accidental match.</li>
+<li>Confirmed <code>go.mod</code> is untouched in the diff (no new dependencies introduced).</li>
+<li>Did not re-run <code>go test</code>/<code>go build</code> — implementer's report already shows RED→GREEN TDD evidence and a clean <code>gofmt -l</code>, and the code read verbatim-matches the brief, so no specific doubt warranted a rerun.</li>
+</ul>
+<h2>Assessment</h2>
+<p><strong>Task quality: Approved</strong></p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

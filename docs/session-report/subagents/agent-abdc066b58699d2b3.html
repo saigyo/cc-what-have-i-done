@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Check usage.Report field origins · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Check usage.Report field origins</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:20</span>
+        <span>19 turns</span>
+        <span>Explore · agent-abdc066b58699d2b3</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 11k in+out · ~$0.16 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>3k</td><td>211k</td><td>30k</td><td>$0.16</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>3k</td><td>211k</td><td>30k</td><td>$0.16</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="in the go repo at ~/ideaprojects/cc-what-have-i-done, read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.
+
+i need to know, for the review of a rendering feature:
+1. where does `usage.report.pricesasof` (a string field) come from? is it a hardcoded constant, derived from a pricing table file, or ever derived from session/transcript data (e.g. model ids, user text)?
+2. where does `usage.modelusage.model` come from? confirm it is the model id string as it appears in the transcript (i.e., session/transcript-derived, potentially attacker-influenced if a transcript file were crafted).
+3. is there any per-model or aggregate field on usage.report/usage.modelusage other than `model` that contains raw text (as opposed to formatted numbers)? list every string-typed field there.
+4. does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?
+
+report back concisely: field names, their exact source, and whether any could contain html-special characters like `&lt;`, `&gt;`, `&amp;`, or quotes if a transcript were maliciously crafted with a bogus &#34;model&#34; field value.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.</p>
+<p>I need to know, for the review of a rendering feature:</p>
+<ol>
+<li>Where does <code>usage.Report.PricesAsOf</code> (a string field) come from? Is it a hardcoded constant, derived from a pricing table file, or ever derived from session/transcript data (e.g. model IDs, user text)?</li>
+<li>Where does <code>usage.ModelUsage.Model</code> come from? Confirm it is the model ID string as it appears in the transcript (i.e., session/transcript-derived, potentially attacker-influenced if a transcript file were crafted).</li>
+<li>Is there any per-model or aggregate field on usage.Report/usage.ModelUsage other than <code>Model</code> that contains raw text (as opposed to formatted numbers)? List every string-typed field there.</li>
+<li>Does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?</li>
+</ol>
+<p>Report back concisely: field names, their exact source, and whether any could contain HTML-special characters like <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, or quotes if a transcript were maliciously crafted with a bogus &quot;model&quot; field value.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/internal/usage/">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/&#34;
+}</pre><pre class="tool-result">total 40
+drwxr-xr-x@ 7 markus  staff   224 12 Juli 08:07 .
+drwxr-xr-x@ 9 markus  staff   288 12 Juli 08:02 ..
+-rw-r--r--@ 1 markus  staff   542 12 Juli 08:02 prices.json
+-rw-r--r--@ 1 markus  staff   766 12 Juli 08:02 pricing_test.go
+-rw-r--r--@ 1 markus  staff  1699 12 Juli 08:03 pricing.go
+-rw-r--r--@ 1 markus  staff  2744 12 Juli 08:07 usage_test.go
+-rw-r--r--@ 1 markus  staff  3730 12 Juli 08:07 usage.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
+}</pre><pre class="tool-result">1	package usage
+2	
+3	import (
+4		&#34;sort&#34;
+5	
+6		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+7	)
+8	
+9	// TokenCounts is a bucket of token totals by billing category.
+10	type TokenCounts struct {
+11		Input        int
+12		Output       int
+13		CacheRead    int
+14		CacheWrite5m int
+15		CacheWrite1h int
+16	}
+17	
+18	// InOut is the base input+output total, excluding cache tokens. Used for the
+19	// report&#39;s headline figure so cache-read volume does not dominate it.
+20	func (t TokenCounts) InOut() int { return t.Input + t.Output }
+21	
+22	func (t *TokenCounts) add(u model.Usage) {
+23		t.Input += u.Input
+24		t.Output += u.Output
+25		t.CacheRead += u.CacheRead
+26		t.CacheWrite5m += u.CacheWrite5m
+27		t.CacheWrite1h += u.CacheWrite1h
+28	}
+29	
+30	// ModelUsage is the token total and cost for one model in a session.
+31	type ModelUsage struct {
+32		Model   string
+33		Tokens  TokenCounts
+34		CostUSD *float64 // nil when the model is unpriced
+35	}
+36	
+37	// Report is the computed usage for a session.
+38	type Report struct {
+39		Total           TokenCounts
+40		TotalCostUSD    *float64         // nil only when nothing was priced
+41		ByModel         []ModelUsage     // sorted, highest in+out first
+42		PerTurnCost     map[int]*float64 // top-level turn index -&gt; cost (nil = unpriced)
+43		PricesAsOf      string
+44		HasUnknownModel bool // some tokens came from an unpriced model
+45		HasAnyUsage     bool // at least one turn carried usage
+46	}
+47	
+48	// cost returns the USD cost of a token bucket at a model&#39;s price.
+49	func cost(t TokenCounts, p Price) float64 {
+50		inRate := p.Input / 1e6
+51		return float64(t.Input)*inRate +
+52			float64(t.Output)*(p.Output/1e6) +
+53			float64(t.CacheWrite5m)*inRate*cacheWrite5mMult +
+54			float64(t.CacheWrite1h)*inRate*cacheWrite1hMult +
+55			float64(t.CacheRead)*inRate*cacheReadMult
+56	}
+57	
+58	// Compute aggregates token usage and estimated cost for a session. Totals and
+59	// per-model figures include nested subagent turns; per-turn costs are recorded
+60	// for top-level turns only.
+61	func Compute(s model.Session) Report {
+62		r := Report{PricesAsOf: PricesAsOf, PerTurnCost: map[int]*float64{}}
+63		byModel := map[string]*TokenCounts{}
+64		var order []string
+65	
+66		accumulate := func(t model.Turn) {
+67			if t.Usage == nil {
+68				return
+69			}
+70			r.HasAnyUsage = true
+71			r.Total.add(*t.Usage)
+72			tc, ok := byModel[t.Model]
+73			if !ok {
+74				tc = &amp;TokenCounts{}
+75				byModel[t.Model] = tc
+76				order = append(order, t.Model)
+77			}
+78			tc.add(*t.Usage)
+79		}
+80	
+81		// Totals + per-model: walk top-level and nested subagent turns.
+82		for _, t := range s.Turns {
+83			walk(t, accumulate)
+84		}
+85	
+86		// Per-turn cost for top-level turns only.
+87		for i, t := range s.Turns {
+88			if t.Usage == nil {
+89				continue
+90			}
+91			if p, ok := Lookup(t.Model); ok {
+92				c := cost(counts(*t.Usage), p)
+93				r.PerTurnCost[i] = &amp;c
+94			} else {
+95				r.PerTurnCost[i] = nil
+96			}
+97		}
+98	
+99		// Per-model rows + grand total cost.
+100		var total float64
+101		priced := false
+102		for _, m := range order {
+103			tc := *byModel[m]
+104			mu := ModelUsage{Model: m, Tokens: tc}
+105			if p, ok := Lookup(m); ok {
+106				c := cost(tc, p)
+107				mu.CostUSD = &amp;c
+108				total += c
+109				priced = true
+110			} else {
+111				r.HasUnknownModel = true
+112			}
+113			r.ByModel = append(r.ByModel, mu)
+114		}
+115		if priced {
+116			r.TotalCostUSD = &amp;total
+117		}
+118		sort.SliceStable(r.ByModel, func(i, j int) bool {
+119			return r.ByModel[i].Tokens.InOut() &gt; r.ByModel[j].Tokens.InOut()
+120		})
+121		return r
+122	}
+123	
+124	// counts converts a model.Usage into a TokenCounts.
+125	func counts(u model.Usage) TokenCounts {
+126		return TokenCounts{Input: u.Input, Output: u.Output, CacheRead: u.CacheRead,
+127			CacheWrite5m: u.CacheWrite5m, CacheWrite1h: u.CacheWrite1h}
+128	}
+129	
+130	// walk visits a turn and any turns nested in its Task subagents.
+131	func walk(t model.Turn, fn func(model.Turn)) {
+132		fn(t)
+133		for _, b := range t.Blocks {
+134			if b.Tool == nil {
+135				continue
+136			}
+137			for _, sub := range b.Tool.Subagents {
+138				for _, st := range sub.Turns {
+139					walk(st, fn)
+140				}
+141			}
+142		}
+143	}
+144	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go&#34;
+}</pre><pre class="tool-result">1	// Package usage computes token totals and estimated cost for a rendered
+2	// session from the per-turn usage data attached by the transcript parser.
+3	package usage
+4	
+5	import (
+6		_ &#34;embed&#34;
+7		&#34;encoding/json&#34;
+8	)
+9	
+10	//go:embed prices.json
+11	var pricesJSON []byte
+12	
+13	// PricesAsOf is the month the embedded list prices were captured. Surfaced in
+14	// the report so readers know how current the cost estimate is.
+15	const PricesAsOf = &#34;2026-07&#34;
+16	
+17	// Cache pricing multipliers relative to a model&#39;s base input price. These are
+18	// universal across Claude models (Anthropic prompt-caching pricing).
+19	const (
+20		cacheWrite5mMult = 1.25
+21		cacheWrite1hMult = 2.0
+22		cacheReadMult    = 0.1
+23	)
+24	
+25	// Price holds a model&#39;s per-million-token USD rates for base input and output.
+26	type Price struct {
+27		Input  float64 `json:&#34;input&#34;`
+28		Output float64 `json:&#34;output&#34;`
+29	}
+30	
+31	var prices map[string]Price
+32	
+33	func init() {
+34		if err := json.Unmarshal(pricesJSON, &amp;prices); err != nil {
+35			panic(&#34;usage: invalid embedded prices.json: &#34; + err.Error())
+36		}
+37	}
+38	
+39	// Lookup returns the price for a model id and whether it is known. A trailing
+40	// &#34;-YYYYMMDD&#34; date suffix (used by some model ids) is stripped on a miss.
+41	func Lookup(modelID string) (Price, bool) {
+42		if p, ok := prices[modelID]; ok {
+43			return p, true
+44		}
+45		if norm := stripDateSuffix(modelID); norm != modelID {
+46			if p, ok := prices[norm]; ok {
+47				return p, true
+48			}
+49		}
+50		return Price{}, false
+51	}
+52	
+53	// stripDateSuffix removes a trailing &#34;-YYYYMMDD&#34; (dash + 8 digits) from id.
+54	func stripDateSuffix(id string) string {
+55		if len(id) &lt; 9 {
+56			return id
+57		}
+58		tail := id[len(id)-9:]
+59		if tail[0] != &#39;-&#39; {
+60			return id
+61		}
+62		for _, c := range tail[1:] {
+63			if c &lt; &#39;0&#39; || c &gt; &#39;9&#39; {
+64				return id
+65			}
+66		}
+67		return id[:len(id)-9]
+68	}
+69	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/prices.json">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json&#34;
+}</pre><pre class="tool-result">1	{
+2	  &#34;claude-opus-4-8&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+3	  &#34;claude-opus-4-7&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+4	  &#34;claude-opus-4-6&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+5	  &#34;claude-opus-4-5&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+6	  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },
+7	  &#34;claude-sonnet-5&#34;:   { &#34;input&#34;: 2,  &#34;output&#34;: 10 },
+8	  &#34;claude-sonnet-4-6&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+9	  &#34;claude-sonnet-4-5&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+10	  &#34;claude-haiku-4-5&#34;:  { &#34;input&#34;: 1,  &#34;output&#34;: 5 },
+11	  &#34;claude-fable-5&#34;:    { &#34;input&#34;: 10, &#34;output&#34;: 50 }
+12	}
+13	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage_test.go&#34;
+}</pre><pre class="tool-result">1	package usage
+2	
+3	import (
+4		&#34;testing&#34;
+5	
+6		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+7	)
+8	
+9	func u(in, out, read, w5, w1 int) *model.Usage {
+10		return &amp;model.Usage{Input: in, Output: out, CacheRead: read, CacheWrite5m: w5, CacheWrite1h: w1}
+11	}
+12	
+13	func TestComputeTotalsAndCost(t *testing.T) {
+14		s := model.Session{Turns: []model.Turn{
+15			{Kind: model.TurnUser},
+16			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: u(1_000_000, 1_000_000, 1_000_000, 1_000_000, 0)},
+17			{Kind: model.TurnAssistant, Model: &#34;&lt;synthetic&gt;&#34;, Usage: u(500, 0, 0, 0, 0)},
+18		}}
+19		r := Compute(s)
+20	
+21		if !r.HasAnyUsage {
+22			t.Fatal(&#34;HasAnyUsage should be true&#34;)
+23		}
+24		if !r.HasUnknownModel {
+25			t.Error(&#34;synthetic model should set HasUnknownModel&#34;)
+26		}
+27		// Totals include all token types across all models.
+28		if r.Total.Input != 1_000_500 || r.Total.Output != 1_000_000 {
+29			t.Errorf(&#34;totals wrong: %+v&#34;, r.Total)
+30		}
+31		// opus-4-8 input $5, output $25/MTok; cache read 0.1x input; 5m write 1.25x input.
+32		// cost = 5 + 25 + (1e6*5*0.1/1e6=0.5) + (1e6*5*1.25/1e6=6.25) = 36.75
+33		if r.TotalCostUSD == nil {
+34			t.Fatal(&#34;TotalCostUSD is nil&#34;)
+35		}
+36		if got := *r.TotalCostUSD; got &lt; 36.74 || got &gt; 36.76 {
+37			t.Errorf(&#34;total cost = %.4f, want 36.75&#34;, got)
+38		}
+39		// per-turn cost: turn index 1 priced, index 2 (synthetic) nil, index 0 (user) absent.
+40		if r.PerTurnCost[1] == nil {
+41			t.Error(&#34;turn 1 should have a cost&#34;)
+42		}
+43		if c, ok := r.PerTurnCost[2]; !ok || c != nil {
+44			t.Error(&#34;synthetic turn should be present with nil cost&#34;)
+45		}
+46		if _, ok := r.PerTurnCost[0]; ok {
+47			t.Error(&#34;user turn should not appear in PerTurnCost&#34;)
+48		}
+49	}
+50	
+51	func TestComputeCountsSubagentTurnsInTotals(t *testing.T) {
+52		sub := model.Subagent{Turns: []model.Turn{
+53			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: u(1_000_000, 0, 0, 0, 0)},
+54		}}
+55		s := model.Session{Turns: []model.Turn{
+56			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: u(1_000_000, 0, 0, 0, 0),
+57				Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{Name: &#34;Task&#34;, Subagents: []model.Subagent{sub}}}}},
+58		}}
+59		r := Compute(s)
+60		// Both the top-level and the nested subagent input tokens count.
+61		if r.Total.Input != 2_000_000 {
+62			t.Errorf(&#34;Total.Input = %d, want 2000000 (incl. subagent)&#34;, r.Total.Input)
+63		}
+64		// But only the top-level turn gets a per-turn cost entry.
+65		if len(r.PerTurnCost) != 1 {
+66			t.Errorf(&#34;PerTurnCost entries = %d, want 1 (top-level only)&#34;, len(r.PerTurnCost))
+67		}
+68	}
+69	
+70	func TestComputeNoUsage(t *testing.T) {
+71		s := model.Session{Turns: []model.Turn{{Kind: model.TurnUser}, {Kind: model.TurnAssistant}}}
+72		r := Compute(s)
+73		if r.HasAnyUsage {
+74			t.Error(&#34;HasAnyUsage should be false when no turn has usage&#34;)
+75		}
+76		if r.TotalCostUSD != nil {
+77			t.Error(&#34;TotalCostUSD should be nil with no usage&#34;)
+78		}
+79	}
+80	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go&#34;
+}</pre><pre class="tool-result">1	package usage
+2	
+3	import &#34;testing&#34;
+4	
+5	func TestLookupKnownModel(t *testing.T) {
+6		p, ok := Lookup(&#34;claude-opus-4-8&#34;)
+7		if !ok {
+8			t.Fatal(&#34;claude-opus-4-8 not found&#34;)
+9		}
+10		if p.Input != 5 || p.Output != 25 {
+11			t.Errorf(&#34;price = %+v, want {5 25}&#34;, p)
+12		}
+13	}
+14	
+15	func TestLookupStripsDateSuffix(t *testing.T) {
+16		if _, ok := Lookup(&#34;claude-haiku-4-5-20251001&#34;); !ok {
+17			t.Error(&#34;dated model id should resolve after stripping the date suffix&#34;)
+18		}
+19	}
+20	
+21	func TestLookupUnknownAndSynthetic(t *testing.T) {
+22		if _, ok := Lookup(&#34;&lt;synthetic&gt;&#34;); ok {
+23			t.Error(&#34;&lt;synthetic&gt; should not be priced&#34;)
+24		}
+25		if _, ok := Lookup(&#34;gpt-4&#34;); ok {
+26			t.Error(&#34;unknown model should not be priced&#34;)
+27		}
+28	}
+29	
+30	func TestPricesAsOfSet(t *testing.T) {
+31		if PricesAsOf == &#34;&#34; {
+32			t.Error(&#34;PricesAsOf must be set&#34;)
+33		}
+34	}
+35	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -rn &#34;model&#34; ~/ideaprojects/cc-what-have-i-done/internal/model/*.go | grep -v &#34;_test.go&#34;">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;Model&#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v &#34;_test.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;Model\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v \&#34;_test.go\&#34;&#34;
+}</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go:49:	Model     string // assistant model id (empty for user turns / when absent)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash grep -rln &#34;\.model =&#34; ~/ideaprojects/cc-what-have-i-done --include=*.go | grep -v _test">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rln &#34;\.Model =&#34; ~/IdeaProjects/cc-what-have-i-done --include=*.go | grep -v _test</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rln \&#34;\\.Model =\&#34; ~/IdeaProjects/cc-what-have-i-done --include=*.go | grep -v _test&#34;
+}</pre><pre class="tool-result">(eval):1: no matches found: --include=*.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash grep -rn &#34;\.model&#34; ~/ideaprojects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go">
+      <div class="turn-role">Claude<span class="usage-badge">100 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;\.Model&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;\\.Model\&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go&#34;
+}</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go:109:	return m.Model, m.Usage
+~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go:96:func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go:119:func (m model) updateProjects(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go:170:func (m model) updateSessions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go:218:func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go:222:		turn.Model, turn.Usage = messageMeta(rec.Message)
+~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:178:		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:182:		v.Models = append(v.Models, row)
+~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:72:		tc, ok := byModel[t.Model]
+~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:75:			byModel[t.Model] = tc
+~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:76:			order = append(order, t.Model)
+~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:91:		if p, ok := Lookup(t.Model); ok {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash grep -n &#34;messagemeta\|model\b&#34; ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go | head -50">
+      <div class="turn-role">Claude<span class="usage-badge">146 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;messageMeta\|Model\b&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go | head -50</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;messageMeta\\|Model\\b\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go | head -50&#34;
+}</pre><pre class="tool-result">103:		Model string    `json:&#34;model&#34;`
+109:	return m.Model, m.Usage</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="confirmed: `model` field is tagged `json:&#34;model&#34;` and read straight off the raw jsonl message record — no validation, sanitization, or allow-listing before being stored as `turn.model`. let me check the render.go usage to see how pricesasof and other fields flow into the template (for full picture), and confirm there&#39;s no other string field.">
+      <div class="turn-role">Claude<span class="usage-badge">153 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Confirmed: <code>Model</code> field is tagged <code>json:&quot;model&quot;</code> and read straight off the raw JSONL message record — no validation, sanitization, or allow-listing before being stored as <code>turn.Model</code>. Let me check the render.go usage to see how PricesAsOf and other fields flow into the template (for full picture), and confirm there's no other string field.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;,
+  &#34;limit&#34;: 30,
+  &#34;offset&#34;: 85
+}</pre><pre class="tool-result">85	// apiUsage mirrors the message.usage object of an assistant record.
+86	type apiUsage struct {
+87		InputTokens              int `json:&#34;input_tokens&#34;`
+88		OutputTokens             int `json:&#34;output_tokens&#34;`
+89		CacheReadInputTokens     int `json:&#34;cache_read_input_tokens&#34;`
+90		CacheCreationInputTokens int `json:&#34;cache_creation_input_tokens&#34;`
+91		CacheCreation            struct {
+92			Ephemeral5m int `json:&#34;ephemeral_5m_input_tokens&#34;`
+93			Ephemeral1h int `json:&#34;ephemeral_1h_input_tokens&#34;`
+94		} `json:&#34;cache_creation&#34;`
+95	}
+96	
+97	// decodeMessageMeta extracts the model id and usage (if any) from a raw message.
+98	func decodeMessageMeta(raw json.RawMessage) (modelID string, usage *apiUsage) {
+99		if len(raw) == 0 {
+100			return &#34;&#34;, nil
+101		}
+102		var m struct {
+103			Model string    `json:&#34;model&#34;`
+104			Usage *apiUsage `json:&#34;usage&#34;`
+105		}
+106		if err := json.Unmarshal(raw, &amp;m); err != nil {
+107			return &#34;&#34;, nil
+108		}
+109		return m.Model, m.Usage
+110	}
+111	
+112	func parseTime(s string) time.Time {
+113		if s == &#34;&#34; {
+114			return time.Time{}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="bash grep -n &#34;pricesasof\|usagemodel\|\.models\b\|modelusage\|report{&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;PricesAsOf\|usageModel\|\.Models\b\|ModelUsage\|Report{&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;PricesAsOf\\|usageModel\\|\\.Models\\b\\|ModelUsage\\|Report{\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
+}</pre><pre class="tool-result">95:	Models   []usageModel  // per-model table rows
+104:type usageModel struct {
+178:		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+182:		v.Models = append(v.Models, row)
+184:	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="bash sed -n &#39;90,200p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;90,200p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;90,200p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
+}</pre><pre class="tool-result">type usageView struct {
+	HasAny   bool
+	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
+	Rows     []usageRow    // token breakdown
+	Models   []usageModel  // per-model table rows
+	Footnote string
+}
+
+type usageRow struct {
+	Label string
+	Value string
+}
+
+type usageModel struct {
+	Model  string
+	Tokens template.HTML // safe, built only from our own formatted numbers/words
+	Cost   string        // &#34;$1.23&#34; or &#34;n/a&#34;
+}
+
+func buildViewModel(s model.Session, title string, opts Options) viewData {
+	d := viewData{
+		Title:     title,
+		Session:   s,
+		TurnCount: len(s.Turns),
+	}
+	if !s.StartedAt.IsZero() {
+		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+	}
+
+	var rep usage.Report
+	if opts.Usage {
+		rep = usage.Compute(s)
+		d.Usage = buildUsageView(rep)
+	}
+
+	for i, t := range s.Turns {
+		plain := turnPlainText(t)
+		if t.Kind == model.TurnUser {
+			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+		}
+		tv := turnView{
+			Index:      i,
+			Kind:       string(t.Kind),
+			RoleLabel:  roleLabel(t.Kind),
+			SearchText: strings.ToLower(plain),
+			Body:       renderTurnBody(t),
+		}
+		if opts.Usage &amp;&amp; t.Usage != nil {
+			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+		}
+		d.Turns = append(d.Turns, tv)
+	}
+	return d
+}
+
+// turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.
+func turnBadge(u model.Usage, costUSD *float64) string {
+	b := formatTokens(u.Input+u.Output) + &#34; tok&#34;
+	if costUSD != nil {
+		b += &#34; · ~&#34; + formatCost(*costUSD)
+	}
+	return b
+}
+
+// buildUsageView turns a usage.Report into the template-facing view model.
+func buildUsageView(r usage.Report) *usageView {
+	v := &amp;usageView{HasAny: r.HasAnyUsage}
+	if !r.HasAnyUsage {
+		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)
+		return v
+	}
+	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;
+	if r.TotalCostUSD != nil {
+		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;
+	}
+	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact
+	// while still escaping &#34;&lt;&#34;/&#34;&amp;&#34; etc.; headline is built solely from our own
+	// formatted numbers and literal words, so this is safe to mark as raw HTML.
+	v.Headline = template.HTML(html.EscapeString(headline))
+
+	v.Rows = []usageRow{
+		{&#34;input&#34;, formatTokens(r.Total.Input)},
+		{&#34;output&#34;, formatTokens(r.Total.Output)},
+		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},
+		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
+	}
+	for _, m := range r.ByModel {
+		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}
+		if m.CostUSD != nil {
+			row.Cost = formatCost(*m.CostUSD)
+		}
+		v.Models = append(v.Models, row)
+	}
+	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;
+	if r.HasUnknownModel {
+		foot += &#34; Totals exclude unpriced models (shown as n/a).&#34;
+	}
+	v.Footnote = foot
+	return v
+}
+
+func roleLabel(k model.TurnKind) string {
+	if k == model.TurnUser {
+		return &#34;You&#34;
+	}
+	return &#34;Claude&#34;
+}
+
+// renderTurnBody renders all blocks of a turn to HTML.
+func renderTurnBody(t model.Turn) template.HTML {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="bash grep -rn &#34;\.model\b&#34; ~/ideaprojects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2&gt;/dev/null; find ~/ideaprojects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln &#34;usagemodel\|models&#34; 2&gt;/dev/null">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;\.Model\b&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2&gt;/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln &#34;usageModel\|Models&#34; 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;\\.Model\\b\&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2\u003e/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln \&#34;usageModel\\|Models\&#34; 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">&lt;persisted-output&gt;
+Output too large (208.4KB). Full output saved to: ~/.claude/projects/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tool-results/buhhqrrg4.txt
+
+Preview (first 2KB):
+~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl:46:          {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+~/IdeaProjects/cc-what-have-i-done/docs/session-report/index.html:581:      &lt;div class=&#34;turn-body&#34;&gt;&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;&lt;span class=&#34;tool-name&#34;&gt;Write&lt;/span&gt;&lt;span class=&#34;tool-summary&#34;&gt;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-11-ccwhid.md&lt;/span&gt;&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;&lt;div class=&#34;diff&#34;&gt;&lt;div class=&#34;diff-add&#34;&gt;+ # ccwhid Implementation Plan&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &amp;gt; **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ **Goal:** Build `ccwhid`, a single-binary Go CLI that renders a Claude Code session transcript (`.jsonl`) into a browsable static HTML report, with a TUI session browser.&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ **Architecture:** A layered pipeline — `discovery` finds/indexes sessions, `transcript` parses one JSONL file into a typed `model.Session` timeline, `redact` scrubs secrets, and `render` emits a self-contained `index.html` + `assets/`. A `cobra` root command wires flags; with no args it launches a Bubble Tea `tui`. Every package below the CLI is pure and independently testable; `go:embed` bundles all HTML/CSS/JS into the binary.&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ **Tech Stack:** Go 1.26, cobra (CLI), Bubble Tea + Bubbles + Lipgloss (TUI), goldmark (markdown→HTML), chroma (syntax highlighting), stdlib `html/template` + `embed`.&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ ## Global Constraints&lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ &lt;/div&gt;&lt;div class=&#34;diff-add&#34;&gt;+ - **Module pat
+...
+&lt;/persisted-output&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="the key line is `internal/render/assets/report.html.tmpl:46`:
+```
+{{ range .models }}&lt;tr&gt;&lt;td&gt;{{ .model }}&lt;/td&gt;&lt;td&gt;{{ .tokens }}&lt;/td&gt;&lt;td&gt;{{ .cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+```
+
+let me confirm this template is parsed via `html/template` (auto-escaping) and not `text/template`.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>The key line is <code>internal/render/assets/report.html.tmpl:46</code>:</p>
+<pre><code>{{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+</code></pre>
+<p>Let me confirm this template is parsed via <code>html/template</code> (auto-escaping) and not <code>text/template</code>.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash grep -rn &#34;html/template\|text/template\|template.must\|parsefs\|parsefiles&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;html/template\|text/template\|template.Must\|ParseFS\|ParseFiles&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;html/template\\|text/template\\|template.Must\\|ParseFS\\|ParseFiles\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
+}</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:7:	&#34;html/template&#34;
+~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:166:	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="confirmed: `html/template` is used, so the plain `string` field `usagemodel.model` (and thus `modelusage.model`) is auto-escaped by go&#39;s contextual html escaper when rendered into the `&lt;td&gt;` in `report.html.tmpl`. `pricesasof` is only ever consumed inside `render.go`&#39;s go code (concatenated into `foot` and passed through `html.escapestring` at line ~184-186 before landing in `footnote`), never inserted as raw html.
+
+now i have everything needed. here&#39;s my report.
+
+## summary
+
+**files read:** `internal/usage/usage.go`, `internal/usage/pricing.go`, `internal/usage/prices.json`, `internal/usage/usage_test.go`, `internal/usage/pricing_test.go`, plus `internal/transcript/raw.go` and `internal/render/render.go` for provenance/sink tracing.
+
+### 1. `usage.report.pricesasof`
+- type: `string`, set in `compute()` (`usage.go:62`): `r := report{pricesasof: pricesasof, ...}`.
+- source: `pricesasof` is a **hardcoded go constant** in `internal/usage/pricing.go:15`: `const pricesasof = &#34;2026-07&#34;`.
+- it is never derived from the pricing table file (`prices.json`) or from any session/transcript data. it&#39;s a literal string maintained by hand in the source.
+- sink: consumed in `internal/render/render.go` — concatenated into the footnote string and passed through `html.escapestring` before being marked `template.html`/placed in `footnote`. since it&#39;s a fixed constant, it can&#39;t contain html-special chars unless someone edits the source.
+
+### 2. `usage.modelusage.model`
+- type: `string`, set in `compute()` (`usage.go:104`): `mu := modelusage{model: m, tokens: tc}`, where `m` comes from `order`/`bymodel` keys, which are populated from `t.model` for each `model.turn` (`usage.go:72-77`).
+- `model.turn.model` is populated in `internal/transcript/parse.go:222`: `turn.model, turn.usage = messagemeta(rec.message)`, which decodes the raw jsonl message record. in `internal/transcript/raw.go:98-109` (`decodemessagemeta`), the model id is extracted via `json.unmarshal` into a struct field tagged `json:&#34;model&#34;`, with **no validation, allow-listing, or sanitization** — it is exactly whatever string value sits at `message.model` in the transcript jsonl file.
+- **confirmed: this is transcript-derived and attacker-controllable** if a `.jsonl` transcript file is crafted with an arbitrary `&#34;model&#34;: &#34;&lt;payload&gt;&#34;` value (e.g. containing `&lt;script&gt;`, quotes, `&amp;`, etc.). the existing test `usage_test.go` even exercises a non-conforming model string (`&#34;&lt;synthetic&gt;&#34;`) and confirms it flows through unpriced but otherwise unaltered as `modelusage.model`.
+
+### 3. other string fields on `usage.report` / `usage.modelusage`
+full field inventory:
+- `report.total` — `tokencounts` (all `int`)
+- `report.totalcostusd` — `*float64`
+- `report.bymodel` — `[]modelusage`
+- `report.perturncost` — `map[int]*float64`
+- `report.pricesasof` — **`string`** (hardcoded constant, see #1)
+- `report.hasunknownmodel`, `report.hasanyusage` — `bool`
+- `modelusage.model` — **`string`** (transcript-derived, see #2)
+- `modelusage.tokens` — `tokencounts` (all `int`)
+- `modelusage.costusd` — `*float64`
+
+so the **only two string-typed fields** in this package&#39;s exported types are `report.pricesasof` (hardcoded constant) and `modelusage.model` (transcript-derived model id). no other field carries raw/free text — everything else is numeric (`int`/`float64`) or boolean.
+
+### 4. arbitrary/unbounded text (model output, prompts, etc.)
+no. the `usage` package itself never touches prompt text, assistant output text, tool output, or any free-form content — it only reads `model.turn.model` (string) and `model.turn.usage` (numeric token counts: `input`, `output`, `cacheread`, `cachewrite5m`, `cachewrite1h`). it has no access to message bodies/blocks at all. the one non-numeric, non-constant string that flows through this package end-to-end is `modelusage.model`.
+
+### risk assessment for the rendering review
+- `pricesasof`: safe — compile-time constant, cannot be attacker-influenced.
+- `modelusage.model`: **can contain any bytes an attacker puts in the transcript&#39;s `message.model` field**, including `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;`, or full html/script payloads. whether this is exploitable depends entirely on the sink: in the current code, `internal/render/render.go` passes `usagemodel.model` (assigned directly from `m.model`, i.e. `modelusage.model`) as a **plain `string`** field into the `html/template`-parsed template `internal/render/assets/report.html.tmpl:46` (`{{ .model }}` inside a `&lt;td&gt;`), and `render.go` imports `html/template` (not `text/template`), so go&#39;s contextual auto-escaper will html-escape `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;` at render time for that particular sink. if a reviewer finds any *other* code path that writes `modelusage.model` (or the string derived from it) into html via `text/template`, raw string concatenation, `template.html(...)` casts, or js/attribute contexts without going through the `html/template` auto-escaper, that would be the actual injection point to flag — the `usage` package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer&#39;s auto-escaping.">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><p>Confirmed: <code>html/template</code> is used, so the plain <code>string</code> field <code>usageModel.Model</code> (and thus <code>ModelUsage.Model</code>) is auto-escaped by Go's contextual HTML escaper when rendered into the <code>&lt;td&gt;</code> in <code>report.html.tmpl</code>. <code>PricesAsOf</code> is only ever consumed inside <code>render.go</code>'s Go code (concatenated into <code>foot</code> and passed through <code>html.EscapeString</code> at line ~184-186 before landing in <code>Footnote</code>), never inserted as raw HTML.</p>
+<p>Now I have everything needed. Here's my report.</p>
+<h2>Summary</h2>
+<p><strong>Files read:</strong> <code>internal/usage/usage.go</code>, <code>internal/usage/pricing.go</code>, <code>internal/usage/prices.json</code>, <code>internal/usage/usage_test.go</code>, <code>internal/usage/pricing_test.go</code>, plus <code>internal/transcript/raw.go</code> and <code>internal/render/render.go</code> for provenance/sink tracing.</p>
+<h3>1. <code>usage.Report.PricesAsOf</code></h3>
+<ul>
+<li>Type: <code>string</code>, set in <code>Compute()</code> (<code>usage.go:62</code>): <code>r := Report{PricesAsOf: PricesAsOf, ...}</code>.</li>
+<li>Source: <code>PricesAsOf</code> is a <strong>hardcoded Go constant</strong> in <code>internal/usage/pricing.go:15</code>: <code>const PricesAsOf = &quot;2026-07&quot;</code>.</li>
+<li>It is never derived from the pricing table file (<code>prices.json</code>) or from any session/transcript data. It's a literal string maintained by hand in the source.</li>
+<li>Sink: consumed in <code>internal/render/render.go</code> — concatenated into the footnote string and passed through <code>html.EscapeString</code> before being marked <code>template.HTML</code>/placed in <code>Footnote</code>. Since it's a fixed constant, it can't contain HTML-special chars unless someone edits the source.</li>
+</ul>
+<h3>2. <code>usage.ModelUsage.Model</code></h3>
+<ul>
+<li>Type: <code>string</code>, set in <code>Compute()</code> (<code>usage.go:104</code>): <code>mu := ModelUsage{Model: m, Tokens: tc}</code>, where <code>m</code> comes from <code>order</code>/<code>byModel</code> keys, which are populated from <code>t.Model</code> for each <code>model.Turn</code> (<code>usage.go:72-77</code>).</li>
+<li><code>model.Turn.Model</code> is populated in <code>internal/transcript/parse.go:222</code>: <code>turn.Model, turn.Usage = messageMeta(rec.Message)</code>, which decodes the raw JSONL message record. In <code>internal/transcript/raw.go:98-109</code> (<code>decodeMessageMeta</code>), the model id is extracted via <code>json.Unmarshal</code> into a struct field tagged <code>json:&quot;model&quot;</code>, with <strong>no validation, allow-listing, or sanitization</strong> — it is exactly whatever string value sits at <code>message.model</code> in the transcript JSONL file.</li>
+<li><strong>Confirmed: this is transcript-derived and attacker-controllable</strong> if a <code>.jsonl</code> transcript file is crafted with an arbitrary <code>&quot;model&quot;: &quot;&lt;payload&gt;&quot;</code> value (e.g. containing <code>&lt;script&gt;</code>, quotes, <code>&amp;</code>, etc.). The existing test <code>usage_test.go</code> even exercises a non-conforming model string (<code>&quot;&lt;synthetic&gt;&quot;</code>) and confirms it flows through unpriced but otherwise unaltered as <code>ModelUsage.Model</code>.</li>
+</ul>
+<h3>3. Other string fields on <code>usage.Report</code> / <code>usage.ModelUsage</code></h3>
+<p>Full field inventory:</p>
+<ul>
+<li><code>Report.Total</code> — <code>TokenCounts</code> (all <code>int</code>)</li>
+<li><code>Report.TotalCostUSD</code> — <code>*float64</code></li>
+<li><code>Report.ByModel</code> — <code>[]ModelUsage</code></li>
+<li><code>Report.PerTurnCost</code> — <code>map[int]*float64</code></li>
+<li><code>Report.PricesAsOf</code> — <strong><code>string</code></strong> (hardcoded constant, see #1)</li>
+<li><code>Report.HasUnknownModel</code>, <code>Report.HasAnyUsage</code> — <code>bool</code></li>
+<li><code>ModelUsage.Model</code> — <strong><code>string</code></strong> (transcript-derived, see #2)</li>
+<li><code>ModelUsage.Tokens</code> — <code>TokenCounts</code> (all <code>int</code>)</li>
+<li><code>ModelUsage.CostUSD</code> — <code>*float64</code></li>
+</ul>
+<p>So the <strong>only two string-typed fields</strong> in this package's exported types are <code>Report.PricesAsOf</code> (hardcoded constant) and <code>ModelUsage.Model</code> (transcript-derived model id). No other field carries raw/free text — everything else is numeric (<code>int</code>/<code>float64</code>) or boolean.</p>
+<h3>4. Arbitrary/unbounded text (model output, prompts, etc.)</h3>
+<p>No. The <code>usage</code> package itself never touches prompt text, assistant output text, tool output, or any free-form content — it only reads <code>model.Turn.Model</code> (string) and <code>model.Turn.Usage</code> (numeric token counts: <code>Input</code>, <code>Output</code>, <code>CacheRead</code>, <code>CacheWrite5m</code>, <code>CacheWrite1h</code>). It has no access to message bodies/blocks at all. The one non-numeric, non-constant string that flows through this package end-to-end is <code>ModelUsage.Model</code>.</p>
+<h3>Risk assessment for the rendering review</h3>
+<ul>
+<li><code>PricesAsOf</code>: safe — compile-time constant, cannot be attacker-influenced.</li>
+<li><code>ModelUsage.Model</code>: <strong>can contain any bytes an attacker puts in the transcript's <code>message.model</code> field</strong>, including <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, <code>'</code>, or full HTML/script payloads. Whether this is exploitable depends entirely on the sink: in the current code, <code>internal/render/render.go</code> passes <code>usageModel.Model</code> (assigned directly from <code>m.Model</code>, i.e. <code>ModelUsage.Model</code>) as a <strong>plain <code>string</code></strong> field into the <code>html/template</code>-parsed template <code>internal/render/assets/report.html.tmpl:46</code> (<code>{{ .Model }}</code> inside a <code>&lt;td&gt;</code>), and <code>render.go</code> imports <code>html/template</code> (not <code>text/template</code>), so Go's contextual auto-escaper will HTML-escape <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, <code>'</code> at render time for that particular sink. If a reviewer finds any <em>other</em> code path that writes <code>ModelUsage.Model</code> (or the string derived from it) into HTML via <code>text/template</code>, raw string concatenation, <code>template.HTML(...)</code> casts, or JS/attribute contexts without going through the <code>html/template</code> auto-escaper, that would be the actual injection point to flag — the <code>usage</code> package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer's auto-escaping.</li>
+</ul>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

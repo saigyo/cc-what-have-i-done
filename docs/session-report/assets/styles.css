@@ -66,3 +66,19 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 body.hide-tools .tool-body { display: none; }
 .turn.filtered { display: none; }
 @media (max-width: 760px) { .sidebar { display: none; } }
+.usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
+.usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
+.usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
+.usage-models { margin-top: 0.4rem; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.usage-models td, .usage-models th { text-align: right; padding: 0.15rem 0.7rem; white-space: nowrap; }
+.usage-models td:first-child, .usage-models th:first-child { text-align: left; }
+.usage-models th { color: var(--muted); font-weight: 600; }
+.usage-total td { font-weight: 600; border-top: 1px solid var(--border); }
+.usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
+.usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+.turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }
+.turn-agent-result .turn-role { color: var(--accent); }
+.agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
+.usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; }
+.back-link { display: inline-block; font-size: 0.85rem; margin-bottom: 0.4rem; }

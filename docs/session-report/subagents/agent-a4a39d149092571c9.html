@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 4 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 4 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 09:38</span>
+        <span>11 turns</span>
+        <span>general-purpose · agent-a4a39d149092571c9</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 24k in+out · ~$0.24 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>21k</td><td>3k</td><td>262k</td><td>45k</td><td>$0.24</td></tr>
+          <tr class="usage-total"><td>Total</td><td>21k</td><td>3k</td><td>262k</td><td>45k</td><td>$0.24</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md
+
+global constraints from the spec/design that bind this task:
+- agent-result card rendering is unconditional (not gated on any options flag); the subline/footnote live inside the usage view (gated on `--usage` upstream).
+- role label format: `agent · &lt;name&gt;` extracted from the quoted name in the summary; plain `agent` fallback when no quoted name.
+- subline format exactly: `of which subagents: &lt;tokens&gt; in&#43;out · ~$x.xx (n sessions)` with the cost segment omitted when `subagentscost` is nil; subline empty when `agentsessions == 0`.
+- footnote variants exactly as the brief specifies: with agents → &#34;includes n linked subagent session(s); server-tool fees are excluded.&#34;; without → the existing &#34;covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;; the unpriced-models suffix appends to either.
+- the card css class comes from the existing `turn-{{ .kind }}` pattern (kind string `agent-result`).
+- `gofmt -l .` must print nothing.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md
+
+## diff under review
+
+**base:** a6bc8fb
+**head:** b66ed79
+**diff file:** ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff
+
+read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. the diff&#39;s context lines are the changed files: do not read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. do not re-run git commands. do not crawl the broader codebase. inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. one concrete named risk worth a focused check: `rolelabel` changed signature from `model.turnkind` to `model.turn` — verify no remaining call site passes a `turnkind`.
+
+your review is read-only on this checkout. do not mutate the working tree, the index, head, or branch state in any way.
+
+## do not trust the report
+
+treat the implementer&#39;s report as unverified claims about the code. verify the claims against the diff. design rationales in the report are claims too. judge the code on its merits.
+
+## tests
+
+the implementer already ran the tests and reported results with tdd evidence for exactly this code. do not re-run the suite to confirm their report. run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. warnings or other noise in the reported test output are findings — test output should be pristine.
+
+## part 1: spec compliance
+
+compare the diff against what was requested: missing / extra / misunderstood. if a requirement cannot be verified from this diff alone, report it as a ⚠️ item.
+
+## part 2: code quality
+
+code quality (separation of concerns, error handling, dry, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan&#39;s file structure followed). the template/css changes are part of the diff — check the template emits the status chip and subline where the brief says.
+
+point at evidence: file:line references for every finding. your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.
+
+## calibration
+
+categorize by actual severity. important = task cannot be trusted until fixed. &#34;coverage could be broader&#34; and polish are minor. if the plan/brief explicitly mandates something this rubric calls a defect, report it as important, labeled plan-mandated. acknowledge what was done well before listing issues.
+
+## output format
+
+### spec compliance
+- ✅ / ❌ / ⚠️ items
+
+### strengths
+
+### issues
+#### critical (must fix)
+#### important (should fix)
+#### minor (nice to have)
+
+### assessment
+**task quality:** [approved | needs fixes]
+**reasoning:** [1-2 sentences]">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+<p>Global constraints from the spec/design that bind this task:</p>
+<ul>
+<li>Agent-result card rendering is unconditional (not gated on any Options flag); the SubLine/footnote live inside the usage view (gated on <code>--usage</code> upstream).</li>
+<li>Role label format: <code>Agent · &lt;name&gt;</code> extracted from the quoted name in the summary; plain <code>Agent</code> fallback when no quoted name.</li>
+<li>SubLine format exactly: <code>of which subagents: &lt;tokens&gt; in+out · ~$X.XX (N sessions)</code> with the cost segment omitted when <code>SubagentsCost</code> is nil; SubLine empty when <code>AgentSessions == 0</code>.</li>
+<li>Footnote variants exactly as the brief specifies: with agents → &quot;Includes N linked subagent session(s); server-tool fees are excluded.&quot;; without → the existing &quot;Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&quot;; the unpriced-models suffix appends to either.</li>
+<li>The card CSS class comes from the existing <code>turn-{{ .Kind }}</code> pattern (kind string <code>agent-result</code>).</li>
+<li><code>gofmt -l .</code> must print nothing.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+<h2>Diff Under Review</h2>
+<p><strong>Base:</strong> a6bc8fb
+<strong>Head:</strong> b66ed79
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff</p>
+<p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. One concrete named risk worth a focused check: <code>roleLabel</code> changed signature from <code>model.TurnKind</code> to <code>model.Turn</code> — verify no remaining call site passes a <code>TurnKind</code>.</p>
+<p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
+<h2>Do Not Trust the Report</h2>
+<p>Treat the implementer's report as unverified claims about the code. Verify the claims against the diff. Design rationales in the report are claims too. Judge the code on its merits.</p>
+<h2>Tests</h2>
+<p>The implementer already ran the tests and reported results with TDD evidence for exactly this code. Do not re-run the suite to confirm their report. Run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. Warnings or other noise in the reported test output are findings — test output should be pristine.</p>
+<h2>Part 1: Spec Compliance</h2>
+<p>Compare the diff against What Was Requested: Missing / Extra / Misunderstood. If a requirement cannot be verified from this diff alone, report it as a ⚠️ item.</p>
+<h2>Part 2: Code Quality</h2>
+<p>Code quality (separation of concerns, error handling, DRY, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan's file structure followed). The template/CSS changes are part of the diff — check the template emits the status chip and SubLine where the brief says.</p>
+<p>Point at evidence: file:line references for every finding. Your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.</p>
+<h2>Calibration</h2>
+<p>Categorize by actual severity. Important = task cannot be trusted until fixed. &quot;Coverage could be broader&quot; and polish are Minor. If the plan/brief explicitly mandates something this rubric calls a defect, report it as Important, labeled plan-mandated. Acknowledge what was done well before listing issues.</p>
+<h2>Output Format</h2>
+<h3>Spec Compliance</h3>
+<ul>
+<li>✅ / ❌ / ⚠️ items</li>
+</ul>
+<h3>Strengths</h3>
+<h3>Issues</h3>
+<h4>Critical (Must Fix)</h4>
+<h4>Important (Should Fix)</h4>
+<h4>Minor (Nice to Have)</h4>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> [Approved | Needs fixes]
+<strong>Reasoning:</strong> [1-2 sentences]</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.06</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 4: Render agent-result cards and the subagent usage line
+2	
+3	**Files:**
+4	- Modify: `internal/render/render.go`
+5	- Modify: `internal/render/assets/report.html.tmpl`
+6	- Modify: `internal/render/assets/styles.css`
+7	- Test: `internal/render/render_test.go` (append)
+8	
+9	**Interfaces:**
+10	- Consumes: `model.TurnAgentResult`, `Turn.AgentStatus/AgentSummary` (Task 1); `usage.Report.Subagents/SubagentsCost/AgentSessions` (Task 3).
+11	- Produces: `turnView` gains `Status string`; `usageView` gains `SubLine string`; unexported `agentRoleLabel(summary string) string`. Task 5 extends the same files further.
+12	
+13	- [ ] **Step 1: Write the failing tests**
+14	
+15	Append to `internal/render/render_test.go` (check the file&#39;s existing imports; it already imports `strings`, `testing`, and the `model` package — add `usage` if absent):
+16	
+17	```go
+18	func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
+19		s := model.Session{Turns: []model.Turn{{
+20			Kind:         model.TurnAgentResult,
+21			AgentStatus:  &#34;completed&#34;,
+22			AgentSummary: `Agent &#34;Implement Task 12: Profiles view&#34; finished`,
+23			Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;All done.&#34;}},
+24		}}}
+25		d := buildViewModel(s, &#34;t&#34;, Options{})
+26		tv := d.Turns[0]
+27		if tv.RoleLabel != &#34;Agent · Implement Task 12: Profiles view&#34; {
+28			t.Errorf(&#34;RoleLabel = %q&#34;, tv.RoleLabel)
+29		}
+30		if tv.Status != &#34;completed&#34; {
+31			t.Errorf(&#34;Status = %q&#34;, tv.Status)
+32		}
+33		if tv.Kind != &#34;agent-result&#34; {
+34			t.Errorf(&#34;Kind = %q&#34;, tv.Kind)
+35		}
+36		if tv.RoleLabel == &#34;You&#34; {
+37			t.Error(&#34;agent result must never be attributed to the user&#34;)
+38		}
+39	}
+40	
+41	func TestAgentRoleLabelFallsBackWithoutQuotes(t *testing.T) {
+42		if got := agentRoleLabel(&#34;something finished&#34;); got != &#34;Agent&#34; {
+43			t.Errorf(&#34;agentRoleLabel = %q, want Agent&#34;, got)
+44		}
+45		if got := agentRoleLabel(&#34;&#34;); got != &#34;Agent&#34; {
+46			t.Errorf(&#34;agentRoleLabel(empty) = %q, want Agent&#34;, got)
+47		}
+48	}
+49	
+50	func TestUsageViewSubagentLineAndFootnote(t *testing.T) {
+51		c := 5.0
+52		r := usage.Report{
+53			HasAnyUsage:   true,
+54			Total:         usage.TokenCounts{Input: 2_000_000},
+55			Subagents:     usage.TokenCounts{Input: 1_000_000},
+56			SubagentsCost: &amp;c,
+57			AgentSessions: 3,
+58			PricesAsOf:    &#34;2026-07&#34;,
+59		}
+60		v := buildUsageView(r)
+61		if v.SubLine != &#34;of which subagents: 1.0M in+out · ~$5.00 (3 sessions)&#34; {
+62			t.Errorf(&#34;SubLine = %q&#34;, v.SubLine)
+63		}
+64		if !strings.Contains(v.Footnote, &#34;Includes 3 linked subagent session(s)&#34;) {
+65			t.Errorf(&#34;footnote = %q&#34;, v.Footnote)
+66		}
+67		if strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files&#34;) {
+68			t.Errorf(&#34;old exclusion wording must go when agents are included: %q&#34;, v.Footnote)
+69		}
+70	}
+71	
+72	func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {
+73		r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}
+74		v := buildUsageView(r)
+75		if v.SubLine != &#34;&#34; {
+76			t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)
+77		}
+78		if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {
+79			t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)
+80		}
+81	}
+82	```
+83	
+84	- [ ] **Step 2: Run tests to verify they fail**
+85	
+86	Run: `go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v`
+87	Expected: FAIL — `turnView` has no `Status`, `usageView` has no `SubLine`, `agentRoleLabel` undefined (compile errors).
+88	
+89	- [ ] **Step 3: Implement the card and usage-line rendering**
+90	
+91	In `internal/render/render.go`:
+92	
+93	1. Extend `turnView`:
+94	
+95	```go
+96	type turnView struct {
+97		Index      int
+98		Kind       string
+99		RoleLabel  string
+100		Status     string // agent-result status chip, e.g. &#34;completed&#34;
+101		SearchText string
+102		Body       template.HTML
+103		Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;
+104	}
+105	```
+106	
+107	2. Extend `usageView` with `SubLine string` (after `Total`):
+108	
+109	```go
+110		SubLine  string // &#34;of which subagents: …&#34;, empty when no linked agents
+111	```
+112	
+113	3. Replace `roleLabel` and add `agentRoleLabel`:
+114	
+115	```go
+116	func roleLabel(t model.Turn) string {
+117		switch t.Kind {
+118		case model.TurnUser:
+119			return &#34;You&#34;
+120		case model.TurnAgentResult:
+121			return agentRoleLabel(t.AgentSummary)
+122		default:
+123			return &#34;Claude&#34;
+124		}
+125	}
+126	
+127	// agentRoleLabel derives `Agent · &lt;name&gt;` from a notification summary like
+128	// `Agent &#34;Implement Task 12&#34; finished`; plain &#34;Agent&#34; when no quoted name.
+129	func agentRoleLabel(summary string) string {
+130		if i := strings.Index(summary, `&#34;`); i &gt;= 0 {
+131			if j := strings.Index(summary[i+1:], `&#34;`); j &gt; 0 {
+132				return &#34;Agent · &#34; + summary[i+1:i+1+j]
+133			}
+134		}
+135		return &#34;Agent&#34;
+136	}
+137	```
+138	
+139	Update the two existing `roleLabel(...)` call sites to pass the turn:
+140	- in `buildViewModel`: `RoleLabel: roleLabel(t)` and add `Status: t.AgentStatus`
+141	- in `renderTool` (subagent inline rendering): `roleLabel(st)`
+142	
+143	4. In `buildUsageView`, after `v.Total = modelRow(...)`, add:
+144	
+145	```go
+146		if r.AgentSessions &gt; 0 {
+147			sub := &#34;of which subagents: &#34; + formatTokens(r.Subagents.InOut()) + &#34; in+out&#34;
+148			if r.SubagentsCost != nil {
+149				sub += &#34; · ~&#34; + formatCost(*r.SubagentsCost)
+150			}
+151			v.SubLine = fmt.Sprintf(&#34;%s (%d sessions)&#34;, sub, r.AgentSessions)
+152		}
+153	```
+154	
+155	and change the footnote block to:
+156	
+157	```go
+158		foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;.&#34;
+159		if r.AgentSessions &gt; 0 {
+160			foot += fmt.Sprintf(&#34; Includes %d linked subagent session(s); server-tool fees are excluded.&#34;, r.AgentSessions)
+161		} else {
+162			foot += &#34; Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;
+163		}
+164		if hasUnpriced {
+165			foot += &#34; Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted.&#34;
+166		}
+167		v.Footnote = foot
+168	```
+169	
+170	Add `&#34;fmt&#34;` to render.go&#39;s imports.
+171	
+172	5. In `assets/report.html.tmpl`:
+173	
+174	- Turn header line becomes:
+175	
+176	```html
+177	      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Status }}&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;{{ end }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+178	```
+179	
+180	- Below the usage table (before the footnote paragraph):
+181	
+182	```html
+183	        {{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}
+184	```
+185	
+186	6. In `assets/styles.css`, append:
+187	
+188	```css
+189	.turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }
+190	.turn-agent-result .turn-role { color: var(--accent); }
+191	.agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
+192	.usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+193	```
+194	
+195	(The card class `turn-agent-result` comes for free: the template already emits `turn-{{ .Kind }}` and the kind string is `agent-result`.)
+196	
+197	- [ ] **Step 4: Run the tests**
+198	
+199	Run: `go test ./internal/render/ -v`
+200	Expected: all PASS (existing render tests keep passing — `roleLabel` call sites updated).
+201	
+202	- [ ] **Step 5: Run the full suite and commit**
+203	
+204	Run: `gofmt -l . &amp;&amp; go test ./...`
+205	Expected: gofmt prints nothing; all pass.
+206	
+207	```bash
+208	git add internal/render/render.go internal/render/render_test.go internal/render/assets/report.html.tmpl internal/render/assets/styles.css
+209	git commit -m &#34;feat: agent-attributed result cards and subagent usage line&#34;
+210	```
+211	
+212	---
+213	
+214	</pre></div></details><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 4 Implementation Report: Agent-Result Cards and Subagent Usage Line
+2	
+3	## Status: DONE
+4	
+5	Commit: `b66ed79` — &#34;feat: agent-attributed result cards and subagent usage line&#34;
+6	
+7	## Summary
+8	
+9	Implemented Task 4 exactly as specified in the brief using TDD methodology. Extended the render package to:
+10	- Render agent-result turns as agent-attributed cards with status chips
+11	- Add subagent usage line and footnote variants to the usage card
+12	- Refactor roleLabel to handle agent-specific labeling
+13	- Add comprehensive test coverage for all new functionality
+14	
+15	All tests pass; code is properly formatted; full suite verified.
+16	
+17	## What Was Implemented
+18	
+19	### 1. Data Model Extensions
+20	- **turnView struct**: Added `Status string` field to hold agent-result status chips (e.g., &#34;completed&#34;)
+21	- **usageView struct**: Added `SubLine string` field for &#34;of which subagents: ...&#34; breakdown when linked agent sessions exist
+22	
+23	### 2. Function Refactoring
+24	- **roleLabel function**: Changed signature from `func roleLabel(k model.TurnKind)` to `func roleLabel(t model.Turn)` to enable agent-specific labeling
+25	  - Handles `model.TurnAgentResult` by calling `agentRoleLabel()`
+26	  - Updated both call sites: in `buildViewModel` (line 134) and in `renderTool` (line 288) for subagent inline rendering
+27	
+28	### 3. New Functions
+29	- **agentRoleLabel(summary string)**: Extracts task name from notification summary
+30	  - Parses summaries like `Agent &#34;Implement Task 12: Profiles view&#34; finished`
+31	  - Returns &#34;Agent · &lt;name&gt;&#34; when quotes found, plain &#34;Agent&#34; as fallback
+32	
+33	### 4. Usage Reporting
+34	- **buildUsageView** enhanced to populate SubLine and updated footnote logic:
+35	  - When `AgentSessions &gt; 0`: Populates SubLine with formatted subagent tokens and cost
+36	  - Footnote variant 1 (with agents): &#34;Includes N linked subagent session(s); server-tool fees are excluded.&#34;
+37	  - Footnote variant 2 (without agents): &#34;Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;
+38	
+39	### 5. Template Updates
+40	- Updated `report.html.tmpl`:
+41	  - Turn role line now renders `&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;` when Status is set
+42	  - Added conditional SubLine paragraph: `{{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}`
+43	
+44	### 6. Styling
+45	- Added CSS classes in `styles.css`:
+46	  - `.turn-agent-result`: Left accent border, surface background
+47	  - `.turn-agent-result .turn-role`: Accent color for agent label
+48	  - `.agent-status`: Pill-shaped status chip with border, muted color, smaller font
+49	  - `.usage-sub`: Subagent line styling (muted, smaller font, top margin)
+50	
+51	## Files Changed
+52	
+53	- `internal/render/render.go` — 45 insertions, 8 deletions
+54	  - Added `fmt` import
+55	  - Extended `turnView` with `Status` field
+56	  - Extended `usageView` with `SubLine` field
+57	  - Refactored `roleLabel()` function (new signature)
+58	  - Added `agentRoleLabel()` function
+59	  - Updated `buildViewModel()` to pass full Turn to roleLabel and set Status
+60	  - Updated `buildUsageView()` to populate SubLine and update footnote logic
+61	  - Updated `renderTool()` to pass full Turn to roleLabel
+62	
+63	- `internal/render/render_test.go` — 66 insertions
+64	  - Added `usage` package import
+65	  - Added 4 comprehensive test functions
+66	
+67	- `internal/render/assets/report.html.tmpl` — 3 insertions, 1 deletion
+68	  - Updated turn role line to render status chip
+69	  - Added SubLine paragraph in usage body
+70	
+71	- `internal/render/assets/styles.css` — 4 insertions
+72	  - Added agent-result card and status chip styling
+73	
+74	## TDD Evidence
+75	
+76	### RED: Running Tests Before Implementation
+77	```bash
+78	$ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v
+79	
+80	# Compilation errors:
+81	# - tv.Status undefined (type turnView has no field or method Status)
+82	# - undefined: agentRoleLabel  
+83	# - v.SubLine undefined (type *usageView has no field or method SubLine)
+84	
+85	FAIL: build failed
+86	```
+87	
+88	### GREEN: All Tests Pass After Implementation
+89	```bash
+90	$ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v
+91	
+92	=== RUN   TestAgentResultTurnRendersAsAgentCard
+93	--- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)
+94	=== RUN   TestAgentRoleLabelFallsBackWithoutQuotes
+95	--- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)
+96	=== RUN   TestUsageViewSubagentLineAndFootnote
+97	--- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)
+98	=== RUN   TestUsageViewNoSubagentLineWithoutAgents
+99	--- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)
+100	
+101	PASS
+102	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.356s
+103	```
+104	
+105	### Full Render Package Tests
+106	```bash
+107	$ go test ./internal/render/ -v
+108	
+109	=== RUN   TestFormatTokens
+110	--- PASS: TestFormatTokens (0.00s)
+111	=== RUN   TestFormatCost
+112	--- PASS: TestFormatCost (0.00s)
+113	=== RUN   TestMarkdownRendersHeadingAndCode
+114	--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+115	=== RUN   TestDiffHTMLMarksLines
+116	--- PASS: TestDiffHTMLMarksLines (0.00s)
+117	=== RUN   TestStripANSI
+118	--- PASS: TestStripANSI (0.00s)
+119	=== RUN   TestRenderStripsANSIFromReport
+120	--- PASS: TestRenderStripsANSIFromReport (0.00s)
+121	=== RUN   TestPreviewRuneSafe
+122	--- PASS: TestPreviewRuneSafe (0.00s)
+123	=== RUN   TestSiteRendersUsageWhenEnabled
+124	--- PASS: TestSiteRendersUsageWhenEnabled (0.00s)
+125	=== RUN   TestSiteDropsZeroTokenModelRow
+126	--- PASS: TestSiteDropsZeroTokenModelRow (0.00s)
+127	=== RUN   TestSiteOmitsUsageByDefault
+128	--- PASS: TestSiteOmitsUsageByDefault (0.00s)
+129	=== RUN   TestSiteWritesFiles
+130	--- PASS: TestSiteWritesFiles (0.00s)
+131	=== RUN   TestAgentResultTurnRendersAsAgentCard
+132	--- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)
+133	=== RUN   TestAgentRoleLabelFallsBackWithoutQuotes
+134	--- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)
+135	=== RUN   TestUsageViewSubagentLineAndFootnote
+136	--- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)
+137	=== RUN   TestUsageViewNoSubagentLineWithoutAgents
+138	--- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)
+139	=== RUN   TestEndToEndRedactedReport
+140	--- PASS: TestEndToEndRedactedReport (0.00s)
+141	
+142	PASS
+143	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.208s
+144	```
+145	
+146	### Formatting &amp; Full Suite
+147	```bash
+148	$ gofmt -l .
+149	[No output - all files properly formatted]
+150	
+151	$ go test ./...
+152	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.479s
+153	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+154	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+155	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+156	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.211s
+157	ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)
+158	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+159	ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+160	```
+161	
+162	## Self-Review
+163	
+164	### Completeness
+165	- [x] All requirements from brief implemented exactly as specified
+166	- [x] Both roleLabel call sites updated (buildViewModel and renderTool)
+167	- [x] Four test functions verify core functionality
+168	- [x] All existing tests continue to pass
+169	- [x] Code is properly formatted (gofmt clean)
+170	- [x] Full test suite passes (go test ./...)
+171	
+172	### Code Quality
+173	- [x] Function signatures match the brief exactly
+174	- [x] agentRoleLabel logic correctly extracts quoted text with proper quote handling
+175	- [x] SubLine formatting matches spec: &#34;of which subagents: X in+out · ~$Y (N sessions)&#34;
+176	- [x] Footnote logic properly handles both agent and non-agent cases
+177	- [x] CSS follows existing pattern and uses CSS variables
+178	- [x] Template changes are minimal and focused
+179	- [x] Imports properly organized (fmt added, usage already present in test file)
+180	
+181	### Test Quality
+182	- [x] Tests verify exact output formats
+183	- [x] Tests check both success and fallback cases
+184	- [x] Tests verify footnote wording changes based on agent presence
+185	- [x] Tests verify that agent results are never attributed to &#34;You&#34;
+186	- [x] Good coverage of edge cases (empty summary, no agents, zero cost)
+187	
+188	### Potential Issues Verified
+189	- **roleLabel call sites**: Both `buildViewModel` (line 134) and `renderTool` (line 288) updated ✓
+190	- **CSS rule precedence**: `.turn-agent-result .turn-role` properly overrides base `.turn-role` color ✓
+191	- **Template footnote placement**: SubLine positioned between usage table and footnote as specified ✓
+192	- **Escaping safety**: Agent summary text flows through agentRoleLabel (string extraction only) ✓
+193	- **Conditional rendering**: SubLine only appears when AgentSessions &gt; 0 ✓
+194	
+195	## Commit Details
+196	
+197	- **SHA**: b66ed79ec0ce1d52ca4ba0b4d4d51c03729a06ef
+198	- **Branch**: feat/subagent-sessions
+199	- **Subject**: feat: agent-attributed result cards and subagent usage line
+200	- **Co-Authored-By**: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;
+201	
+202	## Test Summary
+203	
+204	**Task 4 specific tests**: 4 new tests, all passing
+205	- TestAgentResultTurnRendersAsAgentCard ✓
+206	- TestAgentRoleLabelFallsBackWithoutQuotes ✓
+207	- TestUsageViewSubagentLineAndFootnote ✓
+208	- TestUsageViewNoSubagentLineWithoutAgents ✓
+209	
+210	**Full render package**: 15 tests, all passing
+211	- 11 existing tests continue to pass
+212	- 4 new tests all pass
+213	
+214	**Full project suite**: All packages pass
+215	- No failures, no formatting issues
+216	</pre></div></details><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: a6bc8fb..HEAD
+2	
+3	## Commits
+4	b66ed79 feat: agent-attributed result cards and subagent usage line
+5	
+6	## Files changed
+7	 internal/render/assets/report.html.tmpl |  3 +-
+8	 internal/render/assets/styles.css       |  4 ++
+9	 internal/render/render.go               | 45 ++++++++++++++++++----
+10	 internal/render/render_test.go          | 66 +++++++++++++++++++++++++++++++++
+11	 4 files changed, 110 insertions(+), 8 deletions(-)
+12	
+13	## Diff
+14	diff --git a/internal/render/assets/report.html.tmpl b/internal/render/assets/report.html.tmpl
+15	index c0139b2..ddba6c8 100644
+16	--- a/internal/render/assets/report.html.tmpl
+17	+++ b/internal/render/assets/report.html.tmpl
+18	@@ -37,25 +37,26 @@
+19	     &lt;details class=&#34;usage-card&#34;&gt;
+20	       &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;
+21	       &lt;div class=&#34;usage-body&#34;&gt;
+22	         {{ if .HasAny }}
+23	         &lt;table class=&#34;usage-models&#34;&gt;
+24	           &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;input&lt;/th&gt;&lt;th&gt;output&lt;/th&gt;&lt;th&gt;cache read&lt;/th&gt;&lt;th&gt;cache write&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;
+25	           {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Input }}&lt;/td&gt;&lt;td&gt;{{ .Output }}&lt;/td&gt;&lt;td&gt;{{ .CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+26	           &lt;tr class=&#34;usage-total&#34;&gt;&lt;td&gt;{{ .Total.Model }}&lt;/td&gt;&lt;td&gt;{{ .Total.Input }}&lt;/td&gt;&lt;td&gt;{{ .Total.Output }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Total.Cost }}&lt;/td&gt;&lt;/tr&gt;
+27	         &lt;/table&gt;
+28	         {{ end }}
+29	+        {{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}
+30	         &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;
+31	       &lt;/div&gt;
+32	     &lt;/details&gt;
+33	     {{ end }}
+34	     {{ range .Turns }}
+35	     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+36	-      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+37	+      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Status }}&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;{{ end }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+38	       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+39	     &lt;/article&gt;
+40	     {{ end }}
+41	   &lt;/main&gt;
+42	 &lt;/div&gt;
+43	 &lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+44	 &lt;/body&gt;
+45	 &lt;/html&gt;
+46	diff --git a/internal/render/assets/styles.css b/internal/render/assets/styles.css
+47	index d6eac4d..6f5fe15 100644
+48	--- a/internal/render/assets/styles.css
+49	+++ b/internal/render/assets/styles.css
+50	@@ -69,10 +69,14 @@ body.hide-tools .tool-body { display: none; }
+51	 .usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
+52	 .usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
+53	 .usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
+54	 .usage-models { margin-top: 0.4rem; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+55	 .usage-models td, .usage-models th { text-align: right; padding: 0.15rem 0.7rem; white-space: nowrap; }
+56	 .usage-models td:first-child, .usage-models th:first-child { text-align: left; }
+57	 .usage-models th { color: var(--muted); font-weight: 600; }
+58	 .usage-total td { font-weight: 600; border-top: 1px solid var(--border); }
+59	 .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
+60	 .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+61	+.turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }
+62	+.turn-agent-result .turn-role { color: var(--accent); }
+63	+.agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
+64	+.usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+65	diff --git a/internal/render/render.go b/internal/render/render.go
+66	index 72a71df..79b9023 100644
+67	--- a/internal/render/render.go
+68	+++ b/internal/render/render.go
+69	@@ -1,15 +1,16 @@
+70	 package render
+71	 
+72	 import (
+73	 	&#34;bytes&#34;
+74	 	&#34;embed&#34;
+75	+	&#34;fmt&#34;
+76	 	&#34;html&#34;
+77	 	&#34;html/template&#34;
+78	 	&#34;os&#34;
+79	 	&#34;path/filepath&#34;
+80	 	&#34;strings&#34;
+81	 
+82	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+83	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+84	 )
+85	 
+86	@@ -76,30 +77,32 @@ type viewData struct {
+87	 
+88	 type promptRef struct {
+89	 	Index   int
+90	 	Preview string
+91	 }
+92	 
+93	 type turnView struct {
+94	 	Index      int
+95	 	Kind       string
+96	 	RoleLabel  string
+97	+	Status     string // agent-result status chip, e.g. &#34;completed&#34;
+98	 	SearchText string
+99	 	Body       template.HTML
+100	 	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;
+101	 }
+102	 
+103	 type usageView struct {
+104	 	HasAny   bool
+105	 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
+106	 	Models   []usageModel  // per-model rows, full token breakdown
+107	 	Total    usageModel    // grand-total row
+108	+	SubLine  string        // &#34;of which subagents: …&#34;, empty when no linked agents
+109	 	Footnote string
+110	 }
+111	 
+112	 // usageModel is one row of the per-model table (or the Total row). All fields
+113	 // are plain formatted strings, auto-escaped by html/template.
+114	 type usageModel struct {
+115	 	Model      string // model id, or &#34;Total&#34; for the summary row
+116	 	Input      string
+117	 	Output     string
+118	 	CacheRead  string
+119	@@ -124,21 +127,22 @@ func buildViewModel(s model.Session, title string, opts Options) viewData {
+120	 	}
+121	 
+122	 	for i, t := range s.Turns {
+123	 		plain := turnPlainText(t)
+124	 		if t.Kind == model.TurnUser {
+125	 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+126	 		}
+127	 		tv := turnView{
+128	 			Index:      i,
+129	 			Kind:       string(t.Kind),
+130	-			RoleLabel:  roleLabel(t.Kind),
+131	+			RoleLabel:  roleLabel(t),
+132	+			Status:     t.AgentStatus,
+133	 			SearchText: strings.ToLower(plain),
+134	 			Body:       renderTurnBody(t),
+135	 		}
+136	 		if opts.Usage &amp;&amp; t.Usage != nil {
+137	 			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+138	 		}
+139	 		d.Turns = append(d.Turns, tv)
+140	 	}
+141	 	return d
+142	 }
+143	@@ -173,22 +177,34 @@ func buildUsageView(r usage.Report) *usageView {
+144	 		if m.Tokens == (usage.TokenCounts{}) {
+145	 			continue // drop all-zero rows (e.g. &lt;synthetic&gt; with no tokens)
+146	 		}
+147	 		v.Models = append(v.Models, modelRow(m.Model, m.Tokens, m.CostUSD))
+148	 		if m.CostUSD == nil {
+149	 			hasUnpriced = true
+150	 		}
+151	 	}
+152	 	v.Total = modelRow(&#34;Total&#34;, r.Total, r.TotalCostUSD)
+153	 
+154	-	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf +
+155	-		&#34;. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;
+156	+	if r.AgentSessions &gt; 0 {
+157	+		sub := &#34;of which subagents: &#34; + formatTokens(r.Subagents.InOut()) + &#34; in+out&#34;
+158	+		if r.SubagentsCost != nil {
+159	+			sub += &#34; · ~&#34; + formatCost(*r.SubagentsCost)
+160	+		}
+161	+		v.SubLine = fmt.Sprintf(&#34;%s (%d sessions)&#34;, sub, r.AgentSessions)
+162	+	}
+163	+
+164	+	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;.&#34;
+165	+	if r.AgentSessions &gt; 0 {
+166	+		foot += fmt.Sprintf(&#34; Includes %d linked subagent session(s); server-tool fees are excluded.&#34;, r.AgentSessions)
+167	+	} else {
+168	+		foot += &#34; Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;
+169	+	}
+170	 	if hasUnpriced {
+171	 		foot += &#34; Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted.&#34;
+172	 	}
+173	 	v.Footnote = foot
+174	 	return v
+175	 }
+176	 
+177	 // modelRow formats one per-model (or Total) table row from a token bucket and
+178	 // optional cost.
+179	 func modelRow(name string, t usage.TokenCounts, costUSD *float64) usageModel {
+180	@@ -199,25 +215,40 @@ func modelRow(name string, t usage.TokenCounts, costUSD *float64) usageModel {
+181	 		CacheRead:  formatTokens(t.CacheRead),
+182	 		CacheWrite: formatTokens(t.CacheWrite5m + t.CacheWrite1h),
+183	 		Cost:       &#34;n/a&#34;,
+184	 	}
+185	 	if costUSD != nil {
+186	 		row.Cost = formatCost(*costUSD)
+187	 	}
+188	 	return row
+189	 }
+190	 
+191	-func roleLabel(k model.TurnKind) string {
+192	-	if k == model.TurnUser {
+193	+func roleLabel(t model.Turn) string {
+194	+	switch t.Kind {
+195	+	case model.TurnUser:
+196	 		return &#34;You&#34;
+197	+	case model.TurnAgentResult:
+198	+		return agentRoleLabel(t.AgentSummary)
+199	+	default:
+200	+		return &#34;Claude&#34;
+201	+	}
+202	+}
+203	+
+204	+// agentRoleLabel derives `Agent · &lt;name&gt;` from a notification summary like
+205	+// `Agent &#34;Implement Task 12&#34; finished`; plain &#34;Agent&#34; when no quoted name.
+206	+func agentRoleLabel(summary string) string {
+207	+	if i := strings.Index(summary, `&#34;`); i &gt;= 0 {
+208	+		if j := strings.Index(summary[i+1:], `&#34;`); j &gt; 0 {
+209	+			return &#34;Agent · &#34; + summary[i+1:i+1+j]
+210	+		}
+211	 	}
+212	-	return &#34;Claude&#34;
+213	+	return &#34;Agent&#34;
+214	 }
+215	 
+216	 // renderTurnBody renders all blocks of a turn to HTML.
+217	 func renderTurnBody(t model.Turn) template.HTML {
+218	 	var b strings.Builder
+219	 	for _, blk := range t.Blocks {
+220	 		switch blk.Type {
+221	 		case model.BlockText:
+222	 			b.WriteString(string(Markdown(blk.Text)))
+223	 		case model.BlockThinking:
+224	@@ -247,21 +278,21 @@ func renderTool(tc *model.ToolCall) string {
+225	 	if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+226	 		cls := &#34;tool-result&#34;
+227	 		if tc.Result.IsError {
+228	 			cls += &#34; tool-result-error&#34;
+229	 		}
+230	 		b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(StripANSI(tc.Result.Content)) + `&lt;/pre&gt;`)
+231	 	}
+232	 	for _, sub := range tc.Subagents {
+233	 		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+234	 		for _, st := range sub.Turns {
+235	-			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st.Kind) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+236	+			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+237	 			b.WriteString(string(renderTurnBody(st)))
+238	 			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+239	 		}
+240	 		b.WriteString(`&lt;/details&gt;`)
+241	 	}
+242	 	b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+243	 	return b.String()
+244	 }
+245	 
+246	 func turnPlainText(t model.Turn) string {
+247	diff --git a/internal/render/render_test.go b/internal/render/render_test.go
+248	index b1c47d2..173bef9 100644
+249	--- a/internal/render/render_test.go
+250	+++ b/internal/render/render_test.go
+251	@@ -2,20 +2,21 @@ package render
+252	 
+253	 import (
+254	 	&#34;os&#34;
+255	 	&#34;path/filepath&#34;
+256	 	&#34;strings&#34;
+257	 	&#34;testing&#34;
+258	 	&#34;time&#34;
+259	 	&#34;unicode/utf8&#34;
+260	 
+261	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+262	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+263	 )
+264	 
+265	 func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+266	 	out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+267	 	if !strings.Contains(out, &#34;&lt;h1&#34;) {
+268	 		t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+269	 	}
+270	 	if !strings.Contains(out, &#34;Println&#34;) {
+271	 		t.Errorf(&#34;expected highlighted code in output&#34;)
+272	 	}
+273	@@ -197,10 +198,75 @@ func TestSiteWritesFiles(t *testing.T) {
+274	 		}
+275	 	}
+276	 	html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+277	 	s := string(html)
+278	 	for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+279	 		if !strings.Contains(s, want) {
+280	 			t.Errorf(&#34;index.html missing %q&#34;, want)
+281	 		}
+282	 	}
+283	 }
+284	+
+285	+func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
+286	+	s := model.Session{Turns: []model.Turn{{
+287	+		Kind:         model.TurnAgentResult,
+288	+		AgentStatus:  &#34;completed&#34;,
+289	+		AgentSummary: `Agent &#34;Implement Task 12: Profiles view&#34; finished`,
+290	+		Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;All done.&#34;}},
+291	+	}}}
+292	+	d := buildViewModel(s, &#34;t&#34;, Options{})
+293	+	tv := d.Turns[0]
+294	+	if tv.RoleLabel != &#34;Agent · Implement Task 12: Profiles view&#34; {
+295	+		t.Errorf(&#34;RoleLabel = %q&#34;, tv.RoleLabel)
+296	+	}
+297	+	if tv.Status != &#34;completed&#34; {
+298	+		t.Errorf(&#34;Status = %q&#34;, tv.Status)
+299	+	}
+300	+	if tv.Kind != &#34;agent-result&#34; {
+301	+		t.Errorf(&#34;Kind = %q&#34;, tv.Kind)
+302	+	}
+303	+	if tv.RoleLabel == &#34;You&#34; {
+304	+		t.Error(&#34;agent result must never be attributed to the user&#34;)
+305	+	}
+306	+}
+307	+
+308	+func TestAgentRoleLabelFallsBackWithoutQuotes(t *testing.T) {
+309	+	if got := agentRoleLabel(&#34;something finished&#34;); got != &#34;Agent&#34; {
+310	+		t.Errorf(&#34;agentRoleLabel = %q, want Agent&#34;, got)
+311	+	}
+312	+	if got := agentRoleLabel(&#34;&#34;); got != &#34;Agent&#34; {
+313	+		t.Errorf(&#34;agentRoleLabel(empty) = %q, want Agent&#34;, got)
+314	+	}
+315	+}
+316	+
+317	+func TestUsageViewSubagentLineAndFootnote(t *testing.T) {
+318	+	c := 5.0
+319	+	r := usage.Report{
+320	+		HasAnyUsage:   true,
+321	+		Total:         usage.TokenCounts{Input: 2_000_000},
+322	+		Subagents:     usage.TokenCounts{Input: 1_000_000},
+323	+		SubagentsCost: &amp;c,
+324	+		AgentSessions: 3,
+325	+		PricesAsOf:    &#34;2026-07&#34;,
+326	+	}
+327	+	v := buildUsageView(r)
+328	+	if v.SubLine != &#34;of which subagents: 1.0M in+out · ~$5.00 (3 sessions)&#34; {
+329	+		t.Errorf(&#34;SubLine = %q&#34;, v.SubLine)
+330	+	}
+331	+	if !strings.Contains(v.Footnote, &#34;Includes 3 linked subagent session(s)&#34;) {
+332	+		t.Errorf(&#34;footnote = %q&#34;, v.Footnote)
+333	+	}
+334	+	if strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files&#34;) {
+335	+		t.Errorf(&#34;old exclusion wording must go when agents are included: %q&#34;, v.Footnote)
+336	+	}
+337	+}
+338	+
+339	+func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {
+340	+	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}
+341	+	v := buildUsageView(r)
+342	+	if v.SubLine != &#34;&#34; {
+343	+		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)
+344	+	}
+345	+	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {
+346	+		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)
+347	+	}
+348	+}
+349	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="bash grep -rn &#34;rolelabel(&#34; --include=&#34;*.go&#34; internal/render/">
+      <div class="turn-role">Claude<span class="usage-badge">16k tok · ~$0.07</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;roleLabel(&#34; --include=&#34;*.go&#34; internal/render/</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;roleLabel(\&#34; --include=\&#34;*.go\&#34; internal/render/&#34;
+}</pre><pre class="tool-result">internal/render/render.go:137:			RoleLabel:  roleLabel(t),
+internal/render/render.go:225:func roleLabel(t model.Turn) string {
+internal/render/render.go:288:			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="bash sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl">
+      <div class="turn-role">Claude<span class="usage-badge">258 tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl&#34;
+}</pre><pre class="tool-result">&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;meta charset=&#34;utf-8&#34;&gt;
+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&gt;
+&lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;assets/styles.css&#34;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header class=&#34;topbar&#34;&gt;
+  &lt;div class=&#34;topbar-inner&#34;&gt;
+    &lt;div class=&#34;brand&#34;&gt;ccwhid&lt;/div&gt;
+    &lt;input id=&#34;filter&#34; type=&#34;search&#34; placeholder=&#34;Filter turns…&#34; aria-label=&#34;Filter turns&#34;&gt;
+    &lt;button id=&#34;toggle-all&#34; class=&#34;btn&#34;&gt;Expand all&lt;/button&gt;
+    &lt;button id=&#34;toggle-tools&#34; class=&#34;btn&#34;&gt;Hide tool detail&lt;/button&gt;
+    &lt;button id=&#34;toggle-theme&#34; class=&#34;btn&#34; aria-label=&#34;Toggle theme&#34;&gt;◐&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+&lt;div class=&#34;layout&#34;&gt;
+  &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Prompts&#34;&gt;
+    &lt;div class=&#34;sidebar-title&#34;&gt;Prompts&lt;/div&gt;
+    &lt;ol class=&#34;prompt-list&#34;&gt;
+      {{ range .Prompts }}&lt;li&gt;&lt;a href=&#34;#turn-{{ .Index }}&#34;&gt;{{ .Preview }}&lt;/a&gt;&lt;/li&gt;{{ end }}
+    &lt;/ol&gt;
+  &lt;/nav&gt;
+  &lt;main class=&#34;content&#34;&gt;
+    &lt;section class=&#34;session-head&#34;&gt;
+      &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+      &lt;div class=&#34;meta&#34;&gt;
+        &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+        {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+        &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+        &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+    {{ with .Usage }}
+    &lt;details class=&#34;usage-card&#34;&gt;
+      &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;
+      &lt;div class=&#34;usage-body&#34;&gt;
+        {{ if .HasAny }}
+        &lt;table class=&#34;usage-models&#34;&gt;
+          &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;input&lt;/th&gt;&lt;th&gt;output&lt;/th&gt;&lt;th&gt;cache read&lt;/th&gt;&lt;th&gt;cache write&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;
+          {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Input }}&lt;/td&gt;&lt;td&gt;{{ .Output }}&lt;/td&gt;&lt;td&gt;{{ .CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+          &lt;tr class=&#34;usage-total&#34;&gt;&lt;td&gt;{{ .Total.Model }}&lt;/td&gt;&lt;td&gt;{{ .Total.Input }}&lt;/td&gt;&lt;td&gt;{{ .Total.Output }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Total.Cost }}&lt;/td&gt;&lt;/tr&gt;
+        &lt;/table&gt;
+        {{ end }}
+        {{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}
+        &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="confirmed: `{{ with .usage }}` gates the whole usage card (subline &#43; footnote) — this is the pre-existing gate tied to `--usage`, not something the task added or needs to change. the turn card loop (`{{ range .turns }}`) is outside that block and unconditional, matching the constraint.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Confirmed: <code>{{ with .Usage }}</code> gates the whole usage card (SubLine + footnote) — this is the pre-existing gate tied to <code>--usage</code>, not something the task added or needs to change. The turn card loop (<code>{{ range .Turns }}</code>) is outside that block and unconditional, matching the constraint.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;inout\b&#34; -r internal/usage/*.go | head -20">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;InOut\b&#34; -r internal/usage/*.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;InOut\\b\&#34; -r internal/usage/*.go | head -20&#34;
+}</pre><pre class="tool-result">internal/usage/usage.go:18:// InOut is the base input+output total, excluding cache tokens. Used for the
+internal/usage/usage.go:20:func (t TokenCounts) InOut() int { return t.Input + t.Output }
+internal/usage/usage.go:163:		return r.ByModel[i].Tokens.InOut() &gt; r.ByModel[j].Tokens.InOut()</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash grep -n &#34;func formattokens&#34; -a 15 internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">158 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func formatTokens&#34; -A 15 internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;func formatTokens\&#34; -A 15 internal/render/render.go&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -rn &#34;func formattokens\|func formatcost&#34; internal/render/*.go">
+      <div class="turn-role">Claude<span class="usage-badge">99 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;func formatTokens\|func formatCost&#34; internal/render/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;func formatTokens\\|func formatCost\&#34; internal/render/*.go&#34;
+}</pre><pre class="tool-result">internal/render/format.go:11:func formatTokens(n int) string {
+internal/render/format.go:23:func formatCost(c float64) string {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="good, those are pre-existing helpers outside this diff&#39;s scope, unmodified. that confirms the subline formatting reuses existing utilities correctly.
+
+everything checks out. let me verify the `agentstatus` field and `turnagentresult` referenced in the test actually exist in the model package (task 1 dependency), just to be safe it&#39;s not a phantom reference causing a compile-time-only pass illusion — though the report claims tests actually ran and passed, so this is low risk. i&#39;ll skip since it&#39;s outside the named-risk scope and the report includes credible pass output.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Good, those are pre-existing helpers outside this diff's scope, unmodified. That confirms the SubLine formatting reuses existing utilities correctly.</p>
+<p>Everything checks out. Let me verify the <code>AgentStatus</code> field and <code>TurnAgentResult</code> referenced in the test actually exist in the model package (Task 1 dependency), just to be safe it's not a phantom reference causing a compile-time-only pass illusion — though the report claims tests actually ran and passed, so this is low risk. I'll skip since it's outside the named-risk scope and the report includes credible PASS output.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash git log --oneline -3">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -3</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log --oneline -3&#34;
+}</pre><pre class="tool-result">b66ed79 feat: agent-attributed result cards and subagent usage line
+a6bc8fb feat: roll linked agent-session usage into the usage report
+10aff40 feat: load linked subagent session transcripts</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="this confirms the base/head commits match the review scope and the branch has prior tasks already landed (model/usage fields from tasks 1 and 3 exist as prerequisites).
+
+### spec compliance
+- ✅ agent-result card rendering is unconditional — the `{{ range .turns }}` loop (report.html.tmpl:34) sits outside the `{{ with .usage }}` block; subline/footnote correctly live inside the usage card gated upstream by `--usage`.
+- ✅ role label format `agent · &lt;name&gt;` / plain `agent` fallback — `agentrolelabel` (render.go:206-214) matches the brief&#39;s reference implementation verbatim, including the `j &gt; 0` fallback for empty-quoted or unclosed-quote summaries.
+- ✅ subline format exact match, cost segment omitted when `subagentscost` is nil, empty when `agentsessions == 0` — render.go:156-162; confirmed `usage.tokencounts.inout()` (internal/usage/usage.go:20) and `formattokens`/`formatcost` (internal/render/format.go:11,23) are the correct pre-existing helpers.
+- ✅ footnote variants exact wording for both branches, unpriced-models suffix appended to either — render.go:164-171, matches brief text character-for-character.
+- ✅ card css class via existing `turn-{{ .kind }}` pattern, kind `agent-result` — no new template plumbing needed; `.turn-agent-result` rule added in styles.css:61-64 targets it correctly.
+- ✅ `gofmt -l .` prints nothing — report claims verified; diff shows conventionally formatted go (consistent indentation, import grouping).
+- ✅ named risk (rolelabel signature change `turnkind` → `turn`): grep confirms only two call sites in `internal/render/render.go` (lines 137, 288), both updated to pass `model.turn` values (`t` and `st`); no stray `turnkind` call sites remain, and `rolelabel` is unexported so no cross-package callers exist.
+
+### strengths
+- `agentrolelabel` and footnote/subline logic are copied faithfully from the brief&#39;s suggested code, including edge-case handling (empty summary, unmatched quotes).
+- tests cover the &#34;never attributed to you&#34; invariant explicitly (render_test.go:303-305), a good regression guard against a plausible mistake in the `rolelabel` switch.
+- both `subline`-present and `subline`-absent paths are tested, and both footnote variants are asserted to *exclude* the other&#39;s wording (render_test.go:334-336, 345), which is a stronger check than just presence.
+
+### issues
+none found at critical, important, or minor severity — the diff is a faithful, minimal implementation of the brief with no scope creep and no deviation from the specified wording/format.
+
+### assessment
+**task quality:** approved
+**reasoning:** the diff implements every element of the brief exactly as specified (formats, gating, fallback logic, footnote wording), the one named risk (rolelabel signature migration) is verified clean via grep, and tests exercise both the happy path and the fallback/absence edge cases.">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-body"><p>This confirms the base/head commits match the review scope and the branch has prior tasks already landed (model/usage fields from Tasks 1 and 3 exist as prerequisites).</p>
+<h3>Spec Compliance</h3>
+<ul>
+<li>✅ Agent-result card rendering is unconditional — the <code>{{ range .Turns }}</code> loop (report.html.tmpl:34) sits outside the <code>{{ with .Usage }}</code> block; SubLine/Footnote correctly live inside the usage card gated upstream by <code>--usage</code>.</li>
+<li>✅ Role label format <code>Agent · &lt;name&gt;</code> / plain <code>Agent</code> fallback — <code>agentRoleLabel</code> (render.go:206-214) matches the brief's reference implementation verbatim, including the <code>j &gt; 0</code> fallback for empty-quoted or unclosed-quote summaries.</li>
+<li>✅ SubLine format exact match, cost segment omitted when <code>SubagentsCost</code> is nil, empty when <code>AgentSessions == 0</code> — render.go:156-162; confirmed <code>usage.TokenCounts.InOut()</code> (internal/usage/usage.go:20) and <code>formatTokens</code>/<code>formatCost</code> (internal/render/format.go:11,23) are the correct pre-existing helpers.</li>
+<li>✅ Footnote variants exact wording for both branches, unpriced-models suffix appended to either — render.go:164-171, matches brief text character-for-character.</li>
+<li>✅ Card CSS class via existing <code>turn-{{ .Kind }}</code> pattern, kind <code>agent-result</code> — no new template plumbing needed; <code>.turn-agent-result</code> rule added in styles.css:61-64 targets it correctly.</li>
+<li>✅ <code>gofmt -l .</code> prints nothing — report claims verified; diff shows conventionally formatted Go (consistent indentation, import grouping).</li>
+<li>✅ Named risk (roleLabel signature change <code>TurnKind</code> → <code>Turn</code>): grep confirms only two call sites in <code>internal/render/render.go</code> (lines 137, 288), both updated to pass <code>model.Turn</code> values (<code>t</code> and <code>st</code>); no stray <code>TurnKind</code> call sites remain, and <code>roleLabel</code> is unexported so no cross-package callers exist.</li>
+</ul>
+<h3>Strengths</h3>
+<ul>
+<li><code>agentRoleLabel</code> and footnote/SubLine logic are copied faithfully from the brief's suggested code, including edge-case handling (empty summary, unmatched quotes).</li>
+<li>Tests cover the &quot;never attributed to You&quot; invariant explicitly (render_test.go:303-305), a good regression guard against a plausible mistake in the <code>roleLabel</code> switch.</li>
+<li>Both <code>SubLine</code>-present and <code>SubLine</code>-absent paths are tested, and both footnote variants are asserted to <em>exclude</em> the other's wording (render_test.go:334-336, 345), which is a stronger check than just presence.</li>
+</ul>
+<h3>Issues</h3>
+<p>None found at Critical, Important, or Minor severity — the diff is a faithful, minimal implementation of the brief with no scope creep and no deviation from the specified wording/format.</p>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> Approved
+<strong>Reasoning:</strong> The diff implements every element of the brief exactly as specified (formats, gating, fallback logic, footnote wording), the one named risk (roleLabel signature migration) is verified clean via grep, and tests exercise both the happy path and the fallback/absence edge cases.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

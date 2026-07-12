@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implement Task 5: CLI/TUI/README · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are implementing Task 5: CLI flag, TUI toggle, and docs…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Implement Task 5: CLI/TUI/README</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:24</span>
+        <span>47 turns</span>
+        <span>general-purpose · agent-af0beb7f8d1b0d24b</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 12k in+out · ~$0.35 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>10k</td><td>2k</td><td>1.0M</td><td>46k</td><td>$0.35</td></tr>
+          <tr class="usage-total"><td>Total</td><td>10k</td><td>2k</td><td>1.0M</td><td>46k</td><td>$0.35</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are implementing task 5: cli flag, tui toggle, and docs — the final task of the usage &amp; cost feature for ccwhid (module github.com/saigyo/cc-what-have-i-done).
+
+## task description
+read your task brief first — it is your requirements, with the exact code to use verbatim:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
+
+## context
+tasks 1–4 added parsing, pricing, computation, and rendering of a usage section gated on `render.options.usage bool`. your task exposes it to users:
+- cli: add a `--usage` bool flag (default false) to `cmd/ccwhid/main.go`&#39;s `options` struct &#43; `newrootcmd`, and thread it into the `render.site(..., render.options{title:..., usage: opts.usage})` call in `cmd/ccwhid/run.go`&#39;s `generate`.
+- tui: add an &#34;include usage &amp; cost&#34; toggle to the options screen in `internal/tui/tui.go` (new `optusage` index, `selection.usage` field, toggle case, and a row in the `toggles` slice), and map `opts.usage = sel.usage` in main.go&#39;s run() where other sel fields are applied.
+- readme: add the `--usage` flags-table row and a &#34;token usage &amp; cost&#34; section.
+
+critical repo facts to reconcile with the brief (an earlier feature already extended the tui options screen, so the brief&#39;s option-index block may not match verbatim):
+- `internal/tui/tui.go` currently has an options-screen index block with iota constants. check the current constants — they already include an output-dir row and generate row, e.g. `optsubagents, optredact, optopen, optoutdir, optgenerate, optioncount`. you must insert `optusage` in the right position so it stays consistent with the `toggles` slice order in `viewoptions`. the toggles slice currently renders {subagents, redact, open} then an output-dir row then generate. insert the usage toggle as the 4th toggle (after open, before the output-dir row), i.e. index order `optsubagents, optredact, optopen, optusage, optoutdir, optgenerate, optioncount`, and add `{&#34;include usage &amp; cost&#34;, m.sel.usage}` as the 4th entry in the toggles slice. verify the toggle-index → `toggles[i]` mapping and the `updateoptions` switch cases stay aligned after inserting.
+- `internal/tui/tui_test.go` has helpers `newmodel`, `testgroups`, `send`, `key`. the brief&#39;s `testoptionsusagetoggle` navigates down to `optusage` — make sure the number of `key(&#34;down&#34;)` presses matches the actual cursor position of the usage row given the real layout (usage is the 4th row, index optusage=3, so 3 downs from index 0). adjust the test&#39;s down-count if the brief&#39;s assumed layout differs from the real one, keeping the assertion that the cursor lands on `optusage` and space toggles `sel.usage`.
+- existing tui tests (output-dir input, toggles, navigation) must still pass — the inserted row shifts later indices, so re-run the whole tui package.
+
+implement the brief, adapting the tui index/insertion to the actual current file. follow tdd for the tui toggle test.
+
+## your job
+1. apply cli changes (main.go options&#43;flag&#43;sel mapping; run.go site call).
+2. apply tui changes; run `go test ./internal/tui/ -v` (new &#43; existing must pass).
+3. update readme.
+4. full verification: `gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go build ./... &amp;&amp; go test ./...` — expect no gofmt output, all green. also sanity-check `go run ./cmd/ccwhid --help | grep usage` shows the flag.
+5. commit as the brief specifies.
+6. self-review, then report.
+
+work from: ~/ideaprojects/cc-what-have-i-done
+
+if the tui layout reconciliation is genuinely ambiguous or something is inconsistent, stop and report needs_context with specifics rather than guessing.
+
+## report
+write your full report (implemented, tdd red/green evidence, files changed, how you reconciled the tui index layout, self-review) to:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md
+
+then reply with only (under 15 lines): status, commits (short sha &#43; subject), one-line test summary, concerns, and the report file path.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are implementing Task 5: CLI flag, TUI toggle, and docs — the final task of the usage &amp; cost feature for ccwhid (module github.com/saigyo/cc-what-have-i-done).</p>
+<h2>Task Description</h2>
+<p>Read your task brief FIRST — it is your requirements, with the exact code to use verbatim:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<h2>Context</h2>
+<p>Tasks 1–4 added parsing, pricing, computation, and rendering of a usage section gated on <code>render.Options.Usage bool</code>. Your task exposes it to users:</p>
+<ul>
+<li>CLI: add a <code>--usage</code> bool flag (default false) to <code>cmd/ccwhid/main.go</code>'s <code>options</code> struct + <code>newRootCmd</code>, and thread it into the <code>render.Site(..., render.Options{Title:..., Usage: opts.usage})</code> call in <code>cmd/ccwhid/run.go</code>'s <code>generate</code>.</li>
+<li>TUI: add an &quot;Include usage &amp; cost&quot; toggle to the options screen in <code>internal/tui/tui.go</code> (new <code>optUsage</code> index, <code>Selection.Usage</code> field, toggle case, and a row in the <code>toggles</code> slice), and map <code>opts.usage = sel.Usage</code> in main.go's run() where other sel fields are applied.</li>
+<li>README: add the <code>--usage</code> flags-table row and a &quot;Token usage &amp; cost&quot; section.</li>
+</ul>
+<p>CRITICAL repo facts to reconcile with the brief (an earlier feature already extended the TUI options screen, so the brief's option-index block may not match verbatim):</p>
+<ul>
+<li><code>internal/tui/tui.go</code> currently has an options-screen index block with iota constants. Check the CURRENT constants — they already include an output-dir row and generate row, e.g. <code>optSubagents, optRedact, optOpen, optOutDir, optGenerate, optionCount</code>. You must insert <code>optUsage</code> in the RIGHT position so it stays consistent with the <code>toggles</code> slice order in <code>viewOptions</code>. The toggles slice currently renders {subagents, redact, open} then an output-dir row then generate. Insert the usage toggle as the 4th toggle (after open, before the output-dir row), i.e. index order <code>optSubagents, optRedact, optOpen, optUsage, optOutDir, optGenerate, optionCount</code>, and add <code>{&quot;Include usage &amp; cost&quot;, m.sel.Usage}</code> as the 4th entry in the toggles slice. Verify the toggle-index → <code>toggles[i]</code> mapping and the <code>updateOptions</code> switch cases stay aligned after inserting.</li>
+<li><code>internal/tui/tui_test.go</code> has helpers <code>newModel</code>, <code>testGroups</code>, <code>send</code>, <code>key</code>. The brief's <code>TestOptionsUsageToggle</code> navigates down to <code>optUsage</code> — make sure the number of <code>key(&quot;down&quot;)</code> presses matches the actual cursor position of the usage row given the real layout (usage is the 4th row, index optUsage=3, so 3 downs from index 0). Adjust the test's down-count if the brief's assumed layout differs from the real one, keeping the assertion that the cursor lands on <code>optUsage</code> and space toggles <code>sel.Usage</code>.</li>
+<li>Existing TUI tests (output-dir input, toggles, navigation) MUST still pass — the inserted row shifts later indices, so re-run the whole tui package.</li>
+</ul>
+<p>Implement the brief, adapting the TUI index/insertion to the ACTUAL current file. Follow TDD for the TUI toggle test.</p>
+<h2>Your job</h2>
+<ol>
+<li>Apply CLI changes (main.go options+flag+sel mapping; run.go Site call).</li>
+<li>Apply TUI changes; run <code>go test ./internal/tui/ -v</code> (new + existing must pass).</li>
+<li>Update README.</li>
+<li>Full verification: <code>gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go build ./... &amp;&amp; go test ./...</code> — expect no gofmt output, all green. Also sanity-check <code>go run ./cmd/ccwhid --help | grep usage</code> shows the flag.</li>
+<li>Commit as the brief specifies.</li>
+<li>Self-review, then report.</li>
+</ol>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
+<p>If the TUI layout reconciliation is genuinely ambiguous or something is inconsistent, STOP and report NEEDS_CONTEXT with specifics rather than guessing.</p>
+<h2>Report</h2>
+<p>Write your full report (implemented, TDD RED/GREEN evidence, files changed, how you reconciled the TUI index layout, self-review) to:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 5: CLI flag, TUI toggle, and docs
+2	
+3	**Files:**
+4	- Modify: `cmd/ccwhid/main.go`
+5	- Modify: `cmd/ccwhid/run.go`
+6	- Modify: `internal/tui/tui.go`
+7	- Modify: `internal/tui/tui_test.go`
+8	- Modify: `README.md`
+9	
+10	**Interfaces:**
+11	- Consumes: `render.Options.Usage` from Task 4.
+12	- Produces: `--usage` flag; `tui.Selection.Usage bool`; option row on the TUI options screen.
+13	
+14	- [ ] **Step 1: Add the CLI flag**
+15	
+16	In `cmd/ccwhid/main.go`, add to the `options` struct:
+17	
+18	```go
+19		open             bool
+20		usage            bool
+21	```
+22	
+23	Register the flag in `newRootCmd` (after the `--open` flag):
+24	
+25	```go
+26		f.BoolVar(&amp;opts.usage, &#34;usage&#34;, false, &#34;include a token-usage &amp; estimated-cost section&#34;)
+27	```
+28	
+29	- [ ] **Step 2: Thread it into generate**
+30	
+31	In `cmd/ccwhid/run.go`, change the `render.Site` call in `generate`:
+32	
+33	```go
+34		if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
+35			return &#34;&#34;, err
+36		}
+37	```
+38	
+39	- [ ] **Step 3: Map the TUI selection**
+40	
+41	In `cmd/ccwhid/main.go`, inside `run`, where TUI selection is applied (after `opts.open = sel.Open`), add:
+42	
+43	```go
+44			opts.usage = sel.Usage
+45	```
+46	
+47	- [ ] **Step 4: Write the failing TUI test**
+48	
+49	Add to `internal/tui/tui_test.go`:
+50	
+51	```go
+52	func TestOptionsUsageToggle(t *testing.T) {
+53		m := newModel(testGroups())
+54		m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open project, select session -&gt; options
+55		// move to the usage toggle row and toggle it on
+56		m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))
+57		if m.optCursor != optUsage {
+58			t.Fatalf(&#34;optCursor = %d, want optUsage (%d)&#34;, m.optCursor, optUsage)
+59		}
+60		m = send(m, key(&#34; &#34;))
+61		if !m.sel.Usage {
+62			t.Fatal(&#34;space on usage row should enable Selection.Usage&#34;)
+63		}
+64	}
+65	```
+66	
+67	- [ ] **Step 5: Run test to verify it fails**
+68	
+69	Run: `go test ./internal/tui/ -run TestOptionsUsageToggle -v`
+70	Expected: FAIL — `optUsage` / `Selection.Usage` undefined.
+71	
+72	- [ ] **Step 6: Implement the TUI toggle**
+73	
+74	In `internal/tui/tui.go`:
+75	
+76	(a) Add `Usage` to `Selection`:
+77	
+78	```go
+79	type Selection struct {
+80		Session          discovery.SessionInfo
+81		IncludeSubagents bool
+82		Redact           bool
+83		Open             bool
+84		Usage            bool
+85		OutDir           string
+86		Canceled         bool
+87	}
+88	```
+89	
+90	(b) Insert `optUsage` into the option index block, before `optOutDir`:
+91	
+92	```go
+93	const (
+94		optSubagents = iota
+95		optRedact
+96		optOpen
+97		optUsage
+98		optOutDir
+99		optGenerate
+100		optionCount
+101	)
+102	```
+103	
+104	(c) In `updateOptions`, add a case in the `&#34; &#34;, &#34;enter&#34;` switch (alongside the other toggles):
+105	
+106	```go
+107			case optUsage:
+108				m.sel.Usage = !m.sel.Usage
+109	```
+110	
+111	(d) In `viewOptions`, add the toggle to the `toggles` slice so it renders and is navigable:
+112	
+113	```go
+114		toggles := []struct {
+115			label string
+116			on    bool
+117		}{
+118			{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+119			{&#34;Redact secrets&#34;, m.sel.Redact},
+120			{&#34;Open in browser when done&#34;, m.sel.Open},
+121			{&#34;Include usage &amp; cost&#34;, m.sel.Usage},
+122		}
+123	```
+124	
+125	Because the toggles slice is indexed by cursor position, its order must match the `opt*` constants (subagents, redact, open, usage). The output-dir and generate rows already render after the toggles loop, so no further ordering changes are needed.
+126	
+127	- [ ] **Step 7: Run tests to verify they pass**
+128	
+129	Run: `go test ./internal/tui/ ./cmd/... -v`
+130	Expected: PASS.
+131	
+132	- [ ] **Step 8: Update the README**
+133	
+134	In `README.md`, add a row to the flags table (after `--open`):
+135	
+136	```markdown
+137	| `--usage` | Include a token-usage &amp; estimated-cost section (default off) |
+138	```
+139	
+140	And add a section after &#34;What&#39;s included&#34;:
+141	
+142	```markdown
+143	## Token usage &amp; cost
+144	
+145	Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible
+146	**Usage** card and per-turn cost badges. Token counts come straight from the
+147	transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in
+148	Anthropic list-price table (dated in the report footnote) — unknown models show
+149	tokens with cost `n/a`, and server-tool fees are not included. Prices are
+150	embedded, so this works fully offline.
+151	```
+152	
+153	- [ ] **Step 9: Full verification**
+154	
+155	Run:
+156	```bash
+157	gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./...
+158	```
+159	Expected: no gofmt output, vet clean, all tests pass.
+160	
+161	- [ ] **Step 10: Commit**
+162	
+163	```bash
+164	git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go README.md
+165	git commit -m &#34;feat: --usage flag and TUI toggle for the usage section&#34;
+166	```
+167	
+168	---
+169	
+170	## Notes for the implementer
+171	
+172	- The exact-cost assertion in Task 3 uses round numbers so the arithmetic is checkable by hand (opus-4.8: input $5, output $25 per MTok; cache read 0.1× input; cache write-5m 1.25× input). Do not &#34;adjust&#34; prices to make a test pass — the prices live in `prices.json` and the multipliers in `pricing.go`.
+173	- `&lt;synthetic&gt;` is deliberately absent from `prices.json`; it must resolve as unpriced.
+174	- Keep the offline guarantee: no `http`/CDN/`url()`/`@font-face`/external refs in the CSS you add.
+175	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;fmt&#34;
+5		&#34;os&#34;
+6	
+7		&#34;github.com/spf13/cobra&#34;
+8	
+9		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;
+11	)
+12	
+13	// version is the build version, overridden at release time via
+14	// -ldflags &#34;-X main.version=…&#34; (GoReleaser). Defaults to &#34;dev&#34; for local builds.
+15	var version = &#34;dev&#34;
+16	
+17	// options holds all CLI flag values.
+18	type options struct {
+19		session          string
+20		project          string
+21		latest           bool
+22		out              string
+23		title            string
+24		includeSubagents bool
+25		noRedact         bool
+26		force            bool
+27		open             bool
+28	}
+29	
+30	func newRootCmd() *cobra.Command {
+31		opts := &amp;options{}
+32		cmd := &amp;cobra.Command{
+33			Use:   &#34;ccwhid&#34;,
+34			Short: &#34;Turn a Claude Code session transcript into a browsable HTML report&#34;,
+35			Long: &#34;ccwhid (cc-what-have-i-done) renders a Claude Code session &#34; +
+36				&#34;transcript into a self-contained static HTML report. Run with no &#34; +
+37				&#34;flags to browse sessions in an interactive TUI.&#34;,
+38			Version:      version,
+39			SilenceUsage: true,
+40			RunE: func(cmd *cobra.Command, args []string) error {
+41				return run(cmd, opts)
+42			},
+43		}
+44		f := cmd.Flags()
+45		f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+46		f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name; scopes --latest, or opens the TUI focused on it&#34;)
+47		f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent interactive session (skips agent transcripts)&#34;)
+48		f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+49		f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+50		f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+51		f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+52		f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+53		f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+54		return cmd
+55	}
+56	
+57	func run(cmd *cobra.Command, opts *options) error {
+58		root, err := discovery.DefaultRoot()
+59		if err != nil {
+60			return err
+61		}
+62		si, needTUI, err := resolveSession(opts, root)
+63		if err != nil {
+64			return err
+65		}
+66		if needTUI {
+67			groups, err := discovery.Scan(root)
+68			if err != nil {
+69				return err
+70			}
+71			focusIdx := -1
+72			if opts.project != &#34;&#34; {
+73				focusIdx, err = discovery.FindProject(groups, opts.project)
+74				if err != nil {
+75					return err
+76				}
+77			}
+78			sel, err := tui.Run(groups, focusIdx)
+79			if err != nil {
+80				return err
+81			}
+82			if sel.Canceled {
+83				fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+84				return nil
+85			}
+86			si = sel.Session
+87			opts.includeSubagents = sel.IncludeSubagents
+88			opts.noRedact = !sel.Redact
+89			opts.open = sel.Open
+90			if sel.OutDir != &#34;&#34; {
+91				opts.out = sel.OutDir
+92			}
+93		}
+94		outDir, err := generate(opts, si)
+95		if err != nil {
+96			return err
+97		}
+98		fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+99		if opts.open {
+100			if err := openInBrowser(outDir); err != nil {
+101				fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+102			}
+103		}
+104		return nil
+105	}
+106	
+107	func main() {
+108		if err := newRootCmd().Execute(); err != nil {
+109			fmt.Fprintln(os.Stderr, &#34;error:&#34;, err)
+110			os.Exit(1)
+111		}
+112	}
+113	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;fmt&#34;
+5		&#34;os&#34;
+6		&#34;os/exec&#34;
+7		&#34;path/filepath&#34;
+8		&#34;runtime&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+11		&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+12		&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+14	)
+15	
+16	func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+17		if opts.out != &#34;&#34; {
+18			return opts.out
+19		}
+20		short := si.ID
+21		if len(short) &gt; 8 {
+22			short = short[:8]
+23		}
+24		return filepath.Join(&#34;ccwhid-report&#34;, short)
+25	}
+26	
+27	// resolveSession picks a session from flags. It returns needTUI=true when the
+28	// user gave no selector.
+29	func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+30		switch {
+31		case opts.session != &#34;&#34;:
+32			si, err := discovery.FindSession(root, opts.session)
+33			return si, false, err
+34		case opts.latest:
+35			return latestSession(opts, root)
+36		default:
+37			return discovery.SessionInfo{}, true, nil
+38		}
+39	}
+40	
+41	// latestSession returns the most recent interactive (non-agent) session,
+42	// optionally scoped to a project. Agent-spawned transcripts are skipped so
+43	// --latest targets the user&#39;s own sessions.
+44	func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+45		groups, err := discovery.Scan(root)
+46		if err != nil {
+47			return discovery.SessionInfo{}, false, err
+48		}
+49		if opts.project != &#34;&#34; {
+50			idx, err := discovery.FindProject(groups, opts.project)
+51			if err != nil {
+52				return discovery.SessionInfo{}, false, err
+53			}
+54			groups = groups[idx : idx+1]
+55		}
+56		// Pick the newest interactive session by modification time. Group order
+57		// alone is insufficient: groups are sorted by their newest session
+58		// *including* agent transcripts, so a recent agent run in one project
+59		// could otherwise mask a newer human session in another.
+60		bestGI, bestSI := -1, -1
+61		for gi := range groups {
+62			for si := range groups[gi].Sessions {
+63				if groups[gi].Sessions[si].IsAgent {
+64					continue
+65				}
+66				if bestGI &lt; 0 || groups[gi].Sessions[si].ModTime.After(groups[bestGI].Sessions[bestSI].ModTime) {
+67					bestGI, bestSI = gi, si
+68				}
+69			}
+70		}
+71		if bestGI &lt; 0 {
+72			return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+73		}
+74		return groups[bestGI].Sessions[bestSI], false, nil
+75	}
+76	
+77	// generate parses, redacts, and renders a session, returning the output dir.
+78	func generate(opts *options, si discovery.SessionInfo) (string, error) {
+79		outDir := resolveOutDir(opts, si)
+80		if err := ensureOutDir(outDir, opts.force); err != nil {
+81			return &#34;&#34;, err
+82		}
+83		sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+84			IncludeSubagents: opts.includeSubagents,
+85		})
+86		if err != nil {
+87			return &#34;&#34;, err
+88		}
+89		if si.ID != &#34;&#34; {
+90			sess.ID = si.ID
+91		}
+92		if sess.SkippedLines &gt; 0 {
+93			fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed line(s)\n&#34;, sess.SkippedLines)
+94		}
+95		if !opts.noRedact {
+96			home, _ := os.UserHomeDir()
+97			redact.Session(&amp;sess, home)
+98		}
+99		if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+100			return &#34;&#34;, err
+101		}
+102		return outDir, nil
+103	}
+104	
+105	func ensureOutDir(dir string, force bool) error {
+106		entries, err := os.ReadDir(dir)
+107		if err != nil {
+108			if os.IsNotExist(err) {
+109				return os.MkdirAll(dir, 0o755)
+110			}
+111			return err
+112		}
+113		if len(entries) == 0 {
+114			return nil
+115		}
+116		if !force {
+117			return fmt.Errorf(&#34;output directory %q is not empty (use --force to overwrite)&#34;, dir)
+118		}
+119		// --force: clear existing entries so the report reflects only this run and
+120		// no stale files (e.g. renamed assets) are left behind.
+121		for _, e := range entries {
+122			if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
+123				return err
+124			}
+125		}
+126		return nil
+127	}
+128	
+129	// openInBrowser opens the report&#39;s index.html inside dir in the default browser.
+130	func openInBrowser(dir string) error {
+131		index := filepath.Join(dir, &#34;index.html&#34;)
+132		abs, err := filepath.Abs(index)
+133		if err != nil {
+134			return err
+135		}
+136		// Pass the filesystem path directly rather than a file:// URL: exec runs the
+137		// opener without a shell, so a single path argument handles spaces and
+138		// special characters, and avoids Windows backslash/URL-encoding pitfalls.
+139		switch runtime.GOOS {
+140		case &#34;darwin&#34;:
+141			return exec.Command(&#34;open&#34;, abs).Start()
+142		case &#34;windows&#34;:
+143			return exec.Command(&#34;rundll32&#34;, &#34;url.dll,FileProtocolHandler&#34;, abs).Start()
+144		default:
+145			return exec.Command(&#34;xdg-open&#34;, abs).Start()
+146		}
+147	}
+148	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
+}</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
+2	// with no selector flags. It presents a two-level view: a scrollable list of
+3	// projects, then a scrollable list of that project&#39;s sessions.
+4	package tui
+5	
+6	import (
+7		&#34;fmt&#34;
+8		&#34;strings&#34;
+9	
+10		tea &#34;github.com/charmbracelet/bubbletea&#34;
+11		&#34;github.com/charmbracelet/lipgloss&#34;
+12	
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+14	)
+15	
+16	// Selection is the result of running the browser.
+17	type Selection struct {
+18		Session          discovery.SessionInfo
+19		IncludeSubagents bool
+20		Redact           bool
+21		Open             bool
+22		OutDir           string
+23		Canceled         bool
+24	}
+25	
+26	var (
+27		titleStyle    = lipgloss.NewStyle().Bold(true)
+28		headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;))
+29		selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+30		mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+31		optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+32	)
+33	
+34	type screen int
+35	
+36	const (
+37		screenProjects screen = iota
+38		screenSessions
+39		screenOptions
+40	)
+41	
+42	// reservedLines is how many rows the title and footer occupy, leaving the rest
+43	// of the terminal height for the scrollable list body.
+44	const reservedLines = 4
+45	
+46	type model struct {
+47		groups []discovery.ProjectGroup
+48	
+49		// projects screen
+50		projCursor int
+51		projTop    int
+52	
+53		// sessions screen
+54		groupIdx   int
+55		showAll    bool
+56		sessions   []discovery.SessionInfo // filtered view of groups[groupIdx]
+57		sessCursor int
+58		sessTop    int
+59	
+60		// options screen
+61		optCursor int
+62		outDir    string // output directory override (&#34;&#34; = default); edited in place
+63		editing   bool   // true while the output-directory field is being typed into
+64	
+65		screen screen
+66		sel    Selection
+67	
+68		height int
+69		width  int
+70	}
+71	
+72	func newModel(groups []discovery.ProjectGroup) model {
+73		return model{
+74			groups: groups,
+75			screen: screenProjects,
+76			height: 20,
+77			width:  80,
+78			sel: Selection{
+79				IncludeSubagents: true,
+80				Redact:           true,
+81			},
+82		}
+83	}
+84	
+85	// listHeight is the number of list rows visible in the current terminal.
+86	func (m model) listHeight() int {
+87		h := m.height - reservedLines
+88		if h &lt; 1 {
+89			return 1
+90		}
+91		return h
+92	}
+93	
+94	func (m model) Init() tea.Cmd { return nil }
+95	
+96	func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+97		switch msg := msg.(type) {
+98		case tea.WindowSizeMsg:
+99			m.height = msg.Height
+100			m.width = msg.Width
+101			m.adjustProjScroll()
+102			m.adjustSessScroll()
+103			return m, nil
+104		case tea.KeyMsg:
+105			switch m.screen {
+106			case screenProjects:
+107				return m.updateProjects(msg)
+108			case screenSessions:
+109				return m.updateSessions(msg)
+110			default:
+111				return m.updateOptions(msg)
+112			}
+113		}
+114		return m, nil
+115	}
+116	
+117	// --- projects screen ---
+118	
+119	func (m model) updateProjects(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+120		switch key.String() {
+121		case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+122			m.sel.Canceled = true
+123			return m, tea.Quit
+124		case &#34;up&#34;, &#34;k&#34;:
+125			if m.projCursor &gt; 0 {
+126				m.projCursor--
+127				m.adjustProjScroll()
+128			}
+129		case &#34;down&#34;, &#34;j&#34;:
+130			if m.projCursor &lt; len(m.groups)-1 {
+131				m.projCursor++
+132				m.adjustProjScroll()
+133			}
+134		case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+135			if len(m.groups) &gt; 0 {
+136				m.enterProject(m.projCursor)
+137			}
+138		}
+139		return m, nil
+140	}
+141	
+142	func (m *model) adjustProjScroll() {
+143		m.projTop = clampScroll(m.projCursor, m.projTop, m.listHeight(), len(m.groups))
+144	}
+145	
+146	func (m *model) enterProject(idx int) {
+147		m.groupIdx = idx
+148		m.showAll = false
+149		m.sessCursor = 0
+150		m.sessTop = 0
+151		m.refreshSessions()
+152		m.screen = screenSessions
+153	}
+154	
+155	func (m *model) refreshSessions() {
+156		g := m.groups[m.groupIdx]
+157		if m.showAll {
+158			m.sessions = g.Sessions
+159		} else {
+160			m.sessions = g.RootSessions()
+161		}
+162		if m.sessCursor &gt;= len(m.sessions) {
+163			m.sessCursor = max(0, len(m.sessions)-1)
+164		}
+165		m.adjustSessScroll()
+166	}
+167	
+168	// --- sessions screen ---
+169	
+170	func (m model) updateSessions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+171		switch key.String() {
+172		case &#34;ctrl+c&#34;, &#34;q&#34;:
+173			m.sel.Canceled = true
+174			return m, tea.Quit
+175		case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+176			m.screen = screenProjects
+177		case &#34;up&#34;, &#34;k&#34;:
+178			if m.sessCursor &gt; 0 {
+179				m.sessCursor--
+180				m.adjustSessScroll()
+181			}
+182		case &#34;down&#34;, &#34;j&#34;:
+183			if m.sessCursor &lt; len(m.sessions)-1 {
+184				m.sessCursor++
+185				m.adjustSessScroll()
+186			}
+187		case &#34;a&#34;:
+188			m.showAll = !m.showAll
+189			m.sessCursor = 0
+190			m.sessTop = 0
+191			m.refreshSessions()
+192		case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+193			if len(m.sessions) &gt; 0 {
+194				m.sel.Session = m.sessions[m.sessCursor]
+195				m.optCursor = 0
+196				m.screen = screenOptions
+197			}
+198		}
+199		return m, nil
+200	}
+201	
+202	func (m *model) adjustSessScroll() {
+203		m.sessTop = clampScroll(m.sessCursor, m.sessTop, m.listHeight(), len(m.sessions))
+204	}
+205	
+206	// --- options screen ---
+207	
+208	// Option-screen row indices.
+209	const (
+210		optSubagents = iota
+211		optRedact
+212		optOpen
+213		optOutDir
+214		optGenerate
+215		optionCount
+216	)
+217	
+218	func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+219		// While editing the output-directory field, keys feed the text buffer;
+220		// only Ctrl+C still quits so typed characters (q, h, …) are taken literally.
+221		if m.editing {
+222			switch key.Type {
+223			case tea.KeyCtrlC:
+224				m.sel.Canceled = true
+225				return m, tea.Quit
+226			case tea.KeyEnter, tea.KeyEsc:
+227				m.editing = false
+228			case tea.KeyBackspace, tea.KeyDelete:
+229				if r := []rune(m.outDir); len(r) &gt; 0 {
+230					m.outDir = string(r[:len(r)-1])
+231				}
+232			case tea.KeyCtrlU:
+233				m.outDir = &#34;&#34;
+234			case tea.KeySpace:
+235				m.outDir += &#34; &#34;
+236			case tea.KeyRunes:
+237				m.outDir += string(key.Runes)
+238			}
+239			return m, nil
+240		}
+241	
+242		switch key.String() {
+243		case &#34;ctrl+c&#34;, &#34;q&#34;:
+244			m.sel.Canceled = true
+245			return m, tea.Quit
+246		case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+247			m.screen = screenSessions
+248		case &#34;up&#34;, &#34;k&#34;:
+249			if m.optCursor &gt; 0 {
+250				m.optCursor--
+251			}
+252		case &#34;down&#34;, &#34;j&#34;:
+253			if m.optCursor &lt; optionCount-1 {
+254				m.optCursor++
+255			}
+256		case &#34; &#34;, &#34;enter&#34;:
+257			switch m.optCursor {
+258			case optSubagents:
+259				m.sel.IncludeSubagents = !m.sel.IncludeSubagents
+260			case optRedact:
+261				m.sel.Redact = !m.sel.Redact
+262			case optOpen:
+263				m.sel.Open = !m.sel.Open
+264			case optOutDir:
+265				m.editing = true
+266			case optGenerate:
+267				m.sel.OutDir = strings.TrimSpace(m.outDir)
+268				return m, tea.Quit
+269			}
+270		}
+271		return m, nil
+272	}
+273	
+274	// clampScroll returns a scroll offset that keeps cursor within the visible
+275	// window [top, top+visible) over a list of length n.
+276	func clampScroll(cursor, top, visible, n int) int {
+277		if visible &lt; 1 {
+278			visible = 1
+279		}
+280		if cursor &lt; top {
+281			top = cursor
+282		}
+283		if cursor &gt;= top+visible {
+284			top = cursor - visible + 1
+285		}
+286		if top &lt; 0 {
+287			top = 0
+288		}
+289		// Don&#39;t scroll past the end when the list shrank.
+290		if max := n - visible; top &gt; max &amp;&amp; max &gt;= 0 {
+291			top = max
+292		}
+293		return top
+294	}
+295	
+296	func (m model) View() string {
+297		switch m.screen {
+298		case screenProjects:
+299			return m.viewProjects()
+300		case screenSessions:
+301			return m.viewSessions()
+302		default:
+303			return m.viewOptions()
+304		}
+305	}
+306	
+307	func (m model) viewProjects() string {
+308		var b strings.Builder
+309		b.WriteString(titleStyle.Render(&#34;Select a project&#34;) +
+310			mutedStyle.Render(&#34;   ↑/↓ move · enter open · q quit&#34;) + &#34;\n\n&#34;)
+311		visible := m.listHeight()
+312		end := min(m.projTop+visible, len(m.groups))
+313		for i := m.projTop; i &lt; end; i++ {
+314			g := m.groups[i]
+315			roots, agents := g.Counts()
+316			count := fmt.Sprintf(&#34;%d session%s&#34;, roots, plural(roots))
+317			if agents &gt; 0 {
+318				count += fmt.Sprintf(&#34;, %d agent%s&#34;, agents, plural(agents))
+319			}
+320			label := headerStyle.Render(g.ProjectPath) + &#34;  &#34; + mutedStyle.Render(count)
+321			if i == m.projCursor {
+322				label = selectedStyle.Render(&#34;▸ &#34; + g.ProjectPath + &#34;  &#34; + count)
+323			} else {
+324				label = &#34;  &#34; + label
+325			}
+326			b.WriteString(label + &#34;\n&#34;)
+327		}
+328		b.WriteString(scrollHint(m.projTop, end, len(m.groups)))
+329		return b.String()
+330	}
+331	
+332	func (m model) viewSessions() string {
+333		var b strings.Builder
+334		g := m.groups[m.groupIdx]
+335		b.WriteString(titleStyle.Render(&#34;Sessions in &#34;) + headerStyle.Render(g.ProjectPath) + &#34;\n&#34;)
+336		toggle := &#34;a show all&#34;
+337		if m.showAll {
+338			toggle = &#34;a root only&#34;
+339		}
+340		b.WriteString(mutedStyle.Render(&#34;↑/↓ move · enter select · ← back · &#34;+toggle+&#34; · q quit&#34;) + &#34;\n\n&#34;)
+341	
+342		if len(m.sessions) == 0 {
+343			b.WriteString(mutedStyle.Render(&#34;  no interactive sessions here — press a to show agent sessions&#34;) + &#34;\n&#34;)
+344			return b.String()
+345		}
+346		visible := m.listHeight()
+347		end := min(m.sessTop+visible, len(m.sessions))
+348		for i := m.sessTop; i &lt; end; i++ {
+349			s := m.sessions[i]
+350			id := s.ID[:min(8, len(s.ID))]
+351			tag := &#34;&#34;
+352			if s.IsAgent {
+353				tag = mutedStyle.Render(&#34; ⟲&#34;)
+354			}
+355			line := fmt.Sprintf(&#34;  %s  %s%s&#34;, s.DisplayLabel(), mutedStyle.Render(id), tag)
+356			if i == m.sessCursor {
+357				line = selectedStyle.Render(&#34;▸ &#34;+s.DisplayLabel()+&#34;  &#34;+id) + tag
+358			}
+359			b.WriteString(line + &#34;\n&#34;)
+360		}
+361		b.WriteString(scrollHint(m.sessTop, end, len(m.sessions)))
+362		return b.String()
+363	}
+364	
+365	func (m model) viewOptions() string {
+366		var b strings.Builder
+367		b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+368		toggles := []struct {
+369			label string
+370			on    bool
+371		}{
+372			{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+373			{&#34;Redact secrets&#34;, m.sel.Redact},
+374			{&#34;Open in browser when done&#34;, m.sel.Open},
+375		}
+376		for i, t := range toggles {
+377			check := &#34;[ ]&#34;
+378			if t.on {
+379				check = &#34;[x]&#34;
+380			}
+381			line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+382			if m.optCursor == i {
+383				line = optionStyle.Render(&#34;▸ &#34; + line)
+384			} else {
+385				line = &#34;  &#34; + line
+386			}
+387			b.WriteString(line + &#34;\n&#34;)
+388		}
+389	
+390		// Output-directory field.
+391		outRow := &#34;Output dir: &#34; + m.outDirDisplay()
+392		if m.optCursor == optOutDir {
+393			outRow = optionStyle.Render(&#34;▸ &#34; + outRow)
+394		} else {
+395			outRow = &#34;  &#34; + outRow
+396		}
+397		b.WriteString(outRow + &#34;\n&#34;)
+398	
+399		gen := &#34;Generate report&#34;
+400		if m.optCursor == optGenerate {
+401			gen = optionStyle.Render(&#34;▸ &#34; + gen)
+402		} else {
+403			gen = &#34;  &#34; + gen
+404		}
+405		b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+406	
+407		help := &#34;↑/↓ move · space/enter select · esc back · q quit&#34;
+408		if m.editing {
+409			help = &#34;type a path · enter/esc done · ctrl+u clear&#34;
+410		}
+411		b.WriteString(mutedStyle.Render(help) + &#34;\n&#34;)
+412		return b.String()
+413	}
+414	
+415	// outDirDisplay renders the current output-directory value: the typed path (with
+416	// a cursor while editing), or a muted hint showing the default destination.
+417	func (m model) outDirDisplay() string {
+418		if m.editing {
+419			return m.outDir + &#34;▏&#34;
+420		}
+421		if m.outDir != &#34;&#34; {
+422			return m.outDir
+423		}
+424		short := m.sel.Session.ID
+425		if len(short) &gt; 8 {
+426			short = short[:8]
+427		}
+428		return mutedStyle.Render(&#34;ccwhid-report/&#34; + short + &#34; (default)&#34;)
+429	}
+430	
+431	// scrollHint renders a one-line position indicator when the list is scrolled or
+432	// overflows the viewport.
+433	func scrollHint(top, end, n int) string {
+434		if top == 0 &amp;&amp; end &gt;= n {
+435			return &#34;&#34;
+436		}
+437		return mutedStyle.Render(fmt.Sprintf(&#34;\n  %d–%d of %d&#34;, top+1, end, n))
+438	}
+439	
+440	func plural(n int) string {
+441		if n == 1 {
+442			return &#34;&#34;
+443		}
+444		return &#34;s&#34;
+445	}
+446	
+447	// Run launches the browser and returns the user&#39;s selection. If focusIdx is a
+448	// valid index into groups, the browser opens directly on that project&#39;s session
+449	// list; pass -1 to start on the project list.
+450	func Run(groups []discovery.ProjectGroup, focusIdx int) (Selection, error) {
+451		if len(groups) == 0 {
+452			return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+453		}
+454		m := newModel(groups)
+455		if focusIdx &gt;= 0 &amp;&amp; focusIdx &lt; len(groups) {
+456			m.projCursor = focusIdx
+457			m.enterProject(focusIdx)
+458		}
+459		p := tea.NewProgram(m, tea.WithAltScreen())
+460		res, err := p.Run()
+461		if err != nil {
+462			return Selection{}, err
+463		}
+464		fm := res.(model)
+465		return fm.sel, nil
+466	}
+467	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go&#34;
+}</pre><pre class="tool-result">1	package tui
+2	
+3	import (
+4		&#34;testing&#34;
+5	
+6		tea &#34;github.com/charmbracelet/bubbletea&#34;
+7	
+8		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+9	)
+10	
+11	func testGroups() []discovery.ProjectGroup {
+12		return []discovery.ProjectGroup{
+13			{
+14				ProjectPath: &#34;/tmp/projA&#34;,
+15				Sessions: []discovery.SessionInfo{
+16					{ID: &#34;root1aaa-0000&#34;, Title: &#34;Root one&#34;},
+17					{ID: &#34;agent1aa-0000&#34;, Title: &#34;Agent one&#34;, IsAgent: true},
+18					{ID: &#34;root2aaa-0000&#34;, Title: &#34;Root two&#34;},
+19				},
+20			},
+21			{
+22				ProjectPath: &#34;/tmp/projB&#34;,
+23				Sessions:    []discovery.SessionInfo{{ID: &#34;root3bbb-0000&#34;, Title: &#34;Root three&#34;}},
+24			},
+25		}
+26	}
+27	
+28	func key(s string) tea.KeyMsg {
+29		switch s {
+30		case &#34;enter&#34;:
+31			return tea.KeyMsg{Type: tea.KeyEnter}
+32		case &#34;left&#34;:
+33			return tea.KeyMsg{Type: tea.KeyLeft}
+34		case &#34;down&#34;:
+35			return tea.KeyMsg{Type: tea.KeyDown}
+36		case &#34;up&#34;:
+37			return tea.KeyMsg{Type: tea.KeyUp}
+38		default:
+39			return tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(s)}
+40		}
+41	}
+42	
+43	func send(m model, msgs ...tea.Msg) model {
+44		var tm tea.Model = m
+45		for _, msg := range msgs {
+46			tm, _ = tm.Update(msg)
+47		}
+48		return tm.(model)
+49	}
+50	
+51	func TestSessionListHidesAgentsByDefault(t *testing.T) {
+52		m := newModel(testGroups())
+53		m = send(m, key(&#34;enter&#34;)) // open projA
+54		if m.screen != screenSessions {
+55			t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+56		}
+57		if len(m.sessions) != 2 {
+58			t.Fatalf(&#34;root sessions = %d, want 2 (agents hidden)&#34;, len(m.sessions))
+59		}
+60		for _, s := range m.sessions {
+61			if s.IsAgent {
+62				t.Errorf(&#34;agent session %q leaked into default list&#34;, s.ID)
+63			}
+64		}
+65	}
+66	
+67	func TestToggleShowAllRevealsAgents(t *testing.T) {
+68		m := newModel(testGroups())
+69		m = send(m, key(&#34;enter&#34;), key(&#34;a&#34;))
+70		if !m.showAll {
+71			t.Fatal(&#34;showAll not toggled&#34;)
+72		}
+73		if len(m.sessions) != 3 {
+74			t.Fatalf(&#34;all sessions = %d, want 3&#34;, len(m.sessions))
+75		}
+76		m = send(m, key(&#34;a&#34;))
+77		if m.showAll || len(m.sessions) != 2 {
+78			t.Fatalf(&#34;toggle back failed: showAll=%v n=%d&#34;, m.showAll, len(m.sessions))
+79		}
+80	}
+81	
+82	func TestLeftReturnsToProjectList(t *testing.T) {
+83		m := newModel(testGroups())
+84		m = send(m, key(&#34;enter&#34;))
+85		if m.screen != screenSessions {
+86			t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+87		}
+88		m = send(m, key(&#34;left&#34;))
+89		if m.screen != screenProjects {
+90			t.Fatalf(&#34;screen = %v, want projects after left&#34;, m.screen)
+91		}
+92	}
+93	
+94	func TestSelectSessionGoesToOptions(t *testing.T) {
+95		m := newModel(testGroups())
+96		m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open projA, select first session
+97		if m.screen != screenOptions {
+98			t.Fatalf(&#34;screen = %v, want options&#34;, m.screen)
+99		}
+100		if m.sel.Session.ID != &#34;root1aaa-0000&#34; {
+101			t.Errorf(&#34;selected %q, want root1aaa-0000&#34;, m.sel.Session.ID)
+102		}
+103	}
+104	
+105	func TestScrollKeepsCursorVisible(t *testing.T) {
+106		// 30 sessions, viewport of 10 rows.
+107		var ss []discovery.SessionInfo
+108		for i := 0; i &lt; 30; i++ {
+109			ss = append(ss, discovery.SessionInfo{ID: string(rune(&#39;a&#39;+i%26)) + &#34;0000000&#34;, Title: &#34;s&#34;})
+110		}
+111		m := newModel([]discovery.ProjectGroup{{ProjectPath: &#34;/p&#34;, Sessions: ss}})
+112		m = send(m, tea.WindowSizeMsg{Width: 80, Height: reservedLines + 10}, key(&#34;enter&#34;))
+113		for i := 0; i &lt; 25; i++ {
+114			m = send(m, key(&#34;down&#34;))
+115		}
+116		if m.sessCursor != 25 {
+117			t.Fatalf(&#34;cursor = %d, want 25&#34;, m.sessCursor)
+118		}
+119		// cursor must be within the visible window [top, top+10)
+120		if m.sessCursor &lt; m.sessTop || m.sessCursor &gt;= m.sessTop+m.listHeight() {
+121			t.Errorf(&#34;cursor %d outside window [%d,%d)&#34;, m.sessCursor, m.sessTop, m.sessTop+m.listHeight())
+122		}
+123	}
+124	
+125	func TestFocusIdxOpensSessionList(t *testing.T) {
+126		m := newModel(testGroups())
+127		m.projCursor = 1
+128		m.enterProject(1)
+129		if m.screen != screenSessions {
+130			t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+131		}
+132		if m.sessions[0].ID != &#34;root3bbb-0000&#34; {
+133			t.Errorf(&#34;focused group session = %q, want root3bbb-0000&#34;, m.sessions[0].ID)
+134		}
+135	}
+136	
+137	func TestOptionsOutputDirInput(t *testing.T) {
+138		m := newModel(testGroups())
+139		m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open projA, select first session → options
+140		if m.screen != screenOptions {
+141			t.Fatalf(&#34;screen = %v, want options&#34;, m.screen)
+142		}
+143		// Move down to the output-directory row.
+144		m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))
+145		if m.optCursor != optOutDir {
+146			t.Fatalf(&#34;optCursor = %d, want optOutDir (%d)&#34;, m.optCursor, optOutDir)
+147		}
+148		// Enter editing, type a path, finish with enter.
+149		m = send(m, key(&#34;enter&#34;))
+150		if !m.editing {
+151			t.Fatal(&#34;expected editing mode after enter on output-dir row&#34;)
+152		}
+153		for _, ch := range []string{&#34;o&#34;, &#34;u&#34;, &#34;t&#34;, &#34;/&#34;, &#34;r&#34;, &#34;u&#34;, &#34;n&#34;} {
+154			m = send(m, key(ch))
+155		}
+156		m = send(m, key(&#34;enter&#34;))
+157		if m.editing {
+158			t.Fatal(&#34;still editing after enter&#34;)
+159		}
+160		if m.outDir != &#34;out/run&#34; {
+161			t.Fatalf(&#34;outDir = %q, want out/run&#34;, m.outDir)
+162		}
+163		// Confirm from Generate; the selection carries the override.
+164		m = send(m, key(&#34;down&#34;))
+165		if m.optCursor != optGenerate {
+166			t.Fatalf(&#34;optCursor = %d, want optGenerate (%d)&#34;, m.optCursor, optGenerate)
+167		}
+168		m = send(m, key(&#34;enter&#34;))
+169		if m.sel.OutDir != &#34;out/run&#34; {
+170			t.Fatalf(&#34;sel.OutDir = %q, want out/run&#34;, m.sel.OutDir)
+171		}
+172	}
+173	
+174	func TestEditingModeTakesLiteralKeys(t *testing.T) {
+175		m := newModel(testGroups())
+176		m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options
+177		m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))
+178		// &#39;q&#39; would normally quit; while editing it must be a literal character.
+179		m = send(m, key(&#34;q&#34;), key(&#34;a&#34;))
+180		if m.sel.Canceled {
+181			t.Fatal(&#34;&#39;q&#39; quit while editing; should be literal input&#34;)
+182		}
+183		if m.outDir != &#34;qa&#34; {
+184			t.Fatalf(&#34;outDir = %q, want qa&#34;, m.outDir)
+185		}
+186	}
+187	
+188	func TestClampScroll(t *testing.T) {
+189		// cursor below window scrolls down
+190		if got := clampScroll(12, 0, 10, 30); got != 3 {
+191			t.Errorf(&#34;clampScroll down = %d, want 3&#34;, got)
+192		}
+193		// cursor above window scrolls up
+194		if got := clampScroll(2, 5, 10, 30); got != 2 {
+195			t.Errorf(&#34;clampScroll up = %d, want 2&#34;, got)
+196		}
+197		// list shorter than window pins to 0
+198		if got := clampScroll(0, 4, 10, 3); got != 0 {
+199			t.Errorf(&#34;clampScroll short = %d, want 0&#34;, got)
+200		}
+201	}
+202	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
+}</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
+2	
+3	Turn a Claude Code session transcript into a browsable, self-contained static
+4	HTML report. See what you prompted and what Claude Code did — and commit the
+5	report into your repo as a documentation artifact.
+6	
+7	&gt; **Status:** under active development. See
+8	&gt; [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plan.
+9	
+10	## Preview
+11	
+12	A full example — ccwhid rendering the very session that built it — is committed
+13	at [`docs/session-report/index.html`](docs/session-report/index.html); clone the
+14	repo and open it in a browser.
+15	
+16	| Report overview | Tool calls &amp; diffs |
+17	|:---:|:---:|
+18	| [![ccwhid report overview](docs/images/report-top.png)](docs/session-report/index.html) | [![tool calls and diffs](docs/images/report-tool.png)](docs/session-report/index.html) |
+19	
+20	The report is one self-contained page: a jump-to-prompt sidebar, a live turn
+21	filter, expand/collapse-all, and a light/dark toggle — all client-side, no
+22	server.
+23	
+24	## Install
+25	
+26	```bash
+27	go install github.com/saigyo/cc-what-have-i-done/cmd/ccwhid@latest
+28	```
+29	
+30	Or build locally:
+31	
+32	```bash
+33	go build -o ccwhid ./cmd/ccwhid
+34	```
+35	
+36	## Usage
+37	
+38	```bash
+39	ccwhid                      # browse sessions in an interactive TUI
+40	ccwhid --latest             # render the most recent session
+41	ccwhid --session &lt;id&gt;       # render a specific session (id or prefix)
+42	ccwhid --session &lt;id&gt; --open
+43	```
+44	
+45	The report is written to `./ccwhid-report/&lt;session-short&gt;/` by default (override
+46	with `--out`). Open `index.html` in any browser — no server needed.
+47	
+48	### Browsing sessions
+49	
+50	Run `ccwhid` with no selector to open the interactive browser:
+51	
+52	- **Project list** — every project with sessions, most-recent first. `↑`/`↓`
+53	  to move, `enter` (or `→`) to open a project, `q` to quit.
+54	- **Session list** — the chosen project&#39;s sessions. `enter` selects, `←` (or
+55	  `esc`) returns to the project list.
+56	- Both lists **scroll** to fit any terminal size.
+57	- By default only your **interactive sessions** are shown. Claude Code writes
+58	  each Task subagent / code-review agent as its own transcript; press **`a`**
+59	  in the session list to show (and hide) those agent sessions — they&#39;re marked
+60	  with a `⟲`.
+61	- Selecting a session opens an **options screen** to toggle subagents,
+62	  redaction, and open-in-browser, and to type an output directory (blank uses
+63	  the default) before generating.
+64	
+65	`--project &lt;name&gt;` opens the browser directly on that project&#39;s session list.
+66	
+67	![ccwhid project list](docs/images/tui-projects.png)
+68	
+69	*Pick a project, then a session. Agent transcripts are hidden until you press
+70	`a`, then marked with `⟲`:*
+71	
+72	![ccwhid session list](docs/images/tui-sessions.png)
+73	
+74	### Flags
+75	
+76	| Flag | Description |
+77	|------|-------------|
+78	| `--session &lt;id&gt;` | Session id or unambiguous prefix to render |
+79	| `--project &lt;path\|name&gt;` | Scope `--latest` to a project, or open the TUI on it (matches full path, basename, or unambiguous substring) |
+80	| `--latest` | Render the most recent interactive session (skips agent transcripts) |
+81	| `--out &lt;dir&gt;` | Output directory |
+82	| `--title &lt;str&gt;` | Override the report title |
+83	| `--include-subagents` | Include subagent (Task) activity (default true; `--include-subagents=false` to omit) |
+84	| `--no-redact` | Disable secret redaction |
+85	| `--force` | Overwrite a non-empty output directory |
+86	| `--open` | Open the report in a browser when done |
+87	
+88	## Redaction
+89	
+90	By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
+91	`KEY=[REDACTED:assignment] assignments) and rewrites your home directory to `~`.
+92	This is best-effort defense-in-depth — **review generated reports before
+93	committing them.** Disable with `--no-redact`.
+94	
+95	## What&#39;s included
+96	
+97	Your prompts, Claude&#39;s replies (rendered markdown + syntax-highlighted code),
+98	tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
+99	blocks, and — optionally — nested subagent activity. System reminders and
+100	attachments are omitted for readability.
+101	
+102	## License
+103	
+104	[MIT](LICENSE) © 2026 Markus Ackermann
+105	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="agent ">
+      <div class="turn-role">Claude<span class="usage-badge">275 tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-ae2511e0a48467798.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;description&#34;: &#34;Verify render.Options.Usage exists&#34;,
+  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, look at internal/render package (likely internal/render/render.go or similar) and confirm the `Options` struct has fields `Title string` and `Usage bool`. Report the exact struct definition and file path. Keep response under 100 words.&#34;,
+  &#34;run_in_background&#34;: false,
+  &#34;subagent_type&#34;: &#34;Explore&#34;
+}</pre><pre class="tool-result">Confirmed. In `~/IdeaProjects/cc-what-have-i-done/internal/render/render.go` (lines 20-23):
+
+```go
+type Options struct {
+	Title string
+	Usage bool // render the token-usage &amp; cost section
+}
+```
+
+Both fields `Title string` and `Usage bool` are present as expected.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="good, task 4 is done. now let&#39;s write the failing tui test first (tdd), then implement all changes.">
+      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Good, Task 4 is done. Now let's write the failing TUI test first (TDD), then implement all changes.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestClampScroll(t *testing.T) {</div><div class="diff-add">+ func TestOptionsUsageToggle(t *testing.T) {</div><div class="diff-add">+ 	m := newModel(testGroups())</div><div class="diff-add">+ 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open project, select session -&gt; options</div><div class="diff-add">+ 	// move to the usage toggle row and toggle it on</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-add">+ 	if m.optCursor != optUsage {</div><div class="diff-add">+ 		t.Fatalf(&#34;optCursor = %d, want optUsage (%d)&#34;, m.optCursor, optUsage)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	m = send(m, key(&#34; &#34;))</div><div class="diff-add">+ 	if !m.sel.Usage {</div><div class="diff-add">+ 		t.Fatal(&#34;space on usage row should enable Selection.Usage&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestClampScroll(t *testing.T) {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash go test ./internal/tui/ -run testoptionsusagetoggle -v 2&gt;&amp;1 | tail -30">
+      <div class="turn-role">Claude<span class="usage-badge">221 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -run TestOptionsUsageToggle -v 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/tui/ -run TestOptionsUsageToggle -v 2\u003e\u00261 | tail -30&#34;
+}</pre><pre class="tool-result"># github.com/saigyo/cc-what-have-i-done/internal/tui [github.com/saigyo/cc-what-have-i-done/internal/tui.test]
+internal/tui/tui_test.go:193:20: undefined: optUsage
+internal/tui/tui_test.go:194:63: undefined: optUsage
+internal/tui/tui_test.go:197:12: m.sel.Usage undefined (type Selection has no field or method Usage)
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="red confirmed. now implement all changes.">
+      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>RED confirmed. Now implement all changes.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	Open             bool</div><div class="diff-del">- 	OutDir           string</div><div class="diff-add">+ 	Open             bool</div><div class="diff-add">+ 	Usage            bool</div><div class="diff-add">+ 	OutDir           string</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	optSubagents = iota</div><div class="diff-del">- 	optRedact</div><div class="diff-del">- 	optOpen</div><div class="diff-del">- 	optOutDir</div><div class="diff-del">- 	optGenerate</div><div class="diff-del">- 	optionCount</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optUsage</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		case optOpen:</div><div class="diff-del">- 			m.sel.Open = !m.sel.Open</div><div class="diff-del">- 		case optOutDir:</div><div class="diff-add">+ 		case optOpen:</div><div class="diff-add">+ 			m.sel.Open = !m.sel.Open</div><div class="diff-add">+ 		case optUsage:</div><div class="diff-add">+ 			m.sel.Usage = !m.sel.Usage</div><div class="diff-add">+ 		case optOutDir:</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		{&#34;Open in browser when done&#34;, m.sel.Open},</div><div class="diff-del">- 	}</div><div class="diff-add">+ 		{&#34;Open in browser when done&#34;, m.sel.Open},</div><div class="diff-add">+ 		{&#34;Include usage &amp; cost&#34;, m.sel.Usage},</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="now the cli changes.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now the CLI changes.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	force            bool</div><div class="diff-del">- 	open             bool</div><div class="diff-del">- }</div><div class="diff-add">+ 	force            bool</div><div class="diff-add">+ 	open             bool</div><div class="diff-add">+ 	usage            bool</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)</div><div class="diff-del">- 	return cmd</div><div class="diff-add">+ 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)</div><div class="diff-add">+ 	f.BoolVar(&amp;opts.usage, &#34;usage&#34;, false, &#34;include a token-usage &amp; estimated-cost section&#34;)</div><div class="diff-add">+ 	return cmd</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		opts.open = sel.Open</div><div class="diff-del">- 		if sel.OutDir != &#34;&#34; {</div><div class="diff-add">+ 		opts.open = sel.Open</div><div class="diff-add">+ 		opts.usage = sel.Usage</div><div class="diff-add">+ 		if sel.OutDir != &#34;&#34; {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {</div><div class="diff-add">+ 	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="now update the readme.">
+      <div class="turn-role">Claude<span class="usage-badge">151 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now update the README.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- | `--open` | Open the report in a browser when done |</div><div class="diff-add">+ | `--open` | Open the report in a browser when done |</div><div class="diff-add">+ | `--usage` | Include a token-usage &amp; estimated-cost section (default off) |</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking</div><div class="diff-del">- blocks, and — optionally — nested subagent activity. System reminders and</div><div class="diff-del">- attachments are omitted for readability.</div><div class="diff-del">- </div><div class="diff-del">- ## License</div><div class="diff-add">+ tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking</div><div class="diff-add">+ blocks, and — optionally — nested subagent activity. System reminders and</div><div class="diff-add">+ attachments are omitted for readability.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Token usage &amp; cost</div><div class="diff-add">+ </div><div class="diff-add">+ Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible</div><div class="diff-add">+ **Usage** card and per-turn cost badges. Token counts come straight from the</div><div class="diff-add">+ transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in</div><div class="diff-add">+ Anthropic list-price table (dated in the report footnote) — unknown models show</div><div class="diff-add">+ tokens with cost `n/a`, and server-tool fees are not included. Prices are</div><div class="diff-add">+ embedded, so this works fully offline.</div><div class="diff-add">+ </div><div class="diff-add">+ ## License</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="bash go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60">
+      <div class="turn-role">Claude<span class="usage-badge">395 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/tui/ -v 2\u003e\u00261 | tail -60&#34;
+}</pre><pre class="tool-result">=== RUN   TestSessionListHidesAgentsByDefault
+--- PASS: TestSessionListHidesAgentsByDefault (0.00s)
+=== RUN   TestToggleShowAllRevealsAgents
+--- PASS: TestToggleShowAllRevealsAgents (0.00s)
+=== RUN   TestLeftReturnsToProjectList
+--- PASS: TestLeftReturnsToProjectList (0.00s)
+=== RUN   TestSelectSessionGoesToOptions
+--- PASS: TestSelectSessionGoesToOptions (0.00s)
+=== RUN   TestScrollKeepsCursorVisible
+--- PASS: TestScrollKeepsCursorVisible (0.00s)
+=== RUN   TestFocusIdxOpensSessionList
+--- PASS: TestFocusIdxOpensSessionList (0.00s)
+=== RUN   TestOptionsOutputDirInput
+    tui_test.go:146: optCursor = 3, want optOutDir (4)
+--- FAIL: TestOptionsOutputDirInput (0.00s)
+=== RUN   TestEditingModeTakesLiteralKeys
+    tui_test.go:181: &#39;q&#39; quit while editing; should be literal input
+--- FAIL: TestEditingModeTakesLiteralKeys (0.00s)
+=== RUN   TestOptionsUsageToggle
+--- PASS: TestOptionsUsageToggle (0.00s)
+=== RUN   TestClampScroll
+--- PASS: TestClampScroll (0.00s)
+FAIL
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui	0.314s
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	// Move down to the output-directory row.</div><div class="diff-del">- 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-del">- 	if m.optCursor != optOutDir {</div><div class="diff-add">+ 	// Move down to the output-directory row.</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-add">+ 	if m.optCursor != optOutDir {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options</div><div class="diff-del">- 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))</div><div class="diff-add">+ 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="bash go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60">
+      <div class="turn-role">Claude<span class="usage-badge">72 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/tui/ -v 2\u003e\u00261 | tail -60&#34;
+}</pre><pre class="tool-result">=== RUN   TestSessionListHidesAgentsByDefault
+--- PASS: TestSessionListHidesAgentsByDefault (0.00s)
+=== RUN   TestToggleShowAllRevealsAgents
+--- PASS: TestToggleShowAllRevealsAgents (0.00s)
+=== RUN   TestLeftReturnsToProjectList
+--- PASS: TestLeftReturnsToProjectList (0.00s)
+=== RUN   TestSelectSessionGoesToOptions
+--- PASS: TestSelectSessionGoesToOptions (0.00s)
+=== RUN   TestScrollKeepsCursorVisible
+--- PASS: TestScrollKeepsCursorVisible (0.00s)
+=== RUN   TestFocusIdxOpensSessionList
+--- PASS: TestFocusIdxOpensSessionList (0.00s)
+=== RUN   TestOptionsOutputDirInput
+--- PASS: TestOptionsOutputDirInput (0.00s)
+=== RUN   TestEditingModeTakesLiteralKeys
+--- PASS: TestEditingModeTakesLiteralKeys (0.00s)
+=== RUN   TestOptionsUsageToggle
+--- PASS: TestOptionsUsageToggle (0.00s)
+=== RUN   TestClampScroll
+--- PASS: TestClampScroll (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-28" data-search="all tui tests pass. now full verification.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All TUI tests pass. Now full verification.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-29" data-search="bash gofmt -l . &amp;&amp; echo &#34;---vet---&#34; &amp;&amp; go vet ./... &amp;&amp; echo &#34;---build---&#34; &amp;&amp; go build ./... &amp;&amp; echo &#34;---test---&#34; &amp;&amp; go test ./... 2&gt;&amp;1 | tail -40">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;---vet---&#34; &amp;&amp; go vet ./... &amp;&amp; echo &#34;---build---&#34; &amp;&amp; go build ./... &amp;&amp; echo &#34;---test---&#34; &amp;&amp; go test ./... 2&gt;&amp;1 | tail -40</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;---vet---\&#34; \u0026\u0026 go vet ./... \u0026\u0026 echo \&#34;---build---\&#34; \u0026\u0026 go build ./... \u0026\u0026 echo \&#34;---test---\&#34; \u0026\u0026 go test ./... 2\u003e\u00261 | tail -40&#34;
+}</pre><pre class="tool-result">---vet---
+---build---
+---test---
+ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.341s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.442s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-30" data-search="no gofmt output, vet clean, all tests pass. now sanity-check the cli flag.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>No gofmt output, vet clean, all tests pass. Now sanity-check the CLI flag.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-31" data-search="bash go run ./cmd/ccwhid --help 2&gt;&amp;1 | grep -i usage">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go run ./cmd/ccwhid --help 2&gt;&amp;1 | grep -i usage</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go run ./cmd/ccwhid --help 2\u003e\u00261 | grep -i usage&#34;
+}</pre><pre class="tool-result">Usage:
+      --usage               include a token-usage &amp; estimated-cost section</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-32" data-search="confirmed. now let&#39;s diff-review before committing.">
+      <div class="turn-role">Claude<span class="usage-badge">153 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Confirmed. Now let's diff-review before committing.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-33" data-search="bash git status --short &amp;&amp; echo &#34;---&#34; &amp;&amp; git diff --stat">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short &amp;&amp; echo &#34;---&#34; &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status --short \u0026\u0026 echo \&#34;---\&#34; \u0026\u0026 git diff --stat&#34;
+}</pre><pre class="tool-result"> M README.md
+ M cmd/ccwhid/main.go
+ M cmd/ccwhid/run.go
+ M internal/tui/tui.go
+ M internal/tui/tui_test.go
+---
+ README.md                | 10 ++++++++++
+ cmd/ccwhid/main.go       |  3 +++
+ cmd/ccwhid/run.go        |  2 +-
+ internal/tui/tui.go      |  5 +++++
+ internal/tui/tui_test.go | 18 ++++++++++++++++--
+ 5 files changed, 35 insertions(+), 3 deletions(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-34" data-search="all the expected files, matching the brief&#39;s file list exactly. let&#39;s do a final full diff review.">
+      <div class="turn-role">Claude<span class="usage-badge">81 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All the expected files, matching the brief's file list exactly. Let's do a final full diff review.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-35" data-search="bash git diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git diff&#34;
+}</pre><pre class="tool-result">diff --git a/README.md b/README.md
+index ef88347..f66e09e 100644
+--- a/README.md
++++ b/README.md
+@@ -84,6 +84,7 @@ Run `ccwhid` with no selector to open the interactive browser:
+ | `--no-redact` | Disable secret redaction |
+ | `--force` | Overwrite a non-empty output directory |
+ | `--open` | Open the report in a browser when done |
++| `--usage` | Include a token-usage &amp; estimated-cost section (default off) |
+ 
+ ## Redaction
+ 
+@@ -99,6 +100,15 @@ tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
+ blocks, and — optionally — nested subagent activity. System reminders and
+ attachments are omitted for readability.
+ 
++## Token usage &amp; cost
++
++Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible
++**Usage** card and per-turn cost badges. Token counts come straight from the
++transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in
++Anthropic list-price table (dated in the report footnote) — unknown models show
++tokens with cost `n/a`, and server-tool fees are not included. Prices are
++embedded, so this works fully offline.
++
+ ## License
+ 
+ [MIT](LICENSE) © 2026 Markus Ackermann
+diff --git a/cmd/ccwhid/main.go b/cmd/ccwhid/main.go
+index 060878e..50135e1 100644
+--- a/cmd/ccwhid/main.go
++++ b/cmd/ccwhid/main.go
+@@ -25,6 +25,7 @@ type options struct {
+ 	noRedact         bool
+ 	force            bool
+ 	open             bool
++	usage            bool
+ }
+ 
+ func newRootCmd() *cobra.Command {
+@@ -51,6 +52,7 @@ func newRootCmd() *cobra.Command {
+ 	f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+ 	f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+ 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
++	f.BoolVar(&amp;opts.usage, &#34;usage&#34;, false, &#34;include a token-usage &amp; estimated-cost section&#34;)
+ 	return cmd
+ }
+ 
+@@ -87,6 +89,7 @@ func run(cmd *cobra.Command, opts *options) error {
+ 		opts.includeSubagents = sel.IncludeSubagents
+ 		opts.noRedact = !sel.Redact
+ 		opts.open = sel.Open
++		opts.usage = sel.Usage
+ 		if sel.OutDir != &#34;&#34; {
+ 			opts.out = sel.OutDir
+ 		}
+diff --git a/cmd/ccwhid/run.go b/cmd/ccwhid/run.go
+index 1698689..51fc9d1 100644
+--- a/cmd/ccwhid/run.go
++++ b/cmd/ccwhid/run.go
+@@ -96,7 +96,7 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
+ 		home, _ := os.UserHomeDir()
+ 		redact.Session(&amp;sess, home)
+ 	}
+-	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
++	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
+ 		return &#34;&#34;, err
+ 	}
+ 	return outDir, nil
+diff --git a/internal/tui/tui.go b/internal/tui/tui.go
+index ba85cdb..44f3b05 100644
+--- a/internal/tui/tui.go
++++ b/internal/tui/tui.go
+@@ -19,6 +19,7 @@ type Selection struct {
+ 	IncludeSubagents bool
+ 	Redact           bool
+ 	Open             bool
++	Usage            bool
+ 	OutDir           string
+ 	Canceled         bool
+ }
+@@ -210,6 +211,7 @@ const (
+ 	optSubagents = iota
+ 	optRedact
+ 	optOpen
++	optUsage
+ 	optOutDir
+ 	optGenerate
+ 	optionCount
+@@ -261,6 +263,8 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+ 			m.sel.Redact = !m.sel.Redact
+ 		case optOpen:
+ 			m.sel.Open = !m.sel.Open
++		case optUsage:
++			m.sel.Usage = !m.sel.Usage
+ 		case optOutDir:
+ 			m.editing = true
+ 		case optGenerate:
+@@ -372,6 +376,7 @@ func (m model) viewOptions() string {
+ 		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+ 		{&#34;Redact secrets&#34;, m.sel.Redact},
+ 		{&#34;Open in browser when done&#34;, m.sel.Open},
++		{&#34;Include usage &amp; cost&#34;, m.sel.Usage},
+ 	}
+ 	for i, t := range toggles {
+ 		check := &#34;[ ]&#34;
+diff --git a/internal/tui/tui_test.go b/internal/tui/tui_test.go
+index 26c96d0..9a13dc9 100644
+--- a/internal/tui/tui_test.go
++++ b/internal/tui/tui_test.go
+@@ -141,7 +141,7 @@ func TestOptionsOutputDirInput(t *testing.T) {
+ 		t.Fatalf(&#34;screen = %v, want options&#34;, m.screen)
+ 	}
+ 	// Move down to the output-directory row.
+-	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))
++	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))
+ 	if m.optCursor != optOutDir {
+ 		t.Fatalf(&#34;optCursor = %d, want optOutDir (%d)&#34;, m.optCursor, optOutDir)
+ 	}
+@@ -174,7 +174,7 @@ func TestOptionsOutputDirInput(t *testing.T) {
+ func TestEditingModeTakesLiteralKeys(t *testing.T) {
+ 	m := newModel(testGroups())
+ 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options
+-	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))
++	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))
+ 	// &#39;q&#39; would normally quit; while editing it must be a literal character.
+ 	m = send(m, key(&#34;q&#34;), key(&#34;a&#34;))
+ 	if m.sel.Canceled {
+@@ -185,6 +185,20 @@ func TestEditingModeTakesLiteralKeys(t *testing.T) {
+ 	}
+ }
+ 
++func TestOptionsUsageToggle(t *testing.T) {
++	m := newModel(testGroups())
++	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open project, select session -&gt; options
++	// move to the usage toggle row and toggle it on
++	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))
++	if m.optCursor != optUsage {
++		t.Fatalf(&#34;optCursor = %d, want optUsage (%d)&#34;, m.optCursor, optUsage)
++	}
++	m = send(m, key(&#34; &#34;))
++	if !m.sel.Usage {
++		t.Fatal(&#34;space on usage row should enable Selection.Usage&#34;)
++	}
++}
++
+ func TestClampScroll(t *testing.T) {
+ 	// cursor below window scrolls down
+ 	if got := clampScroll(12, 0, 10, 30); got != 3 {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-36" data-search="this looks correct and complete. now commit as specified.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>This looks correct and complete. Now commit as specified.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-37" data-search="bash git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go readme.md &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go README.md &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go README.md \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: --usage flag and TUI toggle for the usage section\n\nEOF\n)\&#34;&#34;
+}</pre><pre class="tool-result">[feat/usage-cost 6fef39b] feat: --usage flag and TUI toggle for the usage section
+ 5 files changed, 35 insertions(+), 3 deletions(-)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-38" data-search="bash git log --oneline -8 &amp;&amp; echo --- &amp;&amp; git branch --show-current">
+      <div class="turn-role">Claude<span class="usage-badge">133 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -8 &amp;&amp; echo --- &amp;&amp; git branch --show-current</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log --oneline -8 \u0026\u0026 echo --- \u0026\u0026 git branch --show-current&#34;
+}</pre><pre class="tool-result">6fef39b feat: --usage flag and TUI toggle for the usage section
+4de9666 feat(render): usage &amp; cost card and per-turn badges
+4140bfb feat(usage): compute token totals and estimated cost
+08d3928 feat(usage): embedded model price table with lookup
+1753ede feat(transcript): parse per-turn model and token usage
+0bd5a25 docs: implementation plan for usage &amp; cost section
+2c62c85 docs: design spec for usage &amp; cost report section
+fcd7fbd ci: generate release changelog from merged PRs
+---
+feat/usage-cost</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-39" data-search="good — committed on the `feat/usage-cost` branch consistent with tasks 1–4. now writing the report.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Good — committed on the <code>feat/usage-cost</code> branch consistent with Tasks 1–4. Now writing the report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-40" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 5 Report: CLI flag, TUI toggle, and docs</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented all 10 steps of the brief on branch `feat/usage-cost`, adapting</div><div class="diff-add">+ step 6&#39;s option-index insertion to the actual current layout of</div><div class="diff-add">+ `internal/tui/tui.go` (which already had `optOutDir`/`optGenerate` rows from</div><div class="diff-add">+ an earlier feature, unlike the brief&#39;s more minimal sketch).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** — added `TestOptionsUsageToggle` to `internal/tui/tui_test.go` first,</div><div class="diff-add">+ then ran:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -run TestOptionsUsageToggle -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Failed to build as expected:</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/tui/tui_test.go:193:20: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:194:63: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:197:12: m.sel.Usage undefined (type Selection has no field or method Usage)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** — after implementing `Selection.Usage`, `optUsage`, the toggle</div><div class="diff-add">+ case, and the `toggles` slice entry, ran the full package:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ All 10 tests pass, including `TestOptionsUsageToggle`.</div><div class="diff-add">+ </div><div class="diff-add">+ Two pre-existing tests needed a cursor-count fix because inserting `optUsage`</div><div class="diff-add">+ before `optOutDir` shifted the output-dir row&#39;s index by one — they were not</div><div class="diff-add">+ about the new toggle, but their `down` counts had to grow by one to keep</div><div class="diff-add">+ landing on `optOutDir`:</div><div class="diff-add">+ - `TestOptionsOutputDirInput`: `down,down,down` → `down,down,down,down`</div><div class="diff-add">+ - `TestEditingModeTakesLiteralKeys`: same fix</div><div class="diff-add">+ </div><div class="diff-add">+ Confirmed initially failing (before the fix) with:</div><div class="diff-add">+ ```</div><div class="diff-add">+ --- FAIL: TestOptionsOutputDirInput (0.00s)</div><div class="diff-add">+     tui_test.go:146: optCursor = 3, want optOutDir (4)</div><div class="diff-add">+ --- FAIL: TestEditingModeTakesLiteralKeys (0.00s)</div><div class="diff-add">+     tui_test.go:181: &#39;q&#39; quit while editing; should be literal input</div><div class="diff-add">+ ```</div><div class="diff-add">+ then green after the two-line edit.</div><div class="diff-add">+ </div><div class="diff-add">+ ## How the TUI index layout was reconciled</div><div class="diff-add">+ </div><div class="diff-add">+ Current repo state (before this task) had:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div><div class="diff-add">+ )</div><div class="diff-add">+ ```</div><div class="diff-add">+ with `toggles := []struct{...}{subagents, redact, open}` (3 entries) rendered</div><div class="diff-add">+ in a loop, followed by separately-rendered output-dir and generate rows.</div><div class="diff-add">+ </div><div class="diff-add">+ Per the task instructions (which anticipated this drift and specified the</div><div class="diff-add">+ exact resolution), I inserted `optUsage` between `optOpen` and `optOutDir`:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ optSubagents, optRedact, optOpen, optUsage, optOutDir, optGenerate, optionCount</div><div class="diff-add">+ ```</div><div class="diff-add">+ and appended `{&#34;Include usage &amp; cost&#34;, m.sel.Usage}` as the 4th entry in the</div><div class="diff-add">+ `toggles` slice (rendered by the same `for i, t := range toggles` loop that</div><div class="diff-add">+ already uses `m.optCursor == i` for highlighting — so toggle index and cursor</div><div class="diff-add">+ constant stay aligned automatically, no separate index arithmetic needed).</div><div class="diff-add">+ The output-dir and generate rows already render after the toggles loop using</div><div class="diff-add">+ their own named constants (`optOutDir`, `optGenerate`), so no further</div><div class="diff-add">+ reordering was required — inserting `optUsage` at position 3 shifted</div><div class="diff-add">+ `optOutDir` from 3→4 and `optGenerate` from 4→5, which is exactly what the</div><div class="diff-add">+ two adjusted tests now expect.</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s `TestOptionsUsageToggle` already assumed 3 `down` presses to</div><div class="diff-add">+ reach `optUsage` (index 3 from cursor 0), which matches the real layout</div><div class="diff-add">+ exactly — no adjustment was needed for that test.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `cmd/ccwhid/main.go` — added `usage bool` to `options`, registered</div><div class="diff-add">+   `--usage` flag (default false) after `--open`, added</div><div class="diff-add">+   `opts.usage = sel.Usage` mapping in `run()`.</div><div class="diff-add">+ - `cmd/ccwhid/run.go` — `render.Site` call now passes `Usage: opts.usage`.</div><div class="diff-add">+ - `internal/tui/tui.go` — added `Usage bool` to `Selection`, inserted</div><div class="diff-add">+   `optUsage` into the option-index block (before `optOutDir`), added the</div><div class="diff-add">+   toggle case in `updateOptions`, added the toggle row to `viewOptions`&#39;s</div><div class="diff-add">+   `toggles` slice.</div><div class="diff-add">+ - `internal/tui/tui_test.go` — added `TestOptionsUsageToggle`; adjusted</div><div class="diff-add">+   `down`-press counts in `TestOptionsOutputDirInput` and</div><div class="diff-add">+   `TestEditingModeTakesLiteralKeys` to account for the shifted `optOutDir`</div><div class="diff-add">+   index.</div><div class="diff-add">+ - `README.md` — added `--usage` row to the flags table; added a</div><div class="diff-add">+   &#34;Token usage &amp; cost&#34; section (verbatim from the brief) after</div><div class="diff-add">+   &#34;What&#39;s included&#34;.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Full verification</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ gofmt -l .          # no output</div><div class="diff-add">+ go vet ./...        # clean</div><div class="diff-add">+ go build ./...      # clean</div><div class="diff-add">+ go test ./...       # all packages ok (cmd/ccwhid, discovery, model, redact,</div><div class="diff-add">+                      #   render, transcript, tui, usage)</div><div class="diff-add">+ go run ./cmd/ccwhid --help | grep -i usage</div><div class="diff-add">+   --usage   include a token-usage &amp; estimated-cost section</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `6fef39b` — `feat: --usage flag and TUI toggle for the usage section`</div><div class="diff-add">+ (branch `feat/usage-cost`, stacked on Tasks 1–4&#39;s commits</div><div class="diff-add">+ `1753ede`..`4de9666`). Staged exactly the 5 files listed in the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - Diff reviewed via `git diff` before committing: every hunk is additive and</div><div class="diff-add">+   minimal, matches the brief&#39;s snippets verbatim except for the</div><div class="diff-add">+   index-position adjustment (justified above and pre-authorized by the task</div><div class="diff-add">+   instructions).</div><div class="diff-add">+ - Confirmed `Selection.Usage` defaults to `false` (zero value), consistent</div><div class="diff-add">+   with `--usage` defaulting to off and no explicit default set in</div><div class="diff-add">+   `newModel`&#39;s `Selection{IncludeSubagents: true, Redact: true}` literal.</div><div class="diff-add">+ - Confirmed the `toggles` slice loop indexing (`m.optCursor == i`) still</div><div class="diff-add">+   aligns 1:1 with the `opt*` iota constants after insertion — no off-by-one</div><div class="diff-add">+   between the render loop and the constants.</div><div class="diff-add">+ - Did not touch the &#34;Browsing sessions&#34; prose line (&#34;toggle subagents,</div><div class="diff-add">+   redaction, and open-in-browser&#34;) to mention the new usage toggle — out of</div><div class="diff-add">+   scope per the brief&#39;s explicit step 8 instructions (only the flags-table</div><div class="diff-add">+   row and the new &#34;Token usage &amp; cost&#34; section were requested); flagging</div><div class="diff-add">+   this as a minor optional follow-up, not a defect.</div><div class="diff-add">+ - No offline-guarantee concerns: this task added no CSS/JS, only Go and Markdown.</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-41" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2&gt;&amp;1">
+      <div class="turn-role">Claude<span class="usage-badge">124 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">-rw-r--r--@ 1 markus  staff  10562 11 Juli 12:22 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-42" data-search="a pre-existing file exists (from an earlier attempt). let me read then overwrite.">
+      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>A pre-existing file exists (from an earlier attempt). Let me read then overwrite.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-43" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;,
+  &#34;limit&#34;: 5
+}</pre><pre class="tool-result">1	# Task 5 Report: Fold records into a Session timeline
+2	
+3	## Summary
+4	
+5	Implemented `internal/transcript/parse.go`, folding the flat JSONL `rawRecord`</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-44" data-search="that&#39;s an unrelated stale report from a different task numbering. overwriting with this task&#39;s actual report.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>That's an unrelated stale report from a different task numbering. Overwriting with this task's actual report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-45" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 5 Report: CLI flag, TUI toggle, and docs</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented all 10 steps of the brief on branch `feat/usage-cost`, adapting</div><div class="diff-add">+ step 6&#39;s option-index insertion to the actual current layout of</div><div class="diff-add">+ `internal/tui/tui.go` (which already had `optOutDir`/`optGenerate` rows from</div><div class="diff-add">+ an earlier feature, unlike the brief&#39;s more minimal sketch).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** — added `TestOptionsUsageToggle` to `internal/tui/tui_test.go` first,</div><div class="diff-add">+ then ran:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -run TestOptionsUsageToggle -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Failed to build as expected:</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/tui/tui_test.go:193:20: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:194:63: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:197:12: m.sel.Usage undefined (type Selection has no field or method Usage)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** — after implementing `Selection.Usage`, `optUsage`, the toggle</div><div class="diff-add">+ case, and the `toggles` slice entry, ran the full package:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ All 10 tests pass, including `TestOptionsUsageToggle`.</div><div class="diff-add">+ </div><div class="diff-add">+ Two pre-existing tests needed a cursor-count fix because inserting `optUsage`</div><div class="diff-add">+ before `optOutDir` shifted the output-dir row&#39;s index by one — they were not</div><div class="diff-add">+ about the new toggle, but their `down` counts had to grow by one to keep</div><div class="diff-add">+ landing on `optOutDir`:</div><div class="diff-add">+ - `TestOptionsOutputDirInput`: `down,down,down` → `down,down,down,down`</div><div class="diff-add">+ - `TestEditingModeTakesLiteralKeys`: same fix</div><div class="diff-add">+ </div><div class="diff-add">+ Confirmed initially failing (before the fix) with:</div><div class="diff-add">+ ```</div><div class="diff-add">+ --- FAIL: TestOptionsOutputDirInput (0.00s)</div><div class="diff-add">+     tui_test.go:146: optCursor = 3, want optOutDir (4)</div><div class="diff-add">+ --- FAIL: TestEditingModeTakesLiteralKeys (0.00s)</div><div class="diff-add">+     tui_test.go:181: &#39;q&#39; quit while editing; should be literal input</div><div class="diff-add">+ ```</div><div class="diff-add">+ then green after the two-line edit.</div><div class="diff-add">+ </div><div class="diff-add">+ ## How the TUI index layout was reconciled</div><div class="diff-add">+ </div><div class="diff-add">+ Current repo state (before this task) had:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div><div class="diff-add">+ )</div><div class="diff-add">+ ```</div><div class="diff-add">+ with `toggles := []struct{...}{subagents, redact, open}` (3 entries) rendered</div><div class="diff-add">+ in a loop, followed by separately-rendered output-dir and generate rows.</div><div class="diff-add">+ </div><div class="diff-add">+ Per the task instructions (which anticipated this drift and specified the</div><div class="diff-add">+ exact resolution), I inserted `optUsage` between `optOpen` and `optOutDir`:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ optSubagents, optRedact, optOpen, optUsage, optOutDir, optGenerate, optionCount</div><div class="diff-add">+ ```</div><div class="diff-add">+ and appended `{&#34;Include usage &amp; cost&#34;, m.sel.Usage}` as the 4th entry in the</div><div class="diff-add">+ `toggles` slice (rendered by the same `for i, t := range toggles` loop that</div><div class="diff-add">+ already uses `m.optCursor == i` for highlighting — so toggle index and cursor</div><div class="diff-add">+ constant stay aligned automatically, no separate index arithmetic needed).</div><div class="diff-add">+ The output-dir and generate rows already render after the toggles loop using</div><div class="diff-add">+ their own named constants (`optOutDir`, `optGenerate`), so no further</div><div class="diff-add">+ reordering was required — inserting `optUsage` at position 3 shifted</div><div class="diff-add">+ `optOutDir` from 3→4 and `optGenerate` from 4→5, which is exactly what the</div><div class="diff-add">+ two adjusted tests now expect.</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s `TestOptionsUsageToggle` already assumed 3 `down` presses to</div><div class="diff-add">+ reach `optUsage` (index 3 from cursor 0), which matches the real layout</div><div class="diff-add">+ exactly — no adjustment was needed for that test.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `cmd/ccwhid/main.go` — added `usage bool` to `options`, registered</div><div class="diff-add">+   `--usage` flag (default false) after `--open`, added</div><div class="diff-add">+   `opts.usage = sel.Usage` mapping in `run()`.</div><div class="diff-add">+ - `cmd/ccwhid/run.go` — `render.Site` call now passes `Usage: opts.usage`.</div><div class="diff-add">+ - `internal/tui/tui.go` — added `Usage bool` to `Selection`, inserted</div><div class="diff-add">+   `optUsage` into the option-index block (before `optOutDir`), added the</div><div class="diff-add">+   toggle case in `updateOptions`, added the toggle row to `viewOptions`&#39;s</div><div class="diff-add">+   `toggles` slice.</div><div class="diff-add">+ - `internal/tui/tui_test.go` — added `TestOptionsUsageToggle`; adjusted</div><div class="diff-add">+   `down`-press counts in `TestOptionsOutputDirInput` and</div><div class="diff-add">+   `TestEditingModeTakesLiteralKeys` to account for the shifted `optOutDir`</div><div class="diff-add">+   index.</div><div class="diff-add">+ - `README.md` — added `--usage` row to the flags table; added a</div><div class="diff-add">+   &#34;Token usage &amp; cost&#34; section (verbatim from the brief) after</div><div class="diff-add">+   &#34;What&#39;s included&#34;.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Full verification</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ gofmt -l .          # no output</div><div class="diff-add">+ go vet ./...        # clean</div><div class="diff-add">+ go build ./...      # clean</div><div class="diff-add">+ go test ./...       # all packages ok (cmd/ccwhid, discovery, model, redact,</div><div class="diff-add">+                      #   render, transcript, tui, usage)</div><div class="diff-add">+ go run ./cmd/ccwhid --help | grep -i usage</div><div class="diff-add">+   --usage   include a token-usage &amp; estimated-cost section</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `6fef39b` — `feat: --usage flag and TUI toggle for the usage section`</div><div class="diff-add">+ (branch `feat/usage-cost`, stacked on Tasks 1–4&#39;s commits</div><div class="diff-add">+ `1753ede`..`4de9666`). Staged exactly the 5 files listed in the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - Diff reviewed via `git diff` before committing: every hunk is additive and</div><div class="diff-add">+   minimal, matches the brief&#39;s snippets verbatim except for the</div><div class="diff-add">+   index-position adjustment (justified above and pre-authorized by the task</div><div class="diff-add">+   instructions).</div><div class="diff-add">+ - Confirmed `Selection.Usage` defaults to `false` (zero value), consistent</div><div class="diff-add">+   with `--usage` defaulting to off and no explicit default set in</div><div class="diff-add">+   `newModel`&#39;s `Selection{IncludeSubagents: true, Redact: true}` literal.</div><div class="diff-add">+ - Confirmed the `toggles` slice loop indexing (`m.optCursor == i`) still</div><div class="diff-add">+   aligns 1:1 with the `opt*` iota constants after insertion — no off-by-one</div><div class="diff-add">+   between the render loop and the constants.</div><div class="diff-add">+ - Did not touch the &#34;Browsing sessions&#34; prose line (&#34;toggle subagents,</div><div class="diff-add">+   redaction, and open-in-browser&#34;) to mention the new usage toggle — out of</div><div class="diff-add">+   scope per the brief&#39;s explicit step 8 instructions (only the flags-table</div><div class="diff-add">+   row and the new &#34;Token usage &amp; cost&#34; section were requested); flagging</div><div class="diff-add">+   this as a minor optional follow-up, not a defect.</div><div class="diff-add">+ - No offline-guarantee concerns: this task added no CSS/JS, only Go and Markdown.</div><div class="diff-add">+ </div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-46" data-search="status: complete
+commit: 6fef39b — feat: --usage flag and tui toggle for the usage section (branch feat/usage-cost)
+tests: red confirmed (undefined optusage/selection.usage) → green, all 10 tui tests pass, full repo `go test ./...` green, gofmt/vet clean, `--help` shows `--usage`.
+concerns: none blocking; optionally the readme&#39;s &#34;browsing sessions&#34; prose could mention the usage toggle but brief only specified the flags-row &#43; new section, so left untouched.
+report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">241 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>Status: COMPLETE
+Commit: 6fef39b — feat: --usage flag and TUI toggle for the usage section (branch feat/usage-cost)
+Tests: RED confirmed (undefined optUsage/Selection.Usage) → GREEN, all 10 tui tests pass, full repo <code>go test ./...</code> green, gofmt/vet clean, <code>--help</code> shows <code>--usage</code>.
+Concerns: none blocking; optionally the README's &quot;Browsing sessions&quot; prose could mention the usage toggle but brief only specified the flags-row + new section, so left untouched.
+Report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>
