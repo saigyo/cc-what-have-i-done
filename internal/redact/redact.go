@@ -76,6 +76,7 @@ func redactTurn(r *Redactor, t *model.Turn) {
 func redactTool(r *Redactor, tc *model.ToolCall) {
 	tc.Summary = r.String(tc.Summary)
 	tc.InputJSON = r.String(tc.InputJSON)
+	tc.AgentPrompt = r.String(tc.AgentPrompt)
 	if tc.Result != nil {
 		tc.Result.Content = r.String(tc.Result.Content)
 	}

@@ -339,3 +339,15 @@ func TestNonAgentToolResultStaysMonospace(t *testing.T) {
 		t.Errorf("non-agent result must not be markdown-rendered: %q", out)
 	}
 }
+
+func TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:   "Agent",
+		Result: &model.ToolResult{Content: "**Status:** BLOCKED", IsError: true},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="agent-result-body tool-result-error"`) {
+		t.Errorf("agent error result should keep the tool-result-error affordance: %q", out)
+	}
+}
