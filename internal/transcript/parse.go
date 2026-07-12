@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
@@ -187,6 +188,54 @@ func messageMeta(raw json.RawMessage) (msgID, modelID string, usage *model.Usage
 	}
 }
 
+// taskNotification is the parsed payload of a <task-notification> user record —
+// the message a background agent's completion injects into the parent session.
+type taskNotification struct {
+	TaskID    string
+	ToolUseID string
+	Status    string
+	Summary   string
+	Result    string
+}
+
+// parseTaskNotification extracts fields from a <task-notification> payload with
+// tolerant string scanning (the payload is pseudo-XML with unescaped markdown
+// inside <result>). ok is false unless both task-id and summary are present.
+func parseTaskNotification(s string) (taskNotification, bool) {
+	t := strings.TrimLeft(s, " \t\r\n")
+	if !strings.HasPrefix(t, "<task-notification>") {
+		return taskNotification{}, false
+	}
+	n := taskNotification{
+		TaskID:    tagContent(t, "task-id"),
+		ToolUseID: tagContent(t, "tool-use-id"),
+		Status:    tagContent(t, "status"),
+		Summary:   tagContent(t, "summary"),
+		Result:    tagContent(t, "result"),
+	}
+	if n.TaskID == "" || n.Summary == "" {
+		return taskNotification{}, false
+	}
+	return n, true
+}
+
+// tagContent returns the text between the first <name> and the last </name>,
+// trimmed. The last closing tag guards <result> bodies that themselves contain
+// XML-looking text.
+func tagContent(s, name string) string {
+	open, close := "<"+name+">", "</"+name+">"
+	i := strings.Index(s, open)
+	if i < 0 {
+		return ""
+	}
+	rest := s[i+len(open):]
+	j := strings.LastIndex(rest, close)
+	if j < 0 {
+		return ""
+	}
+	return strings.TrimSpace(rest[:j])
+}
+
 // buildTurn converts a record's blocks into a model.Turn. tool_result blocks are
 // attached to their originating ToolCall via toolIndex and do not themselves
 // produce turn content. Returns nil if the record yields no displayable blocks.
@@ -196,6 +245,23 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 		turn.Kind = model.TurnUser
 	} else {
 		turn.Kind = model.TurnAssistant
+	}
+	// A background agent's completion arrives as a user record whose content is
+	// a single <task-notification> text payload. Surface it as an agent-result
+	// turn so the report attributes it to the agent, not to the user.
+	if turn.Kind == model.TurnUser && len(blocks) == 1 && blocks[0].Type == "text" {
+		if n, ok := parseTaskNotification(blocks[0].Text); ok {
+			turn.Kind = model.TurnAgentResult
+			turn.AgentID = n.TaskID
+			turn.AgentStatus = n.Status
+			turn.AgentSummary = n.Summary
+			body := n.Result
+			if body == "" {
+				body = n.Summary
+			}
+			turn.Blocks = []model.Block{{Type: model.BlockText, Text: body}}
+			return turn
+		}
 	}
 	for _, b := range blocks {
 		switch b.Type {
