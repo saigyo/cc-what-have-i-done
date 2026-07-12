@@ -74,3 +74,21 @@ func TestRedactSessionLevelFields(t *testing.T) {
 		t.Error("subagent description not redacted")
 	}
 }
+
+func TestRedactAgentPrompt(t *testing.T) {
+	s := &model.Session{Turns: []model.Turn{{
+		Kind: model.TurnAssistant,
+		Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+			Name:        "Agent",
+			AgentPrompt: "read the brief at /Users/markus/IdeaProjects/app/brief.md and use AKIAIOSFODNN7EXAMPLE",
+		}}},
+	}}}
+	Session(s, "/Users/markus")
+	got := s.Turns[0].Blocks[0].Tool.AgentPrompt
+	if strings.Contains(got, "/Users/markus") {
+		t.Errorf("agent prompt home path not rewritten: %q", got)
+	}
+	if strings.Contains(got, "AKIA") {
+		t.Errorf("agent prompt secret not redacted: %q", got)
+	}
+}

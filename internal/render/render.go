@@ -359,8 +359,12 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 	if tc.Result != nil && tc.Result.Content != "" {
 		if tc.IsAgent() {
 			// A subagent's result is markdown too; render it rather than showing
-			// a monospace block.
-			b.WriteString(`<div class="agent-result-body">` + string(Markdown(tc.Result.Content)) + `</div>`)
+			// a monospace block — but keep the error affordance for failed runs.
+			cls := "agent-result-body"
+			if tc.Result.IsError {
+				cls += " tool-result-error"
+			}
+			b.WriteString(`<div class="` + cls + `">` + string(Markdown(tc.Result.Content)) + `</div>`)
 		} else {
 			cls := "tool-result"
 			if tc.Result.IsError {
