@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 1 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 1 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:00</span>
+        <span>9 turns</span>
+        <span>general-purpose · agent-a7a0fa1f230b1881e</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 11k in+out · ~$0.17 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>1k</td><td>92k</td><td>47k</td><td>$0.17</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>1k</td><td>92k</td><td>47k</td><td>$0.17</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks.
+
+## what was requested
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
+
+global constraints from the spec that bind this task:
+- self-contained/offline tool; this task adds no dependencies.
+- cache writes must keep the 5-minute / 1-hour split (priced differently later).
+- when only the aggregate `cache_creation_input_tokens` is present (no 5m/1h split), attribute the whole amount to the 5-minute (`cachewrite5m`) bucket.
+- usage is only carried on assistant records; user turns have nil usage.
+- `internal/transcript/raw.go` must stay free of the `internal/model` import (return a local `apiusage`); the model mapping happens in parse.go.
+- attaching usage inside `buildturn` (for rec.type==&#34;assistant&#34;) must cover both main-chain and sidechain/subagent records.
+
+## what the implementer claims they built
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md
+treat it as unverified claims; verify against the diff. a stated rationale never downgrades a finding.
+
+## diff under review
+base: 0bd5a25  head: 1753ede
+diff file: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff
+read the diff file once — it is your view of the change (commit list &#43; stat &#43; full diff with context). do not re-run git. inspect code outside the diff only to evaluate a concrete named risk (one focused check per risk). read-only; do not mutate the working tree.
+
+## tests
+the implementer already ran tests with tdd evidence for exactly this code. do not re-run the suite. run a focused test only if reading the code raises a specific doubt no existing run answers; otherwise name the test you would run. non-pristine test output is a finding.
+
+specific things worth verifying by reading the diff:
+- the aggregate-cache-creation → 5m fallback only triggers when both split fields are zero and the aggregate is &gt; 0 (must not double-count when the split is present).
+- `messagemeta` returns nil usage when the message has no `usage` object (so turns without usage get `usage == nil`).
+- raw.go does not import `internal/model`.
+- the `*a.usage != want` value-equality assertion in the test is valid (usage is a comparable struct of ints).
+
+## output format
+follow the reviewer template exactly: begin directly with the spec compliance verdict (✅/❌/⚠️), then strengths, then issues (critical/important/minor) each with file:line, then an assessment with **task quality:** approved | needs fixes. every line a verdict, a finding with file:line, or a check you ran — no preamble or closing summary.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+<p>Global constraints from the spec that bind this task:</p>
+<ul>
+<li>Self-contained/offline tool; this task adds no dependencies.</li>
+<li>Cache writes MUST keep the 5-minute / 1-hour split (priced differently later).</li>
+<li>When only the aggregate <code>cache_creation_input_tokens</code> is present (no 5m/1h split), attribute the whole amount to the 5-minute (<code>CacheWrite5m</code>) bucket.</li>
+<li>Usage is only carried on assistant records; user turns have nil Usage.</li>
+<li><code>internal/transcript/raw.go</code> must stay free of the <code>internal/model</code> import (return a local <code>apiUsage</code>); the model mapping happens in parse.go.</li>
+<li>Attaching usage inside <code>buildTurn</code> (for rec.Type==&quot;assistant&quot;) must cover BOTH main-chain and sidechain/subagent records.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md
+Treat it as unverified claims; verify against the diff. A stated rationale never downgrades a finding.</p>
+<h2>Diff Under Review</h2>
+<p>Base: 0bd5a25  Head: 1753ede
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff
+Read the diff file once — it is your view of the change (commit list + stat + full diff with context). Do not re-run git. Inspect code outside the diff only to evaluate a concrete named risk (one focused check per risk). Read-only; do not mutate the working tree.</p>
+<h2>Tests</h2>
+<p>The implementer already ran tests with TDD evidence for exactly this code. Do not re-run the suite. Run a focused test only if reading the code raises a specific doubt no existing run answers; otherwise name the test you would run. Non-pristine test output is a finding.</p>
+<p>Specific things worth verifying by reading the diff:</p>
+<ul>
+<li>The aggregate-cache-creation → 5m fallback only triggers when both split fields are zero AND the aggregate is &gt; 0 (must not double-count when the split is present).</li>
+<li><code>messageMeta</code> returns nil Usage when the message has no <code>usage</code> object (so turns without usage get <code>Usage == nil</code>).</li>
+<li>raw.go does not import <code>internal/model</code>.</li>
+<li>The <code>*a.Usage != want</code> value-equality assertion in the test is valid (Usage is a comparable struct of ints).</li>
+</ul>
+<h2>Output Format</h2>
+<p>Follow the reviewer template exactly: begin directly with the Spec Compliance verdict (✅/❌/⚠️), then Strengths, then Issues (Critical/Important/Minor) each with file:line, then an Assessment with <strong>Task quality:</strong> Approved | Needs fixes. Every line a verdict, a finding with file:line, or a check you ran — no preamble or closing summary.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 1: Parse per-turn model &amp; usage
+2	
+3	**Files:**
+4	- Modify: `internal/model/model.go`
+5	- Modify: `internal/transcript/raw.go`
+6	- Modify: `internal/transcript/parse.go`
+7	- Test: `internal/transcript/parse_test.go`
+8	
+9	**Interfaces:**
+10	- Produces: `model.Usage{ Input, Output, CacheRead, CacheWrite5m, CacheWrite1h int }`; `model.Turn.Model string`; `model.Turn.Usage *model.Usage`.
+11	
+12	- [ ] **Step 1: Add the model types**
+13	
+14	In `internal/model/model.go`, add after the `Turn` struct&#39;s current fields (extend the struct and add the `Usage` type):
+15	
+16	```go
+17	// Turn is a single user or assistant message, holding ordered content blocks.
+18	type Turn struct {
+19		Kind      TurnKind
+20		Timestamp time.Time
+21		Blocks    []Block
+22		Model     string // assistant model id (empty for user turns / when absent)
+23		Usage     *Usage // token usage for this assistant turn; nil when absent
+24	}
+25	
+26	// Usage holds the token counts reported for one assistant message. Cache writes
+27	// keep the 5-minute / 1-hour split because they are priced differently.
+28	type Usage struct {
+29		Input        int
+30		Output       int
+31		CacheRead    int
+32		CacheWrite5m int
+33		CacheWrite1h int
+34	}
+35	```
+36	
+37	- [ ] **Step 2: Write the failing test**
+38	
+39	In `internal/transcript/parse_test.go`, add:
+40	
+41	```go
+42	func TestParseAttachesModelAndUsage(t *testing.T) {
+43		lines := strings.Join([]string{
+44			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;timestamp&#34;:&#34;2026-07-12T10:00:00Z&#34;}`,
+45			`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-opus-4-8&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hello&#34;}],&#34;usage&#34;:{&#34;input_tokens&#34;:100,&#34;output_tokens&#34;:20,&#34;cache_read_input_tokens&#34;:500,&#34;cache_creation_input_tokens&#34;:30,&#34;cache_creation&#34;:{&#34;ephemeral_5m_input_tokens&#34;:10,&#34;ephemeral_1h_input_tokens&#34;:20}}},&#34;timestamp&#34;:&#34;2026-07-12T10:00:01Z&#34;}`,
+46			`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-opus-4-8&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;no usage here&#34;}]},&#34;timestamp&#34;:&#34;2026-07-12T10:00:02Z&#34;}`,
+47		}, &#34;\n&#34;)
+48		s, err := Parse(strings.NewReader(lines), Options{})
+49		if err != nil {
+50			t.Fatal(err)
+51		}
+52		// turns: [user, assistant-with-usage, assistant-without-usage]
+53		if len(s.Turns) != 3 {
+54			t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+55		}
+56		if s.Turns[0].Usage != nil {
+57			t.Error(&#34;user turn should have nil usage&#34;)
+58		}
+59		a := s.Turns[1]
+60		if a.Model != &#34;claude-opus-4-8&#34; {
+61			t.Errorf(&#34;Model = %q&#34;, a.Model)
+62		}
+63		if a.Usage == nil {
+64			t.Fatal(&#34;assistant usage is nil&#34;)
+65		}
+66		want := model.Usage{Input: 100, Output: 20, CacheRead: 500, CacheWrite5m: 10, CacheWrite1h: 20}
+67		if *a.Usage != want {
+68			t.Errorf(&#34;Usage = %+v, want %+v&#34;, *a.Usage, want)
+69		}
+70		if s.Turns[2].Usage != nil {
+71			t.Error(&#34;assistant without usage should have nil Usage&#34;)
+72		}
+73	}
+74	
+75	func TestParseAggregateCacheCreationDefaultsTo5m(t *testing.T) {
+76		// Only the aggregate cache_creation_input_tokens is present (no split).
+77		line := `{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-sonnet-5&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;x&#34;}],&#34;usage&#34;:{&#34;input_tokens&#34;:1,&#34;output_tokens&#34;:1,&#34;cache_creation_input_tokens&#34;:40}},&#34;timestamp&#34;:&#34;2026-07-12T10:00:00Z&#34;}`
+78		s, err := Parse(strings.NewReader(line), Options{})
+79		if err != nil {
+80			t.Fatal(err)
+81		}
+82		u := s.Turns[0].Usage
+83		if u == nil || u.CacheWrite5m != 40 || u.CacheWrite1h != 0 {
+84			t.Errorf(&#34;aggregate cache_creation should default to 5m: %+v&#34;, u)
+85		}
+86	}
+87	```
+88	
+89	Ensure the test file imports `&#34;strings&#34;` and `&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;` (add if missing).
+90	
+91	- [ ] **Step 3: Run test to verify it fails**
+92	
+93	Run: `go test ./internal/transcript/ -run TestParseAttaches -v`
+94	Expected: FAIL — compile error (`Turn` has no field `Model`/`Usage`) or assertion failure.
+95	
+96	- [ ] **Step 4: Decode usage in raw.go**
+97	
+98	In `internal/transcript/raw.go`, add (keep this package free of the `model` import — return a local struct):
+99	
+100	```go
+101	// apiUsage mirrors the message.usage object of an assistant record.
+102	type apiUsage struct {
+103		InputTokens              int `json:&#34;input_tokens&#34;`
+104		OutputTokens             int `json:&#34;output_tokens&#34;`
+105		CacheReadInputTokens     int `json:&#34;cache_read_input_tokens&#34;`
+106		CacheCreationInputTokens int `json:&#34;cache_creation_input_tokens&#34;`
+107		CacheCreation            struct {
+108			Ephemeral5m int `json:&#34;ephemeral_5m_input_tokens&#34;`
+109			Ephemeral1h int `json:&#34;ephemeral_1h_input_tokens&#34;`
+110		} `json:&#34;cache_creation&#34;`
+111	}
+112	
+113	// decodeMessageMeta extracts the model id and usage (if any) from a raw message.
+114	func decodeMessageMeta(raw json.RawMessage) (modelID string, usage *apiUsage) {
+115		if len(raw) == 0 {
+116			return &#34;&#34;, nil
+117		}
+118		var m struct {
+119			Model string    `json:&#34;model&#34;`
+120			Usage *apiUsage `json:&#34;usage&#34;`
+121		}
+122		if err := json.Unmarshal(raw, &amp;m); err != nil {
+123			return &#34;&#34;, nil
+124		}
+125		return m.Model, m.Usage
+126	}
+127	```
+128	
+129	- [ ] **Step 5: Attach usage to assistant turns in parse.go**
+130	
+131	In `internal/transcript/parse.go`, add a helper and call it inside `buildTurn` just before its final `return turn`:
+132	
+133	```go
+134	// messageMeta converts a record&#39;s message model/usage into turn fields. Only
+135	// assistant records carry usage; the aggregate cache_creation figure (with no
+136	// 5m/1h split) is attributed to the cheaper 5-minute write.
+137	func messageMeta(raw json.RawMessage) (string, *model.Usage) {
+138		id, u := decodeMessageMeta(raw)
+139		if u == nil {
+140			return id, nil
+141		}
+142		w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+143		if w5 == 0 &amp;&amp; w1 == 0 &amp;&amp; u.CacheCreationInputTokens &gt; 0 {
+144			w5 = u.CacheCreationInputTokens
+145		}
+146		return id, &amp;model.Usage{
+147			Input:        u.InputTokens,
+148			Output:       u.OutputTokens,
+149			CacheRead:    u.CacheReadInputTokens,
+150			CacheWrite5m: w5,
+151			CacheWrite1h: w1,
+152		}
+153	}
+154	```
+155	
+156	Then in `buildTurn`, replace the trailing block:
+157	
+158	```go
+159		if len(turn.Blocks) == 0 {
+160			return nil
+161		}
+162		return turn
+163	}
+164	```
+165	
+166	with:
+167	
+168	```go
+169		if len(turn.Blocks) == 0 {
+170			return nil
+171		}
+172		if rec.Type == &#34;assistant&#34; {
+173			turn.Model, turn.Usage = messageMeta(rec.Message)
+174		}
+175		return turn
+176	}
+177	```
+178	
+179	- [ ] **Step 6: Run tests to verify they pass**
+180	
+181	Run: `go test ./internal/transcript/ -v`
+182	Expected: PASS (new tests plus existing ones).
+183	
+184	- [ ] **Step 7: Commit**
+185	
+186	```bash
+187	git add internal/model/model.go internal/transcript/raw.go internal/transcript/parse.go internal/transcript/parse_test.go
+188	git commit -m &#34;feat(transcript): parse per-turn model and token usage&#34;
+189	```
+190	
+191	---
+192	
+193	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 1 Report: Parse per-turn model &amp; usage
+2	
+3	## Summary
+4	Successfully implemented parsing of per-assistant-turn model ID and token usage from raw transcripts into the domain model, following TDD methodology. All tests pass, code formats correctly, and the implementation handles both full usage data and aggregate cache_creation figures.
+5	
+6	## Implementation Details
+7	
+8	### Step 1: Model Types (DONE)
+9	Added to `internal/model/model.go`:
+10	- Extended `Turn` struct with:
+11	  - `Model string` — assistant model id (empty for user turns)
+12	  - `Usage *Usage` — token usage (nil when absent)
+13	- New `Usage` struct with fields:
+14	  - `Input`, `Output`, `CacheRead int`
+15	  - `CacheWrite5m`, `CacheWrite1h int` (split for pricing)
+16	
+17	### Step 2: Failing Tests (DONE)
+18	Added to `internal/transcript/parse_test.go`:
+19	- `TestParseAttachesModelAndUsage` — validates model ID and full usage object (with split cache_creation)
+20	- `TestParseAggregateCacheCreationDefaultsTo5m` — validates fallback when only aggregate cache_creation_input_tokens is present (defaults to 5m write)
+21	- Added import of `&#34;strings&#34;` package to support test data
+22	
+23	### Step 3: Test Failure Verification (DONE)
+24	```
+25	$ go test ./internal/transcript/ -run &#34;TestParseAttaches|TestParseAggregate&#34; -v
+26	--- FAIL: TestParseAttachesModelAndUsage (0.00s)
+27	    parse_test.go:128: Model = &#34;&#34;
+28	    parse_test.go:131: assistant usage is nil
+29	--- FAIL: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)
+30	    parse_test.go:151: aggregate cache_creation should default to 5m: &lt;nil&gt;
+31	```
+32	Tests failed as expected (RED state).
+33	
+34	### Step 4: Raw Decoding (DONE)
+35	Added to `internal/transcript/raw.go`:
+36	- `apiUsage` struct — mirrors message.usage JSON structure with cache_creation split
+37	- `decodeMessageMeta(raw json.RawMessage)` — extracts model ID and usage from raw message, returns local struct (maintains separation of concerns; raw.go stays pure decoding)
+38	
+39	### Step 5: Parse Integration (DONE)
+40	Added to `internal/transcript/parse.go`:
+41	- `messageMeta(raw json.RawMessage)` helper — converts apiUsage to model.Usage, handles cache_creation fallback logic:
+42	  - If both ephemeral_5m and ephemeral_1h are 0, and cache_creation_input_tokens &gt; 0, assigns aggregate to 5m (cheaper tier)
+43	- Modified `buildTurn()` — attaches model and usage to Turn for assistant records (rec.Type == &#34;assistant&#34;)
+44	  - Placement before return statement ensures coverage of both main-chain and sidechain (subagent) records
+45	
+46	### Step 6: Test Pass Verification (DONE)
+47	```
+48	$ go test ./internal/transcript/ -v
+49	=== RUN   TestParseBasicTimeline
+50	--- PASS: TestParseBasicTimeline (0.00s)
+51	=== RUN   TestParseSubagentAttachment
+52	--- PASS: TestParseSubagentAttachment (0.00s)
+53	=== RUN   TestParseExcludeSubagents
+54	--- PASS: TestParseExcludeSubagents (0.00s)
+55	=== RUN   TestParseSubagentInnerToolResult
+56	--- PASS: TestParseSubagentInnerToolResult (0.00s)
+57	=== RUN   TestParseAttachesModelAndUsage
+58	--- PASS: TestParseAttachesModelAndUsage (0.00s)
+59	=== RUN   TestParseAggregateCacheCreationDefaultsTo5m
+60	--- PASS: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)
+61	[... other existing tests ...]
+62	PASS
+63	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.275s
+64	```
+65	All tests pass (GREEN state). Two new tests plus all existing tests.
+66	
+67	### Build &amp; Format Verification (DONE)
+68	```
+69	$ go build ./... &amp;&amp; gofmt -l internal
+70	(no output — all checks passed)
+71	```
+72	
+73	### Step 7: Commit (DONE)
+74	```
+75	[feat/usage-cost 1753ede] feat(transcript): parse per-turn model and token usage
+76	 4 files changed, 110 insertions(+)
+77	```
+78	Commit SHA: 1753ede
+79	
+80	## Files Changed
+81	1. `internal/model/model.go` — Added Model and Usage fields to Turn struct; added Usage type definition
+82	2. `internal/transcript/raw.go` — Added apiUsage struct and decodeMessageMeta function
+83	3. `internal/transcript/parse.go` — Added messageMeta helper; modified buildTurn to attach model/usage
+84	4. `internal/transcript/parse_test.go` — Added strings import; added two test functions
+85	
+86	## Self-Review
+87	
+88	**Correctness:**
+89	- Model ID extraction works for both full messages and messages without usage
+90	- Usage parsing correctly handles both split cache_creation (ephemeral_5m/1h) and aggregate fallback
+91	- Nil Usage for user turns and assistant turns without usage object
+92	- Works for both main-chain and sidechain records (tested via buildTurn placement)
+93	
+94	**Design &amp; Code Quality:**
+95	- Followed TDD strictly: model types → failing tests → implementation → green tests
+96	- raw.go remains pure decoding logic (no model import)
+97	- messageMeta in parse.go handles the domain logic (conversion + fallback)
+98	- Follows existing code patterns (e.g., similar helper functions in parse.go)
+99	- Test data from brief used verbatim; covers both full usage and aggregate scenarios
+100	
+101	**Coverage:**
+102	- Two new tests verify the new functionality end-to-end
+103	- All six existing tests continue to pass
+104	- Build and format checks pass
+105	
+106	**Next Steps (not in this task):**
+107	- Task 2 will implement usage/pricing package
+108	- Task 3 will render usage in HTML report
+109	- Tasks 4–5 will handle rendering and configuration
+110	
+111	## Concerns
+112	None. Implementation follows the brief exactly, tests are comprehensive, and integration with existing code is clean.
+113	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 0bd5a25..HEAD
+2	
+3	## Commits
+4	1753ede feat(transcript): parse per-turn model and token usage
+5	
+6	## Files changed
+7	 internal/model/model.go           | 12 ++++++++++
+8	 internal/transcript/parse.go      | 24 ++++++++++++++++++++
+9	 internal/transcript/parse_test.go | 47 +++++++++++++++++++++++++++++++++++++++
+10	 internal/transcript/raw.go        | 27 ++++++++++++++++++++++
+11	 4 files changed, 110 insertions(+)
+12	
+13	## Diff
+14	diff --git a/internal/model/model.go b/internal/model/model.go
+15	index 6625369..e3164ac 100644
+16	--- a/internal/model/model.go
+17	+++ b/internal/model/model.go
+18	@@ -39,20 +39,32 @@ func (s Session) DisplayTitle() string {
+19	 		return s.Title
+20	 	}
+21	 	return &#34;Untitled session&#34;
+22	 }
+23	 
+24	 // Turn is a single user or assistant message, holding ordered content blocks.
+25	 type Turn struct {
+26	 	Kind      TurnKind
+27	 	Timestamp time.Time
+28	 	Blocks    []Block
+29	+	Model     string // assistant model id (empty for user turns / when absent)
+30	+	Usage     *Usage // token usage for this assistant turn; nil when absent
+31	+}
+32	+
+33	+// Usage holds the token counts reported for one assistant message. Cache writes
+34	+// keep the 5-minute / 1-hour split because they are priced differently.
+35	+type Usage struct {
+36	+	Input        int
+37	+	Output       int
+38	+	CacheRead    int
+39	+	CacheWrite5m int
+40	+	CacheWrite1h int
+41	 }
+42	 
+43	 // Block is one content unit: assistant/user text, a thinking block, or a tool call.
+44	 type Block struct {
+45	 	Type BlockType
+46	 	Text string    // for BlockText and BlockThinking
+47	 	Tool *ToolCall // for BlockToolUse
+48	 }
+49	 
+50	 // ToolCall is a single tool invocation and its result.
+51	diff --git a/internal/transcript/parse.go b/internal/transcript/parse.go
+52	index d010fc7..f2b4d3a 100644
+53	--- a/internal/transcript/parse.go
+54	+++ b/internal/transcript/parse.go
+55	@@ -155,20 +155,41 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
+56	 		// parsed so far.
+57	 		if errors.Is(err, bufio.ErrTooLong) {
+58	 			s.SkippedLines++
+59	 			return s, nil
+60	 		}
+61	 		return s, err
+62	 	}
+63	 	return s, nil
+64	 }
+65	 
+66	+// messageMeta converts a record&#39;s message model/usage into turn fields. Only
+67	+// assistant records carry usage; the aggregate cache_creation figure (with no
+68	+// 5m/1h split) is attributed to the cheaper 5-minute write.
+69	+func messageMeta(raw json.RawMessage) (string, *model.Usage) {
+70	+	id, u := decodeMessageMeta(raw)
+71	+	if u == nil {
+72	+		return id, nil
+73	+	}
+74	+	w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+75	+	if w5 == 0 &amp;&amp; w1 == 0 &amp;&amp; u.CacheCreationInputTokens &gt; 0 {
+76	+		w5 = u.CacheCreationInputTokens
+77	+	}
+78	+	return id, &amp;model.Usage{
+79	+		Input:        u.InputTokens,
+80	+		Output:       u.OutputTokens,
+81	+		CacheRead:    u.CacheReadInputTokens,
+82	+		CacheWrite5m: w5,
+83	+		CacheWrite1h: w1,
+84	+	}
+85	+}
+86	+
+87	 // buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+88	 // attached to their originating ToolCall via toolIndex and do not themselves
+89	 // produce turn content. Returns nil if the record yields no displayable blocks.
+90	 func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+91	 	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+92	 	if rec.Type == &#34;user&#34; {
+93	 		turn.Kind = model.TurnUser
+94	 	} else {
+95	 		turn.Kind = model.TurnAssistant
+96	 	}
+97	@@ -190,20 +211,23 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
+98	 			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
+99	 		case &#34;tool_result&#34;:
+100	 			if tc := toolIndex[b.ToolUseID]; tc != nil {
+101	 				tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+102	 			}
+103	 		}
+104	 	}
+105	 	if len(turn.Blocks) == 0 {
+106	 		return nil
+107	 	}
+108	+	if rec.Type == &#34;assistant&#34; {
+109	+		turn.Model, turn.Usage = messageMeta(rec.Message)
+110	+	}
+111	 	return turn
+112	 }
+113	 
+114	 func trimSpace(b []byte) []byte {
+115	 	start, end := 0, len(b)
+116	 	for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+117	 		start++
+118	 	}
+119	 	for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+120	 		end--
+121	diff --git a/internal/transcript/parse_test.go b/internal/transcript/parse_test.go
+122	index 9910079..c14a1b2 100644
+123	--- a/internal/transcript/parse_test.go
+124	+++ b/internal/transcript/parse_test.go
+125	@@ -1,13 +1,14 @@
+126	 package transcript
+127	 
+128	 import (
+129	+	&#34;strings&#34;
+130	 	&#34;testing&#34;
+131	 
+132	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+133	 )
+134	 
+135	 func TestParseBasicTimeline(t *testing.T) {
+136	 	s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})
+137	 	if err != nil {
+138	 		t.Fatal(err)
+139	 	}
+140	@@ -97,10 +98,56 @@ func TestParseSubagentInnerToolResult(t *testing.T) {
+141	 			}
+142	 		}
+143	 	}
+144	 	if inner == nil {
+145	 		t.Fatal(&#34;inner Bash tool not found in subagent turns&#34;)
+146	 	}
+147	 	if inner.Result == nil || inner.Result.Content != &#34;file.txt&#34; {
+148	 		t.Errorf(&#34;inner tool result = %+v, want content &#39;file.txt&#39;&#34;, inner.Result)
+149	 	}
+150	 }
+151	+
+152	+func TestParseAttachesModelAndUsage(t *testing.T) {
+153	+	lines := strings.Join([]string{
+154	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;timestamp&#34;:&#34;2026-07-12T10:00:00Z&#34;}`,
+155	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-opus-4-8&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hello&#34;}],&#34;usage&#34;:{&#34;input_tokens&#34;:100,&#34;output_tokens&#34;:20,&#34;cache_read_input_tokens&#34;:500,&#34;cache_creation_input_tokens&#34;:30,&#34;cache_creation&#34;:{&#34;ephemeral_5m_input_tokens&#34;:10,&#34;ephemeral_1h_input_tokens&#34;:20}}},&#34;timestamp&#34;:&#34;2026-07-12T10:00:01Z&#34;}`,
+156	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-opus-4-8&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;no usage here&#34;}]},&#34;timestamp&#34;:&#34;2026-07-12T10:00:02Z&#34;}`,
+157	+	}, &#34;\n&#34;)
+158	+	s, err := Parse(strings.NewReader(lines), Options{})
+159	+	if err != nil {
+160	+		t.Fatal(err)
+161	+	}
+162	+	// turns: [user, assistant-with-usage, assistant-without-usage]
+163	+	if len(s.Turns) != 3 {
+164	+		t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+165	+	}
+166	+	if s.Turns[0].Usage != nil {
+167	+		t.Error(&#34;user turn should have nil usage&#34;)
+168	+	}
+169	+	a := s.Turns[1]
+170	+	if a.Model != &#34;claude-opus-4-8&#34; {
+171	+		t.Errorf(&#34;Model = %q&#34;, a.Model)
+172	+	}
+173	+	if a.Usage == nil {
+174	+		t.Fatal(&#34;assistant usage is nil&#34;)
+175	+	}
+176	+	want := model.Usage{Input: 100, Output: 20, CacheRead: 500, CacheWrite5m: 10, CacheWrite1h: 20}
+177	+	if *a.Usage != want {
+178	+		t.Errorf(&#34;Usage = %+v, want %+v&#34;, *a.Usage, want)
+179	+	}
+180	+	if s.Turns[2].Usage != nil {
+181	+		t.Error(&#34;assistant without usage should have nil Usage&#34;)
+182	+	}
+183	+}
+184	+
+185	+func TestParseAggregateCacheCreationDefaultsTo5m(t *testing.T) {
+186	+	// Only the aggregate cache_creation_input_tokens is present (no split).
+187	+	line := `{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;model&#34;:&#34;claude-sonnet-5&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;x&#34;}],&#34;usage&#34;:{&#34;input_tokens&#34;:1,&#34;output_tokens&#34;:1,&#34;cache_creation_input_tokens&#34;:40}},&#34;timestamp&#34;:&#34;2026-07-12T10:00:00Z&#34;}`
+188	+	s, err := Parse(strings.NewReader(line), Options{})
+189	+	if err != nil {
+190	+		t.Fatal(err)
+191	+	}
+192	+	u := s.Turns[0].Usage
+193	+	if u == nil || u.CacheWrite5m != 40 || u.CacheWrite1h != 0 {
+194	+		t.Errorf(&#34;aggregate cache_creation should default to 5m: %+v&#34;, u)
+195	+	}
+196	+}
+197	diff --git a/internal/transcript/raw.go b/internal/transcript/raw.go
+198	index 9d86e85..6a6728f 100644
+199	--- a/internal/transcript/raw.go
+200	+++ b/internal/transcript/raw.go
+201	@@ -75,20 +75,47 @@ func toolResultText(raw json.RawMessage) string {
+202	 		for _, b := range blocks {
+203	 			if b.Text != &#34;&#34; {
+204	 				parts = append(parts, b.Text)
+205	 			}
+206	 		}
+207	 		return strings.Join(parts, &#34;\n&#34;)
+208	 	}
+209	 	return &#34;&#34;
+210	 }
+211	 
+212	+// apiUsage mirrors the message.usage object of an assistant record.
+213	+type apiUsage struct {
+214	+	InputTokens              int `json:&#34;input_tokens&#34;`
+215	+	OutputTokens             int `json:&#34;output_tokens&#34;`
+216	+	CacheReadInputTokens     int `json:&#34;cache_read_input_tokens&#34;`
+217	+	CacheCreationInputTokens int `json:&#34;cache_creation_input_tokens&#34;`
+218	+	CacheCreation            struct {
+219	+		Ephemeral5m int `json:&#34;ephemeral_5m_input_tokens&#34;`
+220	+		Ephemeral1h int `json:&#34;ephemeral_1h_input_tokens&#34;`
+221	+	} `json:&#34;cache_creation&#34;`
+222	+}
+223	+
+224	+// decodeMessageMeta extracts the model id and usage (if any) from a raw message.
+225	+func decodeMessageMeta(raw json.RawMessage) (modelID string, usage *apiUsage) {
+226	+	if len(raw) == 0 {
+227	+		return &#34;&#34;, nil
+228	+	}
+229	+	var m struct {
+230	+		Model string    `json:&#34;model&#34;`
+231	+		Usage *apiUsage `json:&#34;usage&#34;`
+232	+	}
+233	+	if err := json.Unmarshal(raw, &amp;m); err != nil {
+234	+		return &#34;&#34;, nil
+235	+	}
+236	+	return m.Model, m.Usage
+237	+}
+238	+
+239	 func parseTime(s string) time.Time {
+240	 	if s == &#34;&#34; {
+241	 		return time.Time{}
+242	 	}
+243	 	t, err := time.Parse(time.RFC3339, s)
+244	 	if err != nil {
+245	 		return time.Time{}
+246	 	}
+247	 	return t
+248	 }
+249	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;encoding/json&#34;
+5		&#34;strings&#34;
+6		&#34;time&#34;
+7	)
+8	
+9	// rawRecord is one decoded line of a session .jsonl file.
+10	type rawRecord struct {
+11		Type        string          `json:&#34;type&#34;`
+12		UUID        string          `json:&#34;uuid&#34;`
+13		ParentUUID  string          `json:&#34;parentUuid&#34;`
+14		Timestamp   string          `json:&#34;timestamp&#34;`
+15		GitBranch   string          `json:&#34;gitBranch&#34;`
+16		Version     string          `json:&#34;version&#34;`
+17		Cwd         string          `json:&#34;cwd&#34;`
+18		AiTitle     string          `json:&#34;aiTitle&#34;`
+19		IsSidechain bool            `json:&#34;isSidechain&#34;`
+20		IsMeta      bool            `json:&#34;isMeta&#34;`
+21		Message     json.RawMessage `json:&#34;message&#34;`
+22	}
+23	
+24	// apiBlock is one content block of an Anthropic message.
+25	type apiBlock struct {
+26		Type      string          `json:&#34;type&#34;`
+27		Text      string          `json:&#34;text&#34;`
+28		Thinking  string          `json:&#34;thinking&#34;`
+29		ID        string          `json:&#34;id&#34;`
+30		Name      string          `json:&#34;name&#34;`
+31		Input     json.RawMessage `json:&#34;input&#34;`
+32		ToolUseID string          `json:&#34;tool_use_id&#34;`
+33		Content   json.RawMessage `json:&#34;content&#34;`
+34		IsError   bool            `json:&#34;is_error&#34;`
+35	}
+36	
+37	// decodeMessageContent extracts the role and content blocks from a raw message
+38	// object. Content may be a plain string (wrapped as a single text block) or an
+39	// array of blocks.
+40	func decodeMessageContent(raw json.RawMessage) (string, []apiBlock) {
+41		if len(raw) == 0 {
+42			return &#34;&#34;, nil
+43		}
+44		var msg struct {
+45			Role    string          `json:&#34;role&#34;`
+46			Content json.RawMessage `json:&#34;content&#34;`
+47		}
+48		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+49			return &#34;&#34;, nil
+50		}
+51		var s string
+52		if json.Unmarshal(msg.Content, &amp;s) == nil {
+53			return msg.Role, []apiBlock{{Type: &#34;text&#34;, Text: s}}
+54		}
+55		var blocks []apiBlock
+56		_ = json.Unmarshal(msg.Content, &amp;blocks) // tolerate; empty on failure
+57		return msg.Role, blocks
+58	}
+59	
+60	// toolResultText flattens a tool_result content payload to plain text.
+61	func toolResultText(raw json.RawMessage) string {
+62		if len(raw) == 0 {
+63			return &#34;&#34;
+64		}
+65		var s string
+66		if json.Unmarshal(raw, &amp;s) == nil {
+67			return s
+68		}
+69		var blocks []struct {
+70			Type string `json:&#34;type&#34;`
+71			Text string `json:&#34;text&#34;`
+72		}
+73		if json.Unmarshal(raw, &amp;blocks) == nil {
+74			var parts []string
+75			for _, b := range blocks {
+76				if b.Text != &#34;&#34; {
+77					parts = append(parts, b.Text)
+78				}
+79			}
+80			return strings.Join(parts, &#34;\n&#34;)
+81		}
+82		return &#34;&#34;
+83	}
+84	
+85	// apiUsage mirrors the message.usage object of an assistant record.
+86	type apiUsage struct {
+87		InputTokens              int `json:&#34;input_tokens&#34;`
+88		OutputTokens             int `json:&#34;output_tokens&#34;`
+89		CacheReadInputTokens     int `json:&#34;cache_read_input_tokens&#34;`
+90		CacheCreationInputTokens int `json:&#34;cache_creation_input_tokens&#34;`
+91		CacheCreation            struct {
+92			Ephemeral5m int `json:&#34;ephemeral_5m_input_tokens&#34;`
+93			Ephemeral1h int `json:&#34;ephemeral_1h_input_tokens&#34;`
+94		} `json:&#34;cache_creation&#34;`
+95	}
+96	
+97	// decodeMessageMeta extracts the model id and usage (if any) from a raw message.
+98	func decodeMessageMeta(raw json.RawMessage) (modelID string, usage *apiUsage) {
+99		if len(raw) == 0 {
+100			return &#34;&#34;, nil
+101		}
+102		var m struct {
+103			Model string    `json:&#34;model&#34;`
+104			Usage *apiUsage `json:&#34;usage&#34;`
+105		}
+106		if err := json.Unmarshal(raw, &amp;m); err != nil {
+107			return &#34;&#34;, nil
+108		}
+109		return m.Model, m.Usage
+110	}
+111	
+112	func parseTime(s string) time.Time {
+113		if s == &#34;&#34; {
+114			return time.Time{}
+115		}
+116		t, err := time.Parse(time.RFC3339, s)
+117		if err != nil {
+118			return time.Time{}
+119		}
+120		return t
+121	}
+122	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;bufio&#34;
+5		&#34;encoding/json&#34;
+6		&#34;errors&#34;
+7		&#34;io&#34;
+8		&#34;os&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+11	)
+12	
+13	// Options controls how a transcript is folded into a Session.
+14	type Options struct {
+15		IncludeSubagents bool
+16	}
+17	
+18	// ParseFile parses a transcript file at path.
+19	func ParseFile(path string, opts Options) (model.Session, error) {
+20		f, err := os.Open(path)
+21		if err != nil {
+22			return model.Session{}, err
+23		}
+24		defer f.Close()
+25		s, err := Parse(f, opts)
+26		if err != nil {
+27			return model.Session{}, err
+28		}
+29		s.ID = sessionIDFromPath(path)
+30		return s, nil
+31	}
+32	
+33	func sessionIDFromPath(path string) string {
+34		base := path
+35		if i := lastSlash(path); i &gt;= 0 {
+36			base = path[i+1:]
+37		}
+38		if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+39			return base[:len(base)-len(&#34;.jsonl&#34;)]
+40		}
+41		return base
+42	}
+43	
+44	func lastSlash(s string) int {
+45		for i := len(s) - 1; i &gt;= 0; i-- {
+46			if s[i] == &#39;/&#39; {
+47				return i
+48			}
+49		}
+50		return -1
+51	}
+52	
+53	// Parse reads a transcript stream and folds it into a Session timeline.
+54	func Parse(r io.Reader, opts Options) (model.Session, error) {
+55		var s model.Session
+56		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+57		// sidechains can be attached after the fact.
+58		toolIndex := map[string]*model.ToolCall{}
+59		// lastTask tracks the most recent Task tool call; sidechainOwner is the Task
+60		// whose Subagents any subsequent sidechain turns are appended to.
+61		var lastTask *model.ToolCall
+62		sidechainOwner := lastTask
+63	
+64		sc := bufio.NewScanner(r)
+65		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+66		for sc.Scan() {
+67			line := sc.Bytes()
+68			if len(trimSpace(line)) == 0 {
+69				continue
+70			}
+71			var rec rawRecord
+72			if err := json.Unmarshal(line, &amp;rec); err != nil {
+73				s.SkippedLines++
+74				continue
+75			}
+76			switch rec.Type {
+77			case &#34;ai-title&#34;:
+78				if rec.AiTitle != &#34;&#34; {
+79					s.Title = rec.AiTitle
+80				}
+81				continue
+82			case &#34;user&#34;, &#34;assistant&#34;:
+83				// fallthrough to handling below
+84			default:
+85				continue // ignore mode/permission/attachment/etc. for the timeline
+86			}
+87			if rec.IsMeta {
+88				continue
+89			}
+90	
+91			// Capture session-level metadata from the first record that has it.
+92			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+93				s.GitBranch = rec.GitBranch
+94			}
+95			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+96				s.Version = rec.Version
+97			}
+98			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+99				s.ProjectPath = rec.Cwd
+100			}
+101			ts := parseTime(rec.Timestamp)
+102			if !ts.IsZero() {
+103				if s.StartedAt.IsZero() {
+104					s.StartedAt = ts
+105				}
+106				s.EndedAt = ts
+107			}
+108	
+109			_, blocks := decodeMessageContent(rec.Message)
+110	
+111			// Sidechain (subagent) records.
+112			if rec.IsSidechain {
+113				if !opts.IncludeSubagents || sidechainOwner == nil {
+114					continue
+115				}
+116				turn := buildTurn(rec, blocks, toolIndex)
+117				if turn == nil {
+118					continue
+119				}
+120				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+121				sub.Turns = append(sub.Turns, *turn)
+122				continue
+123			}
+124	
+125			// Main-chain records.
+126			turn := buildTurn(rec, blocks, toolIndex)
+127			if turn == nil {
+128				continue // e.g. a user record that only carried a tool_result
+129			}
+130			s.Turns = append(s.Turns, *turn)
+131	
+132			// Seed a subagent slot for each Task tool call and make it the current
+133			// sidechain owner. Tool-use ids are already registered in buildTurn.
+134			// Note: sidechain records are attributed to the nearest preceding Task
+135			// by file order. Sequential Task calls attribute correctly; multiple
+136			// Task calls dispatched in parallel from one assistant message cannot be
+137			// disambiguated from the raw records and will all attach to the last
+138			// one — a known v1 limitation.
+139			if opts.IncludeSubagents {
+140				for i := range turn.Blocks {
+141					tool := turn.Blocks[i].Tool
+142					if tool != nil &amp;&amp; tool.Name == &#34;Task&#34; {
+143						tool.Subagents = append(tool.Subagents, model.Subagent{
+144							Description: taskDescription(tool),
+145						})
+146						lastTask = tool
+147						sidechainOwner = lastTask
+148					}
+149				}
+150			}
+151		}
+152		if err := sc.Err(); err != nil {
+153			// A single over-long line (bufio.ErrTooLong) is a pathological record,
+154			// not a reason to discard the whole report: count it and return what we
+155			// parsed so far.
+156			if errors.Is(err, bufio.ErrTooLong) {
+157				s.SkippedLines++
+158				return s, nil
+159			}
+160			return s, err
+161		}
+162		return s, nil
+163	}
+164	
+165	// messageMeta converts a record&#39;s message model/usage into turn fields. Only
+166	// assistant records carry usage; the aggregate cache_creation figure (with no
+167	// 5m/1h split) is attributed to the cheaper 5-minute write.
+168	func messageMeta(raw json.RawMessage) (string, *model.Usage) {
+169		id, u := decodeMessageMeta(raw)
+170		if u == nil {
+171			return id, nil
+172		}
+173		w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+174		if w5 == 0 &amp;&amp; w1 == 0 &amp;&amp; u.CacheCreationInputTokens &gt; 0 {
+175			w5 = u.CacheCreationInputTokens
+176		}
+177		return id, &amp;model.Usage{
+178			Input:        u.InputTokens,
+179			Output:       u.OutputTokens,
+180			CacheRead:    u.CacheReadInputTokens,
+181			CacheWrite5m: w5,
+182			CacheWrite1h: w1,
+183		}
+184	}
+185	
+186	// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+187	// attached to their originating ToolCall via toolIndex and do not themselves
+188	// produce turn content. Returns nil if the record yields no displayable blocks.
+189	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+190		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+191		if rec.Type == &#34;user&#34; {
+192			turn.Kind = model.TurnUser
+193		} else {
+194			turn.Kind = model.TurnAssistant
+195		}
+196		for _, b := range blocks {
+197			switch b.Type {
+198			case &#34;text&#34;:
+199				if b.Text != &#34;&#34; {
+200					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+201				}
+202			case &#34;thinking&#34;:
+203				if b.Thinking != &#34;&#34; {
+204					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+205				}
+206			case &#34;tool_use&#34;:
+207				tc := buildToolCall(b)
+208				// Register the tool call so a later tool_result (in this turn&#39;s
+209				// chain OR inside a sidechain) can be matched back to it by id.
+210				toolIndex[tc.ID] = tc
+211				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
+212			case &#34;tool_result&#34;:
+213				if tc := toolIndex[b.ToolUseID]; tc != nil {
+214					tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+215				}
+216			}
+217		}
+218		if len(turn.Blocks) == 0 {
+219			return nil
+220		}
+221		if rec.Type == &#34;assistant&#34; {
+222			turn.Model, turn.Usage = messageMeta(rec.Message)
+223		}
+224		return turn
+225	}
+226	
+227	func trimSpace(b []byte) []byte {
+228		start, end := 0, len(b)
+229		for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+230			start++
+231		}
+232		for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+233			end--
+234		}
+235		return b[start:end]
+236	}
+237	
+238	// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+239	// and, for Edit/Write, a Diff.
+240	func buildToolCall(b apiBlock) *model.ToolCall {
+241		tc := &amp;model.ToolCall{
+242			ID:        b.ID,
+243			Name:      b.Name,
+244			InputJSON: prettyJSON(b.Input),
+245		}
+246		input := decodeInput(b.Input)
+247		tc.Summary = toolSummary(b.Name, input)
+248		switch b.Name {
+249		case &#34;Edit&#34;, &#34;Write&#34;:
+250			tc.Diff = buildDiff(b.Name, input)
+251		}
+252		return tc
+253	}
+254	
+255	func decodeInput(raw json.RawMessage) map[string]any {
+256		m := map[string]any{}
+257		if len(raw) &gt; 0 {
+258			_ = json.Unmarshal(raw, &amp;m)
+259		}
+260		return m
+261	}
+262	
+263	func str(m map[string]any, key string) string {
+264		if v, ok := m[key].(string); ok {
+265			return v
+266		}
+267		return &#34;&#34;
+268	}
+269	
+270	// toolSummary produces a compact one-line header for a tool card.
+271	func toolSummary(name string, in map[string]any) string {
+272		switch name {
+273		case &#34;Bash&#34;:
+274			if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+275				return firstLine(c)
+276			}
+277		case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+278			if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+279				return p
+280			}
+281		case &#34;Glob&#34;:
+282			return str(in, &#34;pattern&#34;)
+283		case &#34;Grep&#34;:
+284			return str(in, &#34;pattern&#34;)
+285		case &#34;Task&#34;:
+286			return str(in, &#34;description&#34;)
+287		case &#34;WebFetch&#34;:
+288			return str(in, &#34;url&#34;)
+289		case &#34;WebSearch&#34;:
+290			return str(in, &#34;query&#34;)
+291		}
+292		return &#34;&#34;
+293	}
+294	
+295	func buildDiff(name string, in map[string]any) *model.Diff {
+296		d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+297		if name == &#34;Write&#34; {
+298			d.NewText = str(in, &#34;content&#34;)
+299			return d
+300		}
+301		d.OldText = str(in, &#34;old_string&#34;)
+302		d.NewText = str(in, &#34;new_string&#34;)
+303		return d
+304	}
+305	
+306	func taskDescription(tc *model.ToolCall) string {
+307		if tc.Summary != &#34;&#34; {
+308			return tc.Summary
+309		}
+310		return &#34;subagent&#34;
+311	}
+312	
+313	func firstLine(s string) string {
+314		for i := 0; i &lt; len(s); i++ {
+315			if s[i] == &#39;\n&#39; {
+316				return s[:i]
+317			}
+318		}
+319		return s
+320	}
+321	
+322	func prettyJSON(raw json.RawMessage) string {
+323		if len(raw) == 0 {
+324			return &#34;&#34;
+325		}
+326		var v any
+327		if err := json.Unmarshal(raw, &amp;v); err != nil {
+328			return string(raw)
+329		}
+330		out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+331		if err != nil {
+332			return string(raw)
+333		}
+334		return string(out)
+335	}
+336	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
+}</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
+2	// Session and the timeline of Turns, Blocks and ToolCalls within it.
+3	package model
+4	
+5	import &#34;time&#34;
+6	
+7	type TurnKind string
+8	
+9	const (
+10		TurnUser      TurnKind = &#34;user&#34;
+11		TurnAssistant TurnKind = &#34;assistant&#34;
+12	)
+13	
+14	type BlockType string
+15	
+16	const (
+17		BlockText     BlockType = &#34;text&#34;
+18		BlockThinking BlockType = &#34;thinking&#34;
+19		BlockToolUse  BlockType = &#34;tool_use&#34;
+20	)
+21	
+22	// Session is one fully-parsed Claude Code transcript.
+23	type Session struct {
+24		ID           string
+25		ProjectPath  string // decoded absolute cwd
+26		Title        string
+27		GitBranch    string
+28		Version      string
+29		StartedAt    time.Time
+30		EndedAt      time.Time
+31		Turns        []Turn
+32		SkippedLines int // count of malformed lines skipped while parsing
+33	}
+34	
+35	func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+36	
+37	func (s Session) DisplayTitle() string {
+38		if s.Title != &#34;&#34; {
+39			return s.Title
+40		}
+41		return &#34;Untitled session&#34;
+42	}
+43	
+44	// Turn is a single user or assistant message, holding ordered content blocks.
+45	type Turn struct {
+46		Kind      TurnKind
+47		Timestamp time.Time
+48		Blocks    []Block
+49		Model     string // assistant model id (empty for user turns / when absent)
+50		Usage     *Usage // token usage for this assistant turn; nil when absent
+51	}
+52	
+53	// Usage holds the token counts reported for one assistant message. Cache writes
+54	// keep the 5-minute / 1-hour split because they are priced differently.
+55	type Usage struct {
+56		Input        int
+57		Output       int
+58		CacheRead    int
+59		CacheWrite5m int
+60		CacheWrite1h int
+61	}
+62	
+63	// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+64	type Block struct {
+65		Type BlockType
+66		Text string    // for BlockText and BlockThinking
+67		Tool *ToolCall // for BlockToolUse
+68	}
+69	
+70	// ToolCall is a single tool invocation and its result.
+71	type ToolCall struct {
+72		ID        string
+73		Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+74		Summary   string // one-line summary for the collapsed card header
+75		InputJSON string // pretty-printed input for generic display
+76		Result    *ToolResult
+77		Diff      *Diff      // set for Edit/Write
+78		Subagents []Subagent // set for Task calls with sidechain activity
+79	}
+80	
+81	type ToolResult struct {
+82		Content string
+83		IsError bool
+84	}
+85	
+86	type Diff struct {
+87		Path    string
+88		OldText string
+89		NewText string
+90	}
+91	
+92	// Subagent is a nested sidechain run attached to a parent Task tool call.
+93	type Subagent struct {
+94		Description string
+95		Turns       []Turn
+96	}
+97	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="agent ">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><a class="agent-link" href="agent-a9362c6415f36d9ba.html">transcript ↗</a></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;description&#34;: &#34;Check for positional Turn struct literals&#34;,
+  &#34;prompt&#34;: &#34;In the Go repo at ~/IdeaProjects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.Turn{} struct literal using positional (unkeyed) field initialization, e.g. `model.Turn{TurnKind, time.Now(), nil}` rather than keyed fields like `model.Turn{Kind: ..., Timestamp: ...}`. The Turn struct in internal/model/model.go just had two new fields (Model string, Usage *Usage) appended to it; if any code constructs Turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. Also check whether internal/model.Turn or internal/model.Usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. Report back: any positional Turn literals found (file:line), and a list of all other files that reference model.Turn or model.Usage. Keep the report under 150 words, this is a quick focused check.&#34;,
+  &#34;run_in_background&#34;: false
+}</pre><pre class="tool-result">No positional (unkeyed) `model.Turn{}` literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new `Model`/`Usage` fields.
+
+Positional Turn literals found: none.
+
+Files referencing `model.Turn` / `model.Usage`:
+- `internal/transcript/parse.go` (constructs `&amp;model.Turn{Timestamp: ...}` keyed; `&amp;model.Usage{...}` keyed, in `messageMeta`)
+- `internal/transcript/parse_test.go` (keyed `model.Usage{...}`)
+- `internal/render/render.go` (uses `model.Turn`/`model.TurnKind` only as param types: `roleLabel`, `renderTurnBody`, `turnPlainText` — no construction, no field access needing update)
+- `internal/render/render_test.go` (keyed `model.Turn{Kind: ..., Blocks: ...}` literals, x2)
+- `internal/redact/redact.go` (`redactTurn(r *Redactor, t *model.Turn)` — pointer param, mutates fields by name, no literal construction)
+- `internal/redact/redact_test.go` (keyed `model.Turn{{Kind: ..., Blocks: ...}}` literals, x2)
+
+No `cmd/` or `internal/report` files reference `model.Turn`/`model.Usage` at all. Everything compiles as-is; no code needs updating for the new `Model`/`Usage` fields.
+agentId: a9362c6415f36d9ba (use SendMessage with to: &#39;a9362c6415f36d9ba&#39;, summary: &#39;&lt;5-10 word recap&gt;&#39; to continue this agent)
+&lt;usage&gt;subagent_tokens: 29422
+tool_uses: 5
+duration_ms: 21962&lt;/usage&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="all checks confirmed clean. compiling review conclusions.
+
+## spec compliance: ✅
+
+the implementation fully satisfies task-1-brief.md and the global constraints:
+- `model.usage{input, output, cacheread, cachewrite5m, cachewrite1h}` and `turn.model`/`turn.usage` added exactly as specified (`internal/model/model.go:49-61`).
+- 5m/1h cache-write split preserved; aggregate `cache_creation_input_tokens` fallback only fires when both split fields are zero and the aggregate is `&gt; 0` (`internal/transcript/parse.go:173-176`) — verified no double-counting when split is present (partial split, e.g. `w1&gt;0, w5=0`, correctly skips the fallback).
+- usage is nil for user turns (guarded by `rec.type == &#34;assistant&#34;`, `internal/transcript/parse.go:221-223`) and nil when the assistant message carries no `usage` object (`decodemessagemeta` returns `nil` usage, `messagemeta` short-circuits, `internal/transcript/raw.go:98-110`, `internal/transcript/parse.go:170-172`).
+- `internal/transcript/raw.go` has no `internal/model` import (confirmed: only `encoding/json`, `strings`, `time`); model mapping lives in `messagemeta` in parse.go.
+- `buildturn` is the single function invoked for both main-chain (`parse.go:126`) and sidechain/subagent (`parse.go:116`) records, so the `model`/`usage` attachment at `parse.go:221-223` covers both paths.
+
+## strengths
+- clean separation: raw.go stays a pure json-decoding layer (local `apiusage` struct); domain-level cache-split logic lives in parse.go&#39;s `messagemeta`, matching the brief&#39;s architecture intent.
+- test coverage directly exercises both required behaviors: full usage with explicit split (`testparseattachesmodelandusage`, `parse_test.go:152-183`) and aggregate-only fallback (`testparseaggregatecachecreationdefaultsto5m`, `parse_test.go:185-196`), including the nil-usage cases for user turns and assistant turns without a usage object.
+- `*a.usage != want` is valid: `model.usage` is a plain struct of five `int` fields, which is comparable in go, so pointer-dereferenced value comparison with `!=` is well-defined and correctly checks all fields at once.
+- verified via a full-codebase check: no positional (unkeyed) `model.turn{}` literals exist anywhere, so adding two trailing fields to `turn` doesn&#39;t silently misassign values elsewhere; all other turn/usage references (render, redact, and their tests) use keyed literals or pointer field access and are unaffected.
+- no new dependencies introduced; only stdlib `encoding/json` (already used) is touched.
+
+## issues
+
+none found — no critical, important, or minor issues.
+
+(noted but not flagged as a defect: `messagemeta` re-unmarshals `rec.message` separately from `decodemessagecontent`&#39;s earlier unmarshal of the same raw bytes in `parse` — a small double-parse per assistant record. this is the exact structure specified verbatim in the task brief&#39;s step 4/5 code, not an implementer deviation, and is a non-functional micro-inefficiency rather than a correctness or spec-compliance problem.)
+
+## assessment
+
+**task quality: approved**">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-body"><p>All checks confirmed clean. Compiling review conclusions.</p>
+<h2>Spec Compliance: ✅</h2>
+<p>The implementation fully satisfies task-1-brief.md and the global constraints:</p>
+<ul>
+<li><code>model.Usage{Input, Output, CacheRead, CacheWrite5m, CacheWrite1h}</code> and <code>Turn.Model</code>/<code>Turn.Usage</code> added exactly as specified (<code>internal/model/model.go:49-61</code>).</li>
+<li>5m/1h cache-write split preserved; aggregate <code>cache_creation_input_tokens</code> fallback only fires when both split fields are zero AND the aggregate is <code>&gt; 0</code> (<code>internal/transcript/parse.go:173-176</code>) — verified no double-counting when split is present (partial split, e.g. <code>w1&gt;0, w5=0</code>, correctly skips the fallback).</li>
+<li>Usage is nil for user turns (guarded by <code>rec.Type == &quot;assistant&quot;</code>, <code>internal/transcript/parse.go:221-223</code>) and nil when the assistant message carries no <code>usage</code> object (<code>decodeMessageMeta</code> returns <code>nil</code> usage, <code>messageMeta</code> short-circuits, <code>internal/transcript/raw.go:98-110</code>, <code>internal/transcript/parse.go:170-172</code>).</li>
+<li><code>internal/transcript/raw.go</code> has no <code>internal/model</code> import (confirmed: only <code>encoding/json</code>, <code>strings</code>, <code>time</code>); model mapping lives in <code>messageMeta</code> in parse.go.</li>
+<li><code>buildTurn</code> is the single function invoked for both main-chain (<code>parse.go:126</code>) and sidechain/subagent (<code>parse.go:116</code>) records, so the <code>Model</code>/<code>Usage</code> attachment at <code>parse.go:221-223</code> covers both paths.</li>
+</ul>
+<h2>Strengths</h2>
+<ul>
+<li>Clean separation: raw.go stays a pure JSON-decoding layer (local <code>apiUsage</code> struct); domain-level cache-split logic lives in parse.go's <code>messageMeta</code>, matching the brief's architecture intent.</li>
+<li>Test coverage directly exercises both required behaviors: full usage with explicit split (<code>TestParseAttachesModelAndUsage</code>, <code>parse_test.go:152-183</code>) and aggregate-only fallback (<code>TestParseAggregateCacheCreationDefaultsTo5m</code>, <code>parse_test.go:185-196</code>), including the nil-Usage cases for user turns and assistant turns without a usage object.</li>
+<li><code>*a.Usage != want</code> is valid: <code>model.Usage</code> is a plain struct of five <code>int</code> fields, which is comparable in Go, so pointer-dereferenced value comparison with <code>!=</code> is well-defined and correctly checks all fields at once.</li>
+<li>Verified via a full-codebase check: no positional (unkeyed) <code>model.Turn{}</code> literals exist anywhere, so adding two trailing fields to <code>Turn</code> doesn't silently misassign values elsewhere; all other Turn/Usage references (render, redact, and their tests) use keyed literals or pointer field access and are unaffected.</li>
+<li>No new dependencies introduced; only stdlib <code>encoding/json</code> (already used) is touched.</li>
+</ul>
+<h2>Issues</h2>
+<p>None found — no Critical, Important, or Minor issues.</p>
+<p>(Noted but not flagged as a defect: <code>messageMeta</code> re-unmarshals <code>rec.Message</code> separately from <code>decodeMessageContent</code>'s earlier unmarshal of the same raw bytes in <code>Parse</code> — a small double-parse per assistant record. This is the exact structure specified verbatim in the task brief's Step 4/5 code, not an implementer deviation, and is a non-functional micro-inefficiency rather than a correctness or spec-compliance problem.)</p>
+<h2>Assessment</h2>
+<p><strong>Task quality: Approved</strong></p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 3 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 3 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:05</span>
+        <span>15 turns</span>
+        <span>general-purpose · agent-a68a6e1992118331f</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 13k in+out · ~$0.23 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>4k</td><td>393k</td><td>38k</td><td>$0.23</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>4k</td><td>393k</td><td>38k</td><td>$0.23</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; a broad review happens later.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md
+
+note: after the initial implementation, a controller-directed correctness fix was applied (second commit) because the brief&#39;s `/`↔`-` decode scheme is lossy for paths whose segments contain hyphens. the agreed design: discovery uses the true `cwd` field carried in transcript records as the authoritative `projectpath`, falling back to `decodeprojectdir` only when no cwd is present. judge the task against this corrected design, not the brief&#39;s original lossy round-trip assumption.
+
+global constraints binding this task (verbatim):
+- package import path: `github.com/saigyo/cc-what-have-i-done/internal/discovery`.
+- encoded project dir = absolute cwd with every `/` replaced by `-`; decode is best-effort/lossy and the transcript `cwd` is authoritative when available.
+- malformed jsonl lines must be tolerated (skipped), never abort.
+- commit messages end with: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+- produced api (names/signatures consumed by later tasks): `encodeprojectdir(string) string`, `decodeprojectdir(string) string`, `sessioninfo{id, filepath, projectdir, projectpath, title, firstprompt string; modtime time.time; messagecount int; hassubagents bool}`, `projectgroup{projectdir, projectpath string; sessions []sessioninfo}`, `scan(root string) ([]projectgroup, error)`, `defaultroot() (string, error)`, `findsession(root, idorprefix string) (sessioninfo, error)`.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report (includes the fix section): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md
+
+## diff under review
+
+base: 7b11575cdfb3d3e6a0eef9a70f30ddaddd199c30
+head: 159ee65
+diff file (read once, it is your view of the change): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff
+
+read-only review; do not modify the tree. the implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.
+
+named risks worth a focused check: (a) that malformed lines are truly skipped and don&#39;t abort `indexfile`/`scan`; (b) that `findsession` prefix resolution correctly reports ambiguous vs. not-found; (c) that the cwd-capture logic sets projectpath once and the fallback still works when no cwd is present.
+
+follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+<p>Note: after the initial implementation, a controller-directed correctness fix was applied (second commit) because the brief's <code>/</code>↔<code>-</code> decode scheme is lossy for paths whose segments contain hyphens. The agreed design: discovery uses the true <code>cwd</code> field carried in transcript records as the authoritative <code>ProjectPath</code>, falling back to <code>DecodeProjectDir</code> only when no cwd is present. Judge the task against this corrected design, not the brief's original lossy round-trip assumption.</p>
+<p>Global constraints binding this task (verbatim):</p>
+<ul>
+<li>Package import path: <code>github.com/saigyo/cc-what-have-i-done/internal/discovery</code>.</li>
+<li>Encoded project dir = absolute cwd with every <code>/</code> replaced by <code>-</code>; decode is best-effort/lossy and the transcript <code>cwd</code> is authoritative when available.</li>
+<li>Malformed JSONL lines must be tolerated (skipped), never abort.</li>
+<li>Commit messages end with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+<li>Produced API (names/signatures consumed by later tasks): <code>EncodeProjectDir(string) string</code>, <code>DecodeProjectDir(string) string</code>, <code>SessionInfo{ID, FilePath, ProjectDir, ProjectPath, Title, FirstPrompt string; ModTime time.Time; MessageCount int; HasSubagents bool}</code>, <code>ProjectGroup{ProjectDir, ProjectPath string; Sessions []SessionInfo}</code>, <code>Scan(root string) ([]ProjectGroup, error)</code>, <code>DefaultRoot() (string, error)</code>, <code>FindSession(root, idOrPrefix string) (SessionInfo, error)</code>.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report (includes the fix section): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: 7b11575cdfb3d3e6a0eef9a70f30ddaddd199c30
+Head: 159ee65
+Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff</p>
+<p>Read-only review; do not modify the tree. The implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
+<p>Named risks worth a focused check: (a) that malformed lines are truly skipped and don't abort <code>indexFile</code>/<code>Scan</code>; (b) that <code>FindSession</code> prefix resolution correctly reports ambiguous vs. not-found; (c) that the cwd-capture logic sets ProjectPath once and the fallback still works when no cwd is present.</p>
+<p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 3: Session discovery
+2	
+3	**Files:**
+4	- Create: `internal/discovery/discovery.go`
+5	- Create: `internal/discovery/discovery_test.go`
+6	
+7	**Interfaces:**
+8	- Consumes: nothing from other internal packages.
+9	- Produces:
+10	  - `discovery.EncodeProjectDir(cwd string) string` — `/a/b` → `-a-b`.
+11	  - `discovery.DecodeProjectDir(name string) string` — `-a-b` → `/a/b`.
+12	  - `discovery.SessionInfo{ID, FilePath, ProjectDir, ProjectPath, Title, FirstPrompt string; ModTime time.Time; MessageCount int; HasSubagents bool}`
+13	  - `discovery.ProjectGroup{ProjectDir, ProjectPath string; Sessions []SessionInfo}`
+14	  - `discovery.Scan(root string) ([]ProjectGroup, error)` — root is the `projects` dir; groups sorted by most-recent session first, sessions within a group newest-first.
+15	  - `discovery.DefaultRoot() (string, error)` — returns `~/.claude/projects`.
+16	  - `discovery.FindSession(root, idOrPrefix string) (SessionInfo, error)` — resolves an id or unambiguous prefix across all projects; error on none/ambiguous.
+17	
+18	- [ ] **Step 1: Write the failing test**
+19	
+20	Create `internal/discovery/discovery_test.go`:
+21	```go
+22	package discovery
+23	
+24	import (
+25		&#34;os&#34;
+26		&#34;path/filepath&#34;
+27		&#34;testing&#34;
+28	)
+29	
+30	func TestEncodeDecodeRoundTrip(t *testing.T) {
+31		cwd := &#34;~/IdeaProjects/cc-what-have-i-done&#34;
+32		enc := EncodeProjectDir(cwd)
+33		if enc != &#34;-Users-markus-IdeaProjects-cc-what-have-i-done&#34; {
+34			t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
+35		}
+36		if dec := DecodeProjectDir(enc); dec != cwd {
+37			t.Fatalf(&#34;DecodeProjectDir = %q, want %q&#34;, dec, cwd)
+38		}
+39	}
+40	
+41	// writeSession writes a minimal valid jsonl file with the given lines.
+42	func writeSession(t *testing.T, dir, id string, lines ...string) {
+43		t.Helper()
+44		if err := os.MkdirAll(dir, 0o755); err != nil {
+45			t.Fatal(err)
+46		}
+47		path := filepath.Join(dir, id+&#34;.jsonl&#34;)
+48		data := &#34;&#34;
+49		for _, l := range lines {
+50			data += l + &#34;\n&#34;
+51		}
+52		if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+53			t.Fatal(err)
+54		}
+55	}
+56	
+57	func TestScanBuildsGroups(t *testing.T) {
+58		root := t.TempDir()
+59		proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+60		writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,
+61			`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Build a parser&#34;}`,
+62			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+63			`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+64		)
+65		groups, err := Scan(root)
+66		if err != nil {
+67			t.Fatal(err)
+68		}
+69		if len(groups) != 1 {
+70			t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+71		}
+72		g := groups[0]
+73		if g.ProjectPath != &#34;/tmp/projA&#34; {
+74			t.Errorf(&#34;ProjectPath = %q&#34;, g.ProjectPath)
+75		}
+76		if len(g.Sessions) != 1 {
+77			t.Fatalf(&#34;got %d sessions, want 1&#34;, len(g.Sessions))
+78		}
+79		s := g.Sessions[0]
+80		if s.Title != &#34;Build a parser&#34; {
+81			t.Errorf(&#34;Title = %q&#34;, s.Title)
+82		}
+83		if s.MessageCount != 2 {
+84			t.Errorf(&#34;MessageCount = %d, want 2&#34;, s.MessageCount)
+85		}
+86	}
+87	
+88	func TestFindSessionByPrefix(t *testing.T) {
+89		root := t.TempDir()
+90		proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+91		writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,
+92			`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+93		writeSession(t, proj, &#34; zzzz2222&#34;)
+94		got, err := FindSession(root, &#34;abcd&#34;)
+95		if err != nil {
+96			t.Fatal(err)
+97		}
+98		if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {
+99			t.Errorf(&#34;ID = %q&#34;, got.ID)
+100		}
+101	}
+102	```
+103	
+104	- [ ] **Step 2: Run the test to verify it fails**
+105	
+106	Run: `go test ./internal/discovery/`
+107	Expected: FAIL — `undefined: EncodeProjectDir`.
+108	
+109	- [ ] **Step 3: Write minimal implementation**
+110	
+111	Create `internal/discovery/discovery.go`:
+112	```go
+113	// Package discovery finds Claude Code session transcripts under
+114	// ~/.claude/projects and builds a lightweight index for listing and selection.
+115	package discovery
+116	
+117	import (
+118		&#34;bufio&#34;
+119		&#34;encoding/json&#34;
+120		&#34;fmt&#34;
+121		&#34;os&#34;
+122		&#34;path/filepath&#34;
+123		&#34;sort&#34;
+124		&#34;strings&#34;
+125		&#34;time&#34;
+126	)
+127	
+128	// SessionInfo is a lightweight index entry for one transcript file. It is built
+129	// by a cheap scan and does not parse the full timeline.
+130	type SessionInfo struct {
+131		ID           string
+132		FilePath     string
+133		ProjectDir   string // encoded directory name
+134		ProjectPath  string // decoded absolute path
+135		Title        string
+136		FirstPrompt  string
+137		ModTime      time.Time
+138		MessageCount int
+139		HasSubagents bool
+140	}
+141	
+142	// ProjectGroup groups a project&#39;s sessions.
+143	type ProjectGroup struct {
+144		ProjectDir  string
+145		ProjectPath string
+146		Sessions    []SessionInfo
+147	}
+148	
+149	// EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+150	func EncodeProjectDir(cwd string) string {
+151		return strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+152	}
+153	
+154	// DecodeProjectDir maps a projects dir name back to an absolute path.
+155	func DecodeProjectDir(name string) string {
+156		return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)
+157	}
+158	
+159	// DefaultRoot returns ~/.claude/projects.
+160	func DefaultRoot() (string, error) {
+161		home, err := os.UserHomeDir()
+162		if err != nil {
+163			return &#34;&#34;, err
+164		}
+165		return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+166	}
+167	
+168	// scanLine is the subset of fields needed to index a session cheaply.
+169	type scanLine struct {
+170		Type        string          `json:&#34;type&#34;`
+171		AiTitle     string          `json:&#34;aiTitle&#34;`
+172		IsSidechain bool            `json:&#34;isSidechain&#34;`
+173		Timestamp   string          `json:&#34;timestamp&#34;`
+174		Message     json.RawMessage `json:&#34;message&#34;`
+175	}
+176	
+177	// indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+178	func indexFile(path, projectDir string) (SessionInfo, error) {
+179		f, err := os.Open(path)
+180		if err != nil {
+181			return SessionInfo{}, err
+182		}
+183		defer f.Close()
+184	
+185		fi, err := f.Stat()
+186		if err != nil {
+187			return SessionInfo{}, err
+188		}
+189	
+190		info := SessionInfo{
+191			ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+192			FilePath:    path,
+193			ProjectDir:  projectDir,
+194			ProjectPath: DecodeProjectDir(projectDir),
+195			ModTime:     fi.ModTime(),
+196		}
+197	
+198		sc := bufio.NewScanner(f)
+199		sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+200		for sc.Scan() {
+201			var l scanLine
+202			if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+203				continue // tolerate malformed lines
+204			}
+205			switch l.Type {
+206			case &#34;ai-title&#34;:
+207				if l.AiTitle != &#34;&#34; {
+208					info.Title = l.AiTitle
+209				}
+210			case &#34;user&#34;, &#34;assistant&#34;:
+211				info.MessageCount++
+212				if l.IsSidechain {
+213					info.HasSubagents = true
+214				}
+215				if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+216					info.FirstPrompt = firstPromptText(l.Message)
+217				}
+218			}
+219		}
+220		if info.Title == &#34;&#34; {
+221			info.Title = truncate(info.FirstPrompt, 60)
+222		}
+223		return info, nil
+224	}
+225	
+226	// firstPromptText extracts a plain-text preview from a user message whose
+227	// content is either a JSON string or an array of blocks.
+228	func firstPromptText(raw json.RawMessage) string {
+229		if len(raw) == 0 {
+230			return &#34;&#34;
+231		}
+232		var msg struct {
+233			Content json.RawMessage `json:&#34;content&#34;`
+234		}
+235		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+236			return &#34;&#34;
+237		}
+238		var s string
+239		if json.Unmarshal(msg.Content, &amp;s) == nil {
+240			return strings.TrimSpace(s)
+241		}
+242		var blocks []struct {
+243			Type string `json:&#34;type&#34;`
+244			Text string `json:&#34;text&#34;`
+245		}
+246		if json.Unmarshal(msg.Content, &amp;blocks) == nil {
+247			for _, b := range blocks {
+248				if b.Type == &#34;text&#34; {
+249					return strings.TrimSpace(b.Text)
+250				}
+251			}
+252		}
+253		return &#34;&#34;
+254	}
+255	
+256	func truncate(s string, n int) string {
+257		s = strings.TrimSpace(s)
+258		if len(s) &lt;= n {
+259			return s
+260		}
+261		return s[:n-1] + &#34;…&#34;
+262	}
+263	
+264	// Scan indexes every session under root (the projects directory), grouped by
+265	// project. Groups are ordered by most-recent session first; sessions within a
+266	// group are newest-first.
+267	func Scan(root string) ([]ProjectGroup, error) {
+268		entries, err := os.ReadDir(root)
+269		if err != nil {
+270			return nil, err
+271		}
+272		var groups []ProjectGroup
+273		for _, e := range entries {
+274			if !e.IsDir() {
+275				continue
+276			}
+277			dir := filepath.Join(root, e.Name())
+278			files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+279			if err != nil {
+280				return nil, err
+281			}
+282			var sessions []SessionInfo
+283			for _, fp := range files {
+284				si, err := indexFile(fp, e.Name())
+285				if err != nil {
+286					continue
+287				}
+288				sessions = append(sessions, si)
+289			}
+290			if len(sessions) == 0 {
+291				continue
+292			}
+293			sort.Slice(sessions, func(i, j int) bool {
+294				return sessions[i].ModTime.After(sessions[j].ModTime)
+295			})
+296			groups = append(groups, ProjectGroup{
+297				ProjectDir:  e.Name(),
+298				ProjectPath: DecodeProjectDir(e.Name()),
+299				Sessions:    sessions,
+300			})
+301		}
+302		sort.Slice(groups, func(i, j int) bool {
+303			return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+304		})
+305		return groups, nil
+306	}
+307	
+308	// FindSession resolves a session id or unambiguous prefix across all projects.
+309	func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+310		groups, err := Scan(root)
+311		if err != nil {
+312			return SessionInfo{}, err
+313		}
+314		var matches []SessionInfo
+315		for _, g := range groups {
+316			for _, s := range g.Sessions {
+317				if s.ID == idOrPrefix {
+318					return s, nil // exact wins immediately
+319				}
+320				if strings.HasPrefix(s.ID, idOrPrefix) {
+321					matches = append(matches, s)
+322				}
+323			}
+324		}
+325		switch len(matches) {
+326		case 0:
+327			return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)
+328		case 1:
+329			return matches[0], nil
+330		default:
+331			return SessionInfo{}, fmt.Errorf(&#34;ambiguous prefix %q matches %d sessions&#34;, idOrPrefix, len(matches))
+332		}
+333	}
+334	```
+335	
+336	- [ ] **Step 4: Run the tests to verify they pass**
+337	
+338	Run: `go test ./internal/discovery/`
+339	Expected: PASS.
+340	
+341	- [ ] **Step 5: Commit**
+342	
+343	```bash
+344	git add internal/discovery/
+345	git commit -m &#34;$(printf &#39;feat: add session discovery and indexing\n\nCo-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;&#39;)&#34;
+346	```
+347	
+348	---
+349	
+350	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 3 Report: Session discovery
+2	
+3	## Summary
+4	
+5	Implemented `internal/discovery/discovery.go` and `internal/discovery/discovery_test.go`
+6	exactly per the task brief, with one documented, minimal, justified deviation to a test
+7	fixture (see &#34;Deviation&#34; below). Branch `feat/ccwhid-impl` was used throughout; no branch
+8	was created or switched.
+9	
+10	## What was implemented
+11	
+12	- `discovery.EncodeProjectDir(cwd string) string` — replaces every `/` with `-`.
+13	- `discovery.DecodeProjectDir(name string) string` — replaces every `-` with `/`.
+14	- `discovery.SessionInfo` — lightweight per-transcript index entry (ID, FilePath,
+15	  ProjectDir, ProjectPath, Title, FirstPrompt, ModTime, MessageCount, HasSubagents).
+16	- `discovery.ProjectGroup` — groups a project&#39;s sessions (ProjectDir, ProjectPath, Sessions).
+17	- `discovery.Scan(root string) ([]ProjectGroup, error)` — walks `root` (the `projects`
+18	  dir), globs `*.jsonl` per project subdirectory, indexes each file cheaply via a
+19	  line-by-line scanner (tolerating malformed JSONL lines by skipping them), and returns
+20	  groups sorted most-recent-session-first, with sessions inside each group newest-first.
+21	- `discovery.DefaultRoot() (string, error)` — `~/.claude/projects` via `os.UserHomeDir()`.
+22	- `discovery.FindSession(root, idOrPrefix string) (SessionInfo, error)` — exact ID match
+23	  wins immediately; otherwise resolves an unambiguous prefix match across all projects,
+24	  erroring on zero or multiple matches.
+25	
+26	Implementation is a byte-for-byte copy of the brief&#39;s Step 3 code block (package
+27	comment, imports, `scanLine`, `indexFile`, `firstPromptText`, `truncate`, `Scan`,
+28	`FindSession`, etc.) — no functional changes were made to `discovery.go`.
+29	
+30	## Deviation (documented, minimal)
+31	
+32	The brief&#39;s `TestEncodeDecodeRoundTrip` used `cwd := &#34;~/IdeaProjects/cc-what-have-i-done&#34;`
+33	— i.e., this very repository&#39;s own absolute path — as the round-trip fixture. That
+34	directory name (`cc-what-have-i-done`) contains a **literal hyphen**. Given the specified
+35	`EncodeProjectDir`/`DecodeProjectDir` implementation (a naive character-level `/`↔`-`
+36	replace, exactly as written in the brief), this fixture is **mathematically impossible**
+37	to round-trip: encoding turns every `/` into `-`, and decoding then turns *every* `-`
+38	(including the ones that were already part of the directory name) back into `/`. This
+39	is not an implementation defect — it is an inherent, unavoidable property of the naive
+40	replace-based scheme when applied to any path containing a literal hyphen.
+41	
+42	Verified directly before writing any code:
+43	```
+44	$ cat &gt; /tmp/check.go &lt;&lt;&#39;EOF&#39;
+45	package main
+46	import (&#34;fmt&#34;;&#34;strings&#34;)
+47	func main(){
+48	  cwd := &#34;~/IdeaProjects/cc-what-have-i-done&#34;
+49	  enc := strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+50	  dec := strings.ReplaceAll(enc, &#34;-&#34;, &#34;/&#34;)
+51	  fmt.Println(&#34;enc:&#34;, enc)
+52	  fmt.Println(&#34;dec:&#34;, dec)
+53	  fmt.Println(&#34;roundtrip ok:&#34;, dec == cwd)
+54	}
+55	EOF
+56	$ go run /tmp/check.go
+57	enc: -Users-markus-IdeaProjects-cc-what-have-i-done
+58	dec: ~/IdeaProjects/cc/what/have/i/done
+59	roundtrip ok: false
+60	```
+61	
+62	Running the brief&#39;s implementation and test **verbatim** confirms the test fails at
+63	Step 4 (contradicting the brief&#39;s own &#34;Expected: PASS&#34;):
+64	```
+65	=== RUN   TestEncodeDecodeRoundTrip
+66	    discovery_test.go:16: DecodeProjectDir = &#34;~/IdeaProjects/cc/what/have/i/done&#34;, want &#34;~/IdeaProjects/cc-what-have-i-done&#34;
+67	--- FAIL: TestEncodeDecodeRoundTrip (0.00s)
+68	=== RUN   TestScanBuildsGroups
+69	--- PASS: TestScanBuildsGroups (0.00s)
+70	=== RUN   TestFindSessionByPrefix
+71	--- PASS: TestFindSessionByPrefix (0.00s)
+72	FAIL
+73	```
+74	
+75	Resolution: changed only the `cwd` literal (and its matching expected-encoded string)
+76	in `TestEncodeDecodeRoundTrip` to a hyphen-free path (`~/IdeaProjects/ccwhid`),
+77	which is genuinely invertible under the specified scheme. Everything else — the
+78	implementation in `discovery.go`, the other two tests, and all fixture files (including
+79	the brief-mandated leading-space filename `&#34; zzzz2222&#34;`) — was reproduced exactly as
+80	written in the brief, with no other changes. The deviation is called out in an inline
+81	code comment in the test file as well.
+82	
+83	I judged this the correct call rather than stopping to ask, since it is not an
+84	ambiguity about requirements but a self-contained, verifiable defect in one literal
+85	test fixture value; the fix preserves the test&#39;s intent (verify `EncodeProjectDir`/
+86	`DecodeProjectDir` round-trip correctly) using a fixture that doesn&#39;t collide with the
+87	scheme&#39;s known limitation. Flagging here per instructions in case the brief&#39;s author
+88	wants to handle it differently (e.g., document the round-trip limitation elsewhere,
+89	or accept it as a known product quirk since real Claude Code project directories can
+90	also contain hyphens).
+91	
+92	## TDD evidence
+93	
+94	### RED — before implementation
+95	
+96	Created `internal/discovery/discovery_test.go` (verbatim, before the deviation) and
+97	ran:
+98	```
+99	$ go test ./internal/discovery/
+100	# github.com/saigyo/cc-what-have-i-done/internal/discovery [github.com/saigyo/cc-what-have-i-done/internal/discovery.test]
+101	internal/discovery/discovery_test.go:11:9: undefined: EncodeProjectDir
+102	internal/discovery/discovery_test.go:15:12: undefined: DecodeProjectDir
+103	internal/discovery/discovery_test.go:44:17: undefined: Scan
+104	internal/discovery/discovery_test.go:73:14: undefined: FindSession
+105	FAIL	github.com/saigyo/cc-what-have-i-done/internal/discovery [build failed]
+106	FAIL
+107	```
+108	Matches the brief&#39;s expected RED state (`undefined: EncodeProjectDir` etc.).
+109	
+110	### GREEN — after implementation + fixture deviation
+111	
+112	Created `internal/discovery/discovery.go` verbatim from the brief, applied the single
+113	documented test-fixture deviation described above, then ran:
+114	```
+115	$ go test ./internal/discovery/ -v
+116	=== RUN   TestEncodeDecodeRoundTrip
+117	--- PASS: TestEncodeDecodeRoundTrip (0.00s)
+118	=== RUN   TestScanBuildsGroups
+119	--- PASS: TestScanBuildsGroups (0.00s)
+120	=== RUN   TestFindSessionByPrefix
+121	--- PASS: TestFindSessionByPrefix (0.00s)
+122	PASS
+123	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.257s
+124	```
+125	
+126	### Full suite + build/vet before commit
+127	
+128	```
+129	$ go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./...
+130	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+131	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.155s
+132	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+133	```
+134	
+135	`gofmt -l internal/discovery/` produced no output (already formatted).
+136	
+137	## Files changed
+138	
+139	- `~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go` (new)
+140	- `~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go` (new)
+141	
+142	## Commit
+143	
+144	```
+145	9def244 feat: add session discovery and indexing
+146	```
+147	(includes trailer `Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;`,
+148	branch `feat/ccwhid-impl`, no branch created/switched)
+149	
+150	## Self-review
+151	
+152	- `EncodeProjectDir`/`DecodeProjectDir`: simple, correct for the common case (paths
+153	  without literal hyphens in segment names); known lossy for paths containing hyphens
+154	  (see Deviation above) — this is inherent to the scheme as specified, not something
+155	  introduced by this implementation.
+156	- `indexFile`: tolerates malformed JSON lines via `continue` on unmarshal error, per
+157	  the constraint &#34;malformed JSONL lines must be tolerated (skipped), never abort.&#34;
+158	  Verified: the ` zzzz2222` fixture session (empty file, no lines) is still successfully
+159	  indexed as a zero-message session and matched correctly by `FindSession`&#39;s prefix
+160	  logic not colliding with `abcd...`.
+161	- `Scan`: skips non-directory entries and directories with zero valid sessions; sorts
+162	  groups by their newest session&#39;s ModTime descending, and sessions within a group
+163	  descending, matching the spec (&#34;groups sorted by most-recent session first, sessions
+164	  within a group newest-first&#34;).
+165	- `FindSession`: exact ID match returns immediately even if other IDs share the same
+166	  prefix (correct per &#34;resolves an id or unambiguous prefix&#34;); ambiguous/no-match cases
+167	  return descriptive errors.
+168	- No other internal packages are consumed (per &#34;Consumes: nothing from other internal
+169	  packages&#34;) — confirmed via imports in `discovery.go` (all stdlib: bufio,
+170	  encoding/json, fmt, os, path/filepath, sort, strings, time).
+171	- Package import path matches `github.com/saigyo/cc-what-have-i-done/internal/discovery`
+172	  (verified via `go.mod` module path + directory layout).
+173	
+174	## Concerns
+175	
+176	- The one documented test-fixture deviation above (round-trip test&#39;s `cwd` literal
+177	  changed from a hyphen-containing path to a hyphen-free one). No production code was
+178	  changed to accommodate this — only the test literal. Recommend the brief&#39;s author
+179	  double-check whether this lossy-round-trip edge case (real project directories with
+180	  hyphens in their names, which is common, e.g. this very repo) needs a smarter encoding
+181	  scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly
+182	  recover such names. That is out of scope for Task 3 as literally specified, so it was
+183	  not addressed here beyond flagging it.
+184	
+185	## Fix: transcript cwd for project path
+186	
+187	Addressed the concern flagged above: `DecodeProjectDir` is lossy whenever a real path
+188	segment contains a hyphen (e.g. this repo, `~/IdeaProjects/cc-what-have-i-done`,
+189	naively decodes to `.../cc/what/have/i/done`). Since the on-disk projects directory name
+190	is genuinely ambiguous, decoding alone cannot recover the true path — so the fix instead
+191	sources the true path from the transcript itself.
+192	
+193	### Changes
+194	
+195	- `internal/discovery/discovery.go`:
+196	  - `scanLine` gained a `Cwd string `json:&#34;cwd&#34;`` field — every `user`/`assistant`
+197	    transcript record carries the true absolute cwd.
+198	  - `indexFile` still seeds `info.ProjectPath` with `DecodeProjectDir(projectDir)` as a
+199	    fallback, but now captures the first non-empty `cwd` seen on a `user`/`assistant`
+200	    line (via a local `cwdSet` flag) and overwrites `info.ProjectPath` with it, since all
+201	    sessions in one project directory share the same true cwd.
+202	  - `Scan`&#39;s `ProjectGroup` construction now sets `ProjectPath: sessions[0].ProjectPath`
+203	    (the authoritative per-session value set by `indexFile`) instead of re-decoding the
+204	    encoded directory name via `DecodeProjectDir(e.Name())`.
+205	  - `DecodeProjectDir`&#39;s doc comment now states explicitly that it is best-effort/lossy
+206	    for hyphenated path segments and that callers should prefer the transcript `cwd`,
+207	    falling back to decode only when no `cwd` record is available.
+208	- `internal/discovery/discovery_test.go`: added `TestScanUsesTranscriptCwd`, which writes
+209	  a session under a directory name that would decode incorrectly
+210	  (`-tmp-proj-with-hyphen` → naively `/tmp/proj/with/hyphen`) but carries
+211	  `&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;` in its transcript line, and asserts both
+212	  `groups[0].ProjectPath` and `groups[0].Sessions[0].ProjectPath` equal the true
+213	  `/tmp/proj-with-hyphen`. Existing tests (`TestEncodeDecodeRoundTrip`,
+214	  `TestScanBuildsGroups`, `TestFindSessionByPrefix`) were left unchanged and still pass —
+215	  `TestScanBuildsGroups`&#39;s fixture has no `cwd` field, so it correctly exercises the
+216	  decode fallback path (`-tmp-projA` → `/tmp/projA`).
+217	
+218	### Covering test run
+219	
+220	Command: `go test ./internal/discovery/ -v`
+221	
+222	```
+223	=== RUN   TestEncodeDecodeRoundTrip
+224	--- PASS: TestEncodeDecodeRoundTrip (0.00s)
+225	=== RUN   TestScanBuildsGroups
+226	--- PASS: TestScanBuildsGroups (0.00s)
+227	=== RUN   TestFindSessionByPrefix
+228	--- PASS: TestFindSessionByPrefix (0.00s)
+229	=== RUN   TestScanUsesTranscriptCwd
+230	--- PASS: TestScanUsesTranscriptCwd (0.00s)
+231	PASS
+232	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.299s
+233	```
+234	
+235	### Full suite
+236	
+237	`go test ./...` — green:
+238	
+239	```
+240	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+241	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.157s
+242	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+243	```
+244	
+245	### Commit
+246	
+247	`159ee65` — &#34;fix: use transcript cwd for authoritative project path&#34;
+248	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: 7b11575cdfb3d3e6a0eef9a70f30ddaddd199c30..HEAD
+2	
+3	## Commits
+4	159ee65 fix: use transcript cwd for authoritative project path
+5	9def244 feat: add session discovery and indexing
+6	
+7	## Files changed
+8	 internal/discovery/discovery.go      | 234 +++++++++++++++++++++++++++++++++++
+9	 internal/discovery/discovery_test.go | 111 +++++++++++++++++
+10	 2 files changed, 345 insertions(+)
+11	
+12	## Diff
+13	diff --git a/internal/discovery/discovery.go b/internal/discovery/discovery.go
+14	new file mode 100644
+15	index 0000000..75d636a
+16	--- /dev/null
+17	+++ b/internal/discovery/discovery.go
+18	@@ -0,0 +1,234 @@
+19	+// Package discovery finds Claude Code session transcripts under
+20	+// ~/.claude/projects and builds a lightweight index for listing and selection.
+21	+package discovery
+22	+
+23	+import (
+24	+	&#34;bufio&#34;
+25	+	&#34;encoding/json&#34;
+26	+	&#34;fmt&#34;
+27	+	&#34;os&#34;
+28	+	&#34;path/filepath&#34;
+29	+	&#34;sort&#34;
+30	+	&#34;strings&#34;
+31	+	&#34;time&#34;
+32	+)
+33	+
+34	+// SessionInfo is a lightweight index entry for one transcript file. It is built
+35	+// by a cheap scan and does not parse the full timeline.
+36	+type SessionInfo struct {
+37	+	ID           string
+38	+	FilePath     string
+39	+	ProjectDir   string // encoded directory name
+40	+	ProjectPath  string // decoded absolute path
+41	+	Title        string
+42	+	FirstPrompt  string
+43	+	ModTime      time.Time
+44	+	MessageCount int
+45	+	HasSubagents bool
+46	+}
+47	+
+48	+// ProjectGroup groups a project&#39;s sessions.
+49	+type ProjectGroup struct {
+50	+	ProjectDir  string
+51	+	ProjectPath string
+52	+	Sessions    []SessionInfo
+53	+}
+54	+
+55	+// EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+56	+func EncodeProjectDir(cwd string) string {
+57	+	return strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+58	+}
+59	+
+60	+// DecodeProjectDir maps a projects dir name back to an absolute path.
+61	+//
+62	+// This is best-effort and lossy: the encoding used for ~/.claude/projects
+63	+// directory names replaces every &#34;/&#34; with &#34;-&#34;, so a decode cannot distinguish
+64	+// an original path separator from a literal &#34;-&#34; inside a path segment (e.g.
+65	+// &#34;cc-what-have-i-done&#34; decodes to &#34;cc/what/have/i/done&#34;). Callers that need
+66	+// the true path should prefer the &#34;cwd&#34; field recorded in transcript records
+67	+// and only fall back to this function when no such record is available.
+68	+func DecodeProjectDir(name string) string {
+69	+	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)
+70	+}
+71	+
+72	+// DefaultRoot returns ~/.claude/projects.
+73	+func DefaultRoot() (string, error) {
+74	+	home, err := os.UserHomeDir()
+75	+	if err != nil {
+76	+		return &#34;&#34;, err
+77	+	}
+78	+	return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+79	+}
+80	+
+81	+// scanLine is the subset of fields needed to index a session cheaply.
+82	+type scanLine struct {
+83	+	Type        string          `json:&#34;type&#34;`
+84	+	AiTitle     string          `json:&#34;aiTitle&#34;`
+85	+	IsSidechain bool            `json:&#34;isSidechain&#34;`
+86	+	Timestamp   string          `json:&#34;timestamp&#34;`
+87	+	Cwd         string          `json:&#34;cwd&#34;`
+88	+	Message     json.RawMessage `json:&#34;message&#34;`
+89	+}
+90	+
+91	+// indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+92	+func indexFile(path, projectDir string) (SessionInfo, error) {
+93	+	f, err := os.Open(path)
+94	+	if err != nil {
+95	+		return SessionInfo{}, err
+96	+	}
+97	+	defer f.Close()
+98	+
+99	+	fi, err := f.Stat()
+100	+	if err != nil {
+101	+		return SessionInfo{}, err
+102	+	}
+103	+
+104	+	info := SessionInfo{
+105	+		ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+106	+		FilePath:    path,
+107	+		ProjectDir:  projectDir,
+108	+		ProjectPath: DecodeProjectDir(projectDir),
+109	+		ModTime:     fi.ModTime(),
+110	+	}
+111	+
+112	+	sc := bufio.NewScanner(f)
+113	+	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+114	+	cwdSet := false
+115	+	for sc.Scan() {
+116	+		var l scanLine
+117	+		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+118	+			continue // tolerate malformed lines
+119	+		}
+120	+		switch l.Type {
+121	+		case &#34;ai-title&#34;:
+122	+			if l.AiTitle != &#34;&#34; {
+123	+				info.Title = l.AiTitle
+124	+			}
+125	+		case &#34;user&#34;, &#34;assistant&#34;:
+126	+			info.MessageCount++
+127	+			if l.IsSidechain {
+128	+				info.HasSubagents = true
+129	+			}
+130	+			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+131	+				info.FirstPrompt = firstPromptText(l.Message)
+132	+			}
+133	+			if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {
+134	+				info.ProjectPath = l.Cwd
+135	+				cwdSet = true
+136	+			}
+137	+		}
+138	+	}
+139	+	if info.Title == &#34;&#34; {
+140	+		info.Title = truncate(info.FirstPrompt, 60)
+141	+	}
+142	+	return info, nil
+143	+}
+144	+
+145	+// firstPromptText extracts a plain-text preview from a user message whose
+146	+// content is either a JSON string or an array of blocks.
+147	+func firstPromptText(raw json.RawMessage) string {
+148	+	if len(raw) == 0 {
+149	+		return &#34;&#34;
+150	+	}
+151	+	var msg struct {
+152	+		Content json.RawMessage `json:&#34;content&#34;`
+153	+	}
+154	+	if err := json.Unmarshal(raw, &amp;msg); err != nil {
+155	+		return &#34;&#34;
+156	+	}
+157	+	var s string
+158	+	if json.Unmarshal(msg.Content, &amp;s) == nil {
+159	+		return strings.TrimSpace(s)
+160	+	}
+161	+	var blocks []struct {
+162	+		Type string `json:&#34;type&#34;`
+163	+		Text string `json:&#34;text&#34;`
+164	+	}
+165	+	if json.Unmarshal(msg.Content, &amp;blocks) == nil {
+166	+		for _, b := range blocks {
+167	+			if b.Type == &#34;text&#34; {
+168	+				return strings.TrimSpace(b.Text)
+169	+			}
+170	+		}
+171	+	}
+172	+	return &#34;&#34;
+173	+}
+174	+
+175	+func truncate(s string, n int) string {
+176	+	s = strings.TrimSpace(s)
+177	+	if len(s) &lt;= n {
+178	+		return s
+179	+	}
+180	+	return s[:n-1] + &#34;…&#34;
+181	+}
+182	+
+183	+// Scan indexes every session under root (the projects directory), grouped by
+184	+// project. Groups are ordered by most-recent session first; sessions within a
+185	+// group are newest-first.
+186	+func Scan(root string) ([]ProjectGroup, error) {
+187	+	entries, err := os.ReadDir(root)
+188	+	if err != nil {
+189	+		return nil, err
+190	+	}
+191	+	var groups []ProjectGroup
+192	+	for _, e := range entries {
+193	+		if !e.IsDir() {
+194	+			continue
+195	+		}
+196	+		dir := filepath.Join(root, e.Name())
+197	+		files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+198	+		if err != nil {
+199	+			return nil, err
+200	+		}
+201	+		var sessions []SessionInfo
+202	+		for _, fp := range files {
+203	+			si, err := indexFile(fp, e.Name())
+204	+			if err != nil {
+205	+				continue
+206	+			}
+207	+			sessions = append(sessions, si)
+208	+		}
+209	+		if len(sessions) == 0 {
+210	+			continue
+211	+		}
+212	+		sort.Slice(sessions, func(i, j int) bool {
+213	+			return sessions[i].ModTime.After(sessions[j].ModTime)
+214	+		})
+215	+		groups = append(groups, ProjectGroup{
+216	+			ProjectDir:  e.Name(),
+217	+			ProjectPath: sessions[0].ProjectPath,
+218	+			Sessions:    sessions,
+219	+		})
+220	+	}
+221	+	sort.Slice(groups, func(i, j int) bool {
+222	+		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+223	+	})
+224	+	return groups, nil
+225	+}
+226	+
+227	+// FindSession resolves a session id or unambiguous prefix across all projects.
+228	+func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+229	+	groups, err := Scan(root)
+230	+	if err != nil {
+231	+		return SessionInfo{}, err
+232	+	}
+233	+	var matches []SessionInfo
+234	+	for _, g := range groups {
+235	+		for _, s := range g.Sessions {
+236	+			if s.ID == idOrPrefix {
+237	+				return s, nil // exact wins immediately
+238	+			}
+239	+			if strings.HasPrefix(s.ID, idOrPrefix) {
+240	+				matches = append(matches, s)
+241	+			}
+242	+		}
+243	+	}
+244	+	switch len(matches) {
+245	+	case 0:
+246	+		return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)
+247	+	case 1:
+248	+		return matches[0], nil
+249	+	default:
+250	+		return SessionInfo{}, fmt.Errorf(&#34;ambiguous prefix %q matches %d sessions&#34;, idOrPrefix, len(matches))
+251	+	}
+252	+}
+253	diff --git a/internal/discovery/discovery_test.go b/internal/discovery/discovery_test.go
+254	new file mode 100644
+255	index 0000000..765ab5f
+256	--- /dev/null
+257	+++ b/internal/discovery/discovery_test.go
+258	@@ -0,0 +1,111 @@
+259	+package discovery
+260	+
+261	+import (
+262	+	&#34;os&#34;
+263	+	&#34;path/filepath&#34;
+264	+	&#34;testing&#34;
+265	+)
+266	+
+267	+func TestEncodeDecodeRoundTrip(t *testing.T) {
+268	+	// NOTE: deviates from the task brief&#39;s literal fixture, which used
+269	+	// &#34;~/IdeaProjects/cc-what-have-i-done&#34; (this repo&#39;s own
+270	+	// path). That path contains a literal hyphen in the directory name
+271	+	// (&#34;cc-what-have-i-done&#34;), which the naive &#39;/&#39;&lt;-&gt;&#39;-&#39; replace scheme
+272	+	// specified below cannot round-trip: every embedded hyphen gets
+273	+	// decoded back into a &#39;/&#39;. This is a mathematical property of the
+274	+	// scheme, not an implementation bug, so a hyphen-free path is used
+275	+	// here instead to exercise a genuinely invertible case. See the
+276	+	// task report for verification (go run of the exact replace calls
+277	+	// against the original fixture).
+278	+	cwd := &#34;~/IdeaProjects/ccwhid&#34;
+279	+	enc := EncodeProjectDir(cwd)
+280	+	if enc != &#34;-Users-markus-IdeaProjects-ccwhid&#34; {
+281	+		t.Fatalf(&#34;EncodeProjectDir = %q&#34;, enc)
+282	+	}
+283	+	if dec := DecodeProjectDir(enc); dec != cwd {
+284	+		t.Fatalf(&#34;DecodeProjectDir = %q, want %q&#34;, dec, cwd)
+285	+	}
+286	+}
+287	+
+288	+// writeSession writes a minimal valid jsonl file with the given lines.
+289	+func writeSession(t *testing.T, dir, id string, lines ...string) {
+290	+	t.Helper()
+291	+	if err := os.MkdirAll(dir, 0o755); err != nil {
+292	+		t.Fatal(err)
+293	+	}
+294	+	path := filepath.Join(dir, id+&#34;.jsonl&#34;)
+295	+	data := &#34;&#34;
+296	+	for _, l := range lines {
+297	+		data += l + &#34;\n&#34;
+298	+	}
+299	+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+300	+		t.Fatal(err)
+301	+	}
+302	+}
+303	+
+304	+func TestScanBuildsGroups(t *testing.T) {
+305	+	root := t.TempDir()
+306	+	proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+307	+	writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,
+308	+		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Build a parser&#34;}`,
+309	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,
+310	+		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,
+311	+	)
+312	+	groups, err := Scan(root)
+313	+	if err != nil {
+314	+		t.Fatal(err)
+315	+	}
+316	+	if len(groups) != 1 {
+317	+		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+318	+	}
+319	+	g := groups[0]
+320	+	if g.ProjectPath != &#34;/tmp/projA&#34; {
+321	+		t.Errorf(&#34;ProjectPath = %q&#34;, g.ProjectPath)
+322	+	}
+323	+	if len(g.Sessions) != 1 {
+324	+		t.Fatalf(&#34;got %d sessions, want 1&#34;, len(g.Sessions))
+325	+	}
+326	+	s := g.Sessions[0]
+327	+	if s.Title != &#34;Build a parser&#34; {
+328	+		t.Errorf(&#34;Title = %q&#34;, s.Title)
+329	+	}
+330	+	if s.MessageCount != 2 {
+331	+		t.Errorf(&#34;MessageCount = %d, want 2&#34;, s.MessageCount)
+332	+	}
+333	+}
+334	+
+335	+func TestFindSessionByPrefix(t *testing.T) {
+336	+	root := t.TempDir()
+337	+	proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+338	+	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,
+339	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+340	+	writeSession(t, proj, &#34; zzzz2222&#34;)
+341	+	got, err := FindSession(root, &#34;abcd&#34;)
+342	+	if err != nil {
+343	+		t.Fatal(err)
+344	+	}
+345	+	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {
+346	+		t.Errorf(&#34;ID = %q&#34;, got.ID)
+347	+	}
+348	+}
+349	+
+350	+func TestScanUsesTranscriptCwd(t *testing.T) {
+351	+	root := t.TempDir()
+352	+	// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.
+353	+	proj := filepath.Join(root, &#34;-tmp-proj-with-hyphen&#34;)
+354	+	writeSession(t, proj, &#34;cccc3333-0000-0000-0000-000000000000&#34;,
+355	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+356	+	groups, err := Scan(root)
+357	+	if err != nil {
+358	+		t.Fatal(err)
+359	+	}
+360	+	if len(groups) != 1 {
+361	+		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+362	+	}
+363	+	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+364	+		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)
+365	+	}
+366	+	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+367	+		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)
+368	+	}
+369	+}
+370	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="i&#39;ll examine the actual code more closely and run a couple of focused verification tests to check the three named risks (malformed line tolerance, ambiguous prefix handling, and cwd-capture/fallback). i&#39;ll do this via a temporary test file that i&#39;ll remove afterward, leaving the tree clean.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.03</span></div>
+      <div class="turn-body"><p>I'll examine the actual code more closely and run a couple of focused verification tests to check the three named risks (malformed line tolerance, ambiguous prefix handling, and cwd-capture/fallback). I'll do this via a temporary test file that I'll remove afterward, leaving the tree clean.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash git log --oneline -5 &amp;&amp; git status &amp;&amp; cat go.mod | head -5">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -5 &amp;&amp; git status &amp;&amp; cat go.mod | head -5</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log --oneline -5 \u0026\u0026 git status \u0026\u0026 cat go.mod | head -5&#34;
+}</pre><pre class="tool-result">159ee65 fix: use transcript cwd for authoritative project path
+9def244 feat: add session discovery and indexing
+7b11575 feat: add domain model types
+37ba8bc chore: go mod tidy to correct cobra require metadata
+c2f4251 feat: scaffold ccwhid module and cobra root command
+Auf Branch feat/ccwhid-impl
+nichts zu committen, Arbeitsverzeichnis unverändert
+module github.com/saigyo/cc-what-have-i-done
+
+go 1.26
+
+require github.com/spf13/cobra v1.10.2</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/discovery/zz_review_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package discovery</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Focused review checks — not part of the deliverable, deleted after use.</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_MalformedLinesTolerated(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`not json at all`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,</div><div class="diff-add">+ 		`{&#34;broken json`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,</div><div class="diff-add">+ 		``, // blank line</div><div class="diff-add">+ 	)</div><div class="diff-add">+ 	groups, err := Scan(root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;Scan errored (should tolerate malformed lines): %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups[0].Sessions) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d sessions, want 1&#34;, len(groups[0].Sessions))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	s := groups[0].Sessions[0]</div><div class="diff-add">+ 	if s.MessageCount != 2 {</div><div class="diff-add">+ 		t.Errorf(&#34;MessageCount = %d, want 2 (only valid user/assistant lines counted)&#34;, s.MessageCount)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_FindSessionAmbiguous(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review2&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd2222-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;y&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`)</div><div class="diff-add">+ 	_, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-add">+ 	if err == nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected ambiguous error, got nil&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(err.Error(), &#34;ambiguous&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;error = %q, want mention of ambiguous&#34;, err.Error())</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_FindSessionNotFound(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review3&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	_, err := FindSession(root, &#34;zzzz&#34;)</div><div class="diff-add">+ 	if err == nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected not-found error, got nil&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Exact match should win even when a longer sibling ID shares the same prefix.</div><div class="diff-add">+ func TestReview_FindSessionExactMatchWinsOverAmbiguity(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review4&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-0000000000001111&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;y&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`)</div><div class="diff-add">+ 	got, err := FindSession(root, &#34;abcd1111-0000-0000-0000-000000000000&#34;)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected exact match to win, got error: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash go test ./internal/discovery/ -run &#39;testreview&#39; -v 2&gt;&amp;1">
+      <div class="turn-role">Claude<span class="usage-badge">104 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/discovery/ -run &#39;TestReview&#39; -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/discovery/ -run &#39;TestReview&#39; -v 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">=== RUN   TestReview_MalformedLinesTolerated
+--- PASS: TestReview_MalformedLinesTolerated (0.00s)
+=== RUN   TestReview_FindSessionAmbiguous
+--- PASS: TestReview_FindSessionAmbiguous (0.00s)
+=== RUN   TestReview_FindSessionNotFound
+--- PASS: TestReview_FindSessionNotFound (0.00s)
+=== RUN   TestReview_FindSessionExactMatchWinsOverAmbiguity
+--- PASS: TestReview_FindSessionExactMatchWinsOverAmbiguity (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.307s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="all four focused checks pass. now removing the temporary test file to leave the tree clean.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All four focused checks pass. Now removing the temporary test file to leave the tree clean.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/discovery/zz_review_test.go &amp;&amp; git status --short &amp;&amp; go build ./... &amp;&amp; echo &#34;clean and builds&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go &amp;&amp; git status --short &amp;&amp; go build ./... &amp;&amp; echo &#34;clean and builds&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go \u0026\u0026 git status --short \u0026\u0026 go build ./... \u0026\u0026 echo \&#34;clean and builds\&#34;&#34;
+}</pre><pre class="tool-result">clean and builds</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash git log -2 --format=&#39;%h%n%b%n---&#39; 9def244 159ee65 2&gt;&amp;1 | head -60">
+      <div class="turn-role">Claude<span class="usage-badge">131 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -2 --format=&#39;%H%n%B%n---&#39; 9def244 159ee65 2&gt;&amp;1 | head -60</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -2 --format=&#39;%H%n%B%n---&#39; 9def244 159ee65 2\u003e\u00261 | head -60&#34;
+}</pre><pre class="tool-result">159ee6522adfcbfd4824ad4dd48f419ab084fc47
+fix: use transcript cwd for authoritative project path
+
+DecodeProjectDir is lossy for paths whose segments contain hyphens;
+prefer the true cwd carried in transcript records, decode only as fallback.
+
+Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
+
+---
+9def244f7295e59b74a7d00085e78f639fa2bd9b
+feat: add session discovery and indexing
+
+Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
+
+---</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="both commits satisfy the trailer constraint. now finalizing the review.">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Both commits satisfy the trailer constraint. Now finalizing the review.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="bash gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="bash find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;cwd&#34; -i 2&gt;/dev/null; echo &#34;---&#34;; cat internal/model/*.go 2&gt;/dev/null | head -150">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;cwd&#34; -i 2&gt;/dev/null; echo &#34;---&#34;; cat internal/model/*.go 2&gt;/dev/null | head -150</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -name \&#34;*.go\&#34; -print | xargs grep -l \&#34;cwd\&#34; -i 2\u003e/dev/null; echo \&#34;---\&#34;; cat internal/model/*.go 2\u003e/dev/null | head -150&#34;
+}</pre><pre class="tool-result">./internal/discovery/discovery.go
+./internal/discovery/discovery_test.go
+./internal/model/model.go
+---
+package model
+
+import (
+	&#34;testing&#34;
+	&#34;time&#34;
+)
+
+func TestSessionDuration(t *testing.T) {
+	s := Session{
+		StartedAt: time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+		EndedAt:   time.Date(2026, 7, 11, 10, 5, 0, 0, time.UTC),
+	}
+	if got := s.Duration(); got != 5*time.Minute {
+		t.Errorf(&#34;Duration() = %v, want 5m&#34;, got)
+	}
+}
+
+func TestDisplayTitleFallback(t *testing.T) {
+	if got := (Session{}).DisplayTitle(); got != &#34;Untitled session&#34; {
+		t.Errorf(&#34;DisplayTitle() = %q, want fallback&#34;, got)
+	}
+	if got := (Session{Title: &#34;Fix parser&#34;}).DisplayTitle(); got != &#34;Fix parser&#34; {
+		t.Errorf(&#34;DisplayTitle() = %q, want title&#34;, got)
+	}
+}
+// Package model defines the domain types shared across ccwhid: a parsed
+// Session and the timeline of Turns, Blocks and ToolCalls within it.
+package model
+
+import &#34;time&#34;
+
+type TurnKind string
+
+const (
+	TurnUser      TurnKind = &#34;user&#34;
+	TurnAssistant TurnKind = &#34;assistant&#34;
+)
+
+type BlockType string
+
+const (
+	BlockText     BlockType = &#34;text&#34;
+	BlockThinking BlockType = &#34;thinking&#34;
+	BlockToolUse  BlockType = &#34;tool_use&#34;
+)
+
+// Session is one fully-parsed Claude Code transcript.
+type Session struct {
+	ID           string
+	ProjectPath  string // decoded absolute cwd
+	Title        string
+	GitBranch    string
+	Version      string
+	StartedAt    time.Time
+	EndedAt      time.Time
+	Turns        []Turn
+	SkippedLines int // count of malformed lines skipped while parsing
+}
+
+func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+
+func (s Session) DisplayTitle() string {
+	if s.Title != &#34;&#34; {
+		return s.Title
+	}
+	return &#34;Untitled session&#34;
+}
+
+// Turn is a single user or assistant message, holding ordered content blocks.
+type Turn struct {
+	Kind      TurnKind
+	Timestamp time.Time
+	Blocks    []Block
+}
+
+// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+type Block struct {
+	Type BlockType
+	Text string    // for BlockText and BlockThinking
+	Tool *ToolCall // for BlockToolUse
+}
+
+// ToolCall is a single tool invocation and its result.
+type ToolCall struct {
+	ID        string
+	Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+	Summary   string // one-line summary for the collapsed card header
+	InputJSON string // pretty-printed input for generic display
+	Result    *ToolResult
+	Diff      *Diff      // set for Edit/Write
+	Subagents []Subagent // set for Task calls with sidechain activity
+}
+
+type ToolResult struct {
+	Content string
+	IsError bool
+}
+
+type Diff struct {
+	Path    string
+	OldText string
+	NewText string
+}
+
+// Subagent is a nested sidechain run attached to a parent Task tool call.
+type Subagent struct {
+	Description string
+	Turns       []Turn
+}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="# task 3 review: session discovery
+
+## spec compliance: ✅
+
+all items in the &#34;produced api&#34; contract are present with matching names/signatures/types: `encodeprojectdir(string) string`, `decodeprojectdir(string) string`, `sessioninfo{id, filepath, projectdir, projectpath, title, firstprompt string; modtime time.time; messagecount int; hassubagents bool}`, `projectgroup{projectdir, projectpath string; sessions []sessioninfo}`, `scan(root string) ([]projectgroup, error)`, `defaultroot() (string, error)`, `findsession(root, idorprefix string) (sessioninfo, error)`. package path is `github.com/saigyo/cc-what-have-i-done/internal/discovery` (verified against `go.mod`). no cross-package imports (stdlib only). both commits carry the required `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;` trailer.
+
+the corrected design (cwd-authoritative `projectpath`, decode-only-as-fallback) is correctly implemented in `159ee65`: `scanline` gained a `cwd` field (`internal/discovery/discovery.go:87`), `indexfile` seeds `projectpath` from `decodeprojectdir(projectdir)` and overwrites it once with the first non-empty transcript `cwd` seen (lines 108, 133-136), and `scan` sources `projectgroup.projectpath` from `sessions[0].projectpath` (the group&#39;s most-recently-modified session) rather than re-decoding the directory name (line 217). `decodeprojectdir`&#39;s doc comment now correctly documents the lossy behavior and directs callers to prefer transcript `cwd` (lines 61-70).
+
+## verification of named risks
+
+i wrote a temporary, throwaway test file (`internal/discovery/zz_review_test.go`), ran it, then deleted it — tree is clean (`git status --short` empty, `go build ./...` and `go vet ./...` pass, `gofmt -l` reports nothing).
+
+- **(a) malformed lines don&#39;t abort `indexfile`/`scan`.** confirmed: a file with `not json at all`, a truncated `{&#34;broken json`, a blank line, interleaved with two valid user/assistant lines produced `messagecount == 2` and no error from `scan`. the per-line `continue` on unmarshal failure (line 118) and per-file `continue` in `scan`&#39;s loop (line 205) both hold.
+- **(b) `findsession` ambiguous vs. not-found.** confirmed: two sessions sharing prefix `abcd` → error containing &#34;ambiguous&#34;; unmatched prefix `zzzz` → non-nil error. also confirmed exact-id match short-circuits and wins even when a longer sibling id shares that exact string as a prefix (line 236-238) — this is pre-existing behavior from the brief&#39;s own code, not something the fix commit touched, and is a defensible priority rule (exact identity beats accidental prefix collision).
+- **(c) cwd-capture sets `projectpath` once; fallback still works.** confirmed via the committed `testscanusestranscriptcwd` and by re-reading the `cwdset` guard (line 114, 133-136): it&#39;s a local variable scoped to one `indexfile` call, so there&#39;s no cross-session leakage, and the fallback (`testscanbuildsgroups`, no `cwd` field) still resolves to the naive decode.
+
+## strengths
+
+- fix is minimal and surgical — only the two files this task owns are touched; no other package&#39;s contract changed.
+- `decodeprojectdir`&#39;s doc comment is genuinely useful: it explains *why* it&#39;s lossy and states the calling convention explicitly, which protects future callers (e.g., a later `list`/`resume` command) from re-introducing the bug.
+- the deviation on the `testencodedecoderoundtrip` fixture (documented in the report) was a correct, narrowly-scoped call — the original brief&#39;s fixture was mathematically unsatisfiable under the specified encode/decode scheme, and the report flags it transparently rather than silently patching it.
+- test added for the fix (`testscanusestranscriptcwd`) exercises exactly the scenario the fix targets (hyphenated real path vs. lossy decode).
+
+## issues
+
+**minor** — `internal/discovery/discovery.go` / `discovery_test.go`: no committed regression test exercises the &#34;malformed lines tolerated&#34; or &#34;ambiguous prefix&#34; behaviors directly (the only malformed-adjacent fixture is the empty ` zzzz2222` file, which never even reaches the json-parsing path). both behaviors are correct today (verified above), but a future refactor of `indexfile`&#39;s scan loop or `findsession`&#39;s match-counting could regress silently without a failing test. not blocking, since these are two of the four global constraints and worth a permanent test, but the current code is correct.
+
+**minor** — `internal/discovery/discovery.go:130-136`: cwd capture only inspects `user`/`assistant` typed lines (consistent with `internal/model.turnkind`, which likewise only models those two turn kinds, so this isn&#39;t inconsistent with the rest of the codebase). worth a one-line note if a later task discovers `cwd` also needs to be read from other record types, but nothing here contradicts the corrected design as described.
+
+no critical or important issues found.
+
+## assessment
+
+**task quality: approved**
+
+the implementation matches the produced api contract exactly, and the controller-directed correctness fix is implemented as designed: transcript `cwd` is authoritative when present, `decodeprojectdir` is used only as a fallback, and this was verified both via the implementer&#39;s own test and my independent focused tests (malformed-line tolerance, ambiguous/not-found/exact-match `findsession` resolution, and the fallback path). no functional defects found; the two minor notes are coverage/documentation suggestions, not correctness problems.">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.02</span></div>
+      <div class="turn-body"><h1>Task 3 Review: Session discovery</h1>
+<h2>Spec Compliance: ✅</h2>
+<p>All items in the &quot;Produced API&quot; contract are present with matching names/signatures/types: <code>EncodeProjectDir(string) string</code>, <code>DecodeProjectDir(string) string</code>, <code>SessionInfo{ID, FilePath, ProjectDir, ProjectPath, Title, FirstPrompt string; ModTime time.Time; MessageCount int; HasSubagents bool}</code>, <code>ProjectGroup{ProjectDir, ProjectPath string; Sessions []SessionInfo}</code>, <code>Scan(root string) ([]ProjectGroup, error)</code>, <code>DefaultRoot() (string, error)</code>, <code>FindSession(root, idOrPrefix string) (SessionInfo, error)</code>. Package path is <code>github.com/saigyo/cc-what-have-i-done/internal/discovery</code> (verified against <code>go.mod</code>). No cross-package imports (stdlib only). Both commits carry the required <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code> trailer.</p>
+<p>The corrected design (cwd-authoritative <code>ProjectPath</code>, decode-only-as-fallback) is correctly implemented in <code>159ee65</code>: <code>scanLine</code> gained a <code>Cwd</code> field (<code>internal/discovery/discovery.go:87</code>), <code>indexFile</code> seeds <code>ProjectPath</code> from <code>DecodeProjectDir(projectDir)</code> and overwrites it once with the first non-empty transcript <code>cwd</code> seen (lines 108, 133-136), and <code>Scan</code> sources <code>ProjectGroup.ProjectPath</code> from <code>sessions[0].ProjectPath</code> (the group's most-recently-modified session) rather than re-decoding the directory name (line 217). <code>DecodeProjectDir</code>'s doc comment now correctly documents the lossy behavior and directs callers to prefer transcript <code>cwd</code> (lines 61-70).</p>
+<h2>Verification of named risks</h2>
+<p>I wrote a temporary, throwaway test file (<code>internal/discovery/zz_review_test.go</code>), ran it, then deleted it — tree is clean (<code>git status --short</code> empty, <code>go build ./...</code> and <code>go vet ./...</code> pass, <code>gofmt -l</code> reports nothing).</p>
+<ul>
+<li><strong>(a) Malformed lines don't abort <code>indexFile</code>/<code>Scan</code>.</strong> Confirmed: a file with <code>not json at all</code>, a truncated <code>{&quot;broken json</code>, a blank line, interleaved with two valid user/assistant lines produced <code>MessageCount == 2</code> and no error from <code>Scan</code>. The per-line <code>continue</code> on unmarshal failure (line 118) and per-file <code>continue</code> in <code>Scan</code>'s loop (line 205) both hold.</li>
+<li><strong>(b) <code>FindSession</code> ambiguous vs. not-found.</strong> Confirmed: two sessions sharing prefix <code>abcd</code> → error containing &quot;ambiguous&quot;; unmatched prefix <code>zzzz</code> → non-nil error. Also confirmed exact-ID match short-circuits and wins even when a longer sibling ID shares that exact string as a prefix (line 236-238) — this is pre-existing behavior from the brief's own code, not something the fix commit touched, and is a defensible priority rule (exact identity beats accidental prefix collision).</li>
+<li><strong>(c) cwd-capture sets <code>ProjectPath</code> once; fallback still works.</strong> Confirmed via the committed <code>TestScanUsesTranscriptCwd</code> and by re-reading the <code>cwdSet</code> guard (line 114, 133-136): it's a local variable scoped to one <code>indexFile</code> call, so there's no cross-session leakage, and the fallback (<code>TestScanBuildsGroups</code>, no <code>cwd</code> field) still resolves to the naive decode.</li>
+</ul>
+<h2>Strengths</h2>
+<ul>
+<li>Fix is minimal and surgical — only the two files this task owns are touched; no other package's contract changed.</li>
+<li><code>DecodeProjectDir</code>'s doc comment is genuinely useful: it explains <em>why</em> it's lossy and states the calling convention explicitly, which protects future callers (e.g., a later <code>list</code>/<code>resume</code> command) from re-introducing the bug.</li>
+<li>The deviation on the <code>TestEncodeDecodeRoundTrip</code> fixture (documented in the report) was a correct, narrowly-scoped call — the original brief's fixture was mathematically unsatisfiable under the specified encode/decode scheme, and the report flags it transparently rather than silently patching it.</li>
+<li>Test added for the fix (<code>TestScanUsesTranscriptCwd</code>) exercises exactly the scenario the fix targets (hyphenated real path vs. lossy decode).</li>
+</ul>
+<h2>Issues</h2>
+<p><strong>Minor</strong> — <code>internal/discovery/discovery.go</code> / <code>discovery_test.go</code>: No committed regression test exercises the &quot;malformed lines tolerated&quot; or &quot;ambiguous prefix&quot; behaviors directly (the only malformed-adjacent fixture is the empty <code> zzzz2222</code> file, which never even reaches the JSON-parsing path). Both behaviors are correct today (verified above), but a future refactor of <code>indexFile</code>'s scan loop or <code>FindSession</code>'s match-counting could regress silently without a failing test. Not blocking, since these are two of the four global constraints and worth a permanent test, but the current code is correct.</p>
+<p><strong>Minor</strong> — <code>internal/discovery/discovery.go:130-136</code>: cwd capture only inspects <code>user</code>/<code>assistant</code> typed lines (consistent with <code>internal/model.TurnKind</code>, which likewise only models those two turn kinds, so this isn't inconsistent with the rest of the codebase). Worth a one-line note if a later task discovers <code>cwd</code> also needs to be read from other record types, but nothing here contradicts the corrected design as described.</p>
+<p>No Critical or Important issues found.</p>
+<h2>Assessment</h2>
+<p><strong>Task quality: Approved</strong></p>
+<p>The implementation matches the produced API contract exactly, and the controller-directed correctness fix is implemented as designed: transcript <code>cwd</code> is authoritative when present, <code>DecodeProjectDir</code> is used only as a fallback, and this was verified both via the implementer's own test and my independent focused tests (malformed-line tolerance, ambiguous/not-found/exact-match <code>FindSession</code> resolution, and the fallback path). No functional defects found; the two minor notes are coverage/documentation suggestions, not correctness problems.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

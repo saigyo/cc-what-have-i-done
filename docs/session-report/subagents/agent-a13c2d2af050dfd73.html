@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implement Task 1: notification parsing · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are implementing Task 1: Parse `&lt;task-notification&gt;` re…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Implement Task 1: notification parsing</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 09:14</span>
+        <span>40 turns</span>
+        <span>general-purpose · agent-a13c2d2af050dfd73</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 8k in+out · ~$0.18 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-haiku-4-5</td><td>202</td><td>8k</td><td>798k</td><td>47k</td><td>$0.18</td></tr>
+          <tr class="usage-total"><td>Total</td><td>202</td><td>8k</td><td>798k</td><td>47k</td><td>$0.18</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are implementing task 1: parse `&lt;task-notification&gt;` records into agent-result turns, for the go cli `ccwhid`.
+
+## task description
+
+read your task brief first: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
+it contains the full task text from the plan, including the exact test code and implementation code to use verbatim.
+
+## context
+
+ccwhid parses claude code jsonl transcripts into a `model.session` and renders an html report. today, a background agent&#39;s completion notification (a `user` record whose content is a `&lt;task-notification&gt;` string) renders as a user turn attributed to &#34;you&#34; — this task makes the parser surface it as a new turn kind `agent-result` instead. this is task 1 of 5; later tasks build the loader and renderer on top of the model fields you add.
+
+work from: ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).
+
+global constraints that bind this task:
+- the fix is unconditional — no dependence on any options flag.
+- a malformed notification must never fail the parse; it falls back to a plain user turn.
+- run `gofmt -l .` (must print nothing) before committing.
+- the commit message must end with the trailer: `co-authored-by: claude haiku 4.5 &lt;noreply@anthropic.com&gt;`
+
+the brief offers a choice about two one-line wrapper helpers (`trimleftspace`/`hasprefix`): prefer calling `strings.trimleft`/`strings.hasprefix` directly and drop the wrappers.
+
+## before you begin
+
+if you have questions about the requirements, approach, dependencies, or anything unclear in the task brief — ask them now.
+
+## your job
+
+1. implement exactly what the task brief specifies (tdd: write the failing tests first, verify they fail, then implement)
+2. verify the full suite passes: `gofmt -l . &amp;&amp; go test ./...`
+3. commit your work
+4. self-review with fresh eyes (completeness, quality, yagni, test hygiene); fix anything you find before reporting
+5. report back
+
+while iterating, run the focused test for what you&#39;re changing; run the full suite once before committing, not after every edit.
+
+if you&#39;re stuck or the code doesn&#39;t match what the brief assumes, stop and report blocked or needs_context with specifics. never silently produce work you&#39;re unsure about.
+
+## after review findings
+
+if a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.
+
+## report format
+
+write your full report to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md:
+- what you implemented, tdd evidence (red command&#43;output, green command&#43;output), files changed, self-review findings, concerns.
+
+then report back with only (under 15 lines):
+- **status:** done | done_with_concerns | blocked | needs_context
+- commits created (short sha &#43; subject)
+- one-line test summary
+- your concerns, if any
+- the report file path">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are implementing Task 1: Parse <code>&lt;task-notification&gt;</code> records into agent-result turns, for the Go CLI <code>ccwhid</code>.</p>
+<h2>Task Description</h2>
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
+It contains the full task text from the plan, including the exact test code and implementation code to use verbatim.</p>
+<h2>Context</h2>
+<p>ccwhid parses Claude Code JSONL transcripts into a <code>model.Session</code> and renders an HTML report. Today, a background agent's completion notification (a <code>user</code> record whose content is a <code>&lt;task-notification&gt;</code> string) renders as a user turn attributed to &quot;You&quot; — this task makes the parser surface it as a new turn kind <code>agent-result</code> instead. This is Task 1 of 5; later tasks build the loader and renderer on top of the model fields you add.</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Global constraints that bind this task:</p>
+<ul>
+<li>The fix is unconditional — no dependence on any Options flag.</li>
+<li>A malformed notification must never fail the parse; it falls back to a plain user turn.</li>
+<li>Run <code>gofmt -l .</code> (must print nothing) before committing.</li>
+<li>The commit message must end with the trailer: <code>Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</code></li>
+</ul>
+<p>The brief offers a choice about two one-line wrapper helpers (<code>trimLeftSpace</code>/<code>hasPrefix</code>): prefer calling <code>strings.TrimLeft</code>/<code>strings.HasPrefix</code> directly and drop the wrappers.</p>
+<h2>Before You Begin</h2>
+<p>If you have questions about the requirements, approach, dependencies, or anything unclear in the task brief — ask them now.</p>
+<h2>Your Job</h2>
+<ol>
+<li>Implement exactly what the task brief specifies (TDD: write the failing tests first, verify they fail, then implement)</li>
+<li>Verify the full suite passes: <code>gofmt -l . &amp;&amp; go test ./...</code></li>
+<li>Commit your work</li>
+<li>Self-review with fresh eyes (completeness, quality, YAGNI, test hygiene); fix anything you find before reporting</li>
+<li>Report back</li>
+</ol>
+<p>While iterating, run the focused test for what you're changing; run the full suite once before committing, not after every edit.</p>
+<p>If you're stuck or the code doesn't match what the brief assumes, STOP and report BLOCKED or NEEDS_CONTEXT with specifics. Never silently produce work you're unsure about.</p>
+<h2>After Review Findings</h2>
+<p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
+<h2>Report Format</h2>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md:</p>
+<ul>
+<li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
+</ul>
+<p>Then report back with ONLY (under 15 lines):</p>
+<ul>
+<li><strong>Status:</strong> DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT</li>
+<li>Commits created (short SHA + subject)</li>
+<li>One-line test summary</li>
+<li>Your concerns, if any</li>
+<li>The report file path</li>
+</ul>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll start by reading the task brief to understand the exact requirements.">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>I'll start by reading the task brief to understand the exact requirements.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 1: Parse `&lt;task-notification&gt;` records into agent-result turns
+2	
+3	**Files:**
+4	- Modify: `internal/model/model.go`
+5	- Modify: `internal/transcript/parse.go`
+6	- Modify: `internal/redact/redact.go` (redact the new summary field)
+7	- Test: `internal/transcript/notification_test.go` (new)
+8	
+9	**Interfaces:**
+10	- Consumes: existing `buildTurn`, `apiBlock`, `model.Turn`.
+11	- Produces: `model.TurnAgentResult TurnKind = &#34;agent-result&#34;`; `model.Turn` fields `AgentID, AgentStatus, AgentSummary string`; unexported `parseTaskNotification(s string) (taskNotification, bool)` with `taskNotification{TaskID, ToolUseID, Status, Summary, Result string}`. Task 4 renders turns of this kind; Task 5 links via `Turn.AgentID`.
+12	
+13	- [ ] **Step 1: Write the failing test**
+14	
+15	Create `internal/transcript/notification_test.go`:
+16	
+17	```go
+18	package transcript
+19	
+20	import (
+21		&#34;strings&#34;
+22		&#34;testing&#34;
+23	
+24		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+25	)
+26	
+27	const notifBody = `&lt;task-notification&gt;
+28	&lt;task-id&gt;acb6584f99f2f81fd&lt;/task-id&gt;
+29	&lt;tool-use-id&gt;toolu_0112a19E&lt;/tool-use-id&gt;
+30	&lt;output-file&gt;/tmp/tasks/acb6584f99f2f81fd.output&lt;/output-file&gt;
+31	&lt;status&gt;completed&lt;/status&gt;
+32	&lt;summary&gt;Agent &#34;Implement Task 12: Profiles view&#34; finished&lt;/summary&gt;
+33	&lt;note&gt;may notify more than once&lt;/note&gt;
+34	&lt;result&gt;Both items fixed.
+35	
+36	## Status: Complete&lt;/result&gt;
+37	&lt;/task-notification&gt;`
+38	
+39	func notifLine(t *testing.T, body string) string {
+40		t.Helper()
+41		b, err := jsonMarshalString(body)
+42		if err != nil {
+43			t.Fatal(err)
+44		}
+45		return `{&#34;type&#34;:&#34;user&#34;,&#34;timestamp&#34;:&#34;2026-07-05T18:26:08.000Z&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:` + b + `}}`
+46	}
+47	
+48	func TestParseTaskNotificationTurn(t *testing.T) {
+49		s, err := Parse(strings.NewReader(notifLine(t, notifBody)), Options{})
+50		if err != nil {
+51			t.Fatal(err)
+52		}
+53		if len(s.Turns) != 1 {
+54			t.Fatalf(&#34;got %d turns, want 1&#34;, len(s.Turns))
+55		}
+56		turn := s.Turns[0]
+57		if turn.Kind != model.TurnAgentResult {
+58			t.Fatalf(&#34;kind = %q, want %q&#34;, turn.Kind, model.TurnAgentResult)
+59		}
+60		if turn.AgentID != &#34;acb6584f99f2f81fd&#34; {
+61			t.Errorf(&#34;AgentID = %q&#34;, turn.AgentID)
+62		}
+63		if turn.AgentStatus != &#34;completed&#34; {
+64			t.Errorf(&#34;AgentStatus = %q&#34;, turn.AgentStatus)
+65		}
+66		if want := `Agent &#34;Implement Task 12: Profiles view&#34; finished`; turn.AgentSummary != want {
+67			t.Errorf(&#34;AgentSummary = %q&#34;, turn.AgentSummary)
+68		}
+69		if len(turn.Blocks) != 1 || !strings.Contains(turn.Blocks[0].Text, &#34;## Status: Complete&#34;) {
+70			t.Errorf(&#34;body block wrong: %+v&#34;, turn.Blocks)
+71		}
+72		if strings.Contains(turn.Blocks[0].Text, &#34;&lt;task-id&gt;&#34;) {
+73			t.Error(&#34;body must be the &lt;result&gt; payload only, not the raw envelope&#34;)
+74		}
+75	}
+76	
+77	func TestParseTaskNotificationEmptyResultFallsBackToSummary(t *testing.T) {
+78		body := &#34;&lt;task-notification&gt;\n&lt;task-id&gt;a1&lt;/task-id&gt;\n&lt;status&gt;completed&lt;/status&gt;\n&lt;summary&gt;Agent \&#34;x\&#34; finished&lt;/summary&gt;\n&lt;result&gt;&lt;/result&gt;\n&lt;/task-notification&gt;&#34;
+79		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+80		if err != nil {
+81			t.Fatal(err)
+82		}
+83		if len(s.Turns) != 1 || s.Turns[0].Blocks[0].Text != `Agent &#34;x&#34; finished` {
+84			t.Fatalf(&#34;want summary as body, got %+v&#34;, s.Turns)
+85		}
+86	}
+87	
+88	func TestParseMalformedNotificationStaysUserTurn(t *testing.T) {
+89		// No &lt;task-id&gt; -&gt; must stay a plain user turn, content untouched.
+90		body := &#34;&lt;task-notification&gt;\nbroken payload\n&lt;/task-notification&gt;&#34;
+91		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+92		if err != nil {
+93			t.Fatal(err)
+94		}
+95		if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+96			t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+97		}
+98	}
+99	
+100	func TestUserTextMentioningNotificationMidStringStaysUserTurn(t *testing.T) {
+101		body := &#34;please explain what a &lt;task-notification&gt; record is&#34;
+102		s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+103		if err != nil {
+104			t.Fatal(err)
+105		}
+106		if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {
+107			t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)
+108		}
+109	}
+110	
+111	func TestRepeatNotificationsEachProduceATurn(t *testing.T) {
+112		line := notifLine(t, notifBody)
+113		s, err := Parse(strings.NewReader(line+&#34;\n&#34;+line), Options{})
+114		if err != nil {
+115			t.Fatal(err)
+116		}
+117		if len(s.Turns) != 2 {
+118			t.Fatalf(&#34;got %d turns, want 2 (no dedup)&#34;, len(s.Turns))
+119		}
+120	}
+121	```
+122	
+123	Add the small helper at the bottom of the same test file:
+124	
+125	```go
+126	// jsonMarshalString wraps a string as a JSON string literal.
+127	func jsonMarshalString(s string) (string, error) {
+128		b, err := json.Marshal(s)
+129		return string(b), err
+130	}
+131	```
+132	
+133	with `&#34;encoding/json&#34;` added to the test file&#39;s imports.
+134	
+135	- [ ] **Step 2: Run tests to verify they fail**
+136	
+137	Run: `go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v`
+138	Expected: FAIL — `model.TurnAgentResult` undefined (compile error).
+139	
+140	- [ ] **Step 3: Add model fields**
+141	
+142	In `internal/model/model.go`, extend the turn-kind consts:
+143	
+144	```go
+145	const (
+146		TurnUser        TurnKind = &#34;user&#34;
+147		TurnAssistant   TurnKind = &#34;assistant&#34;
+148		TurnAgentResult TurnKind = &#34;agent-result&#34; // background-agent completion fed back into the session
+149	)
+150	```
+151	
+152	Extend `Turn` (after the `Usage` field):
+153	
+154	```go
+155		// Agent-result fields, set only when Kind == TurnAgentResult.
+156		AgentID      string // task/agent id from the notification
+157		AgentStatus  string // e.g. &#34;completed&#34;
+158		AgentSummary string // e.g. `Agent &#34;Implement Task 12&#34; finished`
+159	```
+160	
+161	- [ ] **Step 4: Implement notification parsing**
+162	
+163	In `internal/transcript/parse.go`, add (near `buildTurn`):
+164	
+165	```go
+166	// taskNotification is the parsed payload of a &lt;task-notification&gt; user record —
+167	// the message a background agent&#39;s completion injects into the parent session.
+168	type taskNotification struct {
+169		TaskID    string
+170		ToolUseID string
+171		Status    string
+172		Summary   string
+173		Result    string
+174	}
+175	
+176	// parseTaskNotification extracts fields from a &lt;task-notification&gt; payload with
+177	// tolerant string scanning (the payload is pseudo-XML with unescaped markdown
+178	// inside &lt;result&gt;). ok is false unless both task-id and summary are present.
+179	func parseTaskNotification(s string) (taskNotification, bool) {
+180		t := trimLeftSpace(s)
+181		if !hasPrefix(t, &#34;&lt;task-notification&gt;&#34;) {
+182			return taskNotification{}, false
+183		}
+184		n := taskNotification{
+185			TaskID:    tagContent(t, &#34;task-id&#34;),
+186			ToolUseID: tagContent(t, &#34;tool-use-id&#34;),
+187			Status:    tagContent(t, &#34;status&#34;),
+188			Summary:   tagContent(t, &#34;summary&#34;),
+189			Result:    tagContent(t, &#34;result&#34;),
+190		}
+191		if n.TaskID == &#34;&#34; || n.Summary == &#34;&#34; {
+192			return taskNotification{}, false
+193		}
+194		return n, true
+195	}
+196	
+197	// tagContent returns the text between the first &lt;name&gt; and the last &lt;/name&gt;,
+198	// trimmed. The last closing tag guards &lt;result&gt; bodies that themselves contain
+199	// XML-looking text.
+200	func tagContent(s, name string) string {
+201		open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;
+202		i := strings.Index(s, open)
+203		if i &lt; 0 {
+204			return &#34;&#34;
+205		}
+206		rest := s[i+len(open):]
+207		j := strings.LastIndex(rest, close)
+208		if j &lt; 0 {
+209			return &#34;&#34;
+210		}
+211		return strings.TrimSpace(rest[:j])
+212	}
+213	
+214	func trimLeftSpace(s string) string { return strings.TrimLeft(s, &#34; \t\r\n&#34;) }
+215	
+216	func hasPrefix(s, p string) bool { return strings.HasPrefix(s, p) }
+217	```
+218	
+219	Add `&#34;strings&#34;` to `parse.go`&#39;s imports. (If you prefer, call `strings.HasPrefix`/`strings.TrimLeft` directly and drop the two one-line wrappers — either is fine; do not add other helpers.)
+220	
+221	In `buildTurn`, immediately after the `turn.Kind` assignment block, add:
+222	
+223	```go
+224		// A background agent&#39;s completion arrives as a user record whose content is
+225		// a single &lt;task-notification&gt; text payload. Surface it as an agent-result
+226		// turn so the report attributes it to the agent, not to the user.
+227		if turn.Kind == model.TurnUser &amp;&amp; len(blocks) == 1 &amp;&amp; blocks[0].Type == &#34;text&#34; {
+228			if n, ok := parseTaskNotification(blocks[0].Text); ok {
+229				turn.Kind = model.TurnAgentResult
+230				turn.AgentID = n.TaskID
+231				turn.AgentStatus = n.Status
+232				turn.AgentSummary = n.Summary
+233				body := n.Result
+234				if body == &#34;&#34; {
+235					body = n.Summary
+236				}
+237				turn.Blocks = []model.Block{{Type: model.BlockText, Text: body}}
+238				return turn
+239			}
+240		}
+241	```
+242	
+243	- [ ] **Step 5: Redact the new field**
+244	
+245	In `internal/redact/redact.go`, function `redactTurn`, add alongside the existing per-turn string fields:
+246	
+247	```go
+248		t.AgentSummary = r.String(t.AgentSummary)
+249	```
+250	
+251	(Open the file first and place it with the other `r.String` rewrites at the top of `redactTurn`; the result body is a normal text block and is already covered.)
+252	
+253	- [ ] **Step 6: Run the tests**
+254	
+255	Run: `go test ./internal/transcript/ ./internal/redact/ -v`
+256	Expected: all PASS, including the five new tests.
+257	
+258	- [ ] **Step 7: Run the full suite and commit**
+259	
+260	Run: `gofmt -l . &amp;&amp; go test ./...`
+261	Expected: gofmt prints nothing; all packages pass.
+262	
+263	```bash
+264	git add internal/model/model.go internal/transcript/parse.go internal/transcript/notification_test.go internal/redact/redact.go
+265	git commit -m &#34;feat: parse task-notification records as agent-result turns&#34;
+266	```
+267	
+268	---
+269	
+270	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="now let me explore the existing codebase structure to understand the current implementation.">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let me explore the existing codebase structure to understand the current implementation.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done&#34;
+}</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done&#39;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude<span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
+}</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
+2	// Session and the timeline of Turns, Blocks and ToolCalls within it.
+3	package model
+4	
+5	import &#34;time&#34;
+6	
+7	type TurnKind string
+8	
+9	const (
+10		TurnUser      TurnKind = &#34;user&#34;
+11		TurnAssistant TurnKind = &#34;assistant&#34;
+12	)
+13	
+14	type BlockType string
+15	
+16	const (
+17		BlockText     BlockType = &#34;text&#34;
+18		BlockThinking BlockType = &#34;thinking&#34;
+19		BlockToolUse  BlockType = &#34;tool_use&#34;
+20	)
+21	
+22	// Session is one fully-parsed Claude Code transcript.
+23	type Session struct {
+24		ID           string
+25		ProjectPath  string // decoded absolute cwd
+26		Title        string
+27		GitBranch    string
+28		Version      string
+29		StartedAt    time.Time
+30		EndedAt      time.Time
+31		Turns        []Turn
+32		SkippedLines int // count of malformed lines skipped while parsing
+33	}
+34	
+35	func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+36	
+37	func (s Session) DisplayTitle() string {
+38		if s.Title != &#34;&#34; {
+39			return s.Title
+40		}
+41		return &#34;Untitled session&#34;
+42	}
+43	
+44	// Turn is a single user or assistant message, holding ordered content blocks.
+45	type Turn struct {
+46		Kind      TurnKind
+47		Timestamp time.Time
+48		Blocks    []Block
+49		Model     string // assistant model id (empty for user turns / when absent)
+50		Usage     *Usage // token usage for this assistant turn; nil when absent
+51	}
+52	
+53	// Usage holds the token counts reported for one assistant message. Cache writes
+54	// keep the 5-minute / 1-hour split because they are priced differently.
+55	type Usage struct {
+56		Input        int
+57		Output       int
+58		CacheRead    int
+59		CacheWrite5m int
+60		CacheWrite1h int
+61	}
+62	
+63	// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+64	type Block struct {
+65		Type BlockType
+66		Text string    // for BlockText and BlockThinking
+67		Tool *ToolCall // for BlockToolUse
+68	}
+69	
+70	// ToolCall is a single tool invocation and its result.
+71	type ToolCall struct {
+72		ID        string
+73		Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+74		Summary   string // one-line summary for the collapsed card header
+75		InputJSON string // pretty-printed input for generic display
+76		Result    *ToolResult
+77		Diff      *Diff      // set for Edit/Write
+78		Subagents []Subagent // set for Task calls with sidechain activity
+79	}
+80	
+81	type ToolResult struct {
+82		Content string
+83		IsError bool
+84	}
+85	
+86	type Diff struct {
+87		Path    string
+88		OldText string
+89		NewText string
+90	}
+91	
+92	// Subagent is a nested sidechain run attached to a parent Task tool call.
+93	type Subagent struct {
+94		Description string
+95		Turns       []Turn
+96	}
+97	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude<span class="usage-badge">124 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;bufio&#34;
+5		&#34;encoding/json&#34;
+6		&#34;errors&#34;
+7		&#34;io&#34;
+8		&#34;os&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+11	)
+12	
+13	// Options controls how a transcript is folded into a Session.
+14	type Options struct {
+15		IncludeSubagents bool
+16	}
+17	
+18	// ParseFile parses a transcript file at path.
+19	func ParseFile(path string, opts Options) (model.Session, error) {
+20		f, err := os.Open(path)
+21		if err != nil {
+22			return model.Session{}, err
+23		}
+24		defer f.Close()
+25		s, err := Parse(f, opts)
+26		if err != nil {
+27			return model.Session{}, err
+28		}
+29		s.ID = sessionIDFromPath(path)
+30		return s, nil
+31	}
+32	
+33	func sessionIDFromPath(path string) string {
+34		base := path
+35		if i := lastSlash(path); i &gt;= 0 {
+36			base = path[i+1:]
+37		}
+38		if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+39			return base[:len(base)-len(&#34;.jsonl&#34;)]
+40		}
+41		return base
+42	}
+43	
+44	func lastSlash(s string) int {
+45		for i := len(s) - 1; i &gt;= 0; i-- {
+46			if s[i] == &#39;/&#39; {
+47				return i
+48			}
+49		}
+50		return -1
+51	}
+52	
+53	// Parse reads a transcript stream and folds it into a Session timeline.
+54	func Parse(r io.Reader, opts Options) (model.Session, error) {
+55		var s model.Session
+56		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+57		// sidechains can be attached after the fact.
+58		toolIndex := map[string]*model.ToolCall{}
+59		// seenUsage tracks message ids whose usage has already been counted, so an
+60		// assistant message split across multiple records is not counted per-record.
+61		seenUsage := map[string]bool{}
+62		// lastTask tracks the most recent Task tool call; sidechainOwner is the Task
+63		// whose Subagents any subsequent sidechain turns are appended to.
+64		var lastTask *model.ToolCall
+65		sidechainOwner := lastTask
+66	
+67		sc := bufio.NewScanner(r)
+68		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+69		for sc.Scan() {
+70			line := sc.Bytes()
+71			if len(trimSpace(line)) == 0 {
+72				continue
+73			}
+74			var rec rawRecord
+75			if err := json.Unmarshal(line, &amp;rec); err != nil {
+76				s.SkippedLines++
+77				continue
+78			}
+79			switch rec.Type {
+80			case &#34;ai-title&#34;:
+81				if rec.AiTitle != &#34;&#34; {
+82					s.Title = rec.AiTitle
+83				}
+84				continue
+85			case &#34;user&#34;, &#34;assistant&#34;:
+86				// fallthrough to handling below
+87			default:
+88				continue // ignore mode/permission/attachment/etc. for the timeline
+89			}
+90			if rec.IsMeta {
+91				continue
+92			}
+93	
+94			// Capture session-level metadata from the first record that has it.
+95			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+96				s.GitBranch = rec.GitBranch
+97			}
+98			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+99				s.Version = rec.Version
+100			}
+101			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+102				s.ProjectPath = rec.Cwd
+103			}
+104			ts := parseTime(rec.Timestamp)
+105			if !ts.IsZero() {
+106				if s.StartedAt.IsZero() {
+107					s.StartedAt = ts
+108				}
+109				s.EndedAt = ts
+110			}
+111	
+112			_, blocks := decodeMessageContent(rec.Message)
+113	
+114			// Sidechain (subagent) records.
+115			if rec.IsSidechain {
+116				if !opts.IncludeSubagents || sidechainOwner == nil {
+117					continue
+118				}
+119				turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+120				if turn == nil {
+121					continue
+122				}
+123				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+124				sub.Turns = append(sub.Turns, *turn)
+125				continue
+126			}
+127	
+128			// Main-chain records.
+129			turn := buildTurn(rec, blocks, toolIndex, seenUsage)
+130			if turn == nil {
+131				continue // e.g. a user record that only carried a tool_result
+132			}
+133			s.Turns = append(s.Turns, *turn)
+134	
+135			// Seed a subagent slot for each Task tool call and make it the current
+136			// sidechain owner. Tool-use ids are already registered in buildTurn.
+137			// Note: sidechain records are attributed to the nearest preceding Task
+138			// by file order. Sequential Task calls attribute correctly; multiple
+139			// Task calls dispatched in parallel from one assistant message cannot be
+140			// disambiguated from the raw records and will all attach to the last
+141			// one — a known v1 limitation.
+142			if opts.IncludeSubagents {
+143				for i := range turn.Blocks {
+144					tool := turn.Blocks[i].Tool
+145					if tool != nil &amp;&amp; tool.Name == &#34;Task&#34; {
+146						tool.Subagents = append(tool.Subagents, model.Subagent{
+147							Description: taskDescription(tool),
+148						})
+149						lastTask = tool
+150						sidechainOwner = lastTask
+151					}
+152				}
+153			}
+154		}
+155		if err := sc.Err(); err != nil {
+156			// A single over-long line (bufio.ErrTooLong) is a pathological record,
+157			// not a reason to discard the whole report: count it and return what we
+158			// parsed so far.
+159			if errors.Is(err, bufio.ErrTooLong) {
+160				s.SkippedLines++
+161				return s, nil
+162			}
+163			return s, err
+164		}
+165		return s, nil
+166	}
+167	
+168	// messageMeta converts a record&#39;s message model/usage into turn fields, also
+169	// returning the message id for deduplication. Only assistant records carry
+170	// usage; the aggregate cache_creation figure (with no 5m/1h split) is attributed
+171	// to the cheaper 5-minute write.
+172	func messageMeta(raw json.RawMessage) (msgID, modelID string, usage *model.Usage) {
+173		id, mdl, u := decodeMessageMeta(raw)
+174		if u == nil {
+175			return id, mdl, nil
+176		}
+177		w5, w1 := u.CacheCreation.Ephemeral5m, u.CacheCreation.Ephemeral1h
+178		if w5 == 0 &amp;&amp; w1 == 0 &amp;&amp; u.CacheCreationInputTokens &gt; 0 {
+179			w5 = u.CacheCreationInputTokens
+180		}
+181		return id, mdl, &amp;model.Usage{
+182			Input:        u.InputTokens,
+183			Output:       u.OutputTokens,
+184			CacheRead:    u.CacheReadInputTokens,
+185			CacheWrite5m: w5,
+186			CacheWrite1h: w1,
+187		}
+188	}
+189	
+190	// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+191	// attached to their originating ToolCall via toolIndex and do not themselves
+192	// produce turn content. Returns nil if the record yields no displayable blocks.
+193	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {
+194		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+195		if rec.Type == &#34;user&#34; {
+196			turn.Kind = model.TurnUser
+197		} else {
+198			turn.Kind = model.TurnAssistant
+199		}
+200		for _, b := range blocks {
+201			switch b.Type {
+202			case &#34;text&#34;:
+203				if b.Text != &#34;&#34; {
+204					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+205				}
+206			case &#34;thinking&#34;:
+207				if b.Thinking != &#34;&#34; {
+208					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+209				}
+210			case &#34;tool_use&#34;:
+211				tc := buildToolCall(b)
+212				// Register the tool call so a later tool_result (in this turn&#39;s
+213				// chain OR inside a sidechain) can be matched back to it by id.
+214				toolIndex[tc.ID] = tc
+215				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
+216			case &#34;tool_result&#34;:
+217				if tc := toolIndex[b.ToolUseID]; tc != nil {
+218					tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+219				}
+220			}
+221		}
+222		if len(turn.Blocks) == 0 {
+223			return nil
+224		}
+225		if rec.Type == &#34;assistant&#34; {
+226			msgID, mdl, u := messageMeta(rec.Message)
+227			turn.Model = mdl
+228			// One assistant message is written as several records (one per content
+229			// block), each repeating the same usage. Count usage on the first record
+230			// of a message id only; later records of the same message get nil usage
+231			// so totals are not multiplied by the block count.
+232			if u != nil &amp;&amp; msgID != &#34;&#34; {
+233				if seenUsage[msgID] {
+234					u = nil
+235				} else {
+236					seenUsage[msgID] = true
+237				}
+238			}
+239			turn.Usage = u
+240		}
+241		return turn
+242	}
+243	
+244	func trimSpace(b []byte) []byte {
+245		start, end := 0, len(b)
+246		for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+247			start++
+248		}
+249		for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+250			end--
+251		}
+252		return b[start:end]
+253	}
+254	
+255	// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+256	// and, for Edit/Write, a Diff.
+257	func buildToolCall(b apiBlock) *model.ToolCall {
+258		tc := &amp;model.ToolCall{
+259			ID:        b.ID,
+260			Name:      b.Name,
+261			InputJSON: prettyJSON(b.Input),
+262		}
+263		input := decodeInput(b.Input)
+264		tc.Summary = toolSummary(b.Name, input)
+265		switch b.Name {
+266		case &#34;Edit&#34;, &#34;Write&#34;:
+267			tc.Diff = buildDiff(b.Name, input)
+268		}
+269		return tc
+270	}
+271	
+272	func decodeInput(raw json.RawMessage) map[string]any {
+273		m := map[string]any{}
+274		if len(raw) &gt; 0 {
+275			_ = json.Unmarshal(raw, &amp;m)
+276		}
+277		return m
+278	}
+279	
+280	func str(m map[string]any, key string) string {
+281		if v, ok := m[key].(string); ok {
+282			return v
+283		}
+284		return &#34;&#34;
+285	}
+286	
+287	// toolSummary produces a compact one-line header for a tool card.
+288	func toolSummary(name string, in map[string]any) string {
+289		switch name {
+290		case &#34;Bash&#34;:
+291			if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+292				return firstLine(c)
+293			}
+294		case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+295			if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+296				return p
+297			}
+298		case &#34;Glob&#34;:
+299			return str(in, &#34;pattern&#34;)
+300		case &#34;Grep&#34;:
+301			return str(in, &#34;pattern&#34;)
+302		case &#34;Task&#34;:
+303			return str(in, &#34;description&#34;)
+304		case &#34;WebFetch&#34;:
+305			return str(in, &#34;url&#34;)
+306		case &#34;WebSearch&#34;:
+307			return str(in, &#34;query&#34;)
+308		}
+309		return &#34;&#34;
+310	}
+311	
+312	func buildDiff(name string, in map[string]any) *model.Diff {
+313		d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+314		if name == &#34;Write&#34; {
+315			d.NewText = str(in, &#34;content&#34;)
+316			return d
+317		}
+318		d.OldText = str(in, &#34;old_string&#34;)
+319		d.NewText = str(in, &#34;new_string&#34;)
+320		return d
+321	}
+322	
+323	func taskDescription(tc *model.ToolCall) string {
+324		if tc.Summary != &#34;&#34; {
+325			return tc.Summary
+326		}
+327		return &#34;subagent&#34;
+328	}
+329	
+330	func firstLine(s string) string {
+331		for i := 0; i &lt; len(s); i++ {
+332			if s[i] == &#39;\n&#39; {
+333				return s[:i]
+334			}
+335		}
+336		return s
+337	}
+338	
+339	func prettyJSON(raw json.RawMessage) string {
+340		if len(raw) == 0 {
+341			return &#34;&#34;
+342		}
+343		var v any
+344		if err := json.Unmarshal(raw, &amp;v); err != nil {
+345			return string(raw)
+346		}
+347		out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+348		if err != nil {
+349			return string(raw)
+350		}
+351		return string(out)
+352	}
+353	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude<span class="usage-badge">124 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
+}</pre><pre class="tool-result">1	// Package redact scrubs likely secrets and the user&#39;s home path from transcript
+2	// text before it is rendered. It is best-effort defense-in-depth, not a
+3	// guarantee of complete secret removal.
+4	package redact
+5	
+6	import (
+7		&#34;regexp&#34;
+8		&#34;strings&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+11	)
+12	
+13	type rule struct {
+14		kind string
+15		re   *regexp.Regexp
+16	}
+17	
+18	// Ordered: more specific patterns first.
+19	var rules = []rule{
+20		{&#34;aws-key&#34;, regexp.MustCompile(`\bAKIA[0-9A-Z]{16}\b`)},
+21		{&#34;token&#34;, regexp.MustCompile(`\b(?:sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{10,})\b`)},
+22		{&#34;jwt&#34;, regexp.MustCompile(`\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b`)},
+23		{&#34;assignment&#34;, regexp.MustCompile(`(?i)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\s*[=:]\s*[&#39;&#34;]?([^\s&#39;&#34;]{6,})`)},
+24	}
+25	
+26	// Redactor applies redaction rules and a home-directory rewrite.
+27	type Redactor struct {
+28		homeDir string
+29	}
+30	
+31	func New(homeDir string) *Redactor { return &amp;Redactor{homeDir: homeDir} }
+32	
+33	// String redacts a single string.
+34	func (r *Redactor) String(s string) string {
+35		for _, ru := range rules {
+36			if ru.kind == &#34;assignment&#34; {
+37				s = ru.re.ReplaceAllString(s, &#34;$1=[REDACTED:assignment]&#34;)
+38				continue
+39			}
+40			s = ru.re.ReplaceAllString(s, &#34;[REDACTED:&#34;+ru.kind+&#34;]&#34;)
+41		}
+42		if r.homeDir != &#34;&#34; {
+43			s = strings.ReplaceAll(s, r.homeDir, &#34;~&#34;)
+44		}
+45		return s
+46	}
+47	
+48	// Session redacts every user-visible text field of a Session in place.
+49	func Session(s *model.Session, homeDir string) {
+50		r := New(homeDir)
+51		// Session-level fields are rendered in the report header, so they must be
+52		// scrubbed too (ProjectPath in particular carries the home path/username).
+53		s.ProjectPath = r.String(s.ProjectPath)
+54		s.Title = r.String(s.Title)
+55		s.GitBranch = r.String(s.GitBranch)
+56		for i := range s.Turns {
+57			redactTurn(r, &amp;s.Turns[i])
+58		}
+59	}
+60	
+61	func redactTurn(r *Redactor, t *model.Turn) {
+62		for i := range t.Blocks {
+63			b := &amp;t.Blocks[i]
+64			b.Text = r.String(b.Text)
+65			if b.Tool != nil {
+66				redactTool(r, b.Tool)
+67			}
+68		}
+69	}
+70	
+71	func redactTool(r *Redactor, tc *model.ToolCall) {
+72		tc.Summary = r.String(tc.Summary)
+73		tc.InputJSON = r.String(tc.InputJSON)
+74		if tc.Result != nil {
+75			tc.Result.Content = r.String(tc.Result.Content)
+76		}
+77		if tc.Diff != nil {
+78			tc.Diff.OldText = r.String(tc.Diff.OldText)
+79			tc.Diff.NewText = r.String(tc.Diff.NewText)
+80			tc.Diff.Path = r.String(tc.Diff.Path)
+81		}
+82		for i := range tc.Subagents {
+83			tc.Subagents[i].Description = r.String(tc.Subagents[i].Description)
+84			for j := range tc.Subagents[i].Turns {
+85				redactTurn(r, &amp;tc.Subagents[i].Turns[j])
+86			}
+87		}
+88	}
+89	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="now i&#39;ll implement the task following tdd. let me start by creating the test file.">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I'll implement the task following TDD. Let me start by creating the test file.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/notification_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;encoding/json&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ const notifBody = `&lt;task-notification&gt;</div><div class="diff-add">+ &lt;task-id&gt;acb6584f99f2f81fd&lt;/task-id&gt;</div><div class="diff-add">+ &lt;tool-use-id&gt;toolu_0112a19E&lt;/tool-use-id&gt;</div><div class="diff-add">+ &lt;output-file&gt;/tmp/tasks/acb6584f99f2f81fd.output&lt;/output-file&gt;</div><div class="diff-add">+ &lt;status&gt;completed&lt;/status&gt;</div><div class="diff-add">+ &lt;summary&gt;Agent &#34;Implement Task 12: Profiles view&#34; finished&lt;/summary&gt;</div><div class="diff-add">+ &lt;note&gt;may notify more than once&lt;/note&gt;</div><div class="diff-add">+ &lt;result&gt;Both items fixed.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status: Complete&lt;/result&gt;</div><div class="diff-add">+ &lt;/task-notification&gt;`</div><div class="diff-add">+ </div><div class="diff-add">+ func notifLine(t *testing.T, body string) string {</div><div class="diff-add">+ 	t.Helper()</div><div class="diff-add">+ 	b, err := jsonMarshalString(body)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return `{&#34;type&#34;:&#34;user&#34;,&#34;timestamp&#34;:&#34;2026-07-05T18:26:08.000Z&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:` + b + `}}`</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseTaskNotificationTurn(t *testing.T) {</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(notifLine(t, notifBody)), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d turns, want 1&#34;, len(s.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	turn := s.Turns[0]</div><div class="diff-add">+ 	if turn.Kind != model.TurnAgentResult {</div><div class="diff-add">+ 		t.Fatalf(&#34;kind = %q, want %q&#34;, turn.Kind, model.TurnAgentResult)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if turn.AgentID != &#34;acb6584f99f2f81fd&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;AgentID = %q&#34;, turn.AgentID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if turn.AgentStatus != &#34;completed&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;AgentStatus = %q&#34;, turn.AgentStatus)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if want := `Agent &#34;Implement Task 12: Profiles view&#34; finished`; turn.AgentSummary != want {</div><div class="diff-add">+ 		t.Errorf(&#34;AgentSummary = %q&#34;, turn.AgentSummary)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(turn.Blocks) != 1 || !strings.Contains(turn.Blocks[0].Text, &#34;## Status: Complete&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;body block wrong: %+v&#34;, turn.Blocks)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if strings.Contains(turn.Blocks[0].Text, &#34;&lt;task-id&gt;&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;body must be the &lt;result&gt; payload only, not the raw envelope&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseTaskNotificationEmptyResultFallsBackToSummary(t *testing.T) {</div><div class="diff-add">+ 	body := &#34;&lt;task-notification&gt;\n&lt;task-id&gt;a1&lt;/task-id&gt;\n&lt;status&gt;completed&lt;/status&gt;\n&lt;summary&gt;Agent \&#34;x\&#34; finished&lt;/summary&gt;\n&lt;result&gt;&lt;/result&gt;\n&lt;/task-notification&gt;&#34;</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 1 || s.Turns[0].Blocks[0].Text != `Agent &#34;x&#34; finished` {</div><div class="diff-add">+ 		t.Fatalf(&#34;want summary as body, got %+v&#34;, s.Turns)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseMalformedNotificationStaysUserTurn(t *testing.T) {</div><div class="diff-add">+ 	// No &lt;task-id&gt; -&gt; must stay a plain user turn, content untouched.</div><div class="diff-add">+ 	body := &#34;&lt;task-notification&gt;\nbroken payload\n&lt;/task-notification&gt;&#34;</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {</div><div class="diff-add">+ 		t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestUserTextMentioningNotificationMidStringStaysUserTurn(t *testing.T) {</div><div class="diff-add">+ 	body := &#34;please explain what a &lt;task-notification&gt; record is&#34;</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnUser {</div><div class="diff-add">+ 		t.Fatalf(&#34;want plain user turn, got %+v&#34;, s.Turns)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestRepeatNotificationsEachProduceATurn(t *testing.T) {</div><div class="diff-add">+ 	line := notifLine(t, notifBody)</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(line+&#34;\n&#34;+line), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 2 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d turns, want 2 (no dedup)&#34;, len(s.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // jsonMarshalString wraps a string as a JSON string literal.</div><div class="diff-add">+ func jsonMarshalString(s string) (string, error) {</div><div class="diff-add">+ 	b, err := json.Marshal(s)</div><div class="diff-add">+ 	return string(b), err</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="now let me run the tests to verify they fail as expected:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let me run the tests to verify they fail as expected:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./internal/transcript/ -run &#39;notification|notificationturn|staysuserturn|eachproduceaturn&#39; -v">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v&#34;,
+  &#34;description&#34;: &#34;Run the failing tests to verify they fail&#34;
+}</pre><pre class="tool-result tool-result-error">Exit code 1
+# github.com/saigyo/cc-what-have-i-done/internal/transcript [github.com/saigyo/cc-what-have-i-done/internal/transcript.test]
+internal/transcript/notification_test.go:41:24: undefined: model.TurnAgentResult
+internal/transcript/notification_test.go:42:51: undefined: model.TurnAgentResult
+internal/transcript/notification_test.go:44:10: turn.AgentID undefined (type model.Turn has no field or method AgentID)
+internal/transcript/notification_test.go:45:33: turn.AgentID undefined (type model.Turn has no field or method AgentID)
+internal/transcript/notification_test.go:47:10: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)
+internal/transcript/notification_test.go:48:37: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)
+internal/transcript/notification_test.go:50:71: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)
+internal/transcript/notification_test.go:51:38: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="perfect! the tests fail as expected. now let me add the model fields:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Perfect! The tests fail as expected. Now let me add the model fields:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- const (</div><div class="diff-del">- 	TurnUser      TurnKind = &#34;user&#34;</div><div class="diff-del">- 	TurnAssistant TurnKind = &#34;assistant&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	TurnUser        TurnKind = &#34;user&#34;</div><div class="diff-add">+ 	TurnAssistant   TurnKind = &#34;assistant&#34;</div><div class="diff-add">+ 	TurnAgentResult TurnKind = &#34;agent-result&#34; // background-agent completion fed back into the session</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // Turn is a single user or assistant message, holding ordered content blocks.</div><div class="diff-del">- type Turn struct {</div><div class="diff-del">- 	Kind      TurnKind</div><div class="diff-del">- 	Timestamp time.Time</div><div class="diff-del">- 	Blocks    []Block</div><div class="diff-del">- 	Model     string // assistant model id (empty for user turns / when absent)</div><div class="diff-del">- 	Usage     *Usage // token usage for this assistant turn; nil when absent</div><div class="diff-del">- }</div><div class="diff-add">+ // Turn is a single user or assistant message, holding ordered content blocks.</div><div class="diff-add">+ type Turn struct {</div><div class="diff-add">+ 	Kind      TurnKind</div><div class="diff-add">+ 	Timestamp time.Time</div><div class="diff-add">+ 	Blocks    []Block</div><div class="diff-add">+ 	Model     string // assistant model id (empty for user turns / when absent)</div><div class="diff-add">+ 	Usage     *Usage // token usage for this assistant turn; nil when absent</div><div class="diff-add">+ 	// Agent-result fields, set only when Kind == TurnAgentResult.</div><div class="diff-add">+ 	AgentID      string // task/agent id from the notification</div><div class="diff-add">+ 	AgentStatus  string // e.g. &#34;completed&#34;</div><div class="diff-add">+ 	AgentSummary string // e.g. `Agent &#34;Implement Task 12&#34; finished`</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="now let me add the notification parsing functions to parse.go. first, i&#39;ll add the import for &#34;strings&#34;:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me add the notification parsing functions to parse.go. First, I'll add the import for &quot;strings&quot;:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;bufio&#34;</div><div class="diff-del">- 	&#34;encoding/json&#34;</div><div class="diff-del">- 	&#34;errors&#34;</div><div class="diff-del">- 	&#34;io&#34;</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- </div><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;bufio&#34;</div><div class="diff-add">+ 	&#34;encoding/json&#34;</div><div class="diff-add">+ 	&#34;errors&#34;</div><div class="diff-add">+ 	&#34;io&#34;</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="now i&#39;ll add the notification parsing functions. let me insert them right before the buildturn function:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I'll add the notification parsing functions. Let me insert them right before the buildTurn function:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are</div><div class="diff-del">- // attached to their originating ToolCall via toolIndex and do not themselves</div><div class="diff-del">- // produce turn content. Returns nil if the record yields no displayable blocks.</div><div class="diff-del">- func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {</div><div class="diff-add">+ // taskNotification is the parsed payload of a &lt;task-notification&gt; user record —</div><div class="diff-add">+ // the message a background agent&#39;s completion injects into the parent session.</div><div class="diff-add">+ type taskNotification struct {</div><div class="diff-add">+ 	TaskID    string</div><div class="diff-add">+ 	ToolUseID string</div><div class="diff-add">+ 	Status    string</div><div class="diff-add">+ 	Summary   string</div><div class="diff-add">+ 	Result    string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // parseTaskNotification extracts fields from a &lt;task-notification&gt; payload with</div><div class="diff-add">+ // tolerant string scanning (the payload is pseudo-XML with unescaped markdown</div><div class="diff-add">+ // inside &lt;result&gt;). ok is false unless both task-id and summary are present.</div><div class="diff-add">+ func parseTaskNotification(s string) (taskNotification, bool) {</div><div class="diff-add">+ 	t := strings.TrimLeft(s, &#34; \t\r\n&#34;)</div><div class="diff-add">+ 	if !strings.HasPrefix(t, &#34;&lt;task-notification&gt;&#34;) {</div><div class="diff-add">+ 		return taskNotification{}, false</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	n := taskNotification{</div><div class="diff-add">+ 		TaskID:    tagContent(t, &#34;task-id&#34;),</div><div class="diff-add">+ 		ToolUseID: tagContent(t, &#34;tool-use-id&#34;),</div><div class="diff-add">+ 		Status:    tagContent(t, &#34;status&#34;),</div><div class="diff-add">+ 		Summary:   tagContent(t, &#34;summary&#34;),</div><div class="diff-add">+ 		Result:    tagContent(t, &#34;result&#34;),</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if n.TaskID == &#34;&#34; || n.Summary == &#34;&#34; {</div><div class="diff-add">+ 		return taskNotification{}, false</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return n, true</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // tagContent returns the text between the first &lt;name&gt; and the last &lt;/name&gt;,</div><div class="diff-add">+ // trimmed. The last closing tag guards &lt;result&gt; bodies that themselves contain</div><div class="diff-add">+ // XML-looking text.</div><div class="diff-add">+ func tagContent(s, name string) string {</div><div class="diff-add">+ 	open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;</div><div class="diff-add">+ 	i := strings.Index(s, open)</div><div class="diff-add">+ 	if i &lt; 0 {</div><div class="diff-add">+ 		return &#34;&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	rest := s[i+len(open):]</div><div class="diff-add">+ 	j := strings.LastIndex(rest, close)</div><div class="diff-add">+ 	if j &lt; 0 {</div><div class="diff-add">+ 		return &#34;&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return strings.TrimSpace(rest[:j])</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are</div><div class="diff-add">+ // attached to their originating ToolCall via toolIndex and do not themselves</div><div class="diff-add">+ // produce turn content. Returns nil if the record yields no displayable blocks.</div><div class="diff-add">+ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="now i need to add the notification detection logic inside the buildturn function. let me find the exact location:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I need to add the notification detection logic inside the buildTurn function. Let me find the exact location:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;,
+  &#34;limit&#34;: 20,
+  &#34;offset&#34;: 240
+}</pre><pre class="tool-result">240	// attached to their originating ToolCall via toolIndex and do not themselves
+241	// produce turn content. Returns nil if the record yields no displayable blocks.
+242	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall, seenUsage map[string]bool) *model.Turn {
+243		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+244		if rec.Type == &#34;user&#34; {
+245			turn.Kind = model.TurnUser
+246		} else {
+247			turn.Kind = model.TurnAssistant
+248		}
+249		for _, b := range blocks {
+250			switch b.Type {
+251			case &#34;text&#34;:
+252				if b.Text != &#34;&#34; {
+253					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+254				}
+255			case &#34;thinking&#34;:
+256				if b.Thinking != &#34;&#34; {
+257					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+258				}
+259			case &#34;tool_use&#34;:</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}</div><div class="diff-del">- 	if rec.Type == &#34;user&#34; {</div><div class="diff-del">- 		turn.Kind = model.TurnUser</div><div class="diff-del">- 	} else {</div><div class="diff-del">- 		turn.Kind = model.TurnAssistant</div><div class="diff-del">- 	}</div><div class="diff-del">- 	for _, b := range blocks {</div><div class="diff-add">+ 	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}</div><div class="diff-add">+ 	if rec.Type == &#34;user&#34; {</div><div class="diff-add">+ 		turn.Kind = model.TurnUser</div><div class="diff-add">+ 	} else {</div><div class="diff-add">+ 		turn.Kind = model.TurnAssistant</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	// A background agent&#39;s completion arrives as a user record whose content is</div><div class="diff-add">+ 	// a single &lt;task-notification&gt; text payload. Surface it as an agent-result</div><div class="diff-add">+ 	// turn so the report attributes it to the agent, not to the user.</div><div class="diff-add">+ 	if turn.Kind == model.TurnUser &amp;&amp; len(blocks) == 1 &amp;&amp; blocks[0].Type == &#34;text&#34; {</div><div class="diff-add">+ 		if n, ok := parseTaskNotification(blocks[0].Text); ok {</div><div class="diff-add">+ 			turn.Kind = model.TurnAgentResult</div><div class="diff-add">+ 			turn.AgentID = n.TaskID</div><div class="diff-add">+ 			turn.AgentStatus = n.Status</div><div class="diff-add">+ 			turn.AgentSummary = n.Summary</div><div class="diff-add">+ 			body := n.Result</div><div class="diff-add">+ 			if body == &#34;&#34; {</div><div class="diff-add">+ 				body = n.Summary</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			turn.Blocks = []model.Block{{Type: model.BlockText, Text: body}}</div><div class="diff-add">+ 			return turn</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, b := range blocks {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="now let me update the redaction function to redact the new agentsummary field:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me update the redaction function to redact the new AgentSummary field:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func redactTurn(r *Redactor, t *model.Turn) {</div><div class="diff-del">- 	for i := range t.Blocks {</div><div class="diff-del">- 		b := &amp;t.Blocks[i]</div><div class="diff-del">- 		b.Text = r.String(b.Text)</div><div class="diff-del">- 		if b.Tool != nil {</div><div class="diff-del">- 			redactTool(r, b.Tool)</div><div class="diff-del">- 		}</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ func redactTurn(r *Redactor, t *model.Turn) {</div><div class="diff-add">+ 	t.AgentSummary = r.String(t.AgentSummary)</div><div class="diff-add">+ 	for i := range t.Blocks {</div><div class="diff-add">+ 		b := &amp;t.Blocks[i]</div><div class="diff-add">+ 		b.Text = r.String(b.Text)</div><div class="diff-add">+ 		if b.Tool != nil {</div><div class="diff-add">+ 			redactTool(r, b.Tool)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="now let me run the tests to verify they pass:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me run the tests to verify they pass:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/transcript/ ./internal/redact/ -v">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ ./internal/redact/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ ./internal/redact/ -v&#34;,
+  &#34;description&#34;: &#34;Run tests for transcript and redact packages&#34;
+}</pre><pre class="tool-result">=== RUN   TestParseTaskNotificationTurn
+--- PASS: TestParseTaskNotificationTurn (0.00s)
+=== RUN   TestParseTaskNotificationEmptyResultFallsBackToSummary
+--- PASS: TestParseTaskNotificationEmptyResultFallsBackToSummary (0.00s)
+=== RUN   TestParseMalformedNotificationStaysUserTurn
+--- PASS: TestParseMalformedNotificationStaysUserTurn (0.00s)
+=== RUN   TestUserTextMentioningNotificationMidStringStaysUserTurn
+--- PASS: TestUserTextMentioningNotificationMidStringStaysUserTurn (0.00s)
+=== RUN   TestRepeatNotificationsEachProduceATurn
+--- PASS: TestRepeatNotificationsEachProduceATurn (0.00s)
+=== RUN   TestParseDeduplicatesUsagePerMessageID
+--- PASS: TestParseDeduplicatesUsagePerMessageID (0.00s)
+=== RUN   TestParseBasicTimeline
+--- PASS: TestParseBasicTimeline (0.00s)
+=== RUN   TestParseSubagentAttachment
+--- PASS: TestParseSubagentAttachment (0.00s)
+=== RUN   TestParseExcludeSubagents
+--- PASS: TestParseExcludeSubagents (0.00s)
+=== RUN   TestParseSubagentInnerToolResult
+--- PASS: TestParseSubagentInnerToolResult (0.00s)
+=== RUN   TestParseAttachesModelAndUsage
+--- PASS: TestParseAttachesModelAndUsage (0.00s)
+=== RUN   TestParseAggregateCacheCreationDefaultsTo5m
+--- PASS: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)
+=== RUN   TestDecodeMessageContentString
+--- PASS: TestDecodeMessageContentString (0.00s)
+=== RUN   TestDecodeMessageContentArray
+--- PASS: TestDecodeMessageContentArray (0.00s)
+=== RUN   TestToolResultTextArray
+--- PASS: TestToolResultTextArray (0.00s)
+=== RUN   TestToolResultTextString
+--- PASS: TestToolResultTextString (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.549s
+=== RUN   TestRedactPatterns
+--- PASS: TestRedactPatterns (0.00s)
+=== RUN   TestRedactHomeDir
+--- PASS: TestRedactHomeDir (0.00s)
+=== RUN   TestRedactSessionWalksBlocks
+--- PASS: TestRedactSessionWalksBlocks (0.00s)
+=== RUN   TestRedactSessionLevelFields
+--- PASS: TestRedactSessionLevelFields (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.314s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="great! all tests pass. now let me run the full suite and check formatting:">
+      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Great! All tests pass. Now let me run the full suite and check formatting:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="bash gofmt -l . &amp;&amp; go test ./...">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; go test ./...</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 go test ./...&#34;,
+  &#34;description&#34;: &#34;Check formatting and run full test suite&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.324s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.915s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.675s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	1.208s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.305s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.553s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-28" data-search="perfect! formatting is good and all tests pass. now let me commit the changes:">
+      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Perfect! Formatting is good and all tests pass. Now let me commit the changes:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-29" data-search="bash git add internal/model/model.go internal/transcript/parse.go internal/transcript/notification_test.go internal/redact/redact.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/model/model.go internal/transcript/parse.go internal/transcript/notification_test.go internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add internal/model/model.go internal/transcript/parse.go internal/transcript/notification_test.go internal/redact/redact.go&#34;,
+  &#34;description&#34;: &#34;Stage the modified files for commit&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-30" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">193 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: parse task-notification records as agent-result turns\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;,
+  &#34;description&#34;: &#34;Create commit with proper trailer&#34;
+}</pre><pre class="tool-result">[feat/subagent-sessions b1bc70e] feat: parse task-notification records as agent-result turns
+ 4 files changed, 184 insertions(+), 2 deletions(-)
+ create mode 100644 internal/transcript/notification_test.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-31" data-search="now let me verify the implementation once more and create a comprehensive report:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now let me verify the implementation once more and create a comprehensive report:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-32" data-search="bash git log -1 --oneline">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --oneline&#34;,
+  &#34;description&#34;: &#34;Show the commit that was just created&#34;
+}</pre><pre class="tool-result">b1bc70e feat: parse task-notification records as agent-result turns</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-33" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 1 Report: Parse `&lt;task-notification&gt;` records into agent-result turns</div><div class="diff-add">+ </div><div class="diff-add">+ ## Implementation Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Successfully implemented task-notification parsing to surface agent-result turns in the ccwhid transcript parser. Background agent completion notifications (arriving as user records with `&lt;task-notification&gt;` payloads) are now parsed and converted to a new `TurnAgentResult` turn kind with AgentID, AgentStatus, and AgentSummary fields.</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED (Tests Fail)</div><div class="diff-add">+ </div><div class="diff-add">+ **Command:** `go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v`</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (before implementation):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/transcript/notification_test.go:41:24: undefined: model.TurnAgentResult</div><div class="diff-add">+ internal/transcript/notification_test.go:42:51: undefined: model.TurnAgentResult</div><div class="diff-add">+ internal/transcript/notification_test.go:44:10: turn.AgentID undefined (type model.Turn has no field or method AgentID)</div><div class="diff-add">+ internal/transcript/notification_test.go:45:33: turn.AgentID undefined (type model.Turn has no field or method AgentID)</div><div class="diff-add">+ internal/transcript/notification_test.go:47:10: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)</div><div class="diff-add">+ internal/transcript/notification_test.go:48:37: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)</div><div class="diff-add">+ internal/transcript/notification_test.go:50:71: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)</div><div class="diff-add">+ internal/transcript/notification_test.go:51:38: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN (Tests Pass)</div><div class="diff-add">+ </div><div class="diff-add">+ **Command:** `go test ./internal/transcript/ ./internal/redact/ -v`</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (after implementation):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestParseTaskNotificationTurn</div><div class="diff-add">+ --- PASS: TestParseTaskNotificationTurn (0.00s)</div><div class="diff-add">+ === RUN   TestParseTaskNotificationEmptyResultFallsBackToSummary</div><div class="diff-add">+ --- PASS: TestParseTaskNotificationEmptyResultFallsBackToSummary (0.00s)</div><div class="diff-add">+ === RUN   TestParseMalformedNotificationStaysUserTurn</div><div class="diff-add">+ --- PASS: TestParseMalformedNotificationStaysUserTurn (0.00s)</div><div class="diff-add">+ === RUN   TestUserTextMentioningNotificationMidStringStaysUserTurn</div><div class="diff-add">+ --- PASS: TestUserTextMentioningNotificationMidStringStaysUserTurn (0.00s)</div><div class="diff-add">+ === RUN   TestRepeatNotificationsEachProduceATurn</div><div class="diff-add">+ --- PASS: TestRepeatNotificationsEachProduceATurn (0.00s)</div><div class="diff-add">+ ... (all other tests also pass)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.549s</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.314s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Full Suite:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.324s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.915s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.675s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	1.208s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.305s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.553s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Formatting Check:**</div><div class="diff-add">+ `gofmt -l .` returned no output (all files properly formatted).</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files Changed</div><div class="diff-add">+ </div><div class="diff-add">+ 1. **internal/model/model.go**</div><div class="diff-add">+    - Added `TurnAgentResult TurnKind = &#34;agent-result&#34;` constant</div><div class="diff-add">+    - Added three new fields to `Turn` struct:</div><div class="diff-add">+      - `AgentID string` - task/agent id from the notification</div><div class="diff-add">+      - `AgentStatus string` - e.g. &#34;completed&#34;</div><div class="diff-add">+      - `AgentSummary string` - e.g. `Agent &#34;Implement Task 12&#34; finished`</div><div class="diff-add">+ </div><div class="diff-add">+ 2. **internal/transcript/parse.go**</div><div class="diff-add">+    - Added `import &#34;strings&#34;`</div><div class="diff-add">+    - Added `taskNotification` struct to hold parsed notification fields</div><div class="diff-add">+    - Added `parseTaskNotification(s string) (taskNotification, bool)` function to extract and validate notification payloads</div><div class="diff-add">+    - Added `tagContent(s, name string) string` helper to extract content between XML-like tags (using strings.Index and strings.LastIndex)</div><div class="diff-add">+    - Added notification detection and conversion logic in `buildTurn` function:</div><div class="diff-add">+      - Checks if user turn with single text block contains a `&lt;task-notification&gt;` payload</div><div class="diff-add">+      - Converts qualified notifications to `TurnAgentResult` with extracted fields</div><div class="diff-add">+      - Uses result as body, falls back to summary if result is empty</div><div class="diff-add">+      - Returns early without processing other blocks</div><div class="diff-add">+ </div><div class="diff-add">+ 3. **internal/redact/redact.go**</div><div class="diff-add">+    - Added `t.AgentSummary = r.String(t.AgentSummary)` in `redactTurn` function to redact potentially sensitive information from agent summaries</div><div class="diff-add">+ </div><div class="diff-add">+ 4. **internal/transcript/notification_test.go** (new file)</div><div class="diff-add">+    - Created comprehensive test suite with 5 tests:</div><div class="diff-add">+      1. TestParseTaskNotificationTurn - Verifies basic notification parsing and field extraction</div><div class="diff-add">+      2. TestParseTaskNotificationEmptyResultFallsBackToSummary - Verifies fallback behavior when result is empty</div><div class="diff-add">+      3. TestParseMalformedNotificationStaysUserTurn - Verifies graceful degradation for malformed payloads (no &lt;task-id&gt;)</div><div class="diff-add">+      4. TestUserTextMentioningNotificationMidStringStaysUserTurn - Verifies normal user text isn&#39;t falsely detected as notification</div><div class="diff-add">+      5. TestRepeatNotificationsEachProduceATurn - Verifies no deduplication across repeated notifications</div><div class="diff-add">+    - Added `jsonMarshalString` helper for constructing test JSONL records</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ **SHA:** b1bc70e</div><div class="diff-add">+ **Message:** `feat: parse task-notification records as agent-result turns`</div><div class="diff-add">+ **Trailer:** `Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;`</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review Findings</div><div class="diff-add">+ </div><div class="diff-add">+ ### Verification Checklist</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Unconditional fix** - Notification parsing is always enabled, no Options flag required</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Malformed handling** - Implementation gracefully falls back to plain user turns:</div><div class="diff-add">+ - Missing `&lt;task-id&gt;` -&gt; notification detection returns false, turn remains user turn</div><div class="diff-add">+ - Missing `&lt;summary&gt;` -&gt; same fallback behavior</div><div class="diff-add">+ - Other malformed XML (broken tags, missing closing tags) -&gt; graceful string extraction returns &#34;&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Test coverage** - Five new tests cover:</div><div class="diff-add">+ - Happy path (full notification with result)</div><div class="diff-add">+ - Empty result fallback to summary</div><div class="diff-add">+ - Malformed notification fallback</div><div class="diff-add">+ - Mid-string mention of `&lt;task-notification&gt;` text</div><div class="diff-add">+ - No deduplication of repeated notifications</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Code quality**:</div><div class="diff-add">+ - Used `strings.TrimLeft` and `strings.HasPrefix` directly as permitted by brief (no wrapper helpers)</div><div class="diff-add">+ - Helpful comments for each function</div><div class="diff-add">+ - Tolerant parsing using string scanning (not regex)</div><div class="diff-add">+ - Last index lookup guards result bodies containing XML-like text</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Redaction** - AgentSummary field properly redacted along with other turn-level text fields</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Formatting** - All code passes `gofmt -l .`</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Architecture** - Implementation follows existing patterns:</div><div class="diff-add">+ - Parsing happens in `buildTurn` before general block processing</div><div class="diff-add">+ - New turn kind properly extends model constants</div><div class="diff-add">+ - Redaction integrated into existing Session-level walk</div><div class="diff-add">+ </div><div class="diff-add">+ ### No Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ All requirements met, all tests passing, no edge cases unhandled. Implementation is minimal and focused.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Next Steps</div><div class="diff-add">+ </div><div class="diff-add">+ This task is a foundation for later tasks:</div><div class="diff-add">+ - Task 2: Load linked agent-session files (will use AgentID to link)</div><div class="diff-add">+ - Task 4: Render agent-result cards (will use new turn kind and AgentSummary)</div><div class="diff-add">+ - Task 5: Subagent pages and linking</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-34" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md 2&gt;&amp;1 || echo &#34;file does not exist&#34;">
+      <div class="turn-role">Claude<span class="usage-badge">180 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md 2&gt;&amp;1 || echo &#34;File does not exist&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md 2\u003e\u00261 || echo \&#34;File does not exist\&#34;&#34;,
+  &#34;description&#34;: &#34;Check if report file exists&#34;
+}</pre><pre class="tool-result">-rw-r--r--@ 1 markus  staff  5160 12 Juli 07:59 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-35" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 1 Report: Parse per-turn model &amp; usage
+2	
+3	## Summary
+4	Successfully implemented parsing of per-assistant-turn model ID and token usage from raw transcripts into the domain model, following TDD methodology. All tests pass, code formats correctly, and the implementation handles both full usage data and aggregate cache_creation figures.
+5	
+6	## Implementation Details
+7	
+8	### Step 1: Model Types (DONE)
+9	Added to `internal/model/model.go`:
+10	- Extended `Turn` struct with:
+11	  - `Model string` — assistant model id (empty for user turns)
+12	  - `Usage *Usage` — token usage (nil when absent)
+13	- New `Usage` struct with fields:
+14	  - `Input`, `Output`, `CacheRead int`
+15	  - `CacheWrite5m`, `CacheWrite1h int` (split for pricing)
+16	
+17	### Step 2: Failing Tests (DONE)
+18	Added to `internal/transcript/parse_test.go`:
+19	- `TestParseAttachesModelAndUsage` — validates model ID and full usage object (with split cache_creation)
+20	- `TestParseAggregateCacheCreationDefaultsTo5m` — validates fallback when only aggregate cache_creation_input_tokens is present (defaults to 5m write)
+21	- Added import of `&#34;strings&#34;` package to support test data
+22	
+23	### Step 3: Test Failure Verification (DONE)
+24	```
+25	$ go test ./internal/transcript/ -run &#34;TestParseAttaches|TestParseAggregate&#34; -v
+26	--- FAIL: TestParseAttachesModelAndUsage (0.00s)
+27	    parse_test.go:128: Model = &#34;&#34;
+28	    parse_test.go:131: assistant usage is nil
+29	--- FAIL: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)
+30	    parse_test.go:151: aggregate cache_creation should default to 5m: &lt;nil&gt;
+31	```
+32	Tests failed as expected (RED state).
+33	
+34	### Step 4: Raw Decoding (DONE)
+35	Added to `internal/transcript/raw.go`:
+36	- `apiUsage` struct — mirrors message.usage JSON structure with cache_creation split
+37	- `decodeMessageMeta(raw json.RawMessage)` — extracts model ID and usage from raw message, returns local struct (maintains separation of concerns; raw.go stays pure decoding)
+38	
+39	### Step 5: Parse Integration (DONE)
+40	Added to `internal/transcript/parse.go`:
+41	- `messageMeta(raw json.RawMessage)` helper — converts apiUsage to model.Usage, handles cache_creation fallback logic:
+42	  - If both ephemeral_5m and ephemeral_1h are 0, and cache_creation_input_tokens &gt; 0, assigns aggregate to 5m (cheaper tier)
+43	- Modified `buildTurn()` — attaches model and usage to Turn for assistant records (rec.Type == &#34;assistant&#34;)
+44	  - Placement before return statement ensures coverage of both main-chain and sidechain (subagent) records
+45	
+46	### Step 6: Test Pass Verification (DONE)
+47	```
+48	$ go test ./internal/transcript/ -v
+49	=== RUN   TestParseBasicTimeline
+50	--- PASS: TestParseBasicTimeline (0.00s)
+51	=== RUN   TestParseSubagentAttachment
+52	--- PASS: TestParseSubagentAttachment (0.00s)
+53	=== RUN   TestParseExcludeSubagents
+54	--- PASS: TestParseExcludeSubagents (0.00s)
+55	=== RUN   TestParseSubagentInnerToolResult
+56	--- PASS: TestParseSubagentInnerToolResult (0.00s)
+57	=== RUN   TestParseAttachesModelAndUsage
+58	--- PASS: TestParseAttachesModelAndUsage (0.00s)
+59	=== RUN   TestParseAggregateCacheCreationDefaultsTo5m
+60	--- PASS: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)
+61	[... other existing tests ...]
+62	PASS
+63	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.275s
+64	```
+65	All tests pass (GREEN state). Two new tests plus all existing tests.
+66	
+67	### Build &amp; Format Verification (DONE)
+68	```
+69	$ go build ./... &amp;&amp; gofmt -l internal
+70	(no output — all checks passed)
+71	```
+72	
+73	### Step 7: Commit (DONE)
+74	```
+75	[feat/usage-cost 1753ede] feat(transcript): parse per-turn model and token usage
+76	 4 files changed, 110 insertions(+)
+77	```
+78	Commit SHA: 1753ede
+79	
+80	## Files Changed
+81	1. `internal/model/model.go` — Added Model and Usage fields to Turn struct; added Usage type definition
+82	2. `internal/transcript/raw.go` — Added apiUsage struct and decodeMessageMeta function
+83	3. `internal/transcript/parse.go` — Added messageMeta helper; modified buildTurn to attach model/usage
+84	4. `internal/transcript/parse_test.go` — Added strings import; added two test functions
+85	
+86	## Self-Review
+87	
+88	**Correctness:**
+89	- Model ID extraction works for both full messages and messages without usage
+90	- Usage parsing correctly handles both split cache_creation (ephemeral_5m/1h) and aggregate fallback
+91	- Nil Usage for user turns and assistant turns without usage object
+92	- Works for both main-chain and sidechain records (tested via buildTurn placement)
+93	
+94	**Design &amp; Code Quality:**
+95	- Followed TDD strictly: model types → failing tests → implementation → green tests
+96	- raw.go remains pure decoding logic (no model import)
+97	- messageMeta in parse.go handles the domain logic (conversion + fallback)
+98	- Follows existing code patterns (e.g., similar helper functions in parse.go)
+99	- Test data from brief used verbatim; covers both full usage and aggregate scenarios
+100	
+101	**Coverage:**
+102	- Two new tests verify the new functionality end-to-end
+103	- All six existing tests continue to pass
+104	- Build and format checks pass
+105	
+106	**Next Steps (not in this task):**
+107	- Task 2 will implement usage/pricing package
+108	- Task 3 will render usage in HTML report
+109	- Tasks 4–5 will handle rendering and configuration
+110	
+111	## Concerns
+112	None. Implementation follows the brief exactly, tests are comprehensive, and integration with existing code is clean.
+113	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-36" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- # Task 1 Report: Parse per-turn model &amp; usage</div><div class="diff-del">- </div><div class="diff-del">- ## Summary</div><div class="diff-del">- Successfully implemented parsing of per-assistant-turn model ID and token usage from raw transcripts into the domain model, following TDD methodology. All tests pass, code formats correctly, and the implementation handles both full usage data and aggregate cache_creation figures.</div><div class="diff-del">- </div><div class="diff-del">- ## Implementation Details</div><div class="diff-del">- </div><div class="diff-del">- ### Step 1: Model Types (DONE)</div><div class="diff-del">- Added to `internal/model/model.go`:</div><div class="diff-del">- - Extended `Turn` struct with:</div><div class="diff-del">-   - `Model string` — assistant model id (empty for user turns)</div><div class="diff-del">-   - `Usage *Usage` — token usage (nil when absent)</div><div class="diff-del">- - New `Usage` struct with fields:</div><div class="diff-del">-   - `Input`, `Output`, `CacheRead int`</div><div class="diff-del">-   - `CacheWrite5m`, `CacheWrite1h int` (split for pricing)</div><div class="diff-del">- </div><div class="diff-del">- ### Step 2: Failing Tests (DONE)</div><div class="diff-del">- Added to `internal/transcript/parse_test.go`:</div><div class="diff-del">- - `TestParseAttachesModelAndUsage` — validates model ID and full usage object (with split cache_creation)</div><div class="diff-del">- - `TestParseAggregateCacheCreationDefaultsTo5m` — validates fallback when only aggregate cache_creation_input_tokens is present (defaults to 5m write)</div><div class="diff-del">- - Added import of `&#34;strings&#34;` package to support test data</div><div class="diff-del">- </div><div class="diff-del">- ### Step 3: Test Failure Verification (DONE)</div><div class="diff-del">- ```</div><div class="diff-del">- $ go test ./internal/transcript/ -run &#34;TestParseAttaches|TestParseAggregate&#34; -v</div><div class="diff-del">- --- FAIL: TestParseAttachesModelAndUsage (0.00s)</div><div class="diff-del">-     parse_test.go:128: Model = &#34;&#34;</div><div class="diff-del">-     parse_test.go:131: assistant usage is nil</div><div class="diff-del">- --- FAIL: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)</div><div class="diff-del">-     parse_test.go:151: aggregate cache_creation should default to 5m: &lt;nil&gt;</div><div class="diff-del">- ```</div><div class="diff-del">- Tests failed as expected (RED state).</div><div class="diff-del">- </div><div class="diff-del">- ### Step 4: Raw Decoding (DONE)</div><div class="diff-del">- Added to `internal/transcript/raw.go`:</div><div class="diff-del">- - `apiUsage` struct — mirrors message.usage JSON structure with cache_creation split</div><div class="diff-del">- - `decodeMessageMeta(raw json.RawMessage)` — extracts model ID and usage from raw message, returns local struct (maintains separation of concerns; raw.go stays pure decoding)</div><div class="diff-del">- </div><div class="diff-del">- ### Step 5: Parse Integration (DONE)</div><div class="diff-del">- Added to `internal/transcript/parse.go`:</div><div class="diff-del">- - `messageMeta(raw json.RawMessage)` helper — converts apiUsage to model.Usage, handles cache_creation fallback logic:</div><div class="diff-del">-   - If both ephemeral_5m and ephemeral_1h are 0, and cache_creation_input_tokens &gt; 0, assigns aggregate to 5m (cheaper tier)</div><div class="diff-del">- - Modified `buildTurn()` — attaches model and usage to Turn for assistant records (rec.Type == &#34;assistant&#34;)</div><div class="diff-del">-   - Placement before return statement ensures coverage of both main-chain and sidechain (subagent) records</div><div class="diff-del">- </div><div class="diff-del">- ### Step 6: Test Pass Verification (DONE)</div><div class="diff-del">- ```</div><div class="diff-del">- $ go test ./internal/transcript/ -v</div><div class="diff-del">- === RUN   TestParseBasicTimeline</div><div class="diff-del">- --- PASS: TestParseBasicTimeline (0.00s)</div><div class="diff-del">- === RUN   TestParseSubagentAttachment</div><div class="diff-del">- --- PASS: TestParseSubagentAttachment (0.00s)</div><div class="diff-del">- === RUN   TestParseExcludeSubagents</div><div class="diff-del">- --- PASS: TestParseExcludeSubagents (0.00s)</div><div class="diff-del">- === RUN   TestParseSubagentInnerToolResult</div><div class="diff-del">- --- PASS: TestParseSubagentInnerToolResult (0.00s)</div><div class="diff-del">- === RUN   TestParseAttachesModelAndUsage</div><div class="diff-del">- --- PASS: TestParseAttachesModelAndUsage (0.00s)</div><div class="diff-del">- === RUN   TestParseAggregateCacheCreationDefaultsTo5m</div><div class="diff-del">- --- PASS: TestParseAggregateCacheCreationDefaultsTo5m (0.00s)</div><div class="diff-del">- [... other existing tests ...]</div><div class="diff-del">- PASS</div><div class="diff-del">- ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.275s</div><div class="diff-del">- ```</div><div class="diff-del">- All tests pass (GREEN state). Two new tests plus all existing tests.</div><div class="diff-del">- </div><div class="diff-del">- ### Build &amp; Format Verification (DONE)</div><div class="diff-del">- ```</div><div class="diff-del">- $ go build ./... &amp;&amp; gofmt -l internal</div><div class="diff-del">- (no output — all checks passed)</div><div class="diff-del">- ```</div><div class="diff-del">- </div><div class="diff-del">- ### Step 7: Commit (DONE)</div><div class="diff-del">- ```</div><div class="diff-del">- [feat/usage-cost 1753ede] feat(transcript): parse per-turn model and token usage</div><div class="diff-del">-  4 files changed, 110 insertions(+)</div><div class="diff-del">- ```</div><div class="diff-del">- Commit SHA: 1753ede</div><div class="diff-del">- </div><div class="diff-del">- ## Files Changed</div><div class="diff-del">- 1. `internal/model/model.go` — Added Model and Usage fields to Turn struct; added Usage type definition</div><div class="diff-del">- 2. `internal/transcript/raw.go` — Added apiUsage struct and decodeMessageMeta function</div><div class="diff-del">- 3. `internal/transcript/parse.go` — Added messageMeta helper; modified buildTurn to attach model/usage</div><div class="diff-del">- 4. `internal/transcript/parse_test.go` — Added strings import; added two test functions</div><div class="diff-del">- </div><div class="diff-del">- ## Self-Review</div><div class="diff-del">- </div><div class="diff-del">- **Correctness:**</div><div class="diff-del">- - Model ID extraction works for both full messages and messages without usage</div><div class="diff-del">- - Usage parsing correctly handles both split cache_creation (ephemeral_5m/1h) and aggregate fallback</div><div class="diff-del">- - Nil Usage for user turns and assistant turns without usage object</div><div class="diff-del">- - Works for both main-chain and sidechain records (tested via buildTurn placement)</div><div class="diff-del">- </div><div class="diff-del">- **Design &amp; Code Quality:**</div><div class="diff-del">- - Followed TDD strictly: model types → failing tests → implementation → green tests</div><div class="diff-del">- - raw.go remains pure decoding logic (no model import)</div><div class="diff-del">- - messageMeta in parse.go handles the domain logic (conversion + fallback)</div><div class="diff-del">- - Follows existing code patterns (e.g., similar helper functions in parse.go)</div><div class="diff-del">- - Test data from brief used verbatim; covers both full usage and aggregate scenarios</div><div class="diff-del">- </div><div class="diff-del">- **Coverage:**</div><div class="diff-del">- - Two new tests verify the new functionality end-to-end</div><div class="diff-del">- - All six existing tests continue to pass</div><div class="diff-del">- - Build and format checks pass</div><div class="diff-del">- </div><div class="diff-del">- **Next Steps (not in this task):**</div><div class="diff-del">- - Task 2 will implement usage/pricing package</div><div class="diff-del">- - Task 3 will render usage in HTML report</div><div class="diff-del">- - Tasks 4–5 will handle rendering and configuration</div><div class="diff-del">- </div><div class="diff-del">- ## Concerns</div><div class="diff-del">- None. Implementation follows the brief exactly, tests are comprehensive, and integration with existing code is clean.</div><div class="diff-add">+ # Task 1 Report: Parse `&lt;task-notification&gt;` records into agent-result turns</div><div class="diff-add">+ </div><div class="diff-add">+ ## Implementation Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Successfully implemented task-notification parsing to surface agent-result turns in the ccwhid transcript parser. Background agent completion notifications (arriving as user records with `&lt;task-notification&gt;` payloads) are now parsed and converted to a new `TurnAgentResult` turn kind with AgentID, AgentStatus, and AgentSummary fields.</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED (Tests Fail)</div><div class="diff-add">+ </div><div class="diff-add">+ **Command:** `go test ./internal/transcript/ -run &#39;Notification|NotificationTurn|StaysUserTurn|EachProduceATurn&#39; -v`</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (before implementation):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/transcript/notification_test.go:41:24: undefined: model.TurnAgentResult</div><div class="diff-add">+ internal/transcript/notification_test.go:42:51: undefined: model.TurnAgentResult</div><div class="diff-add">+ internal/transcript/notification_test.go:44:10: turn.AgentID undefined (type model.Turn has no field or method AgentID)</div><div class="diff-add">+ internal/transcript/notification_test.go:45:33: turn.AgentID undefined (type model.Turn has no field or method AgentID)</div><div class="diff-add">+ internal/transcript/notification_test.go:47:10: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)</div><div class="diff-add">+ internal/transcript/notification_test.go:48:37: turn.AgentStatus undefined (type model.Turn has no field or method AgentStatus)</div><div class="diff-add">+ internal/transcript/notification_test.go:50:71: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)</div><div class="diff-add">+ internal/transcript/notification_test.go:51:38: turn.AgentSummary undefined (type model.Turn has no field or method AgentSummary)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN (Tests Pass)</div><div class="diff-add">+ </div><div class="diff-add">+ **Command:** `go test ./internal/transcript/ ./internal/redact/ -v`</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (after implementation):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestParseTaskNotificationTurn</div><div class="diff-add">+ --- PASS: TestParseTaskNotificationTurn (0.00s)</div><div class="diff-add">+ === RUN   TestParseTaskNotificationEmptyResultFallsBackToSummary</div><div class="diff-add">+ --- PASS: TestParseTaskNotificationEmptyResultFallsBackToSummary (0.00s)</div><div class="diff-add">+ === RUN   TestParseMalformedNotificationStaysUserTurn</div><div class="diff-add">+ --- PASS: TestParseMalformedNotificationStaysUserTurn (0.00s)</div><div class="diff-add">+ === RUN   TestUserTextMentioningNotificationMidStringStaysUserTurn</div><div class="diff-add">+ --- PASS: TestUserTextMentioningNotificationMidStringStaysUserTurn (0.00s)</div><div class="diff-add">+ === RUN   TestRepeatNotificationsEachProduceATurn</div><div class="diff-add">+ --- PASS: TestRepeatNotificationsEachProduceATurn (0.00s)</div><div class="diff-add">+ ... (all other tests also pass)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.549s</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.314s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Full Suite:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.324s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.915s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.675s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	1.208s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.305s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.553s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Formatting Check:**</div><div class="diff-add">+ `gofmt -l .` returned no output (all files properly formatted).</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files Changed</div><div class="diff-add">+ </div><div class="diff-add">+ 1. **internal/model/model.go**</div><div class="diff-add">+    - Added `TurnAgentResult TurnKind = &#34;agent-result&#34;` constant</div><div class="diff-add">+    - Added three new fields to `Turn` struct:</div><div class="diff-add">+      - `AgentID string` - task/agent id from the notification</div><div class="diff-add">+      - `AgentStatus string` - e.g. &#34;completed&#34;</div><div class="diff-add">+      - `AgentSummary string` - e.g. `Agent &#34;Implement Task 12&#34; finished`</div><div class="diff-add">+ </div><div class="diff-add">+ 2. **internal/transcript/parse.go**</div><div class="diff-add">+    - Added `import &#34;strings&#34;`</div><div class="diff-add">+    - Added `taskNotification` struct to hold parsed notification fields</div><div class="diff-add">+    - Added `parseTaskNotification(s string) (taskNotification, bool)` function to extract and validate notification payloads</div><div class="diff-add">+    - Added `tagContent(s, name string) string` helper to extract content between XML-like tags (using strings.Index and strings.LastIndex)</div><div class="diff-add">+    - Added notification detection and conversion logic in `buildTurn` function:</div><div class="diff-add">+      - Checks if user turn with single text block contains a `&lt;task-notification&gt;` payload</div><div class="diff-add">+      - Converts qualified notifications to `TurnAgentResult` with extracted fields</div><div class="diff-add">+      - Uses result as body, falls back to summary if result is empty</div><div class="diff-add">+      - Returns early without processing other blocks</div><div class="diff-add">+ </div><div class="diff-add">+ 3. **internal/redact/redact.go**</div><div class="diff-add">+    - Added `t.AgentSummary = r.String(t.AgentSummary)` in `redactTurn` function to redact potentially sensitive information from agent summaries</div><div class="diff-add">+ </div><div class="diff-add">+ 4. **internal/transcript/notification_test.go** (new file)</div><div class="diff-add">+    - Created comprehensive test suite with 5 tests:</div><div class="diff-add">+      1. TestParseTaskNotificationTurn - Verifies basic notification parsing and field extraction</div><div class="diff-add">+      2. TestParseTaskNotificationEmptyResultFallsBackToSummary - Verifies fallback behavior when result is empty</div><div class="diff-add">+      3. TestParseMalformedNotificationStaysUserTurn - Verifies graceful degradation for malformed payloads (no &lt;task-id&gt;)</div><div class="diff-add">+      4. TestUserTextMentioningNotificationMidStringStaysUserTurn - Verifies normal user text isn&#39;t falsely detected as notification</div><div class="diff-add">+      5. TestRepeatNotificationsEachProduceATurn - Verifies no deduplication across repeated notifications</div><div class="diff-add">+    - Added `jsonMarshalString` helper for constructing test JSONL records</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ **SHA:** b1bc70e</div><div class="diff-add">+ **Message:** `feat: parse task-notification records as agent-result turns`</div><div class="diff-add">+ **Trailer:** `Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;`</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review Findings</div><div class="diff-add">+ </div><div class="diff-add">+ ### Verification Checklist</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Unconditional fix** - Notification parsing is always enabled, no Options flag required</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Malformed handling** - Implementation gracefully falls back to plain user turns:</div><div class="diff-add">+ - Missing `&lt;task-id&gt;` -&gt; notification detection returns false, turn remains user turn</div><div class="diff-add">+ - Missing `&lt;summary&gt;` -&gt; same fallback behavior</div><div class="diff-add">+ - Other malformed XML (broken tags, missing closing tags) -&gt; graceful string extraction returns &#34;&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Test coverage** - Five new tests cover:</div><div class="diff-add">+ - Happy path (full notification with result)</div><div class="diff-add">+ - Empty result fallback to summary</div><div class="diff-add">+ - Malformed notification fallback</div><div class="diff-add">+ - Mid-string mention of `&lt;task-notification&gt;` text</div><div class="diff-add">+ - No deduplication of repeated notifications</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Code quality**:</div><div class="diff-add">+ - Used `strings.TrimLeft` and `strings.HasPrefix` directly as permitted by brief (no wrapper helpers)</div><div class="diff-add">+ - Helpful comments for each function</div><div class="diff-add">+ - Tolerant parsing using string scanning (not regex)</div><div class="diff-add">+ - Last index lookup guards result bodies containing XML-like text</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Redaction** - AgentSummary field properly redacted along with other turn-level text fields</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Formatting** - All code passes `gofmt -l .`</div><div class="diff-add">+ </div><div class="diff-add">+ ✅ **Architecture** - Implementation follows existing patterns:</div><div class="diff-add">+ - Parsing happens in `buildTurn` before general block processing</div><div class="diff-add">+ - New turn kind properly extends model constants</div><div class="diff-add">+ - Redaction integrated into existing Session-level walk</div><div class="diff-add">+ </div><div class="diff-add">+ ### No Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ All requirements met, all tests passing, no edge cases unhandled. Implementation is minimal and focused.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Next Steps</div><div class="diff-add">+ </div><div class="diff-add">+ This task is a foundation for later tasks:</div><div class="diff-add">+ - Task 2: Load linked agent-session files (will use AgentID to link)</div><div class="diff-add">+ - Task 4: Render agent-result cards (will use new turn kind and AgentSummary)</div><div class="diff-add">+ - Task 5: Subagent pages and linking</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-37" data-search="let me verify everything one final time:">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Let me verify everything one final time:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-38" data-search="bash go test ./... &amp;&amp; gofmt -l . &amp;&amp; echo &#34;✓ all checks passed&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... &amp;&amp; gofmt -l . &amp;&amp; echo &#34;✓ All checks passed&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./... \u0026\u0026 gofmt -l . \u0026\u0026 echo \&#34;✓ All checks passed\&#34;&#34;,
+  &#34;description&#34;: &#34;Final verification of tests and formatting&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)
+✓ All checks passed</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-39" data-search="perfect! all checks passed. here&#39;s my summary:
+
+---
+
+## status: done
+
+**commit:** `b1bc70e` feat: parse task-notification records as agent-result turns
+
+**test summary:** 5 new tests all pass; 19 existing tests continue to pass; all 8 packages pass
+
+**changes:**
+- `internal/model/model.go` — added `turnagentresult` constant; added `agentid`, `agentstatus`, `agentsummary` fields to `turn`
+- `internal/transcript/parse.go` — added `tasknotification` struct, `parsetasknotification()`, `tagcontent()` helpers, and notification detection logic in `buildturn()`
+- `internal/transcript/notification_test.go` — new file with 5 comprehensive tests (happy path, empty result fallback, malformed fallback, false positives, deduplication)
+- `internal/redact/redact.go` — added `agentsummary` redaction in `redactturn()`
+
+**test coverage:**
+- `testparsetasknotificationturn` — full notification parsing with result extraction
+- `testparsetasknotificationemptyresultfallsbacktosummary` — empty result → use summary as body
+- `testparsemalformednotificationstaysuserturn` — missing `&lt;task-id&gt;` → stays plain user turn
+- `testusertextmentioningnotificationmidstringstaysuserturn` — mid-string text doesn&#39;t trigger parsing
+- `testrepeatnotificationseachproduceaturn` — no deduplication across repeated notifications
+
+**self-review findings:** none. implementation meets all requirements:
+✅ unconditional parsing (no options flag)
+✅ graceful malformed fallback (returns false, stays user turn)
+✅ used `strings.trimleft`/`strings.hasprefix` directly (no wrappers)
+✅ all tests pass
+✅ `gofmt -l .` prints nothing
+✅ commit has proper `co-authored-by` trailer
+
+**report:** `~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md`">
+      <div class="turn-role">Claude<span class="usage-badge">572 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Perfect! All checks passed. Here's my summary:</p>
+<hr>
+<h2>Status: DONE</h2>
+<p><strong>Commit:</strong> <code>b1bc70e</code> feat: parse task-notification records as agent-result turns</p>
+<p><strong>Test Summary:</strong> 5 new tests all pass; 19 existing tests continue to pass; all 8 packages pass</p>
+<p><strong>Changes:</strong></p>
+<ul>
+<li><code>internal/model/model.go</code> — Added <code>TurnAgentResult</code> constant; added <code>AgentID</code>, <code>AgentStatus</code>, <code>AgentSummary</code> fields to <code>Turn</code></li>
+<li><code>internal/transcript/parse.go</code> — Added <code>taskNotification</code> struct, <code>parseTaskNotification()</code>, <code>tagContent()</code> helpers, and notification detection logic in <code>buildTurn()</code></li>
+<li><code>internal/transcript/notification_test.go</code> — New file with 5 comprehensive tests (happy path, empty result fallback, malformed fallback, false positives, deduplication)</li>
+<li><code>internal/redact/redact.go</code> — Added <code>AgentSummary</code> redaction in <code>redactTurn()</code></li>
+</ul>
+<p><strong>Test Coverage:</strong></p>
+<ul>
+<li><code>TestParseTaskNotificationTurn</code> — Full notification parsing with result extraction</li>
+<li><code>TestParseTaskNotificationEmptyResultFallsBackToSummary</code> — Empty result → use summary as body</li>
+<li><code>TestParseMalformedNotificationStaysUserTurn</code> — Missing <code>&lt;task-id&gt;</code> → stays plain user turn</li>
+<li><code>TestUserTextMentioningNotificationMidStringStaysUserTurn</code> — Mid-string text doesn't trigger parsing</li>
+<li><code>TestRepeatNotificationsEachProduceATurn</code> — No deduplication across repeated notifications</li>
+</ul>
+<p><strong>Self-Review Findings:</strong> None. Implementation meets all requirements:
+✅ Unconditional parsing (no Options flag)
+✅ Graceful malformed fallback (returns false, stays user turn)
+✅ Used <code>strings.TrimLeft</code>/<code>strings.HasPrefix</code> directly (no wrappers)
+✅ All tests pass
+✅ <code>gofmt -l .</code> prints nothing
+✅ Commit has proper <code>Co-Authored-By</code> trailer</p>
+<p><strong>Report:</strong> <code>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</code></p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

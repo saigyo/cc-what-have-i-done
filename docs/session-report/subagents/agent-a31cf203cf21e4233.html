@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 5 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 5 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/subagent-sessions</span>
+        <span>2026-07-12 10:28</span>
+        <span>17 turns</span>
+        <span>general-purpose · agent-a31cf203cf21e4233</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 17k in+out · ~$0.29 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>8k</td><td>394k</td><td>48k</td><td>$0.29</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>8k</td><td>394k</td><td>48k</td><td>$0.29</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
+
+global constraints from the spec/design that bind this task:
+- agent page path exactly `subagents/agent-&lt;id&gt;.html` relative to outdir; no `subagents/` dir created when the session has no agents.
+- agent pages reference shared assets via `../assets/...` (template `{{ .base }}` prefix) and carry a back-link to `../index.html`.
+- link resolution always uses the root session&#39;s agent set with page-appropriate prefix (&#34;subagents/&#34; on index, &#34;&#34; on agent pages) so depth-2 references resolve to sibling files.
+- index links to an agent page from both the spawning tool card (tooluseid match) and the agent-result card (agentid match).
+- every href built in go goes through `html.escapestring`.
+- cli: `loadagentsessions` wired in `generate()` gated on `opts.includesubagents`, before redaction. tui label and readme updated.
+- `gofmt -l .` silent; `go vet ./...` clean.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md
+
+## diff under review
+
+**base:** b66ed79
+**head:** b703c81
+**diff file:** ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff
+
+read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. the diff&#39;s context lines are the changed files: do not read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. do not re-run git commands. do not crawl the broader codebase. inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. two concrete named risks worth focused checks: (1) `renderturnbody`/`rendertool` signature changes — verify no call site was missed; (2) redaction ordering in `cmd/ccwhid/run.go` — agents must be attached to the session before `redact.session` runs, or agent content ships unredacted.
+
+your review is read-only on this checkout. do not mutate the working tree, the index, head, or branch state in any way.
+
+## do not trust the report
+
+treat the implementer&#39;s report as unverified claims about the code. verify the claims against the diff. design rationales in the report are claims too. judge the code on its merits.
+
+## tests
+
+the implementer already ran the tests and reported results with tdd evidence for exactly this code. do not re-run the suite to confirm their report. run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. warnings or other noise in the reported test output are findings — test output should be pristine.
+
+## part 1: spec compliance
+
+compare the diff against what was requested: missing / extra / misunderstood. if a requirement cannot be verified from this diff alone, report it as a ⚠️ item.
+
+## part 2: code quality
+
+code quality (separation of concerns, error handling, dry, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan&#39;s file structure followed). template/css/readme changes are part of the diff.
+
+point at evidence: file:line references for every finding. your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.
+
+## calibration
+
+categorize by actual severity. important = task cannot be trusted until fixed. &#34;coverage could be broader&#34; and polish are minor. if the plan/brief explicitly mandates something this rubric calls a defect, report it as important, labeled plan-mandated. acknowledge what was done well before listing issues.
+
+## output format
+
+### spec compliance
+- ✅ / ❌ / ⚠️ items
+
+### strengths
+
+### issues
+#### critical (must fix)
+#### important (should fix)
+#### minor (nice to have)
+
+### assessment
+**task quality:** [approved | needs fixes]
+**reasoning:** [1-2 sentences]">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Global constraints from the spec/design that bind this task:</p>
+<ul>
+<li>Agent page path exactly <code>subagents/agent-&lt;ID&gt;.html</code> relative to outDir; NO <code>subagents/</code> dir created when the session has no agents.</li>
+<li>Agent pages reference shared assets via <code>../assets/...</code> (template <code>{{ .Base }}</code> prefix) and carry a back-link to <code>../index.html</code>.</li>
+<li>Link resolution always uses the ROOT session's agent set with page-appropriate prefix (&quot;subagents/&quot; on index, &quot;&quot; on agent pages) so depth-2 references resolve to sibling files.</li>
+<li>Index links to an agent page from BOTH the spawning tool card (ToolUseID match) and the agent-result card (AgentID match).</li>
+<li>Every href built in Go goes through <code>html.EscapeString</code>.</li>
+<li>CLI: <code>LoadAgentSessions</code> wired in <code>generate()</code> gated on <code>opts.includeSubagents</code>, before redaction. TUI label and README updated.</li>
+<li><code>gofmt -l .</code> silent; <code>go vet ./...</code> clean.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<h2>Diff Under Review</h2>
+<p><strong>Base:</strong> b66ed79
+<strong>Head:</strong> b703c81
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff</p>
+<p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. Two concrete named risks worth focused checks: (1) <code>renderTurnBody</code>/<code>renderTool</code> signature changes — verify no call site was missed; (2) redaction ordering in <code>cmd/ccwhid/run.go</code> — agents must be attached to the session BEFORE <code>redact.Session</code> runs, or agent content ships unredacted.</p>
+<p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
+<h2>Do Not Trust the Report</h2>
+<p>Treat the implementer's report as unverified claims about the code. Verify the claims against the diff. Design rationales in the report are claims too. Judge the code on its merits.</p>
+<h2>Tests</h2>
+<p>The implementer already ran the tests and reported results with TDD evidence for exactly this code. Do not re-run the suite to confirm their report. Run a test only when reading the code raises a specific doubt that no existing run answers — and then a focused test, never a package-wide suite. Warnings or other noise in the reported test output are findings — test output should be pristine.</p>
+<h2>Part 1: Spec Compliance</h2>
+<p>Compare the diff against What Was Requested: Missing / Extra / Misunderstood. If a requirement cannot be verified from this diff alone, report it as a ⚠️ item.</p>
+<h2>Part 2: Code Quality</h2>
+<p>Code quality (separation of concerns, error handling, DRY, edge cases), tests (verify real behavior, edge cases covered), structure (file responsibilities, plan's file structure followed). Template/CSS/README changes are part of the diff.</p>
+<p>Point at evidence: file:line references for every finding. Your final message is the report itself: begin directly with the spec-compliance verdict; no preamble, no process narration.</p>
+<h2>Calibration</h2>
+<p>Categorize by actual severity. Important = task cannot be trusted until fixed. &quot;Coverage could be broader&quot; and polish are Minor. If the plan/brief explicitly mandates something this rubric calls a defect, report it as Important, labeled plan-mandated. Acknowledge what was done well before listing issues.</p>
+<h2>Output Format</h2>
+<h3>Spec Compliance</h3>
+<ul>
+<li>✅ / ❌ / ⚠️ items</li>
+</ul>
+<h3>Strengths</h3>
+<h3>Issues</h3>
+<h4>Critical (Must Fix)</h4>
+<h4>Important (Should Fix)</h4>
+<h4>Minor (Nice to Have)</h4>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> [Approved | Needs fixes]
+<strong>Reasoning:</strong> [1-2 sentences]</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 5: Subagent pages, links, and wiring
+2	
+3	**Files:**
+4	- Modify: `internal/render/render.go`
+5	- Modify: `internal/render/assets/report.html.tmpl`
+6	- Modify: `internal/render/assets/styles.css`
+7	- Modify: `cmd/ccwhid/run.go`
+8	- Modify: `cmd/ccwhid/main.go` (flag help text)
+9	- Modify: `internal/tui/tui.go` (option label)
+10	- Modify: `README.md`
+11	- Test: `internal/render/render_e2e_test.go` (append)
+12	
+13	**Interfaces:**
+14	- Consumes: `model.Session.Agents`, `model.AgentSession` (Task 2), `Turn.AgentID` (Task 1), `transcript.LoadAgentSessions` (Task 2).
+15	- Produces: `render.Site` writes `outDir/subagents/agent-&lt;ID&gt;.html` per agent session; main `index.html` links to them from Task/Agent tool cards (`ToolUseID` match) and agent-result cards (`AgentID` match); agent pages link back via `../index.html` and to sibling pages.
+16	
+17	- [ ] **Step 1: Write the failing e2e test**
+18	
+19	Append to `internal/render/render_e2e_test.go` (it already renders a session to a temp dir; follow its existing helper style — read the file first):
+20	
+21	```go
+22	func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
+23		agent := model.AgentSession{
+24			ID:          &#34;abc123&#34;,
+25			Description: &#34;Implement Task 12&#34;,
+26			AgentType:   &#34;general-purpose&#34;,
+27			ToolUseID:   &#34;toolu_9&#34;,
+28			Session: model.Session{Turns: []model.Turn{
+29				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;brief&#34;}}},
+30				{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;agent work&#34;}}},
+31			}},
+32		}
+33		s := model.Session{
+34			Title: &#34;root&#34;,
+35			Turns: []model.Turn{
+36				{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+37					ID: &#34;toolu_9&#34;, Name: &#34;Agent&#34;, Summary: &#34;Implement Task 12&#34;,
+38				}}}},
+39				{Kind: model.TurnAgentResult, AgentID: &#34;abc123&#34;, AgentStatus: &#34;completed&#34;,
+40					AgentSummary: `Agent &#34;Implement Task 12&#34; finished`,
+41					Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;done&#34;}}},
+42			},
+43			Agents: []model.AgentSession{agent},
+44		}
+45		dir := t.TempDir()
+46		if err := Site(s, dir, Options{}); err != nil {
+47			t.Fatal(err)
+48		}
+49	
+50		page, err := os.ReadFile(filepath.Join(dir, &#34;subagents&#34;, &#34;agent-abc123.html&#34;))
+51		if err != nil {
+52			t.Fatalf(&#34;agent page missing: %v&#34;, err)
+53		}
+54		for _, want := range []string{&#34;agent work&#34;, `href=&#34;../index.html&#34;`, `href=&#34;../assets/styles.css&#34;`, &#34;Implement Task 12&#34;} {
+55			if !strings.Contains(string(page), want) {
+56				t.Errorf(&#34;agent page missing %q&#34;, want)
+57			}
+58		}
+59	
+60		index, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+61		if err != nil {
+62			t.Fatal(err)
+63		}
+64		// Both the tool card and the result card link to the agent page.
+65		if got := strings.Count(string(index), `href=&#34;subagents/agent-abc123.html&#34;`); got &lt; 2 {
+66			t.Errorf(&#34;index has %d links to the agent page, want &gt;= 2&#34;, got)
+67		}
+68	}
+69	
+70	func TestSiteNoAgentsWritesNoSubagentsDir(t *testing.T) {
+71		dir := t.TempDir()
+72		if err := Site(model.Session{Title: &#34;x&#34;}, dir, Options{}); err != nil {
+73			t.Fatal(err)
+74		}
+75		if _, err := os.Stat(filepath.Join(dir, &#34;subagents&#34;)); !os.IsNotExist(err) {
+76			t.Errorf(&#34;subagents dir must not exist for agent-less sessions (err=%v)&#34;, err)
+77		}
+78	}
+79	```
+80	
+81	- [ ] **Step 2: Run tests to verify they fail**
+82	
+83	Run: `go test ./internal/render/ -run &#39;SubagentPages|NoSubagentsDir&#39; -v`
+84	Expected: FAIL — no agent page is written / no links found.
+85	
+86	- [ ] **Step 3: Implement multi-page rendering and links**
+87	
+88	In `internal/render/render.go`:
+89	
+90	1. Add a page-context type and link resolver:
+91	
+92	```go
+93	// pageInfo describes where the page being rendered lives relative to outDir.
+94	type pageInfo struct {
+95		Base       string // asset prefix: &#34;&#34; on index.html, &#34;../&#34; on agent pages
+96		PagePrefix string // href prefix to agent pages: &#34;subagents/&#34; on index, &#34;&#34; on agent pages
+97		BackHref   string // back-link to the main report; empty on index
+98		Subtitle   string // agent pages: &#34;&lt;agentType&gt; · agent-&lt;ID&gt;&#34;
+99	}
+100	
+101	// agentLinks resolves tool-use ids and agent ids to agent-page hrefs.
+102	type agentLinks struct {
+103		prefix    string
+104		byToolUse map[string]string // tool_use id -&gt; agent id
+105		byAgentID map[string]bool
+106	}
+107	
+108	func newAgentLinks(agents []model.AgentSession, prefix string) *agentLinks {
+109		l := &amp;agentLinks{prefix: prefix, byToolUse: map[string]string{}, byAgentID: map[string]bool{}}
+110		for _, a := range agents {
+111			if a.ToolUseID != &#34;&#34; {
+112				l.byToolUse[a.ToolUseID] = a.ID
+113			}
+114			l.byAgentID[a.ID] = true
+115		}
+116		return l
+117	}
+118	
+119	func (l *agentLinks) forToolUse(id string) string {
+120		if aid, ok := l.byToolUse[id]; ok {
+121			return l.prefix + &#34;agent-&#34; + aid + &#34;.html&#34;
+122		}
+123		return &#34;&#34;
+124	}
+125	
+126	func (l *agentLinks) forAgent(id string) string {
+127		if l.byAgentID[id] {
+128			return l.prefix + &#34;agent-&#34; + id + &#34;.html&#34;
+129		}
+130		return &#34;&#34;
+131	}
+132	```
+133	
+134	2. Thread the links through body rendering. Change signatures:
+135	
+136	```go
+137	func renderTurnBody(t model.Turn, links *agentLinks) template.HTML
+138	func renderTool(tc *model.ToolCall, links *agentLinks) string
+139	```
+140	
+141	- `renderTurnBody` passes `links` to `renderTool`; its recursive call for inline sidechain turns passes `links` unchanged.
+142	- In `renderTool`, after the `tool-summary` span inside the summary element, add:
+143	
+144	```go
+145		if href := links.forToolUse(tc.ID); href != &#34;&#34; {
+146			b.WriteString(`&lt;a class=&#34;agent-link&#34; href=&#34;` + html.EscapeString(href) + `&#34;&gt;transcript ↗&lt;/a&gt;`)
+147		}
+148	```
+149	
+150	3. Extend `viewData` and `turnView`:
+151	
+152	```go
+153	// viewData gains:
+154		Base     string
+155		BackHref string
+156		Subtitle string
+157	// turnView gains:
+158		AgentHref string // link to the agent&#39;s transcript page, when one exists
+159	```
+160	
+161	4. Change `buildViewModel` to accept the page context and links:
+162	
+163	```go
+164	func buildViewModel(s model.Session, title string, opts Options, page pageInfo, links *agentLinks) viewData {
+165		d := viewData{
+166			Title:     title,
+167			Session:   s,
+168			TurnCount: len(s.Turns),
+169			Base:      page.Base,
+170			BackHref:  page.BackHref,
+171			Subtitle:  page.Subtitle,
+172		}
+173		...
+174		tv := turnView{
+175			...
+176			Body: renderTurnBody(t, links),
+177		}
+178		if t.Kind == model.TurnAgentResult {
+179			tv.AgentHref = links.forAgent(t.AgentID)
+180		}
+181		...
+182	}
+183	```
+184	
+185	Existing unit tests that call `buildViewModel(s, &#34;t&#34;, Options{})` must be updated to `buildViewModel(s, &#34;t&#34;, Options{}, pageInfo{}, newAgentLinks(nil, &#34;&#34;))` — update Task 4&#39;s tests accordingly in this task (they are in the same package; keep the assertions unchanged).
+186	
+187	5. Restructure `Site` to render index + one page per agent:
+188	
+189	```go
+190	// Site renders the session into outDir as index.html + assets/, plus one page
+191	// per linked agent session under subagents/.
+192	func Site(s model.Session, outDir string, opts Options) error {
+193		title := opts.Title
+194		if title == &#34;&#34; {
+195			title = s.DisplayTitle()
+196		}
+197		tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+198		if err != nil {
+199			return err
+200		}
+201		tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+202		if err != nil {
+203			return err
+204		}
+205	
+206		if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+207			return err
+208		}
+209		for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+210			b, err := assets.ReadFile(&#34;assets/&#34; + name)
+211			if err != nil {
+212				return err
+213			}
+214			if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+215				return err
+216			}
+217		}
+218	
+219		writePage := func(path string, sess model.Session, pageTitle string, page pageInfo) error {
+220			links := newAgentLinks(s.Agents, page.PagePrefix)
+221			data := buildViewModel(sess, pageTitle, opts, page, links)
+222			var buf bytes.Buffer
+223			if err := tmpl.Execute(&amp;buf, data); err != nil {
+224				return err
+225			}
+226			return os.WriteFile(path, buf.Bytes(), 0o644)
+227		}
+228	
+229		if err := writePage(filepath.Join(outDir, &#34;index.html&#34;), s, title,
+230			pageInfo{Base: &#34;&#34;, PagePrefix: &#34;subagents/&#34;}); err != nil {
+231			return err
+232		}
+233		if len(s.Agents) == 0 {
+234			return nil
+235		}
+236		subDir := filepath.Join(outDir, &#34;subagents&#34;)
+237		if err := os.MkdirAll(subDir, 0o755); err != nil {
+238			return err
+239		}
+240		for _, a := range s.Agents {
+241			sub := &#34;agent-&#34; + a.ID
+242			if a.AgentType != &#34;&#34; {
+243				sub = a.AgentType + &#34; · &#34; + sub
+244			}
+245			if err := writePage(filepath.Join(subDir, &#34;agent-&#34;+a.ID+&#34;.html&#34;), a.Session, a.Description,
+246				pageInfo{Base: &#34;../&#34;, PagePrefix: &#34;&#34;, BackHref: &#34;../index.html&#34;, Subtitle: sub}); err != nil {
+247				return err
+248			}
+249		}
+250		return nil
+251	}
+252	```
+253	
+254	Note the resolver on agent pages uses the ROOT session&#39;s agent set (`s.Agents`) with prefix `&#34;&#34;`, so depth-2 agent references inside an agent page resolve to sibling files.
+255	
+256	6. In `assets/report.html.tmpl`:
+257	
+258	- Asset paths: `href=&#34;{{ .Base }}assets/styles.css&#34;` and `src=&#34;{{ .Base }}assets/app.js&#34;`.
+259	- In `session-head`, after the `&lt;h1&gt;`:
+260	
+261	```html
+262	      {{ if .BackHref }}&lt;a class=&#34;back-link&#34; href=&#34;{{ .BackHref }}&#34;&gt;← main session&lt;/a&gt;{{ end }}
+263	```
+264	
+265	  and in the `.meta` div add `{{ if .Subtitle }}&lt;span&gt;{{ .Subtitle }}&lt;/span&gt;{{ end }}`.
+266	- Turn header: add the transcript link after the status chip:
+267	
+268	```html
+269	{{ if .AgentHref }}&lt;a class=&#34;agent-link&#34; href=&#34;{{ .AgentHref }}&#34;&gt;transcript ↗&lt;/a&gt;{{ end }}
+270	```
+271	
+272	7. In `assets/styles.css`, append:
+273	
+274	```css
+275	.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; }
+276	.back-link { display: inline-block; font-size: 0.85rem; margin-bottom: 0.4rem; }
+277	```
+278	
+279	- [ ] **Step 4: Run the render tests**
+280	
+281	Run: `go test ./internal/render/ -v`
+282	Expected: all PASS (including Task 4&#39;s updated buildViewModel call sites).
+283	
+284	- [ ] **Step 5: Wire loading into the CLI**
+285	
+286	In `cmd/ccwhid/run.go`, in `generate`, after the `ParseFile` block (before redaction):
+287	
+288	```go
+289		if opts.includeSubagents {
+290			agents, err := transcript.LoadAgentSessions(si.FilePath, transcript.Options{
+291				IncludeSubagents: opts.includeSubagents,
+292			})
+293			if err != nil {
+294				return &#34;&#34;, err
+295			}
+296			sess.Agents = agents
+297		}
+298	```
+299	
+300	In `cmd/ccwhid/main.go`, update the flag help text:
+301	
+302	```go
+303		f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent work: inline Task sidechains and linked agent-session pages&#34;)
+304	```
+305	
+306	In `internal/tui/tui.go`, change the option label `&#34;Include subagents&#34;` to `&#34;Include subagent work&#34;`.
+307	
+308	- [ ] **Step 6: Update the README**
+309	
+310	In `README.md`:
+311	- Flag table row for `--include-subagents`: &#34;Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true)&#34;.
+312	- In the report-description paragraph, mention: background-agent results appear as their own &#34;Agent&#34; cards; linked subagent sessions (from `&lt;sessionId&gt;/subagents/`) render as separate pages linked from the Agent tool card and the result card; with `--usage`, their cost is included and shown as an &#34;of which subagents&#34; line.
+313	- Known limitation note: SDK-spawned sessions without parent linkage (e.g. review-hook runs) are not attributed or included.
+314	
+315	- [ ] **Step 7: Full verification**
+316	
+317	Run: `gofmt -l . &amp;&amp; go vet ./... &amp;&amp; go test ./...`
+318	Expected: gofmt silent, vet clean, all tests pass.
+319	
+320	Manual smoke (optional but recommended): `go run ./cmd/ccwhid --latest --usage --force -o /tmp/ccwhid-smoke &amp;&amp; ls /tmp/ccwhid-smoke/subagents | head` on a session known to have a `subagents/` dir.
+321	
+322	- [ ] **Step 8: Commit**
+323	
+324	```bash
+325	git add internal/render/ cmd/ccwhid/ internal/tui/tui.go README.md
+326	git commit -m &#34;feat: subagent transcript pages linked from the report&#34;
+327	```
+328	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 5 report: Subagent pages, links, and wiring
+2	
+3	## Summary
+4	
+5	Implemented multi-page rendering: `render.Site` now writes `index.html` plus
+6	one page per linked agent session under `outDir/subagents/agent-&lt;ID&gt;.html`.
+7	Agent/Task tool cards link to the matching agent page via `ToolUseID`;
+8	agent-result cards link via `AgentID`. Agent pages reference shared assets
+9	via `../assets/...` and carry a `← main session` back-link to `../index.html`.
+10	Link resolution always uses the root session&#39;s agent set, so depth-2 agent
+11	references inside an agent page resolve to sibling files (verified against
+12	real transcript data, see Manual smoke below).
+13	
+14	Wired `transcript.LoadAgentSessions` into `cmd/ccwhid/run.go`&#39;s `generate()`,
+15	gated on `opts.includeSubagents`; updated the `--include-subagents` flag help
+16	text, the TUI toggle label (`&#34;Include subagents&#34;` → `&#34;Include subagent
+17	work&#34;`), and README (flag table, &#34;What&#39;s included&#34; section, &#34;Token usage &amp;
+18	cost&#34; section, and a new known-limitation note about SDK-spawned sessions
+19	without parent linkage).
+20	
+21	## TDD evidence
+22	
+23	**RED** — `go test ./internal/render/ -run &#39;SubagentPages|NoSubagentsDir&#39; -v`:
+24	
+25	```
+26	=== RUN   TestSiteWritesSubagentPagesAndLinks
+27	    render_e2e_test.go:82: agent page missing: open .../subagents/agent-abc123.html: no such file or directory
+28	--- FAIL: TestSiteWritesSubagentPagesAndLinks (0.00s)
+29	=== RUN   TestSiteNoAgentsWritesNoSubagentsDir
+30	--- PASS: TestSiteNoAgentsWritesNoSubagentsDir (0.00s)
+31	FAIL
+32	```
+33	
+34	(`TestSiteNoAgentsWritesNoSubagentsDir` passed trivially pre-implementation
+35	since no `subagents/` dir was ever created; the meaningful RED signal is the
+36	first test failing on the missing agent page.)
+37	
+38	**GREEN** — `go test ./internal/render/... -v` after implementation: all 18
+39	tests pass, including both new e2e tests and the updated
+40	`TestAgentResultTurnRendersAsAgentCard`.
+41	
+42	## Files changed
+43	
+44	- `internal/render/render.go` — added `pageInfo`, `agentLinks`/`newAgentLinks`/
+45	  `forToolUse`/`forAgent`; restructured `Site` to write index + per-agent
+46	  pages; threaded `links *agentLinks` through `buildViewModel`,
+47	  `renderTurnBody`, `renderTool` (including the recursive inline-sidechain
+48	  call); added `Base`/`BackHref`/`Subtitle` to `viewData` and `AgentHref` to
+49	  `turnView`.
+50	- `internal/render/assets/report.html.tmpl` — asset hrefs prefixed with
+51	  `{{ .Base }}`; back-link and `Subtitle` span added to `session-head`;
+52	  `AgentHref` transcript link added to the turn header.
+53	- `internal/render/assets/styles.css` — appended `.agent-link` and
+54	  `.back-link` rules.
+55	- `cmd/ccwhid/run.go` — `generate()` now calls `transcript.LoadAgentSessions`
+56	  after `ParseFile`/skipped-line warning and before redaction, gated on
+57	  `opts.includeSubagents`.
+58	- `cmd/ccwhid/main.go` — updated `--include-subagents` flag help text.
+59	- `internal/tui/tui.go` — toggle label `&#34;Include subagents&#34;` →
+60	  `&#34;Include subagent work&#34;`.
+61	- `README.md` — flag table row, &#34;What&#39;s included&#34; paragraph (background-agent
+62	  cards, linked subagent pages, usage rollup), new known-limitation note, and
+63	  rewrote the stale &#34;Token usage &amp; cost&#34; paragraph that still claimed
+64	  sub-agent tokens were never included (that behavior changed in an earlier
+65	  task on this branch but README was never updated until now).
+66	- `internal/render/render_e2e_test.go` — appended
+67	  `TestSiteWritesSubagentPagesAndLinks` and
+68	  `TestSiteNoAgentsWritesNoSubagentsDir` (from the brief verbatim, using the
+69	  `render.`/`model.` qualified forms required by the `render_test` package).
+70	- `internal/render/render_test.go` — updated the pre-existing 3-arg
+71	  `buildViewModel` call in `TestAgentResultTurnRendersAsAgentCard` to
+72	  `buildViewModel(s, &#34;t&#34;, Options{}, pageInfo{}, newAgentLinks(nil, &#34;&#34;))`;
+73	  assertions unchanged.
+74	
+75	## Verification
+76	
+77	- `gofmt -l .` → silent.
+78	- `go vet ./...` → clean.
+79	- `go test ./...` → all packages pass (`cmd/ccwhid`, `internal/discovery`,
+80	  `internal/model`, `internal/redact`, `internal/render`, `internal/transcript`,
+81	  `internal/tui`, `internal/usage`).
+82	- Manual smoke against real transcript data (a session on this machine with
+83	  50+ linked agent sessions under `&lt;sessionId&gt;/subagents/`):
+84	  `go run ./cmd/ccwhid --session &lt;id&gt; --usage --force --out /tmp/ccwhid-smoke`
+85	  produced `subagents/agent-*.html` for every linked agent; `index.html`
+86	  contained 48 `href=&#34;subagents/agent-...html&#34;` links and 50 &#34;transcript ↗&#34;
+87	  anchors; agent pages correctly resolved `../assets/styles.css` and
+88	  `../index.html`; and depth-2 links between sibling agent pages resolved as
+89	  bare `agent-&lt;id&gt;.html` (no prefix), confirming the root-agent-set resolver
+90	  works as designed for nested agent references. Removed the smoke output
+91	  afterward.
+92	
+93	## Self-review findings
+94	
+95	- No correctness issues found. Verified the only call site of
+96	  `buildViewModel`/`renderTurnBody`/`renderTool` outside render.go itself is
+97	  the one test updated (repo-wide grep).
+98	- Confirmed no other code or test depends on the old TUI toggle string
+99	  `&#34;Include subagents&#34;`.
+100	- Confirmed the CSP/escaping constraint: the one Go-constructed href
+101	  (`renderTool`&#39;s `agent-link`) is passed through `html.EscapeString`; the
+102	  template-side hrefs (`BackHref`, `AgentHref`, `Base` used in `href`/`src`
+103	  attributes) go through `html/template`&#39;s automatic contextual escaping
+104	  since the template is parsed with `html/template`, not `text/template`.
+105	- The README&#39;s &#34;Token usage &amp; cost&#34; section was stale relative to behavior
+106	  already shipped earlier in this branch (subagent token rollup, task
+107	  a6bc8fb) — folded that fix into this task&#39;s README pass since the brief&#39;s
+108	  instructions for this paragraph directly required correcting it.
+109	
+110	## Concerns
+111	
+112	None. Work matches the brief&#39;s exact code/structure; all steps completed and
+113	verified end-to-end against synthetic and real transcript data.
+114	
+115	## Commits
+116	
+117	- `b703c81` — feat: subagent transcript pages linked from the report
+118	
+119	(Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a
+120	different milestone/branch (`feat/usage-cost`) that previously occupied this
+121	path — that content is preserved in git history if needed.)
+122	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: b66ed79..HEAD
+2	
+3	## Commits
+4	b703c81 feat: subagent transcript pages linked from the report
+5	
+6	## Files changed
+7	 README.md                               |  20 ++++--
+8	 cmd/ccwhid/main.go                      |   2 +-
+9	 cmd/ccwhid/run.go                       |   9 +++
+10	 internal/render/assets/report.html.tmpl |   8 ++-
+11	 internal/render/assets/styles.css       |   2 +
+12	 internal/render/render.go               | 110 +++++++++++++++++++++++++++-----
+13	 internal/render/render_e2e_test.go      |  59 +++++++++++++++++
+14	 internal/render/render_test.go          |   2 +-
+15	 internal/tui/tui.go                     |   2 +-
+16	 9 files changed, 185 insertions(+), 29 deletions(-)
+17	
+18	## Diff
+19	diff --git a/README.md b/README.md
+20	index db0251c..a8a1ba6 100644
+21	--- a/README.md
+22	+++ b/README.md
+23	@@ -73,47 +73,55 @@ Run `ccwhid` with no selector to open the interactive browser:
+24	 
+25	 ### Flags
+26	 
+27	 | Flag | Description |
+28	 |------|-------------|
+29	 | `--session &lt;id&gt;` | Session id or unambiguous prefix to render |
+30	 | `--project &lt;path\|name&gt;` | Scope `--latest` to a project, or open the TUI on it (matches full path, basename, or unambiguous substring) |
+31	 | `--latest` | Render the most recent interactive session (skips agent transcripts) |
+32	 | `--out &lt;dir&gt;` | Output directory |
+33	 | `--title &lt;str&gt;` | Override the report title |
+34	-| `--include-subagents` | Include subagent (Task) activity (default true; `--include-subagents=false` to omit) |
+35	+| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |
+36	 | `--no-redact` | Disable secret redaction |
+37	 | `--force` | Overwrite a non-empty output directory |
+38	 | `--open` | Open the report in a browser when done |
+39	 | `--usage` | Include a token-usage &amp; estimated-cost section (default off) |
+40	 
+41	 ## Redaction
+42	 
+43	 By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
+44	 `KEY=[REDACTED:assignment] assignments) and rewrites your home directory to `~`.
+45	 This is best-effort defense-in-depth — **review generated reports before
+46	 committing them.** Disable with `--no-redact`.
+47	 
+48	 ## What&#39;s included
+49	 
+50	 Your prompts, Claude&#39;s replies (rendered markdown + syntax-highlighted code),
+51	 tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
+52	-blocks, and — optionally — nested subagent activity. System reminders and
+53	+blocks, and — optionally — nested subagent activity. Background-agent results
+54	+(e.g. a `Task` finishing) appear as their own &#34;Agent&#34; cards; linked subagent
+55	+sessions — found under the transcript&#39;s `&lt;sessionId&gt;/subagents/` directory —
+56	+render as separate pages under `subagents/`, linked from both the Agent tool
+57	+card and the result card. With `--usage`, their cost is rolled into the
+58	+totals and shown as an &#34;of which subagents&#34; line. System reminders and
+59	 attachments are omitted for readability.
+60	 
+61	+**Known limitation:** SDK-spawned sessions without parent linkage (e.g. some
+62	+review-hook runs) aren&#39;t attributed to a parent turn and so aren&#39;t included.
+63	+
+64	 ## Token usage &amp; cost
+65	 
+66	 Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible
+67	 **Usage** card and per-turn cost badges. Token counts come straight from the
+68	 transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in
+69	 Anthropic list-price table (dated in the report footnote) — unknown models show
+70	 tokens with cost `n/a`, and server-tool fees are not included. Prices are
+71	 embedded, so this works fully offline.
+72	 
+73	-These figures cover the **single transcript being rendered**. Claude Code stores
+74	-each `Task` sub-agent / code-review agent as its own transcript file, so their
+75	-tokens are not included here — which is why the total can be lower than Claude
+76	-Code&#39;s `/usage`, whose session rollup aggregates those sub-agent sessions too.
+77	+These figures cover the rendered transcript plus any linked subagent sessions
+78	+(shown separately as &#34;of which subagents&#34;). SDK-spawned sessions without
+79	+parent linkage aren&#39;t attributed or included, which is why the total can
+80	+still differ from Claude Code&#39;s `/usage` session rollup.
+81	 
+82	 ## License
+83	 
+84	 [MIT](LICENSE) © 2026 Markus Ackermann
+85	diff --git a/cmd/ccwhid/main.go b/cmd/ccwhid/main.go
+86	index 50135e1..8b45788 100644
+87	--- a/cmd/ccwhid/main.go
+88	+++ b/cmd/ccwhid/main.go
+89	@@ -41,21 +41,21 @@ func newRootCmd() *cobra.Command {
+90	 		RunE: func(cmd *cobra.Command, args []string) error {
+91	 			return run(cmd, opts)
+92	 		},
+93	 	}
+94	 	f := cmd.Flags()
+95	 	f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+96	 	f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name; scopes --latest, or opens the TUI focused on it&#34;)
+97	 	f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent interactive session (skips agent transcripts)&#34;)
+98	 	f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+99	 	f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+100	-	f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+101	+	f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent work: inline Task sidechains and linked agent-session pages&#34;)
+102	 	f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+103	 	f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+104	 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+105	 	f.BoolVar(&amp;opts.usage, &#34;usage&#34;, false, &#34;include a token-usage &amp; estimated-cost section&#34;)
+106	 	return cmd
+107	 }
+108	 
+109	 func run(cmd *cobra.Command, opts *options) error {
+110	 	root, err := discovery.DefaultRoot()
+111	 	if err != nil {
+112	diff --git a/cmd/ccwhid/run.go b/cmd/ccwhid/run.go
+113	index 51fc9d1..7cb48e8 100644
+114	--- a/cmd/ccwhid/run.go
+115	+++ b/cmd/ccwhid/run.go
+116	@@ -85,20 +85,29 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
+117	 	})
+118	 	if err != nil {
+119	 		return &#34;&#34;, err
+120	 	}
+121	 	if si.ID != &#34;&#34; {
+122	 		sess.ID = si.ID
+123	 	}
+124	 	if sess.SkippedLines &gt; 0 {
+125	 		fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed line(s)\n&#34;, sess.SkippedLines)
+126	 	}
+127	+	if opts.includeSubagents {
+128	+		agents, err := transcript.LoadAgentSessions(si.FilePath, transcript.Options{
+129	+			IncludeSubagents: opts.includeSubagents,
+130	+		})
+131	+		if err != nil {
+132	+			return &#34;&#34;, err
+133	+		}
+134	+		sess.Agents = agents
+135	+	}
+136	 	if !opts.noRedact {
+137	 		home, _ := os.UserHomeDir()
+138	 		redact.Session(&amp;sess, home)
+139	 	}
+140	 	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
+141	 		return &#34;&#34;, err
+142	 	}
+143	 	return outDir, nil
+144	 }
+145	 
+146	diff --git a/internal/render/assets/report.html.tmpl b/internal/render/assets/report.html.tmpl
+147	index ddba6c8..0cee0e1 100644
+148	--- a/internal/render/assets/report.html.tmpl
+149	+++ b/internal/render/assets/report.html.tmpl
+150	@@ -1,17 +1,17 @@
+151	 &lt;!DOCTYPE html&gt;
+152	 &lt;html lang=&#34;en&#34;&gt;
+153	 &lt;head&gt;
+154	 &lt;meta charset=&#34;utf-8&#34;&gt;
+155	 &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&gt;
+156	 &lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
+157	-&lt;link rel=&#34;stylesheet&#34; href=&#34;assets/styles.css&#34;&gt;
+158	+&lt;link rel=&#34;stylesheet&#34; href=&#34;{{ .Base }}assets/styles.css&#34;&gt;
+159	 &lt;/head&gt;
+160	 &lt;body&gt;
+161	 &lt;header class=&#34;topbar&#34;&gt;
+162	   &lt;div class=&#34;topbar-inner&#34;&gt;
+163	     &lt;div class=&#34;brand&#34;&gt;ccwhid&lt;/div&gt;
+164	     &lt;input id=&#34;filter&#34; type=&#34;search&#34; placeholder=&#34;Filter turns…&#34; aria-label=&#34;Filter turns&#34;&gt;
+165	     &lt;button id=&#34;toggle-all&#34; class=&#34;btn&#34;&gt;Expand all&lt;/button&gt;
+166	     &lt;button id=&#34;toggle-tools&#34; class=&#34;btn&#34;&gt;Hide tool detail&lt;/button&gt;
+167	     &lt;button id=&#34;toggle-theme&#34; class=&#34;btn&#34; aria-label=&#34;Toggle theme&#34;&gt;◐&lt;/button&gt;
+168	   &lt;/div&gt;
+169	@@ -19,44 +19,46 @@
+170	 &lt;div class=&#34;layout&#34;&gt;
+171	   &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Prompts&#34;&gt;
+172	     &lt;div class=&#34;sidebar-title&#34;&gt;Prompts&lt;/div&gt;
+173	     &lt;ol class=&#34;prompt-list&#34;&gt;
+174	       {{ range .Prompts }}&lt;li&gt;&lt;a href=&#34;#turn-{{ .Index }}&#34;&gt;{{ .Preview }}&lt;/a&gt;&lt;/li&gt;{{ end }}
+175	     &lt;/ol&gt;
+176	   &lt;/nav&gt;
+177	   &lt;main class=&#34;content&#34;&gt;
+178	     &lt;section class=&#34;session-head&#34;&gt;
+179	       &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+180	+      {{ if .BackHref }}&lt;a class=&#34;back-link&#34; href=&#34;{{ .BackHref }}&#34;&gt;← main session&lt;/a&gt;{{ end }}
+181	       &lt;div class=&#34;meta&#34;&gt;
+182	         &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+183	         {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+184	         &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+185	         &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+186	+        {{ if .Subtitle }}&lt;span&gt;{{ .Subtitle }}&lt;/span&gt;{{ end }}
+187	       &lt;/div&gt;
+188	     &lt;/section&gt;
+189	     {{ with .Usage }}
+190	     &lt;details class=&#34;usage-card&#34;&gt;
+191	       &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;
+192	       &lt;div class=&#34;usage-body&#34;&gt;
+193	         {{ if .HasAny }}
+194	         &lt;table class=&#34;usage-models&#34;&gt;
+195	           &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;input&lt;/th&gt;&lt;th&gt;output&lt;/th&gt;&lt;th&gt;cache read&lt;/th&gt;&lt;th&gt;cache write&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;
+196	           {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Input }}&lt;/td&gt;&lt;td&gt;{{ .Output }}&lt;/td&gt;&lt;td&gt;{{ .CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
+197	           &lt;tr class=&#34;usage-total&#34;&gt;&lt;td&gt;{{ .Total.Model }}&lt;/td&gt;&lt;td&gt;{{ .Total.Input }}&lt;/td&gt;&lt;td&gt;{{ .Total.Output }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheRead }}&lt;/td&gt;&lt;td&gt;{{ .Total.CacheWrite }}&lt;/td&gt;&lt;td&gt;{{ .Total.Cost }}&lt;/td&gt;&lt;/tr&gt;
+198	         &lt;/table&gt;
+199	         {{ end }}
+200	         {{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}
+201	         &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;
+202	       &lt;/div&gt;
+203	     &lt;/details&gt;
+204	     {{ end }}
+205	     {{ range .Turns }}
+206	     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+207	-      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Status }}&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;{{ end }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+208	+      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Status }}&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;{{ end }}{{ if .AgentHref }}&lt;a class=&#34;agent-link&#34; href=&#34;{{ .AgentHref }}&#34;&gt;transcript ↗&lt;/a&gt;{{ end }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;
+209	       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+210	     &lt;/article&gt;
+211	     {{ end }}
+212	   &lt;/main&gt;
+213	 &lt;/div&gt;
+214	-&lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+215	+&lt;script src=&#34;{{ .Base }}assets/app.js&#34;&gt;&lt;/script&gt;
+216	 &lt;/body&gt;
+217	 &lt;/html&gt;
+218	diff --git a/internal/render/assets/styles.css b/internal/render/assets/styles.css
+219	index 6f5fe15..40868e4 100644
+220	--- a/internal/render/assets/styles.css
+221	+++ b/internal/render/assets/styles.css
+222	@@ -73,10 +73,12 @@ body.hide-tools .tool-body { display: none; }
+223	 .usage-models td, .usage-models th { text-align: right; padding: 0.15rem 0.7rem; white-space: nowrap; }
+224	 .usage-models td:first-child, .usage-models th:first-child { text-align: left; }
+225	 .usage-models th { color: var(--muted); font-weight: 600; }
+226	 .usage-total td { font-weight: 600; border-top: 1px solid var(--border); }
+227	 .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
+228	 .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+229	 .turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }
+230	 .turn-agent-result .turn-role { color: var(--accent); }
+231	 .agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
+232	 .usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+233	+.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; }
+234	+.back-link { display: inline-block; font-size: 0.85rem; margin-bottom: 0.4rem; }
+235	diff --git a/internal/render/render.go b/internal/render/render.go
+236	index 79b9023..848433e 100644
+237	--- a/internal/render/render.go
+238	+++ b/internal/render/render.go
+239	@@ -16,85 +16,152 @@ import (
+240	 
+241	 //go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+242	 var assets embed.FS
+243	 
+244	 // Options configures a render.
+245	 type Options struct {
+246	 	Title string
+247	 	Usage bool // render the token-usage &amp; cost section
+248	 }
+249	 
+250	-// Site renders the session into outDir as index.html + assets/.
+251	+// pageInfo describes where the page being rendered lives relative to outDir.
+252	+type pageInfo struct {
+253	+	Base       string // asset prefix: &#34;&#34; on index.html, &#34;../&#34; on agent pages
+254	+	PagePrefix string // href prefix to agent pages: &#34;subagents/&#34; on index, &#34;&#34; on agent pages
+255	+	BackHref   string // back-link to the main report; empty on index
+256	+	Subtitle   string // agent pages: &#34;&lt;agentType&gt; · agent-&lt;ID&gt;&#34;
+257	+}
+258	+
+259	+// agentLinks resolves tool-use ids and agent ids to agent-page hrefs.
+260	+type agentLinks struct {
+261	+	prefix    string
+262	+	byToolUse map[string]string // tool_use id -&gt; agent id
+263	+	byAgentID map[string]bool
+264	+}
+265	+
+266	+func newAgentLinks(agents []model.AgentSession, prefix string) *agentLinks {
+267	+	l := &amp;agentLinks{prefix: prefix, byToolUse: map[string]string{}, byAgentID: map[string]bool{}}
+268	+	for _, a := range agents {
+269	+		if a.ToolUseID != &#34;&#34; {
+270	+			l.byToolUse[a.ToolUseID] = a.ID
+271	+		}
+272	+		l.byAgentID[a.ID] = true
+273	+	}
+274	+	return l
+275	+}
+276	+
+277	+func (l *agentLinks) forToolUse(id string) string {
+278	+	if aid, ok := l.byToolUse[id]; ok {
+279	+		return l.prefix + &#34;agent-&#34; + aid + &#34;.html&#34;
+280	+	}
+281	+	return &#34;&#34;
+282	+}
+283	+
+284	+func (l *agentLinks) forAgent(id string) string {
+285	+	if l.byAgentID[id] {
+286	+		return l.prefix + &#34;agent-&#34; + id + &#34;.html&#34;
+287	+	}
+288	+	return &#34;&#34;
+289	+}
+290	+
+291	+// Site renders the session into outDir as index.html + assets/, plus one page
+292	+// per linked agent session under subagents/.
+293	 func Site(s model.Session, outDir string, opts Options) error {
+294	 	title := opts.Title
+295	 	if title == &#34;&#34; {
+296	 		title = s.DisplayTitle()
+297	 	}
+298	-
+299	 	tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+300	 	if err != nil {
+301	 		return err
+302	 	}
+303	 	tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+304	 	if err != nil {
+305	 		return err
+306	 	}
+307	 
+308	-	data := buildViewModel(s, title, opts)
+309	-	var buf bytes.Buffer
+310	-	if err := tmpl.Execute(&amp;buf, data); err != nil {
+311	-		return err
+312	-	}
+313	-
+314	 	if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+315	 		return err
+316	 	}
+317	-	if err := os.WriteFile(filepath.Join(outDir, &#34;index.html&#34;), buf.Bytes(), 0o644); err != nil {
+318	-		return err
+319	-	}
+320	 	for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+321	 		b, err := assets.ReadFile(&#34;assets/&#34; + name)
+322	 		if err != nil {
+323	 			return err
+324	 		}
+325	 		if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+326	 			return err
+327	 		}
+328	 	}
+329	+
+330	+	writePage := func(path string, sess model.Session, pageTitle string, page pageInfo) error {
+331	+		links := newAgentLinks(s.Agents, page.PagePrefix)
+332	+		data := buildViewModel(sess, pageTitle, opts, page, links)
+333	+		var buf bytes.Buffer
+334	+		if err := tmpl.Execute(&amp;buf, data); err != nil {
+335	+			return err
+336	+		}
+337	+		return os.WriteFile(path, buf.Bytes(), 0o644)
+338	+	}
+339	+
+340	+	if err := writePage(filepath.Join(outDir, &#34;index.html&#34;), s, title,
+341	+		pageInfo{Base: &#34;&#34;, PagePrefix: &#34;subagents/&#34;}); err != nil {
+342	+		return err
+343	+	}
+344	+	if len(s.Agents) == 0 {
+345	+		return nil
+346	+	}
+347	+	subDir := filepath.Join(outDir, &#34;subagents&#34;)
+348	+	if err := os.MkdirAll(subDir, 0o755); err != nil {
+349	+		return err
+350	+	}
+351	+	for _, a := range s.Agents {
+352	+		sub := &#34;agent-&#34; + a.ID
+353	+		if a.AgentType != &#34;&#34; {
+354	+			sub = a.AgentType + &#34; · &#34; + sub
+355	+		}
+356	+		if err := writePage(filepath.Join(subDir, &#34;agent-&#34;+a.ID+&#34;.html&#34;), a.Session, a.Description,
+357	+			pageInfo{Base: &#34;../&#34;, PagePrefix: &#34;&#34;, BackHref: &#34;../index.html&#34;, Subtitle: sub}); err != nil {
+358	+			return err
+359	+		}
+360	+	}
+361	 	return nil
+362	 }
+363	 
+364	 // view models -------------------------------------------------------------
+365	 
+366	 type viewData struct {
+367	 	Title     string
+368	 	Session   model.Session
+369	 	StartedAt string
+370	 	TurnCount int
+371	 	Prompts   []promptRef
+372	 	Turns     []turnView
+373	 	Usage     *usageView
+374	+	Base      string
+375	+	BackHref  string
+376	+	Subtitle  string
+377	 }
+378	 
+379	 type promptRef struct {
+380	 	Index   int
+381	 	Preview string
+382	 }
+383	 
+384	 type turnView struct {
+385	 	Index      int
+386	 	Kind       string
+387	 	RoleLabel  string
+388	 	Status     string // agent-result status chip, e.g. &#34;completed&#34;
+389	 	SearchText string
+390	 	Body       template.HTML
+391	 	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;
+392	+	AgentHref  string // link to the agent&#39;s transcript page, when one exists
+393	 }
+394	 
+395	 type usageView struct {
+396	 	HasAny   bool
+397	 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
+398	 	Models   []usageModel  // per-model rows, full token breakdown
+399	 	Total    usageModel    // grand-total row
+400	 	SubLine  string        // &#34;of which subagents: …&#34;, empty when no linked agents
+401	 	Footnote string
+402	 }
+403	@@ -103,25 +170,28 @@ type usageView struct {
+404	 // are plain formatted strings, auto-escaped by html/template.
+405	 type usageModel struct {
+406	 	Model      string // model id, or &#34;Total&#34; for the summary row
+407	 	Input      string
+408	 	Output     string
+409	 	CacheRead  string
+410	 	CacheWrite string
+411	 	Cost       string // &#34;$1.23&#34; or &#34;n/a&#34;
+412	 }
+413	 
+414	-func buildViewModel(s model.Session, title string, opts Options) viewData {
+415	+func buildViewModel(s model.Session, title string, opts Options, page pageInfo, links *agentLinks) viewData {
+416	 	d := viewData{
+417	 		Title:     title,
+418	 		Session:   s,
+419	 		TurnCount: len(s.Turns),
+420	+		Base:      page.Base,
+421	+		BackHref:  page.BackHref,
+422	+		Subtitle:  page.Subtitle,
+423	 	}
+424	 	if !s.StartedAt.IsZero() {
+425	 		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+426	 	}
+427	 
+428	 	var rep usage.Report
+429	 	if opts.Usage {
+430	 		rep = usage.Compute(s)
+431	 		d.Usage = buildUsageView(rep)
+432	 	}
+433	@@ -130,21 +200,24 @@ func buildViewModel(s model.Session, title string, opts Options) viewData {
+434	 		plain := turnPlainText(t)
+435	 		if t.Kind == model.TurnUser {
+436	 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+437	 		}
+438	 		tv := turnView{
+439	 			Index:      i,
+440	 			Kind:       string(t.Kind),
+441	 			RoleLabel:  roleLabel(t),
+442	 			Status:     t.AgentStatus,
+443	 			SearchText: strings.ToLower(plain),
+444	-			Body:       renderTurnBody(t),
+445	+			Body:       renderTurnBody(t, links),
+446	+		}
+447	+		if t.Kind == model.TurnAgentResult {
+448	+			tv.AgentHref = links.forAgent(t.AgentID)
+449	 		}
+450	 		if opts.Usage &amp;&amp; t.Usage != nil {
+451	 			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])
+452	 		}
+453	 		d.Turns = append(d.Turns, tv)
+454	 	}
+455	 	return d
+456	 }
+457	 
+458	 // turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.
+459	@@ -238,62 +311,65 @@ func roleLabel(t model.Turn) string {
+460	 func agentRoleLabel(summary string) string {
+461	 	if i := strings.Index(summary, `&#34;`); i &gt;= 0 {
+462	 		if j := strings.Index(summary[i+1:], `&#34;`); j &gt; 0 {
+463	 			return &#34;Agent · &#34; + summary[i+1:i+1+j]
+464	 		}
+465	 	}
+466	 	return &#34;Agent&#34;
+467	 }
+468	 
+469	 // renderTurnBody renders all blocks of a turn to HTML.
+470	-func renderTurnBody(t model.Turn) template.HTML {
+471	+func renderTurnBody(t model.Turn, links *agentLinks) template.HTML {
+472	 	var b strings.Builder
+473	 	for _, blk := range t.Blocks {
+474	 		switch blk.Type {
+475	 		case model.BlockText:
+476	 			b.WriteString(string(Markdown(blk.Text)))
+477	 		case model.BlockThinking:
+478	 			b.WriteString(`&lt;details class=&#34;thinking&#34;&gt;&lt;summary&gt;thinking&lt;/summary&gt;`)
+479	 			b.WriteString(string(Markdown(blk.Text)))
+480	 			b.WriteString(`&lt;/details&gt;`)
+481	 		case model.BlockToolUse:
+482	-			b.WriteString(renderTool(blk.Tool))
+483	+			b.WriteString(renderTool(blk.Tool, links))
+484	 		}
+485	 	}
+486	 	return template.HTML(b.String())
+487	 }
+488	 
+489	-func renderTool(tc *model.ToolCall) string {
+490	+func renderTool(tc *model.ToolCall, links *agentLinks) string {
+491	 	var b strings.Builder
+492	 	b.WriteString(`&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;`)
+493	 	b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+494	 	if tc.Summary != &#34;&#34; {
+495	 		b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(StripANSI(tc.Summary)) + `&lt;/span&gt;`)
+496	 	}
+497	+	if href := links.forToolUse(tc.ID); href != &#34;&#34; {
+498	+		b.WriteString(`&lt;a class=&#34;agent-link&#34; href=&#34;` + html.EscapeString(href) + `&#34;&gt;transcript ↗&lt;/a&gt;`)
+499	+	}
+500	 	b.WriteString(`&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;`)
+501	 	if tc.Diff != nil {
+502	 		b.WriteString(string(DiffHTML(tc.Diff)))
+503	 	} else if tc.InputJSON != &#34;&#34; {
+504	 		b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+505	 	}
+506	 	if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+507	 		cls := &#34;tool-result&#34;
+508	 		if tc.Result.IsError {
+509	 			cls += &#34; tool-result-error&#34;
+510	 		}
+511	 		b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(StripANSI(tc.Result.Content)) + `&lt;/pre&gt;`)
+512	 	}
+513	 	for _, sub := range tc.Subagents {
+514	 		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+515	 		for _, st := range sub.Turns {
+516	 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+517	-			b.WriteString(string(renderTurnBody(st)))
+518	+			b.WriteString(string(renderTurnBody(st, links)))
+519	 			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+520	 		}
+521	 		b.WriteString(`&lt;/details&gt;`)
+522	 	}
+523	 	b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+524	 	return b.String()
+525	 }
+526	 
+527	 func turnPlainText(t model.Turn) string {
+528	 	var parts []string
+529	diff --git a/internal/render/render_e2e_test.go b/internal/render/render_e2e_test.go
+530	index a6ff430..74d6006 100644
+531	--- a/internal/render/render_e2e_test.go
+532	+++ b/internal/render/render_e2e_test.go
+533	@@ -1,18 +1,19 @@
+534	 package render_test
+535	 
+536	 import (
+537	 	&#34;os&#34;
+538	 	&#34;path/filepath&#34;
+539	 	&#34;strings&#34;
+540	 	&#34;testing&#34;
+541	 
+542	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+543	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+544	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+545	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+546	 )
+547	 
+548	 func TestEndToEndRedactedReport(t *testing.T) {
+549	 	dir := t.TempDir()
+550	 	src := filepath.Join(dir, &#34;s.jsonl&#34;)
+551	 	lines := strings.Join([]string{
+552	 		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;E2E&#34;}`,
+553	@@ -40,10 +41,68 @@ func TestEndToEndRedactedReport(t *testing.T) {
+554	 	if strings.Contains(s, &#34;[REDACTED:aws-key]&#34;) {
+555	 		t.Error(&#34;secret leaked into report&#34;)
+556	 	}
+557	 	if !strings.Contains(s, &#34;REDACTED:aws-key&#34;) {
+558	 		t.Error(&#34;expected redaction marker in report&#34;)
+559	 	}
+560	 	if !strings.Contains(s, &#34;a.txt&#34;) {
+561	 		t.Error(&#34;tool result missing from report&#34;)
+562	 	}
+563	 }
+564	+
+565	+func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
+566	+	agent := model.AgentSession{
+567	+		ID:          &#34;abc123&#34;,
+568	+		Description: &#34;Implement Task 12&#34;,
+569	+		AgentType:   &#34;general-purpose&#34;,
+570	+		ToolUseID:   &#34;toolu_9&#34;,
+571	+		Session: model.Session{Turns: []model.Turn{
+572	+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;brief&#34;}}},
+573	+			{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;agent work&#34;}}},
+574	+		}},
+575	+	}
+576	+	s := model.Session{
+577	+		Title: &#34;root&#34;,
+578	+		Turns: []model.Turn{
+579	+			{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+580	+				ID: &#34;toolu_9&#34;, Name: &#34;Agent&#34;, Summary: &#34;Implement Task 12&#34;,
+581	+			}}}},
+582	+			{Kind: model.TurnAgentResult, AgentID: &#34;abc123&#34;, AgentStatus: &#34;completed&#34;,
+583	+				AgentSummary: `Agent &#34;Implement Task 12&#34; finished`,
+584	+				Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;done&#34;}}},
+585	+		},
+586	+		Agents: []model.AgentSession{agent},
+587	+	}
+588	+	dir := t.TempDir()
+589	+	if err := render.Site(s, dir, render.Options{}); err != nil {
+590	+		t.Fatal(err)
+591	+	}
+592	+
+593	+	page, err := os.ReadFile(filepath.Join(dir, &#34;subagents&#34;, &#34;agent-abc123.html&#34;))
+594	+	if err != nil {
+595	+		t.Fatalf(&#34;agent page missing: %v&#34;, err)
+596	+	}
+597	+	for _, want := range []string{&#34;agent work&#34;, `href=&#34;../index.html&#34;`, `href=&#34;../assets/styles.css&#34;`, &#34;Implement Task 12&#34;} {
+598	+		if !strings.Contains(string(page), want) {
+599	+			t.Errorf(&#34;agent page missing %q&#34;, want)
+600	+		}
+601	+	}
+602	+
+603	+	index, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+604	+	if err != nil {
+605	+		t.Fatal(err)
+606	+	}
+607	+	// Both the tool card and the result card link to the agent page.
+608	+	if got := strings.Count(string(index), `href=&#34;subagents/agent-abc123.html&#34;`); got &lt; 2 {
+609	+		t.Errorf(&#34;index has %d links to the agent page, want &gt;= 2&#34;, got)
+610	+	}
+611	+}
+612	+
+613	+func TestSiteNoAgentsWritesNoSubagentsDir(t *testing.T) {
+614	+	dir := t.TempDir()
+615	+	if err := render.Site(model.Session{Title: &#34;x&#34;}, dir, render.Options{}); err != nil {
+616	+		t.Fatal(err)
+617	+	}
+618	+	if _, err := os.Stat(filepath.Join(dir, &#34;subagents&#34;)); !os.IsNotExist(err) {
+619	+		t.Errorf(&#34;subagents dir must not exist for agent-less sessions (err=%v)&#34;, err)
+620	+	}
+621	+}
+622	diff --git a/internal/render/render_test.go b/internal/render/render_test.go
+623	index 173bef9..466cee4 100644
+624	--- a/internal/render/render_test.go
+625	+++ b/internal/render/render_test.go
+626	@@ -206,21 +206,21 @@ func TestSiteWritesFiles(t *testing.T) {
+627	 	}
+628	 }
+629	 
+630	 func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
+631	 	s := model.Session{Turns: []model.Turn{{
+632	 		Kind:         model.TurnAgentResult,
+633	 		AgentStatus:  &#34;completed&#34;,
+634	 		AgentSummary: `Agent &#34;Implement Task 12: Profiles view&#34; finished`,
+635	 		Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;All done.&#34;}},
+636	 	}}}
+637	-	d := buildViewModel(s, &#34;t&#34;, Options{})
+638	+	d := buildViewModel(s, &#34;t&#34;, Options{}, pageInfo{}, newAgentLinks(nil, &#34;&#34;))
+639	 	tv := d.Turns[0]
+640	 	if tv.RoleLabel != &#34;Agent · Implement Task 12: Profiles view&#34; {
+641	 		t.Errorf(&#34;RoleLabel = %q&#34;, tv.RoleLabel)
+642	 	}
+643	 	if tv.Status != &#34;completed&#34; {
+644	 		t.Errorf(&#34;Status = %q&#34;, tv.Status)
+645	 	}
+646	 	if tv.Kind != &#34;agent-result&#34; {
+647	 		t.Errorf(&#34;Kind = %q&#34;, tv.Kind)
+648	 	}
+649	diff --git a/internal/tui/tui.go b/internal/tui/tui.go
+650	index 44f3b05..77eb474 100644
+651	--- a/internal/tui/tui.go
+652	+++ b/internal/tui/tui.go
+653	@@ -366,21 +366,21 @@ func (m model) viewSessions() string {
+654	 	return b.String()
+655	 }
+656	 
+657	 func (m model) viewOptions() string {
+658	 	var b strings.Builder
+659	 	b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+660	 	toggles := []struct {
+661	 		label string
+662	 		on    bool
+663	 	}{
+664	-		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+665	+		{&#34;Include subagent work&#34;, m.sel.IncludeSubagents},
+666	 		{&#34;Redact secrets&#34;, m.sel.Redact},
+667	 		{&#34;Open in browser when done&#34;, m.sel.Open},
+668	 		{&#34;Include usage &amp; cost&#34;, m.sel.Usage},
+669	 	}
+670	 	for i, t := range toggles {
+671	 		check := &#34;[ ]&#34;
+672	 		if t.on {
+673	 			check = &#34;[x]&#34;
+674	 		}
+675	 		line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+676	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="bash git rev-parse head &amp;&amp; git log --oneline -1">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git rev-parse HEAD &amp;&amp; git log --oneline -1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git rev-parse HEAD \u0026\u0026 git log --oneline -1&#34;,
+  &#34;description&#34;: &#34;Confirm current HEAD matches diff head commit&#34;
+}</pre><pre class="tool-result">b703c819d10e4ae4daf2413bd290aa90b4e08a5a
+b703c81 feat: subagent transcript pages linked from the report</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;renderturnbody\|rendertool(&#34; -r --include=&#34;*.go&#34; .">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTurnBody\|renderTool(&#34; -r --include=&#34;*.go&#34; .</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;renderTurnBody\\|renderTool(\&#34; -r --include=\&#34;*.go\&#34; .&#34;,
+  &#34;description&#34;: &#34;Find all call sites of renderTurnBody and renderTool&#34;
+}</pre><pre class="tool-result">internal/render/render.go:210:			Body:       renderTurnBody(t, links),
+internal/render/render.go:320:// renderTurnBody renders all blocks of a turn to HTML.
+internal/render/render.go:321:func renderTurnBody(t model.Turn, links *agentLinks) template.HTML {
+internal/render/render.go:332:			b.WriteString(renderTool(blk.Tool, links))
+internal/render/render.go:338:func renderTool(tc *model.ToolCall, links *agentLinks) string {
+internal/render/render.go:365:			b.WriteString(string(renderTurnBody(st, links)))</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash sed -n &#39;1,20p&#39; internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,20p&#39; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;1,20p&#39; internal/render/render.go&#34;,
+  &#34;description&#34;: &#34;Check render.go imports for html/template&#34;
+}</pre><pre class="tool-result">package render
+
+import (
+	&#34;bytes&#34;
+	&#34;embed&#34;
+	&#34;fmt&#34;
+	&#34;html&#34;
+	&#34;html/template&#34;
+	&#34;os&#34;
+	&#34;path/filepath&#34;
+	&#34;strings&#34;
+
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;
+)
+
+//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+var assets embed.FS
+
+// Options configures a render.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;agents\|func session&#34; internal/redact/*.go internal/model/*.go | grep -v &#34;_test.go&#34;">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Agents\|func Session&#34; internal/redact/*.go internal/model/*.go | grep -v &#34;_test.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;Agents\\|func Session\&#34; internal/redact/*.go internal/model/*.go | grep -v \&#34;_test.go\&#34;&#34;,
+  &#34;description&#34;: &#34;Check whether redact.Session processes model.Session.Agents field&#34;
+}</pre><pre class="tool-result">internal/model/model.go:34:	Agents       []AgentSession // linked subagent sessions (subagents/ dir), when loaded
+internal/redact/redact.go:49:func Session(s *model.Session, homeDir string) {
+internal/redact/redact.go:59:	for i := range s.Agents {
+internal/redact/redact.go:60:		s.Agents[i].Description = r.String(s.Agents[i].Description)
+internal/redact/redact.go:61:		Session(&amp;s.Agents[i].Session, homeDir)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go&#34;,
+  &#34;description&#34;: &#34;Check gofmt cleanliness on touched files (read-only)&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="bash go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2\u003e\u00261&#34;,
+  &#34;description&#34;: &#34;Run go vet on touched packages (read-only diagnostic)&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;fmt&#34;
+5		&#34;os&#34;
+6		&#34;os/exec&#34;
+7		&#34;path/filepath&#34;
+8		&#34;runtime&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+11		&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+12		&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+14	)
+15	
+16	func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+17		if opts.out != &#34;&#34; {
+18			return opts.out
+19		}
+20		short := si.ID
+21		if len(short) &gt; 8 {
+22			short = short[:8]
+23		}
+24		return filepath.Join(&#34;ccwhid-report&#34;, short)
+25	}
+26	
+27	// resolveSession picks a session from flags. It returns needTUI=true when the
+28	// user gave no selector.
+29	func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+30		switch {
+31		case opts.session != &#34;&#34;:
+32			si, err := discovery.FindSession(root, opts.session)
+33			return si, false, err
+34		case opts.latest:
+35			return latestSession(opts, root)
+36		default:
+37			return discovery.SessionInfo{}, true, nil
+38		}
+39	}
+40	
+41	// latestSession returns the most recent interactive (non-agent) session,
+42	// optionally scoped to a project. Agent-spawned transcripts are skipped so
+43	// --latest targets the user&#39;s own sessions.
+44	func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+45		groups, err := discovery.Scan(root)
+46		if err != nil {
+47			return discovery.SessionInfo{}, false, err
+48		}
+49		if opts.project != &#34;&#34; {
+50			idx, err := discovery.FindProject(groups, opts.project)
+51			if err != nil {
+52				return discovery.SessionInfo{}, false, err
+53			}
+54			groups = groups[idx : idx+1]
+55		}
+56		// Pick the newest interactive session by modification time. Group order
+57		// alone is insufficient: groups are sorted by their newest session
+58		// *including* agent transcripts, so a recent agent run in one project
+59		// could otherwise mask a newer human session in another.
+60		bestGI, bestSI := -1, -1
+61		for gi := range groups {
+62			for si := range groups[gi].Sessions {
+63				if groups[gi].Sessions[si].IsAgent {
+64					continue
+65				}
+66				if bestGI &lt; 0 || groups[gi].Sessions[si].ModTime.After(groups[bestGI].Sessions[bestSI].ModTime) {
+67					bestGI, bestSI = gi, si
+68				}
+69			}
+70		}
+71		if bestGI &lt; 0 {
+72			return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+73		}
+74		return groups[bestGI].Sessions[bestSI], false, nil
+75	}
+76	
+77	// generate parses, redacts, and renders a session, returning the output dir.
+78	func generate(opts *options, si discovery.SessionInfo) (string, error) {
+79		outDir := resolveOutDir(opts, si)
+80		if err := ensureOutDir(outDir, opts.force); err != nil {
+81			return &#34;&#34;, err
+82		}
+83		sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+84			IncludeSubagents: opts.includeSubagents,
+85		})
+86		if err != nil {
+87			return &#34;&#34;, err
+88		}
+89		if si.ID != &#34;&#34; {
+90			sess.ID = si.ID
+91		}
+92		if sess.SkippedLines &gt; 0 {
+93			fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed line(s)\n&#34;, sess.SkippedLines)
+94		}
+95		if opts.includeSubagents {
+96			agents, err := transcript.LoadAgentSessions(si.FilePath, transcript.Options{
+97				IncludeSubagents: opts.includeSubagents,
+98			})
+99			if err != nil {
+100				return &#34;&#34;, err
+101			}
+102			sess.Agents = agents
+103		}
+104		if !opts.noRedact {
+105			home, _ := os.UserHomeDir()
+106			redact.Session(&amp;sess, home)
+107		}
+108		if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
+109			return &#34;&#34;, err
+110		}
+111		return outDir, nil
+112	}
+113	
+114	func ensureOutDir(dir string, force bool) error {
+115		entries, err := os.ReadDir(dir)
+116		if err != nil {
+117			if os.IsNotExist(err) {
+118				return os.MkdirAll(dir, 0o755)
+119			}
+120			return err
+121		}
+122		if len(entries) == 0 {
+123			return nil
+124		}
+125		if !force {
+126			return fmt.Errorf(&#34;output directory %q is not empty (use --force to overwrite)&#34;, dir)
+127		}
+128		// --force: clear existing entries so the report reflects only this run and
+129		// no stale files (e.g. renamed assets) are left behind.
+130		for _, e := range entries {
+131			if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
+132				return err
+133			}
+134		}
+135		return nil
+136	}
+137	
+138	// openInBrowser opens the report&#39;s index.html inside dir in the default browser.
+139	func openInBrowser(dir string) error {
+140		index := filepath.Join(dir, &#34;index.html&#34;)
+141		abs, err := filepath.Abs(index)
+142		if err != nil {
+143			return err
+144		}
+145		// Pass the filesystem path directly rather than a file:// URL: exec runs the
+146		// opener without a shell, so a single path argument handles spaces and
+147		// special characters, and avoids Windows backslash/URL-encoding pitfalls.
+148		switch runtime.GOOS {
+149		case &#34;darwin&#34;:
+150			return exec.Command(&#34;open&#34;, abs).Start()
+151		case &#34;windows&#34;:
+152			return exec.Command(&#34;rundll32&#34;, &#34;url.dll,FileProtocolHandler&#34;, abs).Start()
+153		default:
+154			return exec.Command(&#34;xdg-open&#34;, abs).Start()
+155		}
+156	}
+157	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash grep -rn &#34;include subagents&#34; --include=&#34;*.go&#34; --include=&#34;*.md&#34; . 2&gt;/dev/null">
+      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.06</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;Include subagents&#34; --include=&#34;*.go&#34; --include=&#34;*.md&#34; . 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -rn \&#34;Include subagents\&#34; --include=\&#34;*.go\&#34; --include=\&#34;*.md\&#34; . 2\u003e/dev/null&#34;,
+  &#34;description&#34;: &#34;Verify no stale references to old TUI label remain&#34;
+}</pre><pre class="tool-result">docs/superpowers/plans/2026-07-12-usage-cost.md:1148:		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+docs/superpowers/plans/2026-07-12-subagent-sessions.md:1238:In `internal/tui/tui.go`, change the option label `&#34;Include subagents&#34;` to `&#34;Include subagent work&#34;`.
+docs/superpowers/plans/2026-07-11-ccwhid.md:2585:		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="no stale references outside plan docs (expected, those are historical planning artifacts, not code). verification complete.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>No stale references outside plan docs (expected, those are historical planning artifacts, not code). Verification complete.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="bash grep -n &#34;includesubagents\b&#34; internal/transcript/*.go | grep -v _test.go | head -30">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;IncludeSubagents\b&#34; internal/transcript/*.go | grep -v _test.go | head -30</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;IncludeSubagents\\b\&#34; internal/transcript/*.go | grep -v _test.go | head -30&#34;,
+  &#34;description&#34;: &#34;Check semantics of transcript.Options.IncludeSubagents used by both ParseFile and LoadAgentSessions&#34;
+}</pre><pre class="tool-result">internal/transcript/parse.go:16:	IncludeSubagents bool
+internal/transcript/parse.go:124:			if !opts.IncludeSubagents || sidechainOwner == nil {
+internal/transcript/parse.go:150:		if opts.IncludeSubagents {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="this confirms `loadagentsessions` and `parsefile` are separate concerns sharing the same `options.includesubagents` flag as the brief specified — consistent, no double-gating bug.
+
+all checks complete. findings below.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>This confirms <code>LoadAgentSessions</code> and <code>ParseFile</code> are separate concerns sharing the same <code>Options.IncludeSubagents</code> flag as the brief specified — consistent, no double-gating bug.</p>
+<p>All checks complete. Findings below.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="reportfindings ">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;findings&#34;: []
+}</pre><pre class="tool-result">No findings reported.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="### spec compliance
+
+- ✅ agent page path exactly `subagents/agent-&lt;id&gt;.html` relative to outdir — `internal/render/render.go:352-357` writes `filepath.join(subdir, &#34;agent-&#34;&#43;a.id&#43;&#34;.html&#34;)`; no `subagents/` dir created when `len(s.agents)==0` (`render.go:344-346`), verified by `testsitenoagentswritesnosubagentsdir` (`render_e2e_test.go:613-621`).
+- ✅ agent pages use `../assets/...` via `{{ .base }}` and back-link to `../index.html` — `report.html.tmpl:158,180,215`, `render.go:357` (`base: &#34;../&#34;, backhref: &#34;../index.html&#34;`).
+- ✅ link resolution always uses the root session&#39;s agent set — `render.go:331` closes over outer `s.agents` (not the per-page `sess` param) inside `writepage`, with prefix `&#34;subagents/&#34;` on index and `&#34;&#34;` on agent pages (`render.go:341,357`).
+- ✅ index links from both the tool card (`tooluseid` match, `rendertool` at `render.go:497-499`) and the agent-result card (`agentid` match, `buildviewmodel` at `render.go:447-449`). traced through the new e2e test: both the `toolu_9` tool-use and the `abc123` result turn resolve to the same href, giving the required count ≥ 2.
+- ✅ every go-built href passes `html.escapestring` — the only go-side href concatenation is `rendertool`&#39;s `agent-link` (`render.go:498`); all other href-bearing fields (`base`, `backhref`, `agenthref`) are emitted via `html/template` (confirmed `&#34;html/template&#34;` import at `render.go:9`), which auto-escapes/url-filters attribute context.
+- ✅ cli wiring: `loadagentsessions` gated on `opts.includesubagents`, placed after the skipped-lines warning and before `redact.session` — `cmd/ccwhid/run.go:95-106`. confirmed `redact.session` (`internal/redact/redact.go:59-61`) recurses into `s.agents`, redacting `description` and the nested `session`, so the ordering is load-bearing and correct, not just cosmetic.
+- ✅ tui label and readme updated as specified — `internal/tui/tui.go:664`, `readme.md` flag table/what&#39;s-included/known-limitation sections.
+- ✅ `gofmt -l` silent and `go vet` clean — independently re-verified on the touched files/packages (both produced no output).
+
+### strengths
+
+- signature-threading of `*agentlinks` through `renderturnbody`/`rendertool`/its recursive sidechain call is complete — grep confirms all call sites live in `render.go` itself and were all updated; no orphaned call sites.
+- the design correctly separates &#34;index → subagents/&#34; vs &#34;agent page → sibling&#34; link prefixes while resolving against a single root agent set, exactly matching the brief&#39;s depth-2 resolution requirement, and this was traced end-to-end against the new e2e test.
+- readme&#39;s stale &#34;token usage &amp; cost&#34; paragraph (claiming subagent tokens are never included) was corrected to match already-shipped behavior — a reasonable, in-scope accuracy fix rather than scope creep, and it&#39;s called out transparently in the report.
+- test additions match the brief verbatim and actually exercise both link directions (tool-card and result-card) plus the no-agents case.
+
+### issues
+
+#### critical (must fix)
+none.
+
+#### important (should fix)
+none.
+
+#### minor (nice to have)
+- `internal/render/render.go:330-331` — `newagentlinks(s.agents, page.pageprefix)` is rebuilt from scratch inside `writepage` for every page written, including once per agent page (all with an identical `&#34;&#34;` prefix). for sessions with many agents (the report&#39;s own smoke test used 50&#43;) this is o(n²) map construction; trivial in practice but could be hoisted to two shared instances (one per prefix) since the brief&#39;s own pseudocode already computes it inside the closure — not a deviation, just a possible follow-up polish.
+- `internal/render/render.go:352` — the local variable `sub` is reused both as the intermediate subtitle-string builder and shadows the visually-similar `subdir` from a few lines up; a distinct name (e.g. `subtitle`) would read more clearly. purely cosmetic.
+- agent page filenames are built directly from `a.id` (`render.go:356`) with no path-traversal sanitization; harmless in practice since `agentsession.id` comes from trusted local session-directory names (uuid-shaped), and this pattern is specified verbatim in the brief itself, but worth flagging as a latent assumption if `agentsession.id` ever becomes less trusted.
+
+### assessment
+**task quality:** approved
+**reasoning:** implementation matches the brief essentially line-for-line, all stated global constraints (page path, asset prefixing, root-agent-set link resolution, dual-source linking, go-side escaping, redaction ordering, cli/tui/readme wiring) were independently verified against the diff and, where relevant, against out-of-diff code (redact.go recursion, call-site grep, gofmt/vet re-run). only cosmetic/perf nits remain.">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><h3>Spec Compliance</h3>
+<ul>
+<li>✅ Agent page path exactly <code>subagents/agent-&lt;ID&gt;.html</code> relative to outDir — <code>internal/render/render.go:352-357</code> writes <code>filepath.Join(subDir, &quot;agent-&quot;+a.ID+&quot;.html&quot;)</code>; no <code>subagents/</code> dir created when <code>len(s.Agents)==0</code> (<code>render.go:344-346</code>), verified by <code>TestSiteNoAgentsWritesNoSubagentsDir</code> (<code>render_e2e_test.go:613-621</code>).</li>
+<li>✅ Agent pages use <code>../assets/...</code> via <code>{{ .Base }}</code> and back-link to <code>../index.html</code> — <code>report.html.tmpl:158,180,215</code>, <code>render.go:357</code> (<code>Base: &quot;../&quot;, BackHref: &quot;../index.html&quot;</code>).</li>
+<li>✅ Link resolution always uses the ROOT session's agent set — <code>render.go:331</code> closes over outer <code>s.Agents</code> (not the per-page <code>sess</code> param) inside <code>writePage</code>, with prefix <code>&quot;subagents/&quot;</code> on index and <code>&quot;&quot;</code> on agent pages (<code>render.go:341,357</code>).</li>
+<li>✅ Index links from both the tool card (<code>ToolUseID</code> match, <code>renderTool</code> at <code>render.go:497-499</code>) and the agent-result card (<code>AgentID</code> match, <code>buildViewModel</code> at <code>render.go:447-449</code>). Traced through the new e2e test: both the <code>toolu_9</code> tool-use and the <code>abc123</code> result turn resolve to the same href, giving the required count ≥ 2.</li>
+<li>✅ Every Go-built href passes <code>html.EscapeString</code> — the only Go-side href concatenation is <code>renderTool</code>'s <code>agent-link</code> (<code>render.go:498</code>); all other href-bearing fields (<code>Base</code>, <code>BackHref</code>, <code>AgentHref</code>) are emitted via <code>html/template</code> (confirmed <code>&quot;html/template&quot;</code> import at <code>render.go:9</code>), which auto-escapes/URL-filters attribute context.</li>
+<li>✅ CLI wiring: <code>LoadAgentSessions</code> gated on <code>opts.includeSubagents</code>, placed after the skipped-lines warning and before <code>redact.Session</code> — <code>cmd/ccwhid/run.go:95-106</code>. Confirmed <code>redact.Session</code> (<code>internal/redact/redact.go:59-61</code>) recurses into <code>s.Agents</code>, redacting <code>Description</code> and the nested <code>Session</code>, so the ordering is load-bearing and correct, not just cosmetic.</li>
+<li>✅ TUI label and README updated as specified — <code>internal/tui/tui.go:664</code>, <code>README.md</code> flag table/what's-included/known-limitation sections.</li>
+<li>✅ <code>gofmt -l</code> silent and <code>go vet</code> clean — independently re-verified on the touched files/packages (both produced no output).</li>
+</ul>
+<h3>Strengths</h3>
+<ul>
+<li>Signature-threading of <code>*agentLinks</code> through <code>renderTurnBody</code>/<code>renderTool</code>/its recursive sidechain call is complete — grep confirms all call sites live in <code>render.go</code> itself and were all updated; no orphaned call sites.</li>
+<li>The design correctly separates &quot;index → subagents/&quot; vs &quot;agent page → sibling&quot; link prefixes while resolving against a single root agent set, exactly matching the brief's depth-2 resolution requirement, and this was traced end-to-end against the new e2e test.</li>
+<li>README's stale &quot;Token usage &amp; cost&quot; paragraph (claiming subagent tokens are never included) was corrected to match already-shipped behavior — a reasonable, in-scope accuracy fix rather than scope creep, and it's called out transparently in the report.</li>
+<li>Test additions match the brief verbatim and actually exercise both link directions (tool-card and result-card) plus the no-agents case.</li>
+</ul>
+<h3>Issues</h3>
+<h4>Critical (Must Fix)</h4>
+<p>None.</p>
+<h4>Important (Should Fix)</h4>
+<p>None.</p>
+<h4>Minor (Nice to Have)</h4>
+<ul>
+<li><code>internal/render/render.go:330-331</code> — <code>newAgentLinks(s.Agents, page.PagePrefix)</code> is rebuilt from scratch inside <code>writePage</code> for every page written, including once per agent page (all with an identical <code>&quot;&quot;</code> prefix). For sessions with many agents (the report's own smoke test used 50+) this is O(n²) map construction; trivial in practice but could be hoisted to two shared instances (one per prefix) since the brief's own pseudocode already computes it inside the closure — not a deviation, just a possible follow-up polish.</li>
+<li><code>internal/render/render.go:352</code> — the local variable <code>sub</code> is reused both as the intermediate subtitle-string builder and shadows the visually-similar <code>subDir</code> from a few lines up; a distinct name (e.g. <code>subtitle</code>) would read more clearly. Purely cosmetic.</li>
+<li>Agent page filenames are built directly from <code>a.ID</code> (<code>render.go:356</code>) with no path-traversal sanitization; harmless in practice since <code>AgentSession.ID</code> comes from trusted local session-directory names (UUID-shaped), and this pattern is specified verbatim in the brief itself, but worth flagging as a latent assumption if <code>AgentSession.ID</code> ever becomes less trusted.</li>
+</ul>
+<h3>Assessment</h3>
+<p><strong>Task quality:</strong> Approved
+<strong>Reasoning:</strong> Implementation matches the brief essentially line-for-line, all stated global constraints (page path, asset prefixing, root-agent-set link resolution, dual-source linking, Go-side escaping, redaction ordering, CLI/TUI/README wiring) were independently verified against the diff and, where relevant, against out-of-diff code (redact.go recursion, call-site grep, gofmt/vet re-run). Only cosmetic/perf nits remain.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 9 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 9 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:59</span>
+        <span>13 turns</span>
+        <span>general-purpose · agent-a519365f4b098044d</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 16k in+out · ~$0.28 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>6k</td><td>390k</td><td>48k</td><td>$0.28</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>6k</td><td>390k</td><td>48k</td><td>$0.28</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; a broad whole-branch review happens after this. this is the final implementation task: the bubble tea tui and the cobra rune wiring.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md
+
+global constraints binding this task (verbatim):
+- packages `github.com/saigyo/cc-what-have-i-done/internal/tui`; module `github.com/saigyo/cc-what-have-i-done`.
+- tui browses all projects grouped; options screen toggles include-subagents, redact, open, then generate.
+- produced api: `tui.selection{session discovery.sessioninfo; includesubagents, redact, open bool; outdir string; canceled bool}`, `tui.row{isheader bool; label string; session discovery.sessioninfo}`, `flattenrows([]discovery.projectgroup) []row`, `firstselectable([]row) int`, `run([]discovery.projectgroup) (selection, error)`; `discovery.sessioninfo.displaylabel() string`.
+- rune wiring: on the no-selector (needtui) path, scan → tui.run → apply selection to opts (note the mapping `opts.noredact = !sel.redact`) → generate → optionally open; on canceled, print &#34;canceled&#34; and return nil.
+- commit trailer: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+- go 1.26 builtin `min`: the implementer omitted the brief&#39;s local `min` and relies on the builtin — this is acceptable.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md
+
+## diff under review
+
+base: fd591f472cef397c4fdae967b347c4f1c9c18bbb
+head: 777b116
+diff file (read once): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff
+
+read-only review; do not modify the tree. implementer already ran tests and a `--latest` smoke test — do not re-run the suite; focused test only on a specific doubt.
+
+named risks to check:
+1. **selection→opts mapping in rune:** `opts.noredact = !sel.redact` (redact toggle on must mean noredact=false). an inversion here would silently disable or force redaction against the user&#39;s choice.
+2. **cursor navigation:** `movecursor`/`firstselectable` never land on a header row and never index out of bounds on an all-header or empty list.
+3. **run type assertion:** `p.run()` result is asserted back to `model`; confirm the program returns the final model and the assertion can&#39;t panic on a normal quit.
+4. **empty groups:** `run` handles zero groups without panic.
+5. **displaylabel:** falls back title → firstprompt → id.
+
+follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad whole-branch review happens after this. This is the final implementation task: the Bubble Tea TUI and the cobra RunE wiring.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
+<p>Global constraints binding this task (verbatim):</p>
+<ul>
+<li>Packages <code>github.com/saigyo/cc-what-have-i-done/internal/tui</code>; module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
+<li>TUI browses ALL projects grouped; options screen toggles include-subagents, redact, open, then Generate.</li>
+<li>Produced API: <code>tui.Selection{Session discovery.SessionInfo; IncludeSubagents, Redact, Open bool; OutDir string; Canceled bool}</code>, <code>tui.Row{IsHeader bool; Label string; Session discovery.SessionInfo}</code>, <code>flattenRows([]discovery.ProjectGroup) []Row</code>, <code>firstSelectable([]Row) int</code>, <code>Run([]discovery.ProjectGroup) (Selection, error)</code>; <code>discovery.SessionInfo.DisplayLabel() string</code>.</li>
+<li>RunE wiring: on the no-selector (needTUI) path, scan → tui.Run → apply Selection to opts (note the mapping <code>opts.noRedact = !sel.Redact</code>) → generate → optionally open; on Canceled, print &quot;canceled&quot; and return nil.</li>
+<li>Commit trailer: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+<li>Go 1.26 builtin <code>min</code>: the implementer omitted the brief's local <code>min</code> and relies on the builtin — this is acceptable.</li>
+</ul>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: fd591f472cef397c4fdae967b347c4f1c9c18bbb
+Head: 777b116
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff</p>
+<p>Read-only review; do not modify the tree. Implementer already ran tests and a <code>--latest</code> smoke test — do not re-run the suite; focused test only on a specific doubt.</p>
+<p>Named risks to check:</p>
+<ol>
+<li><strong>Selection→opts mapping in RunE:</strong> <code>opts.noRedact = !sel.Redact</code> (redact toggle ON must mean noRedact=false). An inversion here would silently disable or force redaction against the user's choice.</li>
+<li><strong>Cursor navigation:</strong> <code>moveCursor</code>/<code>firstSelectable</code> never land on a header row and never index out of bounds on an all-header or empty list.</li>
+<li><strong>Run type assertion:</strong> <code>p.Run()</code> result is asserted back to <code>model</code>; confirm the program returns the final model and the assertion can't panic on a normal quit.</li>
+<li><strong>Empty groups:</strong> <code>Run</code> handles zero groups without panic.</li>
+<li><strong>DisplayLabel:</strong> falls back Title → FirstPrompt → ID.</li>
+</ol>
+<p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 9: TUI browser + final dispatch
+2	
+3	**Files:**
+4	- Create: `internal/tui/tui.go`
+5	- Create: `internal/tui/tui_test.go`
+6	- Modify: `cmd/ccwhid/main.go` (RunE dispatch)
+7	
+8	**Interfaces:**
+9	- Consumes: `discovery.*` (Task 3).
+10	- Produces:
+11	  - `tui.Selection{Session discovery.SessionInfo; IncludeSubagents, Redact, Open bool; OutDir string; Canceled bool}`
+12	  - `tui.flattenRows(groups []discovery.ProjectGroup) []tui.Row` — builds the display rows (header rows per project + selectable session rows). `tui.Row{IsHeader bool; Label string; Session discovery.SessionInfo}`.
+13	  - `tui.Run(groups []discovery.ProjectGroup) (Selection, error)` — runs the Bubble Tea program and returns the user&#39;s selection.
+14	  - `main.RunE` updated: on `errNeedTUI`, scan, launch `tui.Run`, then `generate` with the selection&#39;s options.
+15	
+16	- [ ] **Step 1: Add Bubble Tea dependencies**
+17	
+18	```bash
+19	go get github.com/charmbracelet/bubbletea@latest
+20	go get github.com/charmbracelet/lipgloss@latest
+21	```
+22	Expected: modules added.
+23	
+24	- [ ] **Step 2: Write the failing test**
+25	
+26	Create `internal/tui/tui_test.go`:
+27	```go
+28	package tui
+29	
+30	import (
+31		&#34;testing&#34;
+32	
+33		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+34	)
+35	
+36	func TestFlattenRowsBuildsHeadersAndSessions(t *testing.T) {
+37		groups := []discovery.ProjectGroup{
+38			{
+39				ProjectPath: &#34;/tmp/projA&#34;,
+40				Sessions: []discovery.SessionInfo{
+41					{ID: &#34;s1&#34;, Title: &#34;First&#34;},
+42					{ID: &#34;s2&#34;, Title: &#34;Second&#34;},
+43				},
+44			},
+45			{
+46				ProjectPath: &#34;/tmp/projB&#34;,
+47				Sessions:    []discovery.SessionInfo{{ID: &#34;s3&#34;, Title: &#34;Third&#34;}},
+48			},
+49		}
+50		rows := flattenRows(groups)
+51		// 2 headers + 3 sessions
+52		if len(rows) != 5 {
+53			t.Fatalf(&#34;got %d rows, want 5&#34;, len(rows))
+54		}
+55		if !rows[0].IsHeader || rows[0].Label != &#34;/tmp/projA&#34; {
+56			t.Errorf(&#34;row0 = %+v&#34;, rows[0])
+57		}
+58		if rows[1].IsHeader || rows[1].Session.ID != &#34;s1&#34; {
+59			t.Errorf(&#34;row1 = %+v&#34;, rows[1])
+60		}
+61	}
+62	
+63	func TestFirstSelectableRow(t *testing.T) {
+64		rows := []Row{{IsHeader: true}, {IsHeader: false, Session: discovery.SessionInfo{ID: &#34;x&#34;}}}
+65		if got := firstSelectable(rows); got != 1 {
+66			t.Errorf(&#34;firstSelectable = %d, want 1&#34;, got)
+67		}
+68	}
+69	```
+70	
+71	- [ ] **Step 3: Run the test to verify it fails**
+72	
+73	Run: `go test ./internal/tui/`
+74	Expected: FAIL — `undefined: flattenRows`.
+75	
+76	- [ ] **Step 4: Write the TUI implementation**
+77	
+78	Create `internal/tui/tui.go`:
+79	```go
+80	// Package tui provides an interactive session browser used when ccwhid is run
+81	// with no selector flags.
+82	package tui
+83	
+84	import (
+85		&#34;fmt&#34;
+86		&#34;strings&#34;
+87	
+88		tea &#34;github.com/charmbracelet/bubbletea&#34;
+89		&#34;github.com/charmbracelet/lipgloss&#34;
+90	
+91		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+92	)
+93	
+94	// Row is one line in the browser: either a project header or a session.
+95	type Row struct {
+96		IsHeader bool
+97		Label    string
+98		Session  discovery.SessionInfo
+99	}
+100	
+101	// Selection is the result of running the browser.
+102	type Selection struct {
+103		Session          discovery.SessionInfo
+104		IncludeSubagents bool
+105		Redact           bool
+106		Open             bool
+107		OutDir           string
+108		Canceled         bool
+109	}
+110	
+111	func flattenRows(groups []discovery.ProjectGroup) []Row {
+112		var rows []Row
+113		for _, g := range groups {
+114			rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})
+115			for _, s := range g.Sessions {
+116				rows = append(rows, Row{Session: s})
+117			}
+118		}
+119		return rows
+120	}
+121	
+122	func firstSelectable(rows []Row) int {
+123		for i, r := range rows {
+124			if !r.IsHeader {
+125				return i
+126			}
+127		}
+128		return 0
+129	}
+130	
+131	var (
+132		headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;)).MarginTop(1)
+133		selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+134		mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+135		optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+136	)
+137	
+138	type screen int
+139	
+140	const (
+141		screenList screen = iota
+142		screenOptions
+143	)
+144	
+145	type model struct {
+146		rows      []Row
+147		cursor    int
+148		screen    screen
+149		sel       Selection
+150		optCursor int
+151		done      bool
+152	}
+153	
+154	func newModel(groups []discovery.ProjectGroup) model {
+155		rows := flattenRows(groups)
+156		return model{
+157			rows:   rows,
+158			cursor: firstSelectable(rows),
+159			sel: Selection{
+160				IncludeSubagents: true,
+161				Redact:           true,
+162			},
+163		}
+164	}
+165	
+166	func (m model) Init() tea.Cmd { return nil }
+167	
+168	func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+169		key, ok := msg.(tea.KeyMsg)
+170		if !ok {
+171			return m, nil
+172		}
+173		switch m.screen {
+174		case screenList:
+175			return m.updateList(key)
+176		default:
+177			return m.updateOptions(key)
+178		}
+179	}
+180	
+181	func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+182		switch key.String() {
+183		case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+184			m.sel.Canceled = true
+185			m.done = true
+186			return m, tea.Quit
+187		case &#34;up&#34;, &#34;k&#34;:
+188			m.moveCursor(-1)
+189		case &#34;down&#34;, &#34;j&#34;:
+190			m.moveCursor(1)
+191		case &#34;enter&#34;:
+192			if !m.rows[m.cursor].IsHeader {
+193				m.sel.Session = m.rows[m.cursor].Session
+194				m.screen = screenOptions
+195			}
+196		}
+197		return m, nil
+198	}
+199	
+200	func (m *model) moveCursor(delta int) {
+201		i := m.cursor
+202		for {
+203			i += delta
+204			if i &lt; 0 || i &gt;= len(m.rows) {
+205				return // out of bounds; keep current
+206			}
+207			if !m.rows[i].IsHeader {
+208				m.cursor = i
+209				return
+210			}
+211		}
+212	}
+213	
+214	// optionCount is the number of toggle rows plus the Generate action.
+215	const optionCount = 4 // subagents, redact, open, generate
+216	
+217	func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+218		switch key.String() {
+219		case &#34;ctrl+c&#34;, &#34;q&#34;:
+220			m.sel.Canceled = true
+221			m.done = true
+222			return m, tea.Quit
+223		case &#34;esc&#34;:
+224			m.screen = screenList
+225		case &#34;up&#34;, &#34;k&#34;:
+226			if m.optCursor &gt; 0 {
+227				m.optCursor--
+228			}
+229		case &#34;down&#34;, &#34;j&#34;:
+230			if m.optCursor &lt; optionCount-1 {
+231				m.optCursor++
+232			}
+233		case &#34; &#34;, &#34;enter&#34;:
+234			switch m.optCursor {
+235			case 0:
+236				m.sel.IncludeSubagents = !m.sel.IncludeSubagents
+237			case 1:
+238				m.sel.Redact = !m.sel.Redact
+239			case 2:
+240				m.sel.Open = !m.sel.Open
+241			case 3:
+242				m.done = true
+243				return m, tea.Quit
+244			}
+245		}
+246		return m, nil
+247	}
+248	
+249	func (m model) View() string {
+250		if m.screen == screenOptions {
+251			return m.viewOptions()
+252		}
+253		return m.viewList()
+254	}
+255	
+256	func (m model) viewList() string {
+257		var b strings.Builder
+258		b.WriteString(&#34;Select a session  ↑/↓ move · enter select · q quit\n&#34;)
+259		for i, r := range m.rows {
+260			if r.IsHeader {
+261				b.WriteString(headerStyle.Render(r.Label) + &#34;\n&#34;)
+262				continue
+263			}
+264			line := fmt.Sprintf(&#34;  %s  %s&#34;, r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))
+265			if i == m.cursor {
+266				line = selectedStyle.Render(&#34;▸ &#34; + strings.TrimLeft(line, &#34; &#34;))
+267			}
+268			b.WriteString(line + &#34;\n&#34;)
+269		}
+270		return b.String()
+271	}
+272	
+273	func (m model) viewOptions() string {
+274		var b strings.Builder
+275		b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+276		toggles := []struct {
+277			label string
+278			on    bool
+279		}{
+280			{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+281			{&#34;Redact secrets&#34;, m.sel.Redact},
+282			{&#34;Open in browser when done&#34;, m.sel.Open},
+283		}
+284		for i, t := range toggles {
+285			check := &#34;[ ]&#34;
+286			if t.on {
+287				check = &#34;[x]&#34;
+288			}
+289			line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+290			if m.optCursor == i {
+291				line = optionStyle.Render(&#34;▸ &#34; + line)
+292			} else {
+293				line = &#34;  &#34; + line
+294			}
+295			b.WriteString(line + &#34;\n&#34;)
+296		}
+297		gen := &#34;Generate report&#34;
+298		if m.optCursor == 3 {
+299			gen = optionStyle.Render(&#34;▸ &#34; + gen)
+300		} else {
+301			gen = &#34;  &#34; + gen
+302		}
+303		b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+304		b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)
+305		return b.String()
+306	}
+307	
+308	func min(a, b int) int {
+309		if a &lt; b {
+310			return a
+311		}
+312		return b
+313	}
+314	
+315	// Run launches the browser and returns the user&#39;s selection.
+316	func Run(groups []discovery.ProjectGroup) (Selection, error) {
+317		if len(groups) == 0 {
+318			return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+319		}
+320		m := newModel(groups)
+321		p := tea.NewProgram(m)
+322		res, err := p.Run()
+323		if err != nil {
+324			return Selection{}, err
+325		}
+326		fm := res.(model)
+327		return fm.sel, nil
+328	}
+329	```
+330	
+331	- [ ] **Step 5: Add the DisplayLabel helper to discovery**
+332	
+333	The TUI calls `SessionInfo.DisplayLabel()`. Add it to `internal/discovery/discovery.go`:
+334	```go
+335	// DisplayLabel returns a human-friendly one-line label for a session.
+336	func (s SessionInfo) DisplayLabel() string {
+337		if s.Title != &#34;&#34; {
+338			return s.Title
+339		}
+340		if s.FirstPrompt != &#34;&#34; {
+341			return s.FirstPrompt
+342		}
+343		return s.ID
+344	}
+345	```
+346	Add a test to `internal/discovery/discovery_test.go`:
+347	```go
+348	func TestDisplayLabel(t *testing.T) {
+349		if got := (SessionInfo{Title: &#34;T&#34;}).DisplayLabel(); got != &#34;T&#34; {
+350			t.Errorf(&#34;DisplayLabel = %q&#34;, got)
+351		}
+352		if got := (SessionInfo{ID: &#34;id&#34;}).DisplayLabel(); got != &#34;id&#34; {
+353			t.Errorf(&#34;DisplayLabel fallback = %q&#34;, got)
+354		}
+355	}
+356	```
+357	
+358	- [ ] **Step 6: Run the tests to verify they pass**
+359	
+360	Run: `go test ./internal/tui/ ./internal/discovery/`
+361	Expected: PASS.
+362	
+363	- [ ] **Step 7: Wire the TUI into RunE**
+364	
+365	In `cmd/ccwhid/main.go`, replace the `RunE` body with a call to a `run` function, and add that function. Replace the `RunE` field with:
+366	```go
+367			RunE: func(cmd *cobra.Command, args []string) error {
+368				return run(cmd, opts)
+369			},
+370	```
+371	Add to `cmd/ccwhid/main.go` (new imports: `&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;` and `&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;`):
+372	```go
+373	func run(cmd *cobra.Command, opts *options) error {
+374		root, err := discovery.DefaultRoot()
+375		if err != nil {
+376			return err
+377		}
+378		si, needTUI, err := resolveSession(opts, root)
+379		if err != nil {
+380			return err
+381		}
+382		if needTUI {
+383			groups, err := discovery.Scan(root)
+384			if err != nil {
+385				return err
+386			}
+387			sel, err := tui.Run(groups)
+388			if err != nil {
+389				return err
+390			}
+391			if sel.Canceled {
+392				fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+393				return nil
+394			}
+395			si = sel.Session
+396			opts.includeSubagents = sel.IncludeSubagents
+397			opts.noRedact = !sel.Redact
+398			opts.open = sel.Open
+399			if sel.OutDir != &#34;&#34; {
+400				opts.out = sel.OutDir
+401			}
+402		}
+403		outDir, err := generate(opts, si)
+404		if err != nil {
+405			return err
+406		}
+407		fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+408		if opts.open {
+409			if err := openInBrowser(outDir); err != nil {
+410				fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+411			}
+412		}
+413		return nil
+414	}
+415	```
+416	
+417	- [ ] **Step 8: Verify the whole build and test suite**
+418	
+419	Run: `go build ./... &amp;&amp; go test ./...`
+420	Expected: build succeeds; all packages PASS. Manually smoke-test: `go run ./cmd/ccwhid --latest` produces `ccwhid-report/&lt;id&gt;/index.html`.
+421	
+422	- [ ] **Step 9: Commit**
+423	
+424	```bash
+425	git add internal/tui/ internal/discovery/ cmd/ccwhid/main.go
+426	git commit -m &#34;$(printf &#39;feat: add TUI session browser and wire final dispatch\n\nCo-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;&#39;)&#34;
+427	```
+428	
+429	---
+430	
+431	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 9 report: TUI browser + final dispatch
+2	
+3	## Summary
+4	
+5	Implemented the interactive Bubble Tea session browser (`internal/tui`) and
+6	wired it into `cmd/ccwhid/main.go`&#39;s `RunE`, replacing the placeholder
+7	`&#34;not yet implemented&#34;` error. Added `SessionInfo.DisplayLabel()` to
+8	`internal/discovery`.
+9	
+10	## What was implemented
+11	
+12	1. **Dependencies**: `go get github.com/charmbracelet/bubbletea@latest` and
+13	   `go get github.com/charmbracelet/lipgloss@latest` (bubbletea v1.3.10,
+14	   lipgloss v1.1.0, plus transitive deps). `go.mod`/`go.sum` updated.
+15	
+16	2. **`internal/discovery/discovery.go`**: added
+17	   ```go
+18	   func (s SessionInfo) DisplayLabel() string {
+19	       if s.Title != &#34;&#34; {
+20	           return s.Title
+21	       }
+22	       if s.FirstPrompt != &#34;&#34; {
+23	           return s.FirstPrompt
+24	       }
+25	       return s.ID
+26	   }
+27	   ```
+28	   placed just above `FindSession`, exactly as specified in the brief.
+29	
+30	3. **`internal/discovery/discovery_test.go`**: appended `TestDisplayLabel`
+31	   verbatim from the brief at the end of the file (after
+32	   `TestScanUsesTranscriptCwd`).
+33	
+34	4. **`internal/tui/tui.go`** (new): `Row`, `Selection`, `flattenRows`,
+35	   `firstSelectable`, the Bubble Tea `model` (list screen + options screen),
+36	   and `Run(groups) (Selection, error)`, copied verbatim from the brief
+37	   **except** the package-local `min` helper was omitted (see below).
+38	
+39	5. **`internal/tui/tui_test.go`** (new): `TestFlattenRowsBuildsHeadersAndSessions`
+40	   and `TestFirstSelectableRow`, verbatim from the brief.
+41	
+42	6. **`cmd/ccwhid/main.go`**: added imports for `internal/discovery` and
+43	   `internal/tui`; replaced the `RunE` body with `return run(cmd, opts)`;
+44	   added the `run(cmd *cobra.Command, opts *options) error` function verbatim
+45	   from the brief (root discovery → `resolveSession` → TUI launch on
+46	   `needTUI` → apply `Selection` to `opts` → `generate` → optional
+47	   `openInBrowser`).
+48	
+49	## The `min` rough edge — resolution
+50	
+51	I wrote `tui.go` **without** the brief&#39;s package-local `min` function from
+52	the start (rather than adding it and then deleting it), since the module
+53	targets `go 1.26` (confirmed via `go.mod`), which has a builtin `min` for
+54	two ints with identical semantics to the brief&#39;s helper. `go build ./...`
+55	succeeded immediately with no redeclaration error and no missing-symbol
+56	error, confirming the builtin covers the one call site
+57	(`min(8, len(r.Session.ID))` in `viewList`). `go vet ./...` is clean.
+58	
+59	No other rough edges or brief/logic conflicts were encountered — the rest of
+60	`tui.go`, the tests, `DisplayLabel`, and the `run()` wiring were transcribed
+61	and wired exactly as specified, and `resolveSession`/`generate`/
+62	`openInBrowser`/`errNeedTUI` from Task 8 matched the brief&#39;s expectations
+63	(`resolveSession` already returns a `needTUI bool` rather than the
+64	`errNeedTUI` sentinel — `errNeedTUI` remains declared in `run.go` but
+65	unused by `run()`, which is fine since it&#39;s a package-level var, not a
+66	compile error, and Task 8&#39;s own tests don&#39;t reference it either).
+67	
+68	## TDD evidence
+69	
+70	### RED (before implementation)
+71	
+72	```
+73	$ go test ./internal/tui/ ./internal/discovery/
+74	# github.com/saigyo/cc-what-have-i-done/internal/tui [...]
+75	internal/tui/tui_test.go:23:10: undefined: flattenRows
+76	internal/tui/tui_test.go:37:12: undefined: Row
+77	internal/tui/tui_test.go:38:12: undefined: firstSelectable
+78	FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]
+79	# github.com/saigyo/cc-what-have-i-done/internal/discovery [...]
+80	internal/discovery/discovery_test.go:124:38: (SessionInfo{…}).DisplayLabel undefined (type SessionInfo has no field or method DisplayLabel)
+81	internal/discovery/discovery_test.go:127:36: (SessionInfo{…}).DisplayLabel undefined (type SessionInfo has no field or method DisplayLabel)
+82	FAIL	github.com/saigyo/cc-what-have-i-done/internal/discovery [build failed]
+83	FAIL
+84	```
+85	
+86	### GREEN (after implementation)
+87	
+88	```
+89	$ go test ./internal/tui/ ./internal/discovery/ -v
+90	=== RUN   TestFlattenRowsBuildsHeadersAndSessions
+91	--- PASS: TestFlattenRowsBuildsHeadersAndSessions (0.00s)
+92	=== RUN   TestFirstSelectableRow
+93	--- PASS: TestFirstSelectableRow (0.00s)
+94	PASS
+95	ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.552s
+96	=== RUN   TestEncodeDecodeRoundTrip
+97	--- PASS: TestEncodeDecodeRoundTrip (0.00s)
+98	=== RUN   TestTruncateRuneSafe
+99	--- PASS: TestTruncateRuneSafe (0.00s)
+100	=== RUN   TestScanBuildsGroups
+101	--- PASS: TestScanBuildsGroups (0.00s)
+102	=== RUN   TestFindSessionByPrefix
+103	--- PASS: TestFindSessionByPrefix (0.00s)
+104	=== RUN   TestScanUsesTranscriptCwd
+105	--- PASS: TestScanUsesTranscriptCwd (0.00s)
+106	=== RUN   TestDisplayLabel
+107	--- PASS: TestDisplayLabel (0.00s)
+108	PASS
+109	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.326s
+110	```
+111	
+112	## Full build/test/vet
+113	
+114	```
+115	$ go build ./...   -&gt; success, no output
+116	$ go vet ./...      -&gt; success, no output
+117	$ go test ./...
+118	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.561s
+119	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.164s
+120	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+121	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+122	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+123	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+124	ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s
+125	```
+126	
+127	## Smoke test
+128	
+129	```
+130	$ go run ./cmd/ccwhid --latest
+131	report written to ccwhid-report/41f7e8f4
+132	```
+133	
+134	Confirmed `ccwhid-report/41f7e8f4/index.html` exists (479770 bytes) along
+135	with an `assets/` dir. Directory removed afterward (`rm -rf ccwhid-report`)
+136	to leave the working tree clean — the run used the real `~/.claude/projects`
+137	data on this machine (this repo&#39;s own most-recent session), no `--force`
+138	needed since the dir didn&#39;t pre-exist.
+139	
+140	## Files changed
+141	
+142	- `internal/tui/tui.go` (new)
+143	- `internal/tui/tui_test.go` (new)
+144	- `internal/discovery/discovery.go` (added `DisplayLabel`)
+145	- `internal/discovery/discovery_test.go` (added `TestDisplayLabel`)
+146	- `cmd/ccwhid/main.go` (wired `RunE` → `run()`, added `run()` function and
+147	  two new imports)
+148	- `go.mod`, `go.sum` (bubbletea + lipgloss + transitive deps)
+149	
+150	## Self-review
+151	
+152	- All code matches the brief verbatim except the intentional `min` omission
+153	  described above, which is a deliberate, reported deviation to avoid a
+154	  potential builtin/local redeclaration conflict on Go 1.26 — behavior is
+155	  identical either way for two-int `min`.
+156	- No TUI interaction was manually driven (Bubble Tea&#39;s `tea.NewProgram(m).Run()`
+157	  takes over the real terminal); the brief&#39;s own acceptance criteria for this
+158	  task are unit tests on `flattenRows`/`firstSelectable` plus a CLI smoke test
+159	  via `--latest`, which bypasses the TUI path entirely (`resolveSession`
+160	  returns `needTUI=false` when `--latest` is set). This matches the brief&#39;s
+161	  Step 8 instructions exactly — it does not ask for an interactive TUI
+162	  smoke test, only `go build`/`go test` plus the `--latest` CLI check.
+163	- `errNeedTUI` in `run.go` (from Task 8) is now unused by any caller in this
+164	  task&#39;s wiring (the brief&#39;s `run()` uses the `needTUI` bool return from
+165	  `resolveSession`, not the sentinel error). It remains declared but unused,
+166	  which is legal Go for a package-level var and does not fail `go vet` or
+167	  `go build`. I did not modify `run.go` since the brief&#39;s Step 7 only touches
+168	  `main.go`.
+169	- Verified `git status`/`git diff --stat` before staging; only intended files
+170	  were added (`internal/tui/`, `internal/discovery/`, `cmd/ccwhid/main.go`,
+171	  `go.mod`, `go.sum`). Commit `777b116` created on `feat/ccwhid-impl`, no
+172	  branch changes made.
+173	
+174	## Concerns
+175	
+176	None. Build, vet, and full test suite are clean; the smoke test produced the
+177	expected `index.html`. This was the last implementation task per the prompt.
+178	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: fd591f472cef397c4fdae967b347c4f1c9c18bbb..HEAD
+2	
+3	## Commits
+4	777b116 feat: add TUI session browser and wire final dispatch
+5	
+6	## Files changed
+7	 cmd/ccwhid/main.go                   |  49 ++++++-
+8	 go.mod                               |  19 +++
+9	 go.sum                               |  41 ++++++
+10	 internal/discovery/discovery.go      |  11 ++
+11	 internal/discovery/discovery_test.go |   9 ++
+12	 internal/tui/tui.go                  | 242 +++++++++++++++++++++++++++++++++++
+13	 internal/tui/tui_test.go             |  41 ++++++
+14	 7 files changed, 410 insertions(+), 2 deletions(-)
+15	
+16	## Diff
+17	diff --git a/cmd/ccwhid/main.go b/cmd/ccwhid/main.go
+18	index ff3c24f..44142d8 100644
+19	--- a/cmd/ccwhid/main.go
+20	+++ b/cmd/ccwhid/main.go
+21	@@ -1,17 +1,20 @@
+22	 package main
+23	 
+24	 import (
+25	 	&#34;fmt&#34;
+26	 	&#34;os&#34;
+27	 
+28	 	&#34;github.com/spf13/cobra&#34;
+29	+
+30	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+31	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;
+32	 )
+33	 
+34	 // options holds all CLI flag values.
+35	 type options struct {
+36	 	session          string
+37	 	project          string
+38	 	latest           bool
+39	 	out              string
+40	 	title            string
+41	 	includeSubagents bool
+42	@@ -23,33 +26,75 @@ type options struct {
+43	 func newRootCmd() *cobra.Command {
+44	 	opts := &amp;options{}
+45	 	cmd := &amp;cobra.Command{
+46	 		Use:   &#34;ccwhid&#34;,
+47	 		Short: &#34;Turn a Claude Code session transcript into a browsable HTML report&#34;,
+48	 		Long: &#34;ccwhid (cc-what-have-i-done) renders a Claude Code session &#34; +
+49	 			&#34;transcript into a self-contained static HTML report. Run with no &#34; +
+50	 			&#34;flags to browse sessions in an interactive TUI.&#34;,
+51	 		SilenceUsage: true,
+52	 		RunE: func(cmd *cobra.Command, args []string) error {
+53	-			// Wired in Task 8 (TUI) and Task 9 (render dispatch).
+54	-			return fmt.Errorf(&#34;not yet implemented&#34;)
+55	+			return run(cmd, opts)
+56	 		},
+57	 	}
+58	 	f := cmd.Flags()
+59	 	f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+60	 	f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name to scope to&#34;)
+61	 	f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent session&#34;)
+62	 	f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+63	 	f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+64	 	f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+65	 	f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+66	 	f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+67	 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+68	 	return cmd
+69	 }
+70	 
+71	+func run(cmd *cobra.Command, opts *options) error {
+72	+	root, err := discovery.DefaultRoot()
+73	+	if err != nil {
+74	+		return err
+75	+	}
+76	+	si, needTUI, err := resolveSession(opts, root)
+77	+	if err != nil {
+78	+		return err
+79	+	}
+80	+	if needTUI {
+81	+		groups, err := discovery.Scan(root)
+82	+		if err != nil {
+83	+			return err
+84	+		}
+85	+		sel, err := tui.Run(groups)
+86	+		if err != nil {
+87	+			return err
+88	+		}
+89	+		if sel.Canceled {
+90	+			fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+91	+			return nil
+92	+		}
+93	+		si = sel.Session
+94	+		opts.includeSubagents = sel.IncludeSubagents
+95	+		opts.noRedact = !sel.Redact
+96	+		opts.open = sel.Open
+97	+		if sel.OutDir != &#34;&#34; {
+98	+			opts.out = sel.OutDir
+99	+		}
+100	+	}
+101	+	outDir, err := generate(opts, si)
+102	+	if err != nil {
+103	+		return err
+104	+	}
+105	+	fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+106	+	if opts.open {
+107	+		if err := openInBrowser(outDir); err != nil {
+108	+			fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+109	+		}
+110	+	}
+111	+	return nil
+112	+}
+113	+
+114	 func main() {
+115	 	if err := newRootCmd().Execute(); err != nil {
+116	 		fmt.Fprintln(os.Stderr, &#34;error:&#34;, err)
+117	 		os.Exit(1)
+118	 	}
+119	 }
+120	diff --git a/go.mod b/go.mod
+121	index 23f5331..8633c43 100644
+122	--- a/go.mod
+123	+++ b/go.mod
+124	@@ -2,14 +2,33 @@ module github.com/saigyo/cc-what-have-i-done
+125	 
+126	 go 1.26
+127	 
+128	 require (
+129	 	github.com/alecthomas/chroma/v2 v2.27.0
+130	 	github.com/spf13/cobra v1.10.2
+131	 	github.com/yuin/goldmark v1.8.2
+132	 )
+133	 
+134	 require (
+135	+	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+136	+	github.com/charmbracelet/bubbletea v1.3.10 // indirect
+137	+	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
+138	+	github.com/charmbracelet/lipgloss v1.1.0 // indirect
+139	+	github.com/charmbracelet/x/ansi v0.10.1 // indirect
+140	+	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
+141	+	github.com/charmbracelet/x/term v0.2.1 // indirect
+142	 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+143	+	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
+144	 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+145	+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+146	+	github.com/mattn/go-isatty v0.0.20 // indirect
+147	+	github.com/mattn/go-localereader v0.0.1 // indirect
+148	+	github.com/mattn/go-runewidth v0.0.16 // indirect
+149	+	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
+150	+	github.com/muesli/cancelreader v0.2.2 // indirect
+151	+	github.com/muesli/termenv v0.16.0 // indirect
+152	+	github.com/rivo/uniseg v0.4.7 // indirect
+153	 	github.com/spf13/pflag v1.0.9 // indirect
+154	+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+155	+	golang.org/x/sys v0.36.0 // indirect
+156	+	golang.org/x/text v0.3.8 // indirect
+157	 )
+158	diff --git a/go.sum b/go.sum
+159	index 36b0f08..7ea5c3c 100644
+160	--- a/go.sum
+161	+++ b/go.sum
+162	@@ -1,22 +1,63 @@
+163	 github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+164	 github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+165	 github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
+166	 github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
+167	 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+168	 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+169	+github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
+170	+github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
+171	+github.com/charmbracelet/bubbletea v1.3.10 h1:otUDHWMMzQSB0Pkc87rm691KZ3SWa4KUlvF9nRvCICw=
+172	+github.com/charmbracelet/bubbletea v1.3.10/go.mod h1:ORQfo0fk8U+po9VaNvnV95UPWA1BitP1E0N6xJPlHr4=
+173	+github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc h1:4pZI35227imm7yK2bGPcfpFEmuY1gc2YSTShr4iJBfs=
+174	+github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc/go.mod h1:X4/0JoqgTIPSFcRA/P6INZzIuyqdFY5rm8tb41s9okk=
+175	+github.com/charmbracelet/lipgloss v1.1.0 h1:vYXsiLHVkK7fp74RkV7b2kq9+zDLoEU4MZoFqR/noCY=
+176	+github.com/charmbracelet/lipgloss v1.1.0/go.mod h1:/6Q8FR2o+kj8rz4Dq0zQc3vYf7X+B0binUUBwA0aL30=
+177	+github.com/charmbracelet/x/ansi v0.10.1 h1:rL3Koar5XvX0pHGfovN03f5cxLbCF2YvLeyz7D2jVDQ=
+178	+github.com/charmbracelet/x/ansi v0.10.1/go.mod h1:3RQDQ6lDnROptfpWuUVIUG64bD2g2BgntdxH0Ya5TeE=
+179	+github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd h1:vy0GVL4jeHEwG5YOXDmi86oYw2yuYUGqz6a8sLwg0X8=
+180	+github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod h1:xe0nKWGd3eJgtqZRaN9RjMtK7xUYchjzPr7q6kcvCCs=
+181	+github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
+182	+github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
+183	 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
+184	 github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
+185	 github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
+186	+github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
+187	+github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
+188	 github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
+189	 github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
+190	 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+191	 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+192	+github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
+193	+github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
+194	+github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+195	+github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+196	+github.com/mattn/go-localereader v0.0.1 h1:ygSAOl7ZXTx4RdPYinUpg6W99U8jWvWi9Ye2JC/oIi4=
+197	+github.com/mattn/go-localereader v0.0.1/go.mod h1:8fBrzywKY7BI3czFoHkuzRoWE9C+EiG4R1k4Cjx5p88=
+198	+github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
+199	+github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+200	+github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 h1:ZK8zHtRHOkbHy6Mmr5D264iyp3TiX5OmNcI5cIARiQI=
+201	+github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6/go.mod h1:CJlz5H+gyd6CUWT45Oy4q24RdLyn7Md9Vj2/ldJBSIo=
+202	+github.com/muesli/cancelreader v0.2.2 h1:3I4Kt4BQjOR54NavqnDogx/MIoWBFa0StPA8ELUXHmA=
+203	+github.com/muesli/cancelreader v0.2.2/go.mod h1:3XuTXfFS2VjM+HTLZY9Ak0l6eUKfijIfMUZ4EgX0QYo=
+204	+github.com/muesli/termenv v0.16.0 h1:S5AlUN9dENB57rsbnkPyfdGuWIlkmzJjbFf0Tf5FWUc=
+205	+github.com/muesli/termenv v0.16.0/go.mod h1:ZRfOIKPFDYQoDFF4Olj7/QJbW60Ol/kL1pU3VfY/Cnk=
+206	+github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
+207	+github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
+208	+github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
+209	 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+210	 github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
+211	 github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
+212	 github.com/spf13/pflag v1.0.9 h1:9exaQaMOCwffKiiiYk6/BndUBv+iRViNW+4lEMi0PvY=
+213	 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+214	+github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
+215	+github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
+216	 github.com/yuin/goldmark v1.8.2 h1:kEGpgqJXdgbkhcOgBxkC0X0PmoPG1ZyoZ117rDVp4zE=
+217	 github.com/yuin/goldmark v1.8.2/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
+218	 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+219	+golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+220	+golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+221	+golang.org/x/sys v0.36.0 h1:KVRy2GtZBrk1cBYA7MKu5bEZFxQk4NIDV6RLVcC8o0k=
+222	+golang.org/x/sys v0.36.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+223	+golang.org/x/text v0.3.8 h1:nAL+RVCQ9uMn3vJZbV+MRnydTJFPf8qqY42YiA6MrqY=
+224	+golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
+225	 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+226	diff --git a/internal/discovery/discovery.go b/internal/discovery/discovery.go
+227	index 363e44f..538ca04 100644
+228	--- a/internal/discovery/discovery.go
+229	+++ b/internal/discovery/discovery.go
+230	@@ -200,20 +200,31 @@ func Scan(root string) ([]ProjectGroup, error) {
+231	 			ProjectPath: sessions[0].ProjectPath,
+232	 			Sessions:    sessions,
+233	 		})
+234	 	}
+235	 	sort.Slice(groups, func(i, j int) bool {
+236	 		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+237	 	})
+238	 	return groups, nil
+239	 }
+240	 
+241	+// DisplayLabel returns a human-friendly one-line label for a session.
+242	+func (s SessionInfo) DisplayLabel() string {
+243	+	if s.Title != &#34;&#34; {
+244	+		return s.Title
+245	+	}
+246	+	if s.FirstPrompt != &#34;&#34; {
+247	+		return s.FirstPrompt
+248	+	}
+249	+	return s.ID
+250	+}
+251	+
+252	 // FindSession resolves a session id or unambiguous prefix across all projects.
+253	 func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+254	 	groups, err := Scan(root)
+255	 	if err != nil {
+256	 		return SessionInfo{}, err
+257	 	}
+258	 	var matches []SessionInfo
+259	 	for _, g := range groups {
+260	 		for _, s := range g.Sessions {
+261	 			if s.ID == idOrPrefix {
+262	diff --git a/internal/discovery/discovery_test.go b/internal/discovery/discovery_test.go
+263	index 2c14f8e..8c9a4c1 100644
+264	--- a/internal/discovery/discovery_test.go
+265	+++ b/internal/discovery/discovery_test.go
+266	@@ -112,10 +112,19 @@ func TestScanUsesTranscriptCwd(t *testing.T) {
+267	 	if len(groups) != 1 {
+268	 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+269	 	}
+270	 	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+271	 		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)
+272	 	}
+273	 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+274	 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)
+275	 	}
+276	 }
+277	+
+278	+func TestDisplayLabel(t *testing.T) {
+279	+	if got := (SessionInfo{Title: &#34;T&#34;}).DisplayLabel(); got != &#34;T&#34; {
+280	+		t.Errorf(&#34;DisplayLabel = %q&#34;, got)
+281	+	}
+282	+	if got := (SessionInfo{ID: &#34;id&#34;}).DisplayLabel(); got != &#34;id&#34; {
+283	+		t.Errorf(&#34;DisplayLabel fallback = %q&#34;, got)
+284	+	}
+285	+}
+286	diff --git a/internal/tui/tui.go b/internal/tui/tui.go
+287	new file mode 100644
+288	index 0000000..26e0896
+289	--- /dev/null
+290	+++ b/internal/tui/tui.go
+291	@@ -0,0 +1,242 @@
+292	+// Package tui provides an interactive session browser used when ccwhid is run
+293	+// with no selector flags.
+294	+package tui
+295	+
+296	+import (
+297	+	&#34;fmt&#34;
+298	+	&#34;strings&#34;
+299	+
+300	+	tea &#34;github.com/charmbracelet/bubbletea&#34;
+301	+	&#34;github.com/charmbracelet/lipgloss&#34;
+302	+
+303	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+304	+)
+305	+
+306	+// Row is one line in the browser: either a project header or a session.
+307	+type Row struct {
+308	+	IsHeader bool
+309	+	Label    string
+310	+	Session  discovery.SessionInfo
+311	+}
+312	+
+313	+// Selection is the result of running the browser.
+314	+type Selection struct {
+315	+	Session          discovery.SessionInfo
+316	+	IncludeSubagents bool
+317	+	Redact           bool
+318	+	Open             bool
+319	+	OutDir           string
+320	+	Canceled         bool
+321	+}
+322	+
+323	+func flattenRows(groups []discovery.ProjectGroup) []Row {
+324	+	var rows []Row
+325	+	for _, g := range groups {
+326	+		rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})
+327	+		for _, s := range g.Sessions {
+328	+			rows = append(rows, Row{Session: s})
+329	+		}
+330	+	}
+331	+	return rows
+332	+}
+333	+
+334	+func firstSelectable(rows []Row) int {
+335	+	for i, r := range rows {
+336	+		if !r.IsHeader {
+337	+			return i
+338	+		}
+339	+	}
+340	+	return 0
+341	+}
+342	+
+343	+var (
+344	+	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;)).MarginTop(1)
+345	+	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+346	+	mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+347	+	optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+348	+)
+349	+
+350	+type screen int
+351	+
+352	+const (
+353	+	screenList screen = iota
+354	+	screenOptions
+355	+)
+356	+
+357	+type model struct {
+358	+	rows      []Row
+359	+	cursor    int
+360	+	screen    screen
+361	+	sel       Selection
+362	+	optCursor int
+363	+	done      bool
+364	+}
+365	+
+366	+func newModel(groups []discovery.ProjectGroup) model {
+367	+	rows := flattenRows(groups)
+368	+	return model{
+369	+		rows:   rows,
+370	+		cursor: firstSelectable(rows),
+371	+		sel: Selection{
+372	+			IncludeSubagents: true,
+373	+			Redact:           true,
+374	+		},
+375	+	}
+376	+}
+377	+
+378	+func (m model) Init() tea.Cmd { return nil }
+379	+
+380	+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+381	+	key, ok := msg.(tea.KeyMsg)
+382	+	if !ok {
+383	+		return m, nil
+384	+	}
+385	+	switch m.screen {
+386	+	case screenList:
+387	+		return m.updateList(key)
+388	+	default:
+389	+		return m.updateOptions(key)
+390	+	}
+391	+}
+392	+
+393	+func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+394	+	switch key.String() {
+395	+	case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+396	+		m.sel.Canceled = true
+397	+		m.done = true
+398	+		return m, tea.Quit
+399	+	case &#34;up&#34;, &#34;k&#34;:
+400	+		m.moveCursor(-1)
+401	+	case &#34;down&#34;, &#34;j&#34;:
+402	+		m.moveCursor(1)
+403	+	case &#34;enter&#34;:
+404	+		if !m.rows[m.cursor].IsHeader {
+405	+			m.sel.Session = m.rows[m.cursor].Session
+406	+			m.screen = screenOptions
+407	+		}
+408	+	}
+409	+	return m, nil
+410	+}
+411	+
+412	+func (m *model) moveCursor(delta int) {
+413	+	i := m.cursor
+414	+	for {
+415	+		i += delta
+416	+		if i &lt; 0 || i &gt;= len(m.rows) {
+417	+			return // out of bounds; keep current
+418	+		}
+419	+		if !m.rows[i].IsHeader {
+420	+			m.cursor = i
+421	+			return
+422	+		}
+423	+	}
+424	+}
+425	+
+426	+// optionCount is the number of toggle rows plus the Generate action.
+427	+const optionCount = 4 // subagents, redact, open, generate
+428	+
+429	+func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+430	+	switch key.String() {
+431	+	case &#34;ctrl+c&#34;, &#34;q&#34;:
+432	+		m.sel.Canceled = true
+433	+		m.done = true
+434	+		return m, tea.Quit
+435	+	case &#34;esc&#34;:
+436	+		m.screen = screenList
+437	+	case &#34;up&#34;, &#34;k&#34;:
+438	+		if m.optCursor &gt; 0 {
+439	+			m.optCursor--
+440	+		}
+441	+	case &#34;down&#34;, &#34;j&#34;:
+442	+		if m.optCursor &lt; optionCount-1 {
+443	+			m.optCursor++
+444	+		}
+445	+	case &#34; &#34;, &#34;enter&#34;:
+446	+		switch m.optCursor {
+447	+		case 0:
+448	+			m.sel.IncludeSubagents = !m.sel.IncludeSubagents
+449	+		case 1:
+450	+			m.sel.Redact = !m.sel.Redact
+451	+		case 2:
+452	+			m.sel.Open = !m.sel.Open
+453	+		case 3:
+454	+			m.done = true
+455	+			return m, tea.Quit
+456	+		}
+457	+	}
+458	+	return m, nil
+459	+}
+460	+
+461	+func (m model) View() string {
+462	+	if m.screen == screenOptions {
+463	+		return m.viewOptions()
+464	+	}
+465	+	return m.viewList()
+466	+}
+467	+
+468	+func (m model) viewList() string {
+469	+	var b strings.Builder
+470	+	b.WriteString(&#34;Select a session  ↑/↓ move · enter select · q quit\n&#34;)
+471	+	for i, r := range m.rows {
+472	+		if r.IsHeader {
+473	+			b.WriteString(headerStyle.Render(r.Label) + &#34;\n&#34;)
+474	+			continue
+475	+		}
+476	+		line := fmt.Sprintf(&#34;  %s  %s&#34;, r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))
+477	+		if i == m.cursor {
+478	+			line = selectedStyle.Render(&#34;▸ &#34; + strings.TrimLeft(line, &#34; &#34;))
+479	+		}
+480	+		b.WriteString(line + &#34;\n&#34;)
+481	+	}
+482	+	return b.String()
+483	+}
+484	+
+485	+func (m model) viewOptions() string {
+486	+	var b strings.Builder
+487	+	b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+488	+	toggles := []struct {
+489	+		label string
+490	+		on    bool
+491	+	}{
+492	+		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+493	+		{&#34;Redact secrets&#34;, m.sel.Redact},
+494	+		{&#34;Open in browser when done&#34;, m.sel.Open},
+495	+	}
+496	+	for i, t := range toggles {
+497	+		check := &#34;[ ]&#34;
+498	+		if t.on {
+499	+			check = &#34;[x]&#34;
+500	+		}
+501	+		line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+502	+		if m.optCursor == i {
+503	+			line = optionStyle.Render(&#34;▸ &#34; + line)
+504	+		} else {
+505	+			line = &#34;  &#34; + line
+506	+		}
+507	+		b.WriteString(line + &#34;\n&#34;)
+508	+	}
+509	+	gen := &#34;Generate report&#34;
+510	+	if m.optCursor == 3 {
+511	+		gen = optionStyle.Render(&#34;▸ &#34; + gen)
+512	+	} else {
+513	+		gen = &#34;  &#34; + gen
+514	+	}
+515	+	b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+516	+	b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)
+517	+	return b.String()
+518	+}
+519	+
+520	+// Run launches the browser and returns the user&#39;s selection.
+521	+func Run(groups []discovery.ProjectGroup) (Selection, error) {
+522	+	if len(groups) == 0 {
+523	+		return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+524	+	}
+525	+	m := newModel(groups)
+526	+	p := tea.NewProgram(m)
+527	+	res, err := p.Run()
+528	+	if err != nil {
+529	+		return Selection{}, err
+530	+	}
+531	+	fm := res.(model)
+532	+	return fm.sel, nil
+533	+}
+534	diff --git a/internal/tui/tui_test.go b/internal/tui/tui_test.go
+535	new file mode 100644
+536	index 0000000..c47bef4
+537	--- /dev/null
+538	+++ b/internal/tui/tui_test.go
+539	@@ -0,0 +1,41 @@
+540	+package tui
+541	+
+542	+import (
+543	+	&#34;testing&#34;
+544	+
+545	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+546	+)
+547	+
+548	+func TestFlattenRowsBuildsHeadersAndSessions(t *testing.T) {
+549	+	groups := []discovery.ProjectGroup{
+550	+		{
+551	+			ProjectPath: &#34;/tmp/projA&#34;,
+552	+			Sessions: []discovery.SessionInfo{
+553	+				{ID: &#34;s1&#34;, Title: &#34;First&#34;},
+554	+				{ID: &#34;s2&#34;, Title: &#34;Second&#34;},
+555	+			},
+556	+		},
+557	+		{
+558	+			ProjectPath: &#34;/tmp/projB&#34;,
+559	+			Sessions:    []discovery.SessionInfo{{ID: &#34;s3&#34;, Title: &#34;Third&#34;}},
+560	+		},
+561	+	}
+562	+	rows := flattenRows(groups)
+563	+	// 2 headers + 3 sessions
+564	+	if len(rows) != 5 {
+565	+		t.Fatalf(&#34;got %d rows, want 5&#34;, len(rows))
+566	+	}
+567	+	if !rows[0].IsHeader || rows[0].Label != &#34;/tmp/projA&#34; {
+568	+		t.Errorf(&#34;row0 = %+v&#34;, rows[0])
+569	+	}
+570	+	if rows[1].IsHeader || rows[1].Session.ID != &#34;s1&#34; {
+571	+		t.Errorf(&#34;row1 = %+v&#34;, rows[1])
+572	+	}
+573	+}
+574	+
+575	+func TestFirstSelectableRow(t *testing.T) {
+576	+	rows := []Row{{IsHeader: true}, {IsHeader: false, Session: discovery.SessionInfo{ID: &#34;x&#34;}}}
+577	+	if got := firstSelectable(rows); got != 1 {
+578	+		t.Errorf(&#34;firstSelectable = %d, want 1&#34;, got)
+579	+	}
+580	+}
+581	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="bash sed -n &#39;150,240p&#39; internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.05</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;150,240p&#39; internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;150,240p&#39; internal/discovery/discovery.go&#34;
+}</pre><pre class="tool-result">				return strings.TrimSpace(b.Text)
+			}
+		}
+	}
+	return &#34;&#34;
+}
+
+func truncate(s string, n int) string {
+	s = strings.TrimSpace(s)
+	r := []rune(s)
+	if len(r) &lt;= n {
+		return s
+	}
+	return string(r[:n-1]) + &#34;…&#34;
+}
+
+// Scan indexes every session under root (the projects directory), grouped by
+// project. Groups are ordered by most-recent session first; sessions within a
+// group are newest-first.
+func Scan(root string) ([]ProjectGroup, error) {
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return nil, err
+	}
+	var groups []ProjectGroup
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		dir := filepath.Join(root, e.Name())
+		files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+		if err != nil {
+			return nil, err
+		}
+		var sessions []SessionInfo
+		for _, fp := range files {
+			si, err := indexFile(fp, e.Name())
+			if err != nil {
+				continue
+			}
+			sessions = append(sessions, si)
+		}
+		if len(sessions) == 0 {
+			continue
+		}
+		sort.Slice(sessions, func(i, j int) bool {
+			return sessions[i].ModTime.After(sessions[j].ModTime)
+		})
+		groups = append(groups, ProjectGroup{
+			ProjectDir:  e.Name(),
+			ProjectPath: sessions[0].ProjectPath,
+			Sessions:    sessions,
+		})
+	}
+	sort.Slice(groups, func(i, j int) bool {
+		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+	})
+	return groups, nil
+}
+
+// DisplayLabel returns a human-friendly one-line label for a session.
+func (s SessionInfo) DisplayLabel() string {
+	if s.Title != &#34;&#34; {
+		return s.Title
+	}
+	if s.FirstPrompt != &#34;&#34; {
+		return s.FirstPrompt
+	}
+	return s.ID
+}
+
+// FindSession resolves a session id or unambiguous prefix across all projects.
+func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+	groups, err := Scan(root)
+	if err != nil {
+		return SessionInfo{}, err
+	}
+	var matches []SessionInfo
+	for _, g := range groups {
+		for _, s := range g.Sessions {
+			if s.ID == idOrPrefix {
+				return s, nil // exact wins immediately
+			}
+			if strings.HasPrefix(s.ID, idOrPrefix) {
+				matches = append(matches, s)
+			}
+		}
+	}
+	switch len(matches) {
+	case 0:
+		return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash ls cmd/ccwhid/ &amp;&amp; grep -n &#34;func resolvesession\|func generate\|func openinbrowser\|errneedtui&#34; cmd/ccwhid/*.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls cmd/ccwhid/ &amp;&amp; grep -n &#34;func resolveSession\|func generate\|func openInBrowser\|errNeedTUI&#34; cmd/ccwhid/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls cmd/ccwhid/ \u0026\u0026 grep -n \&#34;func resolveSession\\|func generate\\|func openInBrowser\\|errNeedTUI\&#34; cmd/ccwhid/*.go&#34;
+}</pre><pre class="tool-result">main_test.go
+main.go
+run_test.go
+run.go
+cmd/ccwhid/run.go:18:// errNeedTUI signals that no session selector was provided and the caller
+cmd/ccwhid/run.go:20:var errNeedTUI = errors.New(&#34;no session selected: launch TUI&#34;)
+cmd/ccwhid/run.go:35:func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+cmd/ccwhid/run.go:70:func generate(opts *options, si discovery.SessionInfo) (string, error) {
+cmd/ccwhid/run.go:109:func openInBrowser(path string) error {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;errors&#34;
+5		&#34;fmt&#34;
+6		&#34;os&#34;
+7		&#34;os/exec&#34;
+8		&#34;path/filepath&#34;
+9		&#34;runtime&#34;
+10		&#34;strings&#34;
+11	
+12		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+14		&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+15		&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+16	)
+17	
+18	// errNeedTUI signals that no session selector was provided and the caller
+19	// should launch the interactive browser.
+20	var errNeedTUI = errors.New(&#34;no session selected: launch TUI&#34;)
+21	
+22	func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+23		if opts.out != &#34;&#34; {
+24			return opts.out
+25		}
+26		short := si.ID
+27		if len(short) &gt; 8 {
+28			short = short[:8]
+29		}
+30		return filepath.Join(&#34;ccwhid-report&#34;, short)
+31	}
+32	
+33	// resolveSession picks a session from flags. It returns needTUI=true when the
+34	// user gave no selector.
+35	func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+36		switch {
+37		case opts.session != &#34;&#34;:
+38			si, err := discovery.FindSession(root, opts.session)
+39			return si, false, err
+40		case opts.latest:
+41			return latestSession(opts, root)
+42		default:
+43			return discovery.SessionInfo{}, true, nil
+44		}
+45	}
+46	
+47	func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+48		groups, err := discovery.Scan(root)
+49		if err != nil {
+50			return discovery.SessionInfo{}, false, err
+51		}
+52		for _, g := range groups {
+53			if opts.project != &#34;&#34; &amp;&amp; !matchProject(g, opts.project) {
+54				continue
+55			}
+56			if len(g.Sessions) &gt; 0 {
+57				return g.Sessions[0], false, nil
+58			}
+59		}
+60		return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+61	}
+62	
+63	func matchProject(g discovery.ProjectGroup, want string) bool {
+64		return g.ProjectPath == want ||
+65			strings.EqualFold(filepath.Base(g.ProjectPath), want) ||
+66			strings.Contains(g.ProjectPath, want)
+67	}
+68	
+69	// generate parses, redacts, and renders a session, returning the output dir.
+70	func generate(opts *options, si discovery.SessionInfo) (string, error) {
+71		outDir := resolveOutDir(opts, si)
+72		if err := ensureOutDir(outDir, opts.force); err != nil {
+73			return &#34;&#34;, err
+74		}
+75		sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+76			IncludeSubagents: opts.includeSubagents,
+77		})
+78		if err != nil {
+79			return &#34;&#34;, err
+80		}
+81		if si.ID != &#34;&#34; {
+82			sess.ID = si.ID
+83		}
+84		if !opts.noRedact {
+85			home, _ := os.UserHomeDir()
+86			redact.Session(&amp;sess, home)
+87		}
+88		if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+89			return &#34;&#34;, err
+90		}
+91		return outDir, nil
+92	}
+93	
+94	func ensureOutDir(dir string, force bool) error {
+95		entries, err := os.ReadDir(dir)
+96		if err != nil {
+97			if os.IsNotExist(err) {
+98				return os.MkdirAll(dir, 0o755)
+99			}
+100			return err
+101		}
+102		if len(entries) &gt; 0 &amp;&amp; !force {
+103			return fmt.Errorf(&#34;output directory %q is not empty (use --force to overwrite)&#34;, dir)
+104		}
+105		return nil
+106	}
+107	
+108	// openInBrowser opens path (a file or dir) in the default browser.
+109	func openInBrowser(path string) error {
+110		index := filepath.Join(path, &#34;index.html&#34;)
+111		abs, err := filepath.Abs(index)
+112		if err != nil {
+113			return err
+114		}
+115		url := &#34;file://&#34; + abs
+116		switch runtime.GOOS {
+117		case &#34;darwin&#34;:
+118			return exec.Command(&#34;open&#34;, url).Start()
+119		case &#34;windows&#34;:
+120			return exec.Command(&#34;rundll32&#34;, &#34;url.dll,FileProtocolHandler&#34;, url).Start()
+121		default:
+122			return exec.Command(&#34;xdg-open&#34;, url).Start()
+123		}
+124	}
+125	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;fmt&#34;
+5		&#34;os&#34;
+6	
+7		&#34;github.com/spf13/cobra&#34;
+8	
+9		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;
+11	)
+12	
+13	// options holds all CLI flag values.
+14	type options struct {
+15		session          string
+16		project          string
+17		latest           bool
+18		out              string
+19		title            string
+20		includeSubagents bool
+21		noRedact         bool
+22		force            bool
+23		open             bool
+24	}
+25	
+26	func newRootCmd() *cobra.Command {
+27		opts := &amp;options{}
+28		cmd := &amp;cobra.Command{
+29			Use:   &#34;ccwhid&#34;,
+30			Short: &#34;Turn a Claude Code session transcript into a browsable HTML report&#34;,
+31			Long: &#34;ccwhid (cc-what-have-i-done) renders a Claude Code session &#34; +
+32				&#34;transcript into a self-contained static HTML report. Run with no &#34; +
+33				&#34;flags to browse sessions in an interactive TUI.&#34;,
+34			SilenceUsage: true,
+35			RunE: func(cmd *cobra.Command, args []string) error {
+36				return run(cmd, opts)
+37			},
+38		}
+39		f := cmd.Flags()
+40		f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+41		f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name to scope to&#34;)
+42		f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent session&#34;)
+43		f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+44		f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+45		f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+46		f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+47		f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+48		f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+49		return cmd
+50	}
+51	
+52	func run(cmd *cobra.Command, opts *options) error {
+53		root, err := discovery.DefaultRoot()
+54		if err != nil {
+55			return err
+56		}
+57		si, needTUI, err := resolveSession(opts, root)
+58		if err != nil {
+59			return err
+60		}
+61		if needTUI {
+62			groups, err := discovery.Scan(root)
+63			if err != nil {
+64				return err
+65			}
+66			sel, err := tui.Run(groups)
+67			if err != nil {
+68				return err
+69			}
+70			if sel.Canceled {
+71				fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+72				return nil
+73			}
+74			si = sel.Session
+75			opts.includeSubagents = sel.IncludeSubagents
+76			opts.noRedact = !sel.Redact
+77			opts.open = sel.Open
+78			if sel.OutDir != &#34;&#34; {
+79				opts.out = sel.OutDir
+80			}
+81		}
+82		outDir, err := generate(opts, si)
+83		if err != nil {
+84			return err
+85		}
+86		fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+87		if opts.open {
+88			if err := openInBrowser(outDir); err != nil {
+89				fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+90			}
+91		}
+92		return nil
+93	}
+94	
+95	func main() {
+96		if err := newRootCmd().Execute(); err != nil {
+97			fmt.Fprintln(os.Stderr, &#34;error:&#34;, err)
+98			os.Exit(1)
+99		}
+100	}
+101	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;errneedtui&#34; cmd/ccwhid/*.go; echo &#34;---&#34;; grep -n &#34;func test&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2&gt;/dev/null; echo &#34;---vet---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;---build---&#34;; go build ./... 2&gt;&amp;1">
+      <div class="turn-role">Claude<span class="usage-badge">262 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;errNeedTUI&#34; cmd/ccwhid/*.go; echo &#34;---&#34;; grep -n &#34;func Test&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2&gt;/dev/null; echo &#34;---vet---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;---build---&#34;; go build ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;errNeedTUI\&#34; cmd/ccwhid/*.go; echo \&#34;---\&#34;; grep -n \&#34;func Test\&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2\u003e/dev/null; echo \&#34;---vet---\&#34;; go vet ./... 2\u003e\u00261; echo \&#34;---build---\&#34;; go build ./... 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">cmd/ccwhid/run.go:18:// errNeedTUI signals that no session selector was provided and the caller
+cmd/ccwhid/run.go:20:var errNeedTUI = errors.New(&#34;no session selected: launch TUI&#34;)
+---
+cmd/ccwhid/run_test.go:12:func TestResolveOutDirDefault(t *testing.T) {
+cmd/ccwhid/run_test.go:21:func TestGenerateProducesReport(t *testing.T) {
+cmd/ccwhid/main_test.go:8:func TestRootCmdHasExpectedFlags(t *testing.T) {
+cmd/ccwhid/main_test.go:20:func TestRootCmdHelpRuns(t *testing.T) {
+---vet---
+---build---</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/go.mod">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/go.mod</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/go.mod&#34;
+}</pre><pre class="tool-result">1	module github.com/saigyo/cc-what-have-i-done
+2	
+3	go 1.26
+4	
+5	require (
+6		github.com/alecthomas/chroma/v2 v2.27.0
+7		github.com/spf13/cobra v1.10.2
+8		github.com/yuin/goldmark v1.8.2
+9	)
+10	
+11	require (
+12		github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+13		github.com/charmbracelet/bubbletea v1.3.10 // indirect
+14		github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
+15		github.com/charmbracelet/lipgloss v1.1.0 // indirect
+16		github.com/charmbracelet/x/ansi v0.10.1 // indirect
+17		github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
+18		github.com/charmbracelet/x/term v0.2.1 // indirect
+19		github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+20		github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
+21		github.com/inconshreveable/mousetrap v1.1.0 // indirect
+22		github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+23		github.com/mattn/go-isatty v0.0.20 // indirect
+24		github.com/mattn/go-localereader v0.0.1 // indirect
+25		github.com/mattn/go-runewidth v0.0.16 // indirect
+26		github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
+27		github.com/muesli/cancelreader v0.2.2 // indirect
+28		github.com/muesli/termenv v0.16.0 // indirect
+29		github.com/rivo/uniseg v0.4.7 // indirect
+30		github.com/spf13/pflag v1.0.9 // indirect
+31		github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+32		golang.org/x/sys v0.36.0 // indirect
+33		golang.org/x/text v0.3.8 // indirect
+34	)
+35	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash tmpd=/private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">TMPD=/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;TMPD=/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck\nrm -rf \&#34;$TMPD\&#34;\nmkdir -p \&#34;$TMPD\&#34;\ncp -R ~/IdeaProjects/cc-what-have-i-done/* \&#34;$TMPD\&#34;/ 2\u003e/dev/null\ncd \&#34;$TMPD\&#34;\ngo mod tidy 2\u003e\u00261 | tail -20\necho \&#34;---diff go.mod---\&#34;\ndiff ~/IdeaProjects/cc-what-have-i-done/go.mod \&#34;$TMPD/go.mod\&#34;\necho \&#34;---diff go.sum (summary)---\&#34;\ndiff ~/IdeaProjects/cc-what-have-i-done/go.sum \&#34;$TMPD/go.sum\&#34; | head -40\n&#34;
+}</pre><pre class="tool-result">go: downloading golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
+---diff go.mod---
+6a7,8
+&gt; 	github.com/charmbracelet/bubbletea v1.3.10
+&gt; 	github.com/charmbracelet/lipgloss v1.1.0
+13d14
+&lt; 	github.com/charmbracelet/bubbletea v1.3.10 // indirect
+15d15
+&lt; 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
+---diff go.sum (summary)---
+56a57,58
+&gt; golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561 h1:MDc5xs78ZrZr3HMQugiXOAkSZtfTpbJLDr/lwfgO53E=
+&gt; golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash git log -1 --format=&#39;%h%n%s%n%n%b&#39; 777b116">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --format=&#39;%H%n%s%n%n%b&#39; 777b116</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --format=&#39;%H%n%s%n%n%b&#39; 777b116&#34;
+}</pre><pre class="tool-result">777b116eba6d787c9ddcedb2b25b8d3d76192397
+feat: add TUI session browser and wire final dispatch
+
+Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="commit trailer confirmed correct. findings below.
+
+## spec compliance
+
+- ✅ package `internal/tui`, module path correct.
+- ✅ tui browses all projects grouped (list screen with per-project headers), options screen has include-subagents / redact / open toggles &#43; generate action, in that order.
+- ✅ produced api matches exactly: `tui.selection`, `tui.row`, `flattenrows`, `firstselectable`, `run`, `discovery.sessioninfo.displaylabel()` — all present with the specified field/signature shapes.
+- ✅ rune wiring: `needtui` path scans → `tui.run` → applies `selection` to `opts` → `generate` → optional open; `canceled` prints `&#34;canceled&#34;` and returns nil.
+- ✅ `opts.noredact = !sel.redact` mapping verified correct, not inverted (default `redact: true` → `noredact: false` → `generate` runs `redact.session`; toggling off flips both correctly).
+- ✅ commit trailer present verbatim.
+- ✅ go 1.26 builtin `min` relied on in place of a local helper, as pre-approved.
+- ⚠️ `go.mod`/`go.sum` not fully tidy — `bubbletea` and `lipgloss` are directly imported by `internal/tui/tui.go` but were left in the `// indirect` require block instead of being promoted to the direct block; `go mod tidy` (run in an isolated copy, not applied to the tree) also adds a missing `golang.org/x/exp` go.sum entry. doesn&#39;t affect `go build`/`go test` in this environment, but the module metadata is inaccurate. not called out in the brief&#39;s steps (which only ask for `go get`), so this is a quality gap rather than a spec violation.
+
+## strengths
+
+- transcription of the brief&#39;s reference implementation is faithful; verified line-by-line against the diff, no accidental deviations beyond the reported `min` omission.
+- `run()` (`internal/tui/tui.go:290` region) short-circuits on `len(groups) == 0` before ever constructing the bubble tea program, correctly avoiding the &#34;all-header, no selectable row&#34; degenerate case for the tui&#39;s only real caller.
+- confirmed via `internal/discovery/discovery.go` `scan()` that groups are only ever appended when `len(sessions) &gt; 0`, so in production `flattenrows` can never produce an all-header row list — the theoretical `firstselectable` fallback-to-0 edge case is unreachable through the wired cli path.
+- `movecursor` bounds-checks before dereferencing `m.rows[i]` and no-ops (keeps current cursor) when it runs off either end — verified no out-of-bounds access for any delta/cursor combination.
+- `run`&#39;s `res.(model)` assertion is safe: `update` always returns the value-typed `m model` (never a different concrete type or pointer), so `p.run()`&#39;s returned `tea.model` is always the same underlying type regardless of which key path (quit, cancel, generate) triggered the return.
+- `displaylabel()` fallback chain (title → firstprompt → id) matches the brief exactly and is covered by `testdisplaylabel`.
+
+## issues
+
+**critical:** none.
+
+**important:** none.
+
+**minor:**
+1. `go.mod:13,15` (`github.com/charmbracelet/bubbletea`, `github.com/charmbracelet/lipgloss` marked `// indirect`) — both are directly imported in `internal/tui/tui.go`. a `go mod tidy` run in an isolated copy moves them to the direct `require` block and adds a missing `golang.org/x/exp` sum entry to `go.sum`. no functional impact observed (`go build`/`go vet`/`go test` all clean as-is), but `go mod tidy`/`go mod verify` would flag it, and downstream ci that runs `go mod tidy --check` would fail.
+2. `internal/tui/tui.go` `model.done` field is written in three places (`updatelist`&#39;s cancel branch, `updateoptions`&#39;s cancel branch, `updateoptions`&#39;s generate branch) but never read anywhere in `update`/`view`/`run` — dead state. inherited verbatim from the brief&#39;s reference code, so not an implementer-introduced defect, but worth flagging since it survived the transcription unquestioned.
+3. `cmd/ccwhid/run.go:20` — `errneedtui` (from task 8) is now an unreferenced package-level var, since this task&#39;s `run()` uses the `needtui` bool return from `resolvesession` instead. legal go, doesn&#39;t fail build/vet, and out of this task&#39;s file scope per the brief, but it&#39;s dead code the implementer noticed and chose not to clean up (correctly deferred, per their own report, since step 7 only touches `main.go`) — flagging for whoever does the whole-branch pass.
+
+## assessment
+
+task quality: **approved**
+
+the implementation is a faithful, verified-correct transcription of the brief&#39;s reference code with no behavioral deviations. all five named risks were checked against the actual diff/build and none materialized: the redact mapping is correct, cursor navigation is bounds-safe and unreachable-degenerate in practice, the type assertion in `run` cannot panic under normal `update` flow, empty-groups is handled explicitly, and `displaylabel`&#39;s fallback order is correct and tested. the only findings are pre-existing/inherited minor tidiness items (go.mod indirect markers, one dead field carried over from the brief, one unused var left from task 8) — none block this task; they&#39;re worth a mention in the whole-branch pass but don&#39;t warrant reopening this task.">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-body"><p>Commit trailer confirmed correct. Findings below.</p>
+<h2>Spec Compliance</h2>
+<ul>
+<li>✅ Package <code>internal/tui</code>, module path correct.</li>
+<li>✅ TUI browses all projects grouped (list screen with per-project headers), options screen has include-subagents / redact / open toggles + Generate action, in that order.</li>
+<li>✅ Produced API matches exactly: <code>tui.Selection</code>, <code>tui.Row</code>, <code>flattenRows</code>, <code>firstSelectable</code>, <code>Run</code>, <code>discovery.SessionInfo.DisplayLabel()</code> — all present with the specified field/signature shapes.</li>
+<li>✅ RunE wiring: <code>needTUI</code> path scans → <code>tui.Run</code> → applies <code>Selection</code> to <code>opts</code> → <code>generate</code> → optional open; <code>Canceled</code> prints <code>&quot;canceled&quot;</code> and returns nil.</li>
+<li>✅ <code>opts.noRedact = !sel.Redact</code> mapping verified correct, not inverted (default <code>Redact: true</code> → <code>noRedact: false</code> → <code>generate</code> runs <code>redact.Session</code>; toggling off flips both correctly).</li>
+<li>✅ Commit trailer present verbatim.</li>
+<li>✅ Go 1.26 builtin <code>min</code> relied on in place of a local helper, as pre-approved.</li>
+<li>⚠️ <code>go.mod</code>/<code>go.sum</code> not fully tidy — <code>bubbletea</code> and <code>lipgloss</code> are directly imported by <code>internal/tui/tui.go</code> but were left in the <code>// indirect</code> require block instead of being promoted to the direct block; <code>go mod tidy</code> (run in an isolated copy, not applied to the tree) also adds a missing <code>golang.org/x/exp</code> go.sum entry. Doesn't affect <code>go build</code>/<code>go test</code> in this environment, but the module metadata is inaccurate. Not called out in the brief's steps (which only ask for <code>go get</code>), so this is a quality gap rather than a spec violation.</li>
+</ul>
+<h2>Strengths</h2>
+<ul>
+<li>Transcription of the brief's reference implementation is faithful; verified line-by-line against the diff, no accidental deviations beyond the reported <code>min</code> omission.</li>
+<li><code>Run()</code> (<code>internal/tui/tui.go:290</code> region) short-circuits on <code>len(groups) == 0</code> before ever constructing the Bubble Tea program, correctly avoiding the &quot;all-header, no selectable row&quot; degenerate case for the TUI's only real caller.</li>
+<li>Confirmed via <code>internal/discovery/discovery.go</code> <code>Scan()</code> that groups are only ever appended when <code>len(sessions) &gt; 0</code>, so in production <code>flattenRows</code> can never produce an all-header row list — the theoretical <code>firstSelectable</code> fallback-to-0 edge case is unreachable through the wired CLI path.</li>
+<li><code>moveCursor</code> bounds-checks before dereferencing <code>m.rows[i]</code> and no-ops (keeps current cursor) when it runs off either end — verified no out-of-bounds access for any delta/cursor combination.</li>
+<li><code>Run</code>'s <code>res.(model)</code> assertion is safe: <code>Update</code> always returns the value-typed <code>m model</code> (never a different concrete type or pointer), so <code>p.Run()</code>'s returned <code>tea.Model</code> is always the same underlying type regardless of which key path (quit, cancel, generate) triggered the return.</li>
+<li><code>DisplayLabel()</code> fallback chain (Title → FirstPrompt → ID) matches the brief exactly and is covered by <code>TestDisplayLabel</code>.</li>
+</ul>
+<h2>Issues</h2>
+<p><strong>Critical:</strong> None.</p>
+<p><strong>Important:</strong> None.</p>
+<p><strong>Minor:</strong></p>
+<ol>
+<li><code>go.mod:13,15</code> (<code>github.com/charmbracelet/bubbletea</code>, <code>github.com/charmbracelet/lipgloss</code> marked <code>// indirect</code>) — both are directly imported in <code>internal/tui/tui.go</code>. A <code>go mod tidy</code> run in an isolated copy moves them to the direct <code>require</code> block and adds a missing <code>golang.org/x/exp</code> sum entry to <code>go.sum</code>. No functional impact observed (<code>go build</code>/<code>go vet</code>/<code>go test</code> all clean as-is), but <code>go mod tidy</code>/<code>go mod verify</code> would flag it, and downstream CI that runs <code>go mod tidy --check</code> would fail.</li>
+<li><code>internal/tui/tui.go</code> <code>model.done</code> field is written in three places (<code>updateList</code>'s cancel branch, <code>updateOptions</code>'s cancel branch, <code>updateOptions</code>'s Generate branch) but never read anywhere in <code>Update</code>/<code>View</code>/<code>Run</code> — dead state. Inherited verbatim from the brief's reference code, so not an implementer-introduced defect, but worth flagging since it survived the transcription unquestioned.</li>
+<li><code>cmd/ccwhid/run.go:20</code> — <code>errNeedTUI</code> (from Task 8) is now an unreferenced package-level var, since this task's <code>run()</code> uses the <code>needTUI</code> bool return from <code>resolveSession</code> instead. Legal Go, doesn't fail build/vet, and out of this task's file scope per the brief, but it's dead code the implementer noticed and chose not to clean up (correctly deferred, per their own report, since Step 7 only touches <code>main.go</code>) — flagging for whoever does the whole-branch pass.</li>
+</ol>
+<h2>Assessment</h2>
+<p>Task quality: <strong>Approved</strong></p>
+<p>The implementation is a faithful, verified-correct transcription of the brief's reference code with no behavioral deviations. All five named risks were checked against the actual diff/build and none materialized: the redact mapping is correct, cursor navigation is bounds-safe and unreachable-degenerate in practice, the type assertion in <code>Run</code> cannot panic under normal <code>Update</code> flow, empty-groups is handled explicitly, and <code>DisplayLabel</code>'s fallback order is correct and tested. The only findings are pre-existing/inherited minor tidiness items (go.mod indirect markers, one dead field carried over from the brief, one unused var left from Task 8) — none block this task; they're worth a mention in the whole-branch pass but don't warrant reopening this task.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

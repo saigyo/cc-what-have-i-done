@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implement Task 2: price table · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are implementing Task 2: Embedded price table — for the…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Implement Task 2: price table</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/usage-cost</span>
+        <span>2026-07-12 06:02</span>
+        <span>28 turns</span>
+        <span>general-purpose · agent-a2d4933a5f1507c85</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 4k in+out · ~$0.09 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-haiku-4-5</td><td>146</td><td>4k</td><td>419k</td><td>21k</td><td>$0.09</td></tr>
+          <tr class="usage-total"><td>Total</td><td>146</td><td>4k</td><td>419k</td><td>21k</td><td>$0.09</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are implementing task 2: embedded price table — for the ccwhid go project (module github.com/saigyo/cc-what-have-i-done).
+
+## task description
+read your task brief first — it is your requirements, with the exact code and data to use verbatim:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md
+
+## context
+this is task 2 of a token-usage &amp; cost feature. you create a new package `internal/usage` that owns an embedded price table. task 3 (a later task) will add cost computation in the same package and depends on the exact names you create here: `usage.price{input, output float64}`, `usage.lookup(modelid string) (price, bool)`, the const `usage.pricesasof`, and the unexported cache-multiplier consts `cachewrite5mmult=1.25`, `cachewrite1hmult=2.0`, `cachereadmult=0.1`.
+
+notes:
+- the price data (`prices.json`) is embedded via `go:embed`. the prices in the brief are real anthropic list prices captured 2026-07 — use them exactly as given; do not &#34;adjust&#34; any number.
+- `&lt;synthetic&gt;` and any model not in the table must resolve as unpriced (lookup returns false).
+- `stripdatesuffix` removes a trailing &#34;-yyyymmdd&#34; (dash &#43; 8 digits) so a dated model id resolves after a miss.
+- this is a brand-new package — no existing patterns to conflict with, but match the repo&#39;s go style (package doc comment, gofmt).
+
+the brief contains the complete `prices.json`, `pricing.go`, and `pricing_test.go`. implement them verbatim (tdd: data &#43; tests first per the brief&#39;s step order, then pricing.go, confirm green).
+
+## your job
+1. follow the brief&#39;s steps (create prices.json; write pricing_test.go; confirm it fails to compile/red; implement pricing.go; confirm green).
+2. run `go test ./internal/usage/ -v`, and once before committing `go build ./... &amp;&amp; gofmt -l internal` (expect no gofmt output).
+3. commit exactly as the brief specifies.
+4. self-review, then report.
+
+work from: ~/ideaprojects/cc-what-have-i-done
+
+if anything is ambiguous or seems wrong, stop and report blocked/needs_context rather than guessing.
+
+## report
+write your full report (implemented, tdd red/green evidence with commands&#43;output, files changed, self-review) to:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md
+
+then reply with only (under 15 lines): status, commits (short sha &#43; subject), one-line test summary, concerns, and the report file path.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are implementing Task 2: Embedded price table — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
+<h2>Task Description</h2>
+<p>Read your task brief FIRST — it is your requirements, with the exact code and data to use verbatim:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+<h2>Context</h2>
+<p>This is Task 2 of a token-usage &amp; cost feature. You create a NEW package <code>internal/usage</code> that owns an embedded price table. Task 3 (a later task) will add cost computation in the same package and depends on the exact names you create here: <code>usage.Price{Input, Output float64}</code>, <code>usage.Lookup(modelID string) (Price, bool)</code>, the const <code>usage.PricesAsOf</code>, and the unexported cache-multiplier consts <code>cacheWrite5mMult=1.25</code>, <code>cacheWrite1hMult=2.0</code>, <code>cacheReadMult=0.1</code>.</p>
+<p>Notes:</p>
+<ul>
+<li>The price data (<code>prices.json</code>) is embedded via <code>go:embed</code>. The prices in the brief are real Anthropic list prices captured 2026-07 — use them EXACTLY as given; do not &quot;adjust&quot; any number.</li>
+<li><code>&lt;synthetic&gt;</code> and any model not in the table must resolve as unpriced (Lookup returns false).</li>
+<li><code>stripDateSuffix</code> removes a trailing &quot;-YYYYMMDD&quot; (dash + 8 digits) so a dated model id resolves after a miss.</li>
+<li>This is a brand-new package — no existing patterns to conflict with, but match the repo's Go style (package doc comment, gofmt).</li>
+</ul>
+<p>The brief contains the complete <code>prices.json</code>, <code>pricing.go</code>, and <code>pricing_test.go</code>. Implement them verbatim (TDD: data + tests first per the brief's step order, then pricing.go, confirm green).</p>
+<h2>Your job</h2>
+<ol>
+<li>Follow the brief's steps (create prices.json; write pricing_test.go; confirm it fails to compile/RED; implement pricing.go; confirm GREEN).</li>
+<li>Run <code>go test ./internal/usage/ -v</code>, and once before committing <code>go build ./... &amp;&amp; gofmt -l internal</code> (expect no gofmt output).</li>
+<li>Commit exactly as the brief specifies.</li>
+<li>Self-review, then report.</li>
+</ol>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
+<p>If anything is ambiguous or seems wrong, STOP and report BLOCKED/NEEDS_CONTEXT rather than guessing.</p>
+<h2>Report</h2>
+<p>Write your full report (implemented, TDD RED/GREEN evidence with commands+output, files changed, self-review) to:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+<p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">310 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 2: Embedded price table
+2	
+3	**Files:**
+4	- Create: `internal/usage/pricing.go`
+5	- Create: `internal/usage/prices.json`
+6	- Test: `internal/usage/pricing_test.go`
+7	
+8	**Interfaces:**
+9	- Produces: `usage.Price{ Input, Output float64 }`; `usage.Lookup(modelID string) (Price, bool)`; `usage.PricesAsOf` (const string); unexported cache multiplier consts `cacheWrite5mMult=1.25`, `cacheWrite1hMult=2.0`, `cacheReadMult=0.1`.
+10	
+11	- [ ] **Step 1: Create the price data**
+12	
+13	Create `internal/usage/prices.json` (base per-million-token USD rates; cache rates are derived from `input` via the universal multipliers). Values are Anthropic list prices captured 2026-07:
+14	
+15	```json
+16	{
+17	  &#34;claude-opus-4-8&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+18	  &#34;claude-opus-4-7&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+19	  &#34;claude-opus-4-6&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+20	  &#34;claude-opus-4-5&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },
+21	  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },
+22	  &#34;claude-sonnet-5&#34;:   { &#34;input&#34;: 2,  &#34;output&#34;: 10 },
+23	  &#34;claude-sonnet-4-6&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+24	  &#34;claude-sonnet-4-5&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },
+25	  &#34;claude-haiku-4-5&#34;:  { &#34;input&#34;: 1,  &#34;output&#34;: 5 },
+26	  &#34;claude-fable-5&#34;:    { &#34;input&#34;: 10, &#34;output&#34;: 50 }
+27	}
+28	```
+29	
+30	- [ ] **Step 2: Write the failing test**
+31	
+32	Create `internal/usage/pricing_test.go`:
+33	
+34	```go
+35	package usage
+36	
+37	import &#34;testing&#34;
+38	
+39	func TestLookupKnownModel(t *testing.T) {
+40		p, ok := Lookup(&#34;claude-opus-4-8&#34;)
+41		if !ok {
+42			t.Fatal(&#34;claude-opus-4-8 not found&#34;)
+43		}
+44		if p.Input != 5 || p.Output != 25 {
+45			t.Errorf(&#34;price = %+v, want {5 25}&#34;, p)
+46		}
+47	}
+48	
+49	func TestLookupStripsDateSuffix(t *testing.T) {
+50		if _, ok := Lookup(&#34;claude-haiku-4-5-20251001&#34;); !ok {
+51			t.Error(&#34;dated model id should resolve after stripping the date suffix&#34;)
+52		}
+53	}
+54	
+55	func TestLookupUnknownAndSynthetic(t *testing.T) {
+56		if _, ok := Lookup(&#34;&lt;synthetic&gt;&#34;); ok {
+57			t.Error(&#34;&lt;synthetic&gt; should not be priced&#34;)
+58		}
+59		if _, ok := Lookup(&#34;gpt-4&#34;); ok {
+60			t.Error(&#34;unknown model should not be priced&#34;)
+61		}
+62	}
+63	
+64	func TestPricesAsOfSet(t *testing.T) {
+65		if PricesAsOf == &#34;&#34; {
+66			t.Error(&#34;PricesAsOf must be set&#34;)
+67		}
+68	}
+69	```
+70	
+71	- [ ] **Step 3: Run test to verify it fails**
+72	
+73	Run: `go test ./internal/usage/ -v`
+74	Expected: FAIL — package/functions do not exist.
+75	
+76	- [ ] **Step 4: Implement pricing.go**
+77	
+78	Create `internal/usage/pricing.go`:
+79	
+80	```go
+81	// Package usage computes token totals and estimated cost for a rendered
+82	// session from the per-turn usage data attached by the transcript parser.
+83	package usage
+84	
+85	import (
+86		_ &#34;embed&#34;
+87		&#34;encoding/json&#34;
+88	)
+89	
+90	//go:embed prices.json
+91	var pricesJSON []byte
+92	
+93	// PricesAsOf is the month the embedded list prices were captured. Surfaced in
+94	// the report so readers know how current the cost estimate is.
+95	const PricesAsOf = &#34;2026-07&#34;
+96	
+97	// Cache pricing multipliers relative to a model&#39;s base input price. These are
+98	// universal across Claude models (Anthropic prompt-caching pricing).
+99	const (
+100		cacheWrite5mMult = 1.25
+101		cacheWrite1hMult = 2.0
+102		cacheReadMult    = 0.1
+103	)
+104	
+105	// Price holds a model&#39;s per-million-token USD rates for base input and output.
+106	type Price struct {
+107		Input  float64 `json:&#34;input&#34;`
+108		Output float64 `json:&#34;output&#34;`
+109	}
+110	
+111	var prices map[string]Price
+112	
+113	func init() {
+114		if err := json.Unmarshal(pricesJSON, &amp;prices); err != nil {
+115			panic(&#34;usage: invalid embedded prices.json: &#34; + err.Error())
+116		}
+117	}
+118	
+119	// Lookup returns the price for a model id and whether it is known. A trailing
+120	// &#34;-YYYYMMDD&#34; date suffix (used by some model ids) is stripped on a miss.
+121	func Lookup(modelID string) (Price, bool) {
+122		if p, ok := prices[modelID]; ok {
+123			return p, true
+124		}
+125		if norm := stripDateSuffix(modelID); norm != modelID {
+126			if p, ok := prices[norm]; ok {
+127				return p, true
+128			}
+129		}
+130		return Price{}, false
+131	}
+132	
+133	// stripDateSuffix removes a trailing &#34;-YYYYMMDD&#34; (dash + 8 digits) from id.
+134	func stripDateSuffix(id string) string {
+135		if len(id) &lt; 9 {
+136			return id
+137		}
+138		tail := id[len(id)-9:]
+139		if tail[0] != &#39;-&#39; {
+140			return id
+141		}
+142		for _, c := range tail[1:] {
+143			if c &lt; &#39;0&#39; || c &gt; &#39;9&#39; {
+144				return id
+145			}
+146		}
+147		return id[:len(id)-9]
+148	}
+149	```
+150	
+151	- [ ] **Step 5: Run tests to verify they pass**
+152	
+153	Run: `go test ./internal/usage/ -v`
+154	Expected: PASS.
+155	
+156	- [ ] **Step 6: Commit**
+157	
+158	```bash
+159	git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go
+160	git commit -m &#34;feat(usage): embedded model price table with lookup&#34;
+161	```
+162	
+163	---
+164	
+165	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="now i&#39;ll implement task 2 following the brief. let me start by checking the directory structure and then create the package following tdd: data &#43; tests first, then implementation.">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now I'll implement Task 2 following the brief. Let me start by checking the directory structure and then create the package following TDD: data + tests first, then implementation.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/internal/ 2&gt;&amp;1 || echo &#34;directory does not exist yet&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/internal/ 2&gt;&amp;1 || echo &#34;Directory does not exist yet&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/internal/ 2\u003e\u00261 || echo \&#34;Directory does not exist yet\&#34;&#34;
+}</pre><pre class="tool-result">total 0
+drwxr-xr-x@  8 markus  staff  256 11 Juli 20:57 .
+drwxr-xr-x  17 markus  staff  544 11 Juli 21:43 ..
+drwxr-xr-x@  4 markus  staff  128 11 Juli 20:57 discovery
+drwxr-xr-x@  4 markus  staff  128 12 Juli 07:57 model
+drwxr-xr-x@  4 markus  staff  128 11 Juli 20:57 redact
+drwxr-xr-x@  8 markus  staff  256 11 Juli 20:57 render
+drwxr-xr-x@  7 markus  staff  224 12 Juli 07:58 transcript
+drwxr-xr-x@  4 markus  staff  128 11 Juli 20:57 tui</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="**step 1: create prices.json**">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 1: Create prices.json</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash mkdir -p ~/ideaprojects/cc-what-have-i-done/internal/usage">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/usage</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/usage&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/usage/prices.json">
+      <div class="turn-role">Claude<span class="usage-badge">402 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ {</div><div class="diff-add">+   &#34;claude-opus-4-8&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },</div><div class="diff-add">+   &#34;claude-opus-4-7&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },</div><div class="diff-add">+   &#34;claude-opus-4-6&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },</div><div class="diff-add">+   &#34;claude-opus-4-5&#34;:   { &#34;input&#34;: 5,  &#34;output&#34;: 25 },</div><div class="diff-add">+   &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },</div><div class="diff-add">+   &#34;claude-sonnet-5&#34;:   { &#34;input&#34;: 2,  &#34;output&#34;: 10 },</div><div class="diff-add">+   &#34;claude-sonnet-4-6&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },</div><div class="diff-add">+   &#34;claude-sonnet-4-5&#34;: { &#34;input&#34;: 3,  &#34;output&#34;: 15 },</div><div class="diff-add">+   &#34;claude-haiku-4-5&#34;:  { &#34;input&#34;: 1,  &#34;output&#34;: 5 },</div><div class="diff-add">+   &#34;claude-fable-5&#34;:    { &#34;input&#34;: 10, &#34;output&#34;: 50 }</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="**step 2: create pricing_test.go**">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 2: Create pricing_test.go</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing_test.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package usage</div><div class="diff-add">+ </div><div class="diff-add">+ import &#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ func TestLookupKnownModel(t *testing.T) {</div><div class="diff-add">+ 	p, ok := Lookup(&#34;claude-opus-4-8&#34;)</div><div class="diff-add">+ 	if !ok {</div><div class="diff-add">+ 		t.Fatal(&#34;claude-opus-4-8 not found&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if p.Input != 5 || p.Output != 25 {</div><div class="diff-add">+ 		t.Errorf(&#34;price = %+v, want {5 25}&#34;, p)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestLookupStripsDateSuffix(t *testing.T) {</div><div class="diff-add">+ 	if _, ok := Lookup(&#34;claude-haiku-4-5-20251001&#34;); !ok {</div><div class="diff-add">+ 		t.Error(&#34;dated model id should resolve after stripping the date suffix&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestLookupUnknownAndSynthetic(t *testing.T) {</div><div class="diff-add">+ 	if _, ok := Lookup(&#34;&lt;synthetic&gt;&#34;); ok {</div><div class="diff-add">+ 		t.Error(&#34;&lt;synthetic&gt; should not be priced&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if _, ok := Lookup(&#34;gpt-4&#34;); ok {</div><div class="diff-add">+ 		t.Error(&#34;unknown model should not be priced&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestPricesAsOfSet(t *testing.T) {</div><div class="diff-add">+ 	if PricesAsOf == &#34;&#34; {</div><div class="diff-add">+ 		t.Error(&#34;PricesAsOf must be set&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="**step 3: run test to verify it fails (red)**">
+      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 3: Run test to verify it fails (RED)</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash go test ./internal/usage/ -v">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/usage/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/usage/ -v&#34;
+}</pre><pre class="tool-result tool-result-error">Exit code 1
+# github.com/saigyo/cc-what-have-i-done/internal/usage [github.com/saigyo/cc-what-have-i-done/internal/usage.test]
+internal/usage/pricing_test.go:6:11: undefined: Lookup
+internal/usage/pricing_test.go:16:14: undefined: Lookup
+internal/usage/pricing_test.go:22:14: undefined: Lookup
+internal/usage/pricing_test.go:25:14: undefined: Lookup
+internal/usage/pricing_test.go:31:5: undefined: PricesAsOf
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/usage [build failed]
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="**step 4: implement pricing.go**">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 4: Implement pricing.go</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ // Package usage computes token totals and estimated cost for a rendered</div><div class="diff-add">+ // session from the per-turn usage data attached by the transcript parser.</div><div class="diff-add">+ package usage</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	_ &#34;embed&#34;</div><div class="diff-add">+ 	&#34;encoding/json&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ //go:embed prices.json</div><div class="diff-add">+ var pricesJSON []byte</div><div class="diff-add">+ </div><div class="diff-add">+ // PricesAsOf is the month the embedded list prices were captured. Surfaced in</div><div class="diff-add">+ // the report so readers know how current the cost estimate is.</div><div class="diff-add">+ const PricesAsOf = &#34;2026-07&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ // Cache pricing multipliers relative to a model&#39;s base input price. These are</div><div class="diff-add">+ // universal across Claude models (Anthropic prompt-caching pricing).</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	cacheWrite5mMult = 1.25</div><div class="diff-add">+ 	cacheWrite1hMult = 2.0</div><div class="diff-add">+ 	cacheReadMult    = 0.1</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Price holds a model&#39;s per-million-token USD rates for base input and output.</div><div class="diff-add">+ type Price struct {</div><div class="diff-add">+ 	Input  float64 `json:&#34;input&#34;`</div><div class="diff-add">+ 	Output float64 `json:&#34;output&#34;`</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ var prices map[string]Price</div><div class="diff-add">+ </div><div class="diff-add">+ func init() {</div><div class="diff-add">+ 	if err := json.Unmarshal(pricesJSON, &amp;prices); err != nil {</div><div class="diff-add">+ 		panic(&#34;usage: invalid embedded prices.json: &#34; + err.Error())</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Lookup returns the price for a model id and whether it is known. A trailing</div><div class="diff-add">+ // &#34;-YYYYMMDD&#34; date suffix (used by some model ids) is stripped on a miss.</div><div class="diff-add">+ func Lookup(modelID string) (Price, bool) {</div><div class="diff-add">+ 	if p, ok := prices[modelID]; ok {</div><div class="diff-add">+ 		return p, true</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if norm := stripDateSuffix(modelID); norm != modelID {</div><div class="diff-add">+ 		if p, ok := prices[norm]; ok {</div><div class="diff-add">+ 			return p, true</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return Price{}, false</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // stripDateSuffix removes a trailing &#34;-YYYYMMDD&#34; (dash + 8 digits) from id.</div><div class="diff-add">+ func stripDateSuffix(id string) string {</div><div class="diff-add">+ 	if len(id) &lt; 9 {</div><div class="diff-add">+ 		return id</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	tail := id[len(id)-9:]</div><div class="diff-add">+ 	if tail[0] != &#39;-&#39; {</div><div class="diff-add">+ 		return id</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, c := range tail[1:] {</div><div class="diff-add">+ 		if c &lt; &#39;0&#39; || c &gt; &#39;9&#39; {</div><div class="diff-add">+ 			return id</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return id[:len(id)-9]</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="**step 5: run tests to verify they pass (green)**">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 5: Run tests to verify they pass (GREEN)</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="bash go test ./internal/usage/ -v">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/usage/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/usage/ -v&#34;
+}</pre><pre class="tool-result">=== RUN   TestLookupKnownModel
+--- PASS: TestLookupKnownModel (0.00s)
+=== RUN   TestLookupStripsDateSuffix
+--- PASS: TestLookupStripsDateSuffix (0.00s)
+=== RUN   TestLookupUnknownAndSynthetic
+--- PASS: TestLookupUnknownAndSynthetic (0.00s)
+=== RUN   TestPricesAsOfSet
+--- PASS: TestPricesAsOfSet (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.300s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="**step 6: verify build and formatting**">
+      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 6: Verify build and formatting</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="bash go build ./... &amp;&amp; gofmt -l internal">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; gofmt -l internal</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build ./... \u0026\u0026 gofmt -l internal&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="**step 7: commit the changes**">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p><strong>Step 7: Commit the changes</strong></p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="bash git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go &amp;&amp; git commit -m &#34;feat(usage): embedded model price table with lookup&#34;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go &amp;&amp; git commit -m &#34;feat(usage): embedded model price table with lookup&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go \u0026\u0026 git commit -m \&#34;feat(usage): embedded model price table with lookup\&#34;&#34;
+}</pre><pre class="tool-result">[feat/usage-cost 08d3928] feat(usage): embedded model price table with lookup
+ 3 files changed, 114 insertions(+)
+ create mode 100644 internal/usage/prices.json
+ create mode 100644 internal/usage/pricing.go
+ create mode 100644 internal/usage/pricing_test.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash git log -1 --oneline &amp;&amp; git show --stat">
+      <div class="turn-role">Claude<span class="usage-badge">113 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline &amp;&amp; git show --stat</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --oneline \u0026\u0026 git show --stat&#34;
+}</pre><pre class="tool-result">08d3928 feat(usage): embedded model price table with lookup
+commit 08d3928a798e799f564e200e94f9584f189c70be
+Author: Markus Ackermann &lt;markus@kaixo.de&gt;
+Date:   Sun Jul 12 08:03:24 2026 +0200
+
+    feat(usage): embedded model price table with lookup
+
+ internal/usage/prices.json     | 12 ++++++++
+ internal/usage/pricing.go      | 68 ++++++++++++++++++++++++++++++++++++++++++
+ internal/usage/pricing_test.go | 34 +++++++++++++++++++++
+ 3 files changed, 114 insertions(+)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="now i&#39;ll write the report to the specified location:">
+      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><p>Now I'll write the report to the specified location:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 2: Embedded Price Table — Report</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status</div><div class="diff-add">+ **COMPLETE** — All steps executed per brief spec. TDD cycle complete (RED → GREEN), build passes, formatting verified.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Implementation Summary</div><div class="diff-add">+ </div><div class="diff-add">+ ### Files Created</div><div class="diff-add">+ 1. `internal/usage/prices.json` — Embedded price data for 10 Claude models (Anthropic list prices 2026-07)</div><div class="diff-add">+ 2. `internal/usage/pricing.go` — Price lookup implementation with date-suffix stripping</div><div class="diff-add">+ 3. `internal/usage/pricing_test.go` — Four test cases covering lookup, date-suffix handling, unknown models</div><div class="diff-add">+ </div><div class="diff-add">+ ### Exported Interfaces</div><div class="diff-add">+ - `type Price struct { Input, Output float64 }` — Per-million-token USD rates</div><div class="diff-add">+ - `func Lookup(modelID string) (Price, bool)` — Model price lookup with date-suffix fallback</div><div class="diff-add">+ - `const PricesAsOf = &#34;2026-07&#34;` — Pricing data month for reporting</div><div class="diff-add">+ - Unexported constants: `cacheWrite5mMult=1.25`, `cacheWrite1hMult=2.0`, `cacheReadMult=0.1`</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Lifecycle Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 1-2: Data + Tests (Before Implementation)</div><div class="diff-add">+ Created `prices.json` with 10 models and exact prices from brief.</div><div class="diff-add">+ Created `pricing_test.go` with 4 test cases.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 3: RED Phase</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/usage/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (FAIL — Expected):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/usage [github.com/saigyo/cc-what-have-i-done/internal/usage.test]</div><div class="diff-add">+ internal/usage/pricing_test.go:6:11: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:16:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:22:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:25:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:31:5: undefined: PricesAsOf</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/usage [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 4: Implementation</div><div class="diff-add">+ Created `pricing.go` with:</div><div class="diff-add">+ - Package doc comment (computes token totals and estimated cost)</div><div class="diff-add">+ - Embedded `prices.json` via `go:embed`</div><div class="diff-add">+ - `PricesAsOf` constant set to &#34;2026-07&#34;</div><div class="diff-add">+ - Cache multiplier constants (unexported)</div><div class="diff-add">+ - `Price` struct with JSON tags</div><div class="diff-add">+ - `init()` function to unmarshal prices</div><div class="diff-add">+ - `Lookup(modelID string)` function with date-suffix stripping fallback</div><div class="diff-add">+ - Helper `stripDateSuffix(id string)` function</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 5: GREEN Phase</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/usage/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (PASS — Verified):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestLookupKnownModel</div><div class="diff-add">+ --- PASS: TestLookupKnownModel (0.00s)</div><div class="diff-add">+ === RUN   TestLookupStripsDateSuffix</div><div class="diff-add">+ --- PASS: TestLookupStripsDateSuffix (0.00s)</div><div class="diff-add">+ === RUN   TestLookupUnknownAndSynthetic</div><div class="diff-add">+ --- PASS: TestLookupUnknownAndSynthetic (0.00s)</div><div class="diff-add">+ === RUN   TestPricesAsOfSet</div><div class="diff-add">+ --- PASS: TestPricesAsOfSet (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.300s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 6: Build &amp; Format Verification</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go build ./... &amp;&amp; gofmt -l internal</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output:** (No output — build succeeds, no formatting issues)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go</div><div class="diff-add">+ $ git commit -m &#34;feat(usage): embedded model price table with lookup&#34;</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Commit Details:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ Commit: 08d3928a798e799f564e200e94f9584f189c70be</div><div class="diff-add">+ Author: Markus Ackermann &lt;markus@kaixo.de&gt;</div><div class="diff-add">+ Date:   Sun Jul 12 08:03:24 2026 +0200</div><div class="diff-add">+ </div><div class="diff-add">+ feat(usage): embedded model price table with lookup</div><div class="diff-add">+ </div><div class="diff-add">+  internal/usage/prices.json     | 12 +++</div><div class="diff-add">+  internal/usage/pricing.go      | 68 ++++++++++++++++</div><div class="diff-add">+  internal/usage/pricing_test.go | 34 ++++++++</div><div class="diff-add">+  3 files changed, 114 insertions(+)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Data Accuracy:** All 10 models and prices match brief exactly (e.g., claude-opus-4-8: input=5, output=25)</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Interface Compliance:**</div><div class="diff-add">+   - `Price{Input, Output float64}` ✓</div><div class="diff-add">+   - `Lookup(modelID string) (Price, bool)` ✓</div><div class="diff-add">+   - `const PricesAsOf` ✓</div><div class="diff-add">+   - Unexported cache multipliers (`cacheWrite5mMult`, `cacheWrite1hMult`, `cacheReadMult`) ✓</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Date-Suffix Stripping:** `stripDateSuffix` correctly:</div><div class="diff-add">+   - Checks minimum length (9 chars for &#34;-YYYYMMDD&#34;)</div><div class="diff-add">+   - Validates leading dash at position `len(id)-9`</div><div class="diff-add">+   - Validates all 8 trailing chars are digits</div><div class="diff-add">+   - Returns original id if pattern doesn&#39;t match</div><div class="diff-add">+   - Strips correctly when valid (verified by TestLookupStripsDateSuffix)</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Unpriced Models:** `&lt;synthetic&gt;` and unknown models (e.g., &#34;gpt-4&#34;) return `(Price{}, false)` ✓</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Package Style:**</div><div class="diff-add">+   - Package doc comment present and descriptive</div><div class="diff-add">+   - Code follows Go idioms (error handling, variable naming, structure)</div><div class="diff-add">+   - All code formatted per gofmt</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Embedding:** `//go:embed prices.json` correctly embeds prices.json for distribution without external file dependency</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Test Coverage:** All four test cases pass:</div><div class="diff-add">+   - Known model lookup</div><div class="diff-add">+   - Date-suffix stripping fallback</div><div class="diff-add">+   - Unknown/synthetic rejection</div><div class="diff-add">+   - PricesAsOf constant presence</div><div class="diff-add">+ </div><div class="diff-add">+ ## No Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ - All steps completed per brief specification</div><div class="diff-add">+ - No ambiguities encountered</div><div class="diff-add">+ - No blocking issues</div><div class="diff-add">+ - Ready for Task 3 (cost computation) which will depend on these exported types and functions</div><div class="diff-add">+ </div><div class="diff-add">+ ---</div><div class="diff-add">+ </div><div class="diff-add">+ **Task 2 Complete** — 2026-07-12</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/ | grep task-2">
+      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ | grep task-2</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ | grep task-2&#34;
+}</pre><pre class="tool-result">-rw-r--r--@  1 markus  staff   4296 12 Juli 08:02 task-2-brief.md
+-rw-r--r--@  1 markus  staff   3422 11 Juli 11:57 task-2-report.md</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 2: Domain Model Types — Implementation Report
+2	
+3	## Summary
+4	
+5	Successfully implemented the shared domain model types for the `ccwhid` CLI, following TDD discipline with failing tests, green implementation, and full test suite verification.
+6	
+7	## What Was Implemented
+8	
+9	Created two files in `internal/model/`:
+10	
+11	1. **`model.go`** — Complete domain type definitions:
+12	   - `Session` struct with fields: ID, ProjectPath, Title, GitBranch, Version, StartedAt, EndedAt, Turns, SkippedLines
+13	   - `Turn` struct with Kind (TurnKind), Timestamp, and Blocks
+14	   - `Block` struct for content units (text, thinking, tool use)
+15	   - `ToolCall` struct with ID, Name, Summary, InputJSON, Result, Diff, and Subagents
+16	   - `ToolResult` struct with Content and IsError flag
+17	   - `Diff` struct for tracking file changes (Path, OldText, NewText)
+18	   - `Subagent` struct for nested sidechain runs
+19	   - Constants for `TurnKind` (TurnUser, TurnAssistant) and `BlockType` (BlockText, BlockThinking, BlockToolUse)
+20	   - Two methods on Session:
+21	     - `Duration()` — returns EndedAt.Sub(StartedAt)
+22	     - `DisplayTitle()` — returns Title or fallback &#34;Untitled session&#34;
+23	
+24	2. **`model_test.go`** — Test coverage:
+25	   - `TestSessionDuration` — verifies 5-minute duration calculation
+26	   - `TestDisplayTitleFallback` — tests both title fallback and explicit title scenarios
+27	
+28	## TDD Evidence
+29	
+30	### RED: Test Fails (Step 2)
+31	```
+32	go test ./internal/model/
+33	
+34	# output (expected failure):
+35	# github.com/saigyo/cc-what-have-i-done/internal/model [github.com/saigyo/cc-what-have-i-done/internal/model.test]
+36	internal/model/model_test.go:9:7: undefined: Session
+37	internal/model/model_test.go:19:13: undefined: Session
+38	internal/model/model_test.go:22:13: undefined: Session
+39	FAIL	github.com/saigyo/cc-what-have-i-done/internal/model [build failed]
+40	FAIL
+41	```
+42	
+43	### GREEN: Tests Pass (Step 4)
+44	```
+45	go test ./internal/model/ -v
+46	
+47	=== RUN   TestSessionDuration
+48	--- PASS: TestSessionDuration (0.00s)
+49	=== RUN   TestDisplayTitleFallback
+50	--- PASS: TestDisplayTitleFallback (0.00s)
+51	PASS
+52	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.285s
+53	```
+54	
+55	### Full Suite Passes
+56	```
+57	go test ./...
+58	
+59	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+60	ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s
+61	```
+62	
+63	## Files Changed
+64	
+65	Created:
+66	- `~/IdeaProjects/cc-what-have-i-done/internal/model/model.go` (85 lines)
+67	- `~/IdeaProjects/cc-what-have-i-done/internal/model/model_test.go` (24 lines)
+68	
+69	## Git Commit
+70	
+71	Commit: `7b11575` — &#34;feat: add domain model types&#34;
+72	
+73	All code follows the brief exactly. No deviations. No manual edits required.
+74	
+75	## Self-Review
+76	
+77	✓ All domain types match brief specification exactly  
+78	✓ Constants for enums (TurnKind, BlockType) defined correctly  
+79	✓ Both methods (Duration, DisplayTitle) implemented correctly  
+80	✓ Test structure matches brief exactly  
+81	✓ TDD discipline followed: RED → GREEN → COMMIT  
+82	✓ All tests pass; full suite passes; no regressions  
+83	✓ Commit message includes co-author attribution as required  
+84	✓ Package import path correct: `github.com/saigyo/cc-what-have-i-done/internal/model`  
+85	
+86	## Concerns
+87	
+88	None. Implementation is clean, follows the brief precisely, all tests pass, and the code is ready for downstream tasks.
+89	
+90	---
+91	
+92	**Status:** DONE  
+93	**Test Summary:** 2/2 tests pass; full suite passes (0 regressions)  
+94	**Commit:** 7b11575 feat: add domain model types
+95	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- # Task 2: Domain Model Types — Implementation Report</div><div class="diff-del">- </div><div class="diff-del">- ## Summary</div><div class="diff-del">- </div><div class="diff-del">- Successfully implemented the shared domain model types for the `ccwhid` CLI, following TDD discipline with failing tests, green implementation, and full test suite verification.</div><div class="diff-del">- </div><div class="diff-del">- ## What Was Implemented</div><div class="diff-del">- </div><div class="diff-del">- Created two files in `internal/model/`:</div><div class="diff-del">- </div><div class="diff-del">- 1. **`model.go`** — Complete domain type definitions:</div><div class="diff-del">-    - `Session` struct with fields: ID, ProjectPath, Title, GitBranch, Version, StartedAt, EndedAt, Turns, SkippedLines</div><div class="diff-del">-    - `Turn` struct with Kind (TurnKind), Timestamp, and Blocks</div><div class="diff-del">-    - `Block` struct for content units (text, thinking, tool use)</div><div class="diff-del">-    - `ToolCall` struct with ID, Name, Summary, InputJSON, Result, Diff, and Subagents</div><div class="diff-del">-    - `ToolResult` struct with Content and IsError flag</div><div class="diff-del">-    - `Diff` struct for tracking file changes (Path, OldText, NewText)</div><div class="diff-del">-    - `Subagent` struct for nested sidechain runs</div><div class="diff-del">-    - Constants for `TurnKind` (TurnUser, TurnAssistant) and `BlockType` (BlockText, BlockThinking, BlockToolUse)</div><div class="diff-del">-    - Two methods on Session:</div><div class="diff-del">-      - `Duration()` — returns EndedAt.Sub(StartedAt)</div><div class="diff-del">-      - `DisplayTitle()` — returns Title or fallback &#34;Untitled session&#34;</div><div class="diff-del">- </div><div class="diff-del">- 2. **`model_test.go`** — Test coverage:</div><div class="diff-del">-    - `TestSessionDuration` — verifies 5-minute duration calculation</div><div class="diff-del">-    - `TestDisplayTitleFallback` — tests both title fallback and explicit title scenarios</div><div class="diff-del">- </div><div class="diff-del">- ## TDD Evidence</div><div class="diff-del">- </div><div class="diff-del">- ### RED: Test Fails (Step 2)</div><div class="diff-del">- ```</div><div class="diff-del">- go test ./internal/model/</div><div class="diff-del">- </div><div class="diff-del">- # output (expected failure):</div><div class="diff-del">- # github.com/saigyo/cc-what-have-i-done/internal/model [github.com/saigyo/cc-what-have-i-done/internal/model.test]</div><div class="diff-del">- internal/model/model_test.go:9:7: undefined: Session</div><div class="diff-del">- internal/model/model_test.go:19:13: undefined: Session</div><div class="diff-del">- internal/model/model_test.go:22:13: undefined: Session</div><div class="diff-del">- FAIL	github.com/saigyo/cc-what-have-i-done/internal/model [build failed]</div><div class="diff-del">- FAIL</div><div class="diff-del">- ```</div><div class="diff-del">- </div><div class="diff-del">- ### GREEN: Tests Pass (Step 4)</div><div class="diff-del">- ```</div><div class="diff-del">- go test ./internal/model/ -v</div><div class="diff-del">- </div><div class="diff-del">- === RUN   TestSessionDuration</div><div class="diff-del">- --- PASS: TestSessionDuration (0.00s)</div><div class="diff-del">- === RUN   TestDisplayTitleFallback</div><div class="diff-del">- --- PASS: TestDisplayTitleFallback (0.00s)</div><div class="diff-del">- PASS</div><div class="diff-del">- ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.285s</div><div class="diff-del">- ```</div><div class="diff-del">- </div><div class="diff-del">- ### Full Suite Passes</div><div class="diff-del">- ```</div><div class="diff-del">- go test ./...</div><div class="diff-del">- </div><div class="diff-del">- ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-del">- ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s</div><div class="diff-del">- ```</div><div class="diff-del">- </div><div class="diff-del">- ## Files Changed</div><div class="diff-del">- </div><div class="diff-del">- Created:</div><div class="diff-del">- - `~/IdeaProjects/cc-what-have-i-done/internal/model/model.go` (85 lines)</div><div class="diff-del">- - `~/IdeaProjects/cc-what-have-i-done/internal/model/model_test.go` (24 lines)</div><div class="diff-del">- </div><div class="diff-del">- ## Git Commit</div><div class="diff-del">- </div><div class="diff-del">- Commit: `7b11575` — &#34;feat: add domain model types&#34;</div><div class="diff-del">- </div><div class="diff-del">- All code follows the brief exactly. No deviations. No manual edits required.</div><div class="diff-del">- </div><div class="diff-del">- ## Self-Review</div><div class="diff-del">- </div><div class="diff-del">- ✓ All domain types match brief specification exactly  </div><div class="diff-del">- ✓ Constants for enums (TurnKind, BlockType) defined correctly  </div><div class="diff-del">- ✓ Both methods (Duration, DisplayTitle) implemented correctly  </div><div class="diff-del">- ✓ Test structure matches brief exactly  </div><div class="diff-del">- ✓ TDD discipline followed: RED → GREEN → COMMIT  </div><div class="diff-del">- ✓ All tests pass; full suite passes; no regressions  </div><div class="diff-del">- ✓ Commit message includes co-author attribution as required  </div><div class="diff-del">- ✓ Package import path correct: `github.com/saigyo/cc-what-have-i-done/internal/model`  </div><div class="diff-del">- </div><div class="diff-del">- ## Concerns</div><div class="diff-del">- </div><div class="diff-del">- None. Implementation is clean, follows the brief precisely, all tests pass, and the code is ready for downstream tasks.</div><div class="diff-del">- </div><div class="diff-del">- ---</div><div class="diff-del">- </div><div class="diff-del">- **Status:** DONE  </div><div class="diff-del">- **Test Summary:** 2/2 tests pass; full suite passes (0 regressions)  </div><div class="diff-del">- **Commit:** 7b11575 feat: add domain model types</div><div class="diff-add">+ # Task 2: Embedded Price Table — Implementation Report</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status</div><div class="diff-add">+ **COMPLETE** — All steps executed per brief spec. TDD cycle complete (RED → GREEN), build passes, formatting verified.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Implementation Summary</div><div class="diff-add">+ </div><div class="diff-add">+ ### Files Created</div><div class="diff-add">+ 1. `internal/usage/prices.json` — Embedded price data for 10 Claude models (Anthropic list prices 2026-07)</div><div class="diff-add">+ 2. `internal/usage/pricing.go` — Price lookup implementation with date-suffix stripping</div><div class="diff-add">+ 3. `internal/usage/pricing_test.go` — Four test cases covering lookup, date-suffix handling, unknown models</div><div class="diff-add">+ </div><div class="diff-add">+ ### Exported Interfaces</div><div class="diff-add">+ - `type Price struct { Input, Output float64 }` — Per-million-token USD rates</div><div class="diff-add">+ - `func Lookup(modelID string) (Price, bool)` — Model price lookup with date-suffix fallback</div><div class="diff-add">+ - `const PricesAsOf = &#34;2026-07&#34;` — Pricing data month for reporting</div><div class="diff-add">+ - Unexported constants: `cacheWrite5mMult=1.25`, `cacheWrite1hMult=2.0`, `cacheReadMult=0.1`</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Lifecycle Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 1-2: Data + Tests (Before Implementation)</div><div class="diff-add">+ Created `prices.json` with 10 models and exact prices from brief.</div><div class="diff-add">+ Created `pricing_test.go` with 4 test cases.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 3: RED Phase</div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/usage/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (FAIL — Expected):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/usage [github.com/saigyo/cc-what-have-i-done/internal/usage.test]</div><div class="diff-add">+ internal/usage/pricing_test.go:6:11: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:16:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:22:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:25:14: undefined: Lookup</div><div class="diff-add">+ internal/usage/pricing_test.go:31:5: undefined: PricesAsOf</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/usage [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 4: Implementation</div><div class="diff-add">+ Created `pricing.go` with:</div><div class="diff-add">+ - Package doc comment (computes token totals and estimated cost)</div><div class="diff-add">+ - Embedded `prices.json` via `go:embed`</div><div class="diff-add">+ - `PricesAsOf` constant set to &#34;2026-07&#34;</div><div class="diff-add">+ - Cache multiplier constants (unexported)</div><div class="diff-add">+ - `Price` struct with JSON tags</div><div class="diff-add">+ - `init()` function to unmarshal prices</div><div class="diff-add">+ - `Lookup(modelID string)` function with date-suffix stripping fallback</div><div class="diff-add">+ - Helper `stripDateSuffix(id string)` function</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 5: GREEN Phase</div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/usage/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output (PASS — Verified):**</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestLookupKnownModel</div><div class="diff-add">+ --- PASS: TestLookupKnownModel (0.00s)</div><div class="diff-add">+ === RUN   TestLookupStripsDateSuffix</div><div class="diff-add">+ --- PASS: TestLookupStripsDateSuffix (0.00s)</div><div class="diff-add">+ === RUN   TestLookupUnknownAndSynthetic</div><div class="diff-add">+ --- PASS: TestLookupUnknownAndSynthetic (0.00s)</div><div class="diff-add">+ === RUN   TestPricesAsOfSet</div><div class="diff-add">+ --- PASS: TestPricesAsOfSet (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.300s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Step 6: Build &amp; Format Verification</div><div class="diff-add">+ ```</div><div class="diff-add">+ go build ./... &amp;&amp; gofmt -l internal</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Output:** (No output — build succeeds, no formatting issues)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ git add internal/usage/pricing.go internal/usage/prices.json internal/usage/pricing_test.go</div><div class="diff-add">+ git commit -m &#34;feat(usage): embedded model price table with lookup&#34;</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Commit Details:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ Commit: 08d3928a798e799f564e200e94f9584f189c70be</div><div class="diff-add">+ Author: Markus Ackermann &lt;markus@kaixo.de&gt;</div><div class="diff-add">+ Date:   Sun Jul 12 08:03:24 2026 +0200</div><div class="diff-add">+ </div><div class="diff-add">+  internal/usage/prices.json     | 12 +++</div><div class="diff-add">+  internal/usage/pricing.go      | 68 ++++++++++++++++++</div><div class="diff-add">+  internal/usage/pricing_test.go | 34 +++++++++</div><div class="diff-add">+  3 files changed, 114 insertions(+)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Data Accuracy:** All 10 models and prices match brief exactly (e.g., claude-opus-4-8: input=5, output=25)</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Interface Compliance:**</div><div class="diff-add">+   - `Price{Input, Output float64}` ✓</div><div class="diff-add">+   - `Lookup(modelID string) (Price, bool)` ✓</div><div class="diff-add">+   - `const PricesAsOf` ✓</div><div class="diff-add">+   - Unexported cache multipliers (`cacheWrite5mMult`, `cacheWrite1hMult`, `cacheReadMult`) ✓</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Date-Suffix Stripping:** `stripDateSuffix` correctly:</div><div class="diff-add">+   - Checks minimum length (9 chars for &#34;-YYYYMMDD&#34;)</div><div class="diff-add">+   - Validates leading dash at position `len(id)-9`</div><div class="diff-add">+   - Validates all 8 trailing chars are digits</div><div class="diff-add">+   - Returns original id if pattern doesn&#39;t match</div><div class="diff-add">+   - Strips correctly when valid (verified by TestLookupStripsDateSuffix)</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Unpriced Models:** `&lt;synthetic&gt;` and unknown models (e.g., &#34;gpt-4&#34;) return `(Price{}, false)` ✓</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Package Style:**</div><div class="diff-add">+   - Package doc comment present and descriptive</div><div class="diff-add">+   - Code follows Go idioms (error handling, variable naming, structure)</div><div class="diff-add">+   - All code formatted per gofmt</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Embedding:** `//go:embed prices.json` correctly embeds prices.json for distribution without external file dependency</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ **Test Coverage:** All four test cases pass:</div><div class="diff-add">+   - Known model lookup</div><div class="diff-add">+   - Date-suffix stripping fallback</div><div class="diff-add">+   - Unknown/synthetic rejection</div><div class="diff-add">+   - PricesAsOf constant presence</div><div class="diff-add">+ </div><div class="diff-add">+ ## No Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ - All steps completed per brief specification</div><div class="diff-add">+ - No ambiguities encountered</div><div class="diff-add">+ - No blocking issues</div><div class="diff-add">+ - Ready for Task 3 (cost computation) which will depend on these exported types and functions</div><div class="diff-add">+ </div><div class="diff-add">+ ---</div><div class="diff-add">+ </div><div class="diff-add">+ **Task 2 Complete** — 2026-07-12</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/internal/usage/">
+      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/&#34;
+}</pre><pre class="tool-result">total 24
+drwxr-xr-x@ 5 markus  staff   160 12 Juli 08:03 .
+drwxr-xr-x@ 9 markus  staff   288 12 Juli 08:02 ..
+-rw-r--r--@ 1 markus  staff   542 12 Juli 08:02 prices.json
+-rw-r--r--@ 1 markus  staff   766 12 Juli 08:02 pricing_test.go
+-rw-r--r--@ 1 markus  staff  1699 12 Juli 08:03 pricing.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="bash go test ./internal/usage/ -v 2&gt;&amp;1 | tail -10">
+      <div class="turn-role">Claude<span class="usage-badge">137 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/usage/ -v 2&gt;&amp;1 | tail -10</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/usage/ -v 2\u003e\u00261 | tail -10&#34;
+}</pre><pre class="tool-result">=== RUN   TestLookupKnownModel
+--- PASS: TestLookupKnownModel (0.00s)
+=== RUN   TestLookupStripsDateSuffix
+--- PASS: TestLookupStripsDateSuffix (0.00s)
+=== RUN   TestLookupUnknownAndSynthetic
+--- PASS: TestLookupUnknownAndSynthetic (0.00s)
+=== RUN   TestPricesAsOfSet
+--- PASS: TestPricesAsOfSet (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="## task 2 complete
+
+**status:** complete
+- all tdd steps executed (red → green → commit)
+- build passes; formatting verified
+- all 4 tests passing
+
+**commit:**
+- `08d3928` feat(usage): embedded model price table with lookup
+
+**test summary:**
+- 4/4 tests pass (testlookupknownmodel, testlookupstripsdatesuffix, testlookupunknownandsynthetic, testpricesasofset)
+
+**concerns:**
+- none. all interfaces match brief spec exactly. ready for task 3.
+
+**report:**
+- `~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md`">
+      <div class="turn-role">Claude<span class="usage-badge">265 tok · ~&lt;$0.01</span></div>
+      <div class="turn-body"><h2>Task 2 Complete</h2>
+<p><strong>Status:</strong> COMPLETE</p>
+<ul>
+<li>All TDD steps executed (RED → GREEN → COMMIT)</li>
+<li>Build passes; formatting verified</li>
+<li>All 4 tests passing</li>
+</ul>
+<p><strong>Commit:</strong></p>
+<ul>
+<li><code>08d3928</code> feat(usage): embedded model price table with lookup</li>
+</ul>
+<p><strong>Test Summary:</strong></p>
+<ul>
+<li>4/4 tests pass (TestLookupKnownModel, TestLookupStripsDateSuffix, TestLookupUnknownAndSynthetic, TestPricesAsOfSet)</li>
+</ul>
+<p><strong>Concerns:</strong></p>
+<ul>
+<li>None. All interfaces match brief spec exactly. Ready for Task 3.</li>
+</ul>
+<p><strong>Report:</strong></p>
+<ul>
+<li><code>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</code></li>
+</ul>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review TUI redesign change · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are performing a focused code review of a single commit…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review TUI redesign change</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 16:47</span>
+        <span>10 turns</span>
+        <span>general-purpose · agent-ad1bfe0b3beb4138b</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 12k in+out · ~$0.56 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-opus-4-8</td><td>9k</td><td>3k</td><td>159k</td><td>57k</td><td>$0.56</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>3k</td><td>159k</td><td>57k</td><td>$0.56</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are performing a focused code review of a single commit in a go cli project (`ccwhid`, module github.com/saigyo/cc-what-have-i-done). the commit reworks the interactive tui and fixes a `--project` flag. your job: find real defects — correctness bugs, edge cases, logic errors, security issues, test gaps — and verify each against the actual code. do not nitpick style. report only issues you can substantiate.
+
+## the change under review
+read the review package (commit list, stat, full diff with context):
+`/private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt`
+
+then read the current full files as needed to verify (do not trust the diff alone):
+- ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go
+- ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go
+- ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go
+- ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go
+- ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go
+- ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go
+
+## what the change is supposed to do (the spec for this change)
+1. tui is now two-level: a scrollable **project list**, then a scrollable per-project **session list**. both viewports must size to the terminal (via tea.windowsizemsg) and scroll to keep the cursor visible. navigation: enter/→ descends, ←/esc ascends, q/ctrl&#43;c quits. an **options** screen (subagents/redact/open/generate toggles) follows session selection — unchanged behavior.
+2. agent-spawned transcripts (claude code writes task subagents / code-review agents as their own top-level .jsonl files) must be distinguished from interactive human sessions. classification: a session is an agent session if its first record carrying `entrypoint` has an &#34;sdk&#34;-prefixed value, or any user/assistant record has `promptsource == &#34;sdk&#34;`. in the session list, agent sessions are hidden by default; pressing `a` toggles showing all (and hiding again).
+3. `--project` was previously ignored unless combined with `--latest`. now: `--project &lt;name&gt;` alone opens the tui focused on the matched project&#39;s session list; combined with `--latest` it scopes latest. matching is via discovery.findproject: exact absolute path, else case-insensitive basename, else case-insensitive unambiguous substring of the path; ambiguous or no match is an error.
+4. `--latest` now skips agent transcripts and targets the newest interactive session (in or out of a project scope).
+
+## verify especially (think hard about these — they are where bugs hide)
+- **scroll math** (`clampscroll` in tui.go and its callers): off-by-one at boundaries; behavior when the list shrinks (e.g. toggling &#39;a&#39; to a shorter root-only list while scrolled down); behavior when visible &gt;= list length; the `if max := n - visible; top &gt; max &amp;&amp; max &gt;= 0` clause — is it correct and can it produce a negative or wrong top? consider n=0.
+- **windowsizemsg ordering**: before the first windowsizemsg arrives, height defaults to 20. does scroll stay correct if keys arrive before any size msg? does listheight() ever return &lt;1?
+- **empty states**: a project with zero root sessions (all agents) with showall=false → sessions is empty. does `enter`/`right` guard against index panic? does `viewsessions` avoid slicing panics? does `refreshsessions` handle sesscursor when the new list is empty (max(0, -1) style)?
+- **agent classification** in discovery.indexfile: is `entrypointset` logic correct if the first entrypoint-bearing record is an agent but a later record has promptsource != sdk? can a genuine cli session be misclassified, or an agent session missed? what if entrypoint is absent entirely but promptsource==&#34;sdk&#34;? what about a session file with no user/assistant records (only queue-operation etc.)?
+- **findproject**: exact-path precedence vs. basename vs substring; the ambiguity detection — can it return a match when it should error, or error when exactly one match exists? case handling.
+- **run.go latestsession**: `groups = groups[idx:idx&#43;1]` slice after findproject — bounds safe? interaction with the root-session skip loop when the scoped project has only agent sessions (should error &#34;no sessions found&#34;).
+- **main.go**: focusidx wiring; when `--project` matches but the group has zero root sessions, the tui opens on an empty (root-only) session list — is that acceptable and non-crashing? (it should show the &#34;press a&#34; hint.)
+- **test quality**: do the new tests actually assert meaningful behavior, or are any vacuous? is there a gap for any of the above risks that a cheap test would close?
+
+## how to report
+classify each finding as critical / important / minor. for each: file:line, what&#39;s wrong, a concrete failure scenario (inputs → wrong result/panic), and a suggested fix. if you find nothing above minor, say so plainly. be precise and do not invent issues to seem thorough. you may run `go test ./...`, `go vet ./...`, and `go build ./...` from ~/ideaprojects/cc-what-have-i-done to confirm hypotheses. return your review as your final message (it is consumed by the controller, not shown to a human — be concise and structured).">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are performing a focused code review of a single commit in a Go CLI project (<code>ccwhid</code>, module github.com/saigyo/cc-what-have-i-done). The commit reworks the interactive TUI and fixes a <code>--project</code> flag. Your job: find real defects — correctness bugs, edge cases, logic errors, security issues, test gaps — and verify each against the actual code. Do NOT nitpick style. Report only issues you can substantiate.</p>
+<h2>The change under review</h2>
+<p>Read the review package (commit list, stat, full diff with context):
+<code>/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</code></p>
+<p>Then read the current full files as needed to verify (do not trust the diff alone):</p>
+<ul>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</li>
+</ul>
+<h2>What the change is supposed to do (the spec for this change)</h2>
+<ol>
+<li>TUI is now two-level: a scrollable <strong>project list</strong>, then a scrollable per-project <strong>session list</strong>. Both viewports must size to the terminal (via tea.WindowSizeMsg) and scroll to keep the cursor visible. Navigation: enter/→ descends, ←/esc ascends, q/ctrl+c quits. An <strong>options</strong> screen (subagents/redact/open/generate toggles) follows session selection — unchanged behavior.</li>
+<li>Agent-spawned transcripts (Claude Code writes Task subagents / code-review agents as their own top-level .jsonl files) must be distinguished from interactive human sessions. Classification: a session is an agent session if its first record carrying <code>entrypoint</code> has an &quot;sdk&quot;-prefixed value, OR any user/assistant record has <code>promptSource == &quot;sdk&quot;</code>. In the session list, agent sessions are hidden by default; pressing <code>a</code> toggles showing all (and hiding again).</li>
+<li><code>--project</code> was previously ignored unless combined with <code>--latest</code>. Now: <code>--project &lt;name&gt;</code> alone opens the TUI focused on the matched project's session list; combined with <code>--latest</code> it scopes latest. Matching is via discovery.FindProject: exact absolute path, else case-insensitive basename, else case-insensitive unambiguous substring of the path; ambiguous or no match is an error.</li>
+<li><code>--latest</code> now skips agent transcripts and targets the newest interactive session (in or out of a project scope).</li>
+</ol>
+<h2>Verify especially (think hard about these — they are where bugs hide)</h2>
+<ul>
+<li><strong>Scroll math</strong> (<code>clampScroll</code> in tui.go and its callers): off-by-one at boundaries; behavior when the list shrinks (e.g. toggling 'a' to a shorter root-only list while scrolled down); behavior when visible &gt;= list length; the <code>if max := n - visible; top &gt; max &amp;&amp; max &gt;= 0</code> clause — is it correct and can it produce a negative or wrong top? Consider n=0.</li>
+<li><strong>WindowSizeMsg ordering</strong>: before the first WindowSizeMsg arrives, height defaults to 20. Does scroll stay correct if keys arrive before any size msg? Does listHeight() ever return &lt;1?</li>
+<li><strong>Empty states</strong>: a project with zero root sessions (all agents) with showAll=false → sessions is empty. Does <code>enter</code>/<code>right</code> guard against index panic? Does <code>viewSessions</code> avoid slicing panics? Does <code>refreshSessions</code> handle sessCursor when the new list is empty (max(0, -1) style)?</li>
+<li><strong>Agent classification</strong> in discovery.indexFile: is <code>entrypointSet</code> logic correct if the first entrypoint-bearing record is an agent but a later record has promptSource != sdk? Can a genuine cli session be misclassified, or an agent session missed? What if entrypoint is absent entirely but promptSource==&quot;sdk&quot;? What about a session file with NO user/assistant records (only queue-operation etc.)?</li>
+<li><strong>FindProject</strong>: exact-path precedence vs. basename vs substring; the ambiguity detection — can it return a match when it should error, or error when exactly one match exists? Case handling.</li>
+<li><strong>run.go latestSession</strong>: <code>groups = groups[idx:idx+1]</code> slice after FindProject — bounds safe? Interaction with the root-session skip loop when the scoped project has only agent sessions (should error &quot;no sessions found&quot;).</li>
+<li><strong>main.go</strong>: focusIdx wiring; when <code>--project</code> matches but the group has zero root sessions, the TUI opens on an empty (root-only) session list — is that acceptable and non-crashing? (It should show the &quot;press a&quot; hint.)</li>
+<li><strong>Test quality</strong>: do the new tests actually assert meaningful behavior, or are any vacuous? Is there a gap for any of the above risks that a cheap test would close?</li>
+</ul>
+<h2>How to report</h2>
+<p>Classify each finding as Critical / Important / Minor. For each: file:line, what's wrong, a concrete failure scenario (inputs → wrong result/panic), and a suggested fix. If you find nothing above Minor, say so plainly. Be precise and do not invent issues to seem thorough. You may run <code>go test ./...</code>, <code>go vet ./...</code>, and <code>go build ./...</code> from ~/IdeaProjects/cc-what-have-i-done to confirm hypotheses. Return your review as your final message (it is consumed by the controller, not shown to a human — be concise and structured).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read /private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt&#34;
+}</pre><pre class="tool-result">1	=== COMMIT ===
+2	0f130bc feat(tui): two-level scrollable browser + root-session filter; fix --project
+3	
+4	=== STAT ===
+5	 README.md                            |  20 ++-
+6	 cmd/ccwhid/main.go                   |   9 +-
+7	 cmd/ccwhid/run.go                    |  26 +--
+8	 internal/discovery/discovery.go      |  89 +++++++++-
+9	 internal/discovery/discovery_test.go |  63 +++++++
+10	 internal/tui/tui.go                  | 317 ++++++++++++++++++++++++++---------
+11	 internal/tui/tui_test.go             | 143 ++++++++++++++--
+12	 7 files changed, 552 insertions(+), 115 deletions(-)
+13	
+14	=== DIFF (U10) ===
+15	diff --git a/README.md b/README.md
+16	index 3c8de97..b2e77a3 100644
+17	--- a/README.md
+18	+++ b/README.md
+19	@@ -24,27 +24,43 @@ go build -o ccwhid ./cmd/ccwhid
+20	 ```bash
+21	 ccwhid                      # browse sessions in an interactive TUI
+22	 ccwhid --latest             # render the most recent session
+23	 ccwhid --session &lt;id&gt;       # render a specific session (id or prefix)
+24	 ccwhid --session &lt;id&gt; --open
+25	 ```
+26	 
+27	 The report is written to `./ccwhid-report/&lt;session-short&gt;/` by default (override
+28	 with `--out`). Open `index.html` in any browser — no server needed.
+29	 
+30	+### Browsing sessions
+31	+
+32	+Run `ccwhid` with no selector to open the interactive browser:
+33	+
+34	+- **Project list** — every project with sessions, most-recent first. `↑`/`↓`
+35	+  to move, `enter` (or `→`) to open a project, `q` to quit.
+36	+- **Session list** — the chosen project&#39;s sessions. `enter` selects, `←` (or
+37	+  `esc`) returns to the project list.
+38	+- Both lists **scroll** to fit any terminal size.
+39	+- By default only your **interactive sessions** are shown. Claude Code writes
+40	+  each Task subagent / code-review agent as its own transcript; press **`a`**
+41	+  in the session list to show (and hide) those agent sessions — they&#39;re marked
+42	+  with a `⟲`.
+43	+
+44	+`--project &lt;name&gt;` opens the browser directly on that project&#39;s session list.
+45	+
+46	 ### Flags
+47	 
+48	 | Flag | Description |
+49	 |------|-------------|
+50	 | `--session &lt;id&gt;` | Session id or unambiguous prefix to render |
+51	-| `--project &lt;path\|name&gt;` | Scope `--latest` to a project |
+52	-| `--latest` | Render the most recent session |
+53	+| `--project &lt;path\|name&gt;` | Scope `--latest` to a project, or open the TUI on it (matches full path, basename, or unambiguous substring) |
+54	+| `--latest` | Render the most recent interactive session (skips agent transcripts) |
+55	 | `--out &lt;dir&gt;` | Output directory |
+56	 | `--title &lt;str&gt;` | Override the report title |
+57	 | `--include-subagents` | Include subagent (Task) activity (default true; `--include-subagents=false` to omit) |
+58	 | `--no-redact` | Disable secret redaction |
+59	 | `--force` | Overwrite a non-empty output directory |
+60	 | `--open` | Open the report in a browser when done |
+61	 
+62	 ## Redaction
+63	 
+64	 By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
+65	diff --git a/cmd/ccwhid/main.go b/cmd/ccwhid/main.go
+66	index 44142d8..f5f2ea5 100644
+67	--- a/cmd/ccwhid/main.go
+68	+++ b/cmd/ccwhid/main.go
+69	@@ -56,21 +56,28 @@ func run(cmd *cobra.Command, opts *options) error {
+70	 	}
+71	 	si, needTUI, err := resolveSession(opts, root)
+72	 	if err != nil {
+73	 		return err
+74	 	}
+75	 	if needTUI {
+76	 		groups, err := discovery.Scan(root)
+77	 		if err != nil {
+78	 			return err
+79	 		}
+80	-		sel, err := tui.Run(groups)
+81	+		focusIdx := -1
+82	+		if opts.project != &#34;&#34; {
+83	+			focusIdx, err = discovery.FindProject(groups, opts.project)
+84	+			if err != nil {
+85	+				return err
+86	+			}
+87	+		}
+88	+		sel, err := tui.Run(groups, focusIdx)
+89	 		if err != nil {
+90	 			return err
+91	 		}
+92	 		if sel.Canceled {
+93	 			fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+94	 			return nil
+95	 		}
+96	 		si = sel.Session
+97	 		opts.includeSubagents = sel.IncludeSubagents
+98	 		opts.noRedact = !sel.Redact
+99	diff --git a/cmd/ccwhid/run.go b/cmd/ccwhid/run.go
+100	index 6229941..9fd10d8 100644
+101	--- a/cmd/ccwhid/run.go
+102	+++ b/cmd/ccwhid/run.go
+103	@@ -1,19 +1,18 @@
+104	 package main
+105	 
+106	 import (
+107	 	&#34;fmt&#34;
+108	 	&#34;os&#34;
+109	 	&#34;os/exec&#34;
+110	 	&#34;path/filepath&#34;
+111	 	&#34;runtime&#34;
+112	-	&#34;strings&#34;
+113	 
+114	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+115	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+116	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+117	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+118	 )
+119	 
+120	 func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+121	 	if opts.out != &#34;&#34; {
+122	 		return opts.out
+123	@@ -32,42 +31,45 @@ func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, er
+124	 	case opts.session != &#34;&#34;:
+125	 		si, err := discovery.FindSession(root, opts.session)
+126	 		return si, false, err
+127	 	case opts.latest:
+128	 		return latestSession(opts, root)
+129	 	default:
+130	 		return discovery.SessionInfo{}, true, nil
+131	 	}
+132	 }
+133	 
+134	+// latestSession returns the most recent interactive (non-agent) session,
+135	+// optionally scoped to a project. Agent-spawned transcripts are skipped so
+136	+// --latest targets the user&#39;s own sessions.
+137	 func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+138	 	groups, err := discovery.Scan(root)
+139	 	if err != nil {
+140	 		return discovery.SessionInfo{}, false, err
+141	 	}
+142	-	for _, g := range groups {
+143	-		if opts.project != &#34;&#34; &amp;&amp; !matchProject(g, opts.project) {
+144	-			continue
+145	+	if opts.project != &#34;&#34; {
+146	+		idx, err := discovery.FindProject(groups, opts.project)
+147	+		if err != nil {
+148	+			return discovery.SessionInfo{}, false, err
+149	 		}
+150	-		if len(g.Sessions) &gt; 0 {
+151	-			return g.Sessions[0], false, nil
+152	+		groups = groups[idx : idx+1]
+153	+	}
+154	+	for _, g := range groups {
+155	+		for _, s := range g.Sessions {
+156	+			if !s.IsAgent {
+157	+				return s, false, nil
+158	+			}
+159	 		}
+160	 	}
+161	 	return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+162	 }
+163	 
+164	-func matchProject(g discovery.ProjectGroup, want string) bool {
+165	-	return g.ProjectPath == want ||
+166	-		strings.EqualFold(filepath.Base(g.ProjectPath), want) ||
+167	-		strings.Contains(g.ProjectPath, want)
+168	-}
+169	-
+170	 // generate parses, redacts, and renders a session, returning the output dir.
+171	 func generate(opts *options, si discovery.SessionInfo) (string, error) {
+172	 	outDir := resolveOutDir(opts, si)
+173	 	if err := ensureOutDir(outDir, opts.force); err != nil {
+174	 		return &#34;&#34;, err
+175	 	}
+176	 	sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+177	 		IncludeSubagents: opts.includeSubagents,
+178	 	})
+179	 	if err != nil {
+180	diff --git a/internal/discovery/discovery.go b/internal/discovery/discovery.go
+181	index 538ca04..f1b27f7 100644
+182	--- a/internal/discovery/discovery.go
+183	+++ b/internal/discovery/discovery.go
+184	@@ -18,20 +18,25 @@ import (
+185	 type SessionInfo struct {
+186	 	ID           string
+187	 	FilePath     string
+188	 	ProjectDir   string // encoded directory name
+189	 	ProjectPath  string // decoded absolute path
+190	 	Title        string
+191	 	FirstPrompt  string
+192	 	ModTime      time.Time
+193	 	MessageCount int
+194	 	HasSubagents bool
+195	+	// IsAgent reports that this transcript was produced by an SDK/agent
+196	+	// invocation (e.g. a Task subagent or code-review agent) rather than an
+197	+	// interactive human session. Such sessions get their own top-level
+198	+	// transcript files and are hidden from the default listing.
+199	+	IsAgent bool
+200	 }
+201	 
+202	 // ProjectGroup groups a project&#39;s sessions.
+203	 type ProjectGroup struct {
+204	 	ProjectDir  string
+205	 	ProjectPath string
+206	 	Sessions    []SessionInfo
+207	 }
+208	 
+209	 // EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+210	@@ -55,26 +60,28 @@ func DecodeProjectDir(name string) string {
+211	 func DefaultRoot() (string, error) {
+212	 	home, err := os.UserHomeDir()
+213	 	if err != nil {
+214	 		return &#34;&#34;, err
+215	 	}
+216	 	return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+217	 }
+218	 
+219	 // scanLine is the subset of fields needed to index a session cheaply.
+220	 type scanLine struct {
+221	-	Type        string          `json:&#34;type&#34;`
+222	-	AiTitle     string          `json:&#34;aiTitle&#34;`
+223	-	IsSidechain bool            `json:&#34;isSidechain&#34;`
+224	-	Timestamp   string          `json:&#34;timestamp&#34;`
+225	-	Cwd         string          `json:&#34;cwd&#34;`
+226	-	Message     json.RawMessage `json:&#34;message&#34;`
+227	+	Type         string          `json:&#34;type&#34;`
+228	+	AiTitle      string          `json:&#34;aiTitle&#34;`
+229	+	IsSidechain  bool            `json:&#34;isSidechain&#34;`
+230	+	Timestamp    string          `json:&#34;timestamp&#34;`
+231	+	Cwd          string          `json:&#34;cwd&#34;`
+232	+	Entrypoint   string          `json:&#34;entrypoint&#34;`
+233	+	PromptSource string          `json:&#34;promptSource&#34;`
+234	+	Message      json.RawMessage `json:&#34;message&#34;`
+235	 }
+236	 
+237	 // indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+238	 func indexFile(path, projectDir string) (SessionInfo, error) {
+239	 	f, err := os.Open(path)
+240	 	if err != nil {
+241	 		return SessionInfo{}, err
+242	 	}
+243	 	defer f.Close()
+244	 
+245	@@ -87,35 +94,46 @@ func indexFile(path, projectDir string) (SessionInfo, error) {
+246	 		ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+247	 		FilePath:    path,
+248	 		ProjectDir:  projectDir,
+249	 		ProjectPath: DecodeProjectDir(projectDir),
+250	 		ModTime:     fi.ModTime(),
+251	 	}
+252	 
+253	 	sc := bufio.NewScanner(f)
+254	 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+255	 	cwdSet := false
+256	+	entrypointSet := false
+257	 	for sc.Scan() {
+258	 		var l scanLine
+259	 		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+260	 			continue // tolerate malformed lines
+261	 		}
+262	 		switch l.Type {
+263	 		case &#34;ai-title&#34;:
+264	 			if l.AiTitle != &#34;&#34; {
+265	 				info.Title = l.AiTitle
+266	 			}
+267	 		case &#34;user&#34;, &#34;assistant&#34;:
+268	 			info.MessageCount++
+269	 			if l.IsSidechain {
+270	 				info.HasSubagents = true
+271	 			}
+272	+			// Classify origin: the first record carrying an entrypoint decides
+273	+			// it (interactive &#34;cli&#34;/IDE vs. &#34;sdk-*&#34;), and any prompt sourced
+274	+			// from the SDK confirms an agent-spawned transcript.
+275	+			if !entrypointSet &amp;&amp; l.Entrypoint != &#34;&#34; {
+276	+				info.IsAgent = strings.HasPrefix(l.Entrypoint, &#34;sdk&#34;)
+277	+				entrypointSet = true
+278	+			}
+279	+			if l.PromptSource == &#34;sdk&#34; {
+280	+				info.IsAgent = true
+281	+			}
+282	 			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+283	 				info.FirstPrompt = firstPromptText(l.Message)
+284	 			}
+285	 			if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {
+286	 				info.ProjectPath = l.Cwd
+287	 				cwdSet = true
+288	 			}
+289	 		}
+290	 	}
+291	 	if info.Title == &#34;&#34; {
+292	@@ -200,20 +218,79 @@ func Scan(root string) ([]ProjectGroup, error) {
+293	 			ProjectPath: sessions[0].ProjectPath,
+294	 			Sessions:    sessions,
+295	 		})
+296	 	}
+297	 	sort.Slice(groups, func(i, j int) bool {
+298	 		return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+299	 	})
+300	 	return groups, nil
+301	 }
+302	 
+303	+// RootSessions returns the group&#39;s interactive (non-agent) sessions, preserving
+304	+// order.
+305	+func (g ProjectGroup) RootSessions() []SessionInfo {
+306	+	out := make([]SessionInfo, 0, len(g.Sessions))
+307	+	for _, s := range g.Sessions {
+308	+		if !s.IsAgent {
+309	+			out = append(out, s)
+310	+		}
+311	+	}
+312	+	return out
+313	+}
+314	+
+315	+// AgentCount returns how many of the group&#39;s sessions were agent-spawned.
+316	+func (g ProjectGroup) AgentCount() int {
+317	+	n := 0
+318	+	for _, s := range g.Sessions {
+319	+		if s.IsAgent {
+320	+			n++
+321	+		}
+322	+	}
+323	+	return n
+324	+}
+325	+
+326	+// FindProject resolves a project selector (full path, basename, or unambiguous
+327	+// substring of the path) to an index into groups. It errors if nothing matches
+328	+// or the selector is ambiguous.
+329	+func FindProject(groups []ProjectGroup, want string) (int, error) {
+330	+	// 1. Exact absolute-path match.
+331	+	for i, g := range groups {
+332	+		if g.ProjectPath == want {
+333	+			return i, nil
+334	+		}
+335	+	}
+336	+	// 2. Case-insensitive basename match.
+337	+	var matches []int
+338	+	for i, g := range groups {
+339	+		if strings.EqualFold(filepath.Base(g.ProjectPath), want) {
+340	+			matches = append(matches, i)
+341	+		}
+342	+	}
+343	+	// 3. Fall back to a case-insensitive substring of the full path.
+344	+	if len(matches) == 0 {
+345	+		lw := strings.ToLower(want)
+346	+		for i, g := range groups {
+347	+			if strings.Contains(strings.ToLower(g.ProjectPath), lw) {
+348	+				matches = append(matches, i)
+349	+			}
+350	+		}
+351	+	}
+352	+	switch len(matches) {
+353	+	case 0:
+354	+		return -1, fmt.Errorf(&#34;no project matching %q&#34;, want)
+355	+	case 1:
+356	+		return matches[0], nil
+357	+	default:
+358	+		return -1, fmt.Errorf(&#34;ambiguous project %q matches %d projects&#34;, want, len(matches))
+359	+	}
+360	+}
+361	+
+362	 // DisplayLabel returns a human-friendly one-line label for a session.
+363	 func (s SessionInfo) DisplayLabel() string {
+364	 	if s.Title != &#34;&#34; {
+365	 		return s.Title
+366	 	}
+367	 	if s.FirstPrompt != &#34;&#34; {
+368	 		return s.FirstPrompt
+369	 	}
+370	 	return s.ID
+371	 }
+372	diff --git a/internal/discovery/discovery_test.go b/internal/discovery/discovery_test.go
+373	index 8c9a4c1..4b23524 100644
+374	--- a/internal/discovery/discovery_test.go
+375	+++ b/internal/discovery/discovery_test.go
+376	@@ -113,18 +113,81 @@ func TestScanUsesTranscriptCwd(t *testing.T) {
+377	 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))
+378	 	}
+379	 	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+380	 		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)
+381	 	}
+382	 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {
+383	 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)
+384	 	}
+385	 }
+386	 
+387	+func TestScanClassifiesAgentSessions(t *testing.T) {
+388	+	root := t.TempDir()
+389	+	proj := filepath.Join(root, &#34;-tmp-projA&#34;)
+390	+	// Interactive session: entrypoint cli, no promptSource.
+391	+	writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,
+392	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;entrypoint&#34;:&#34;cli&#34;,&#34;cwd&#34;:&#34;/tmp/projA&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)
+393	+	// Agent session: entrypoint sdk-py + promptSource sdk.
+394	+	writeSession(t, proj, &#34;bbbb2222-0000-0000-0000-000000000000&#34;,
+395	+		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;review&#34;},&#34;entrypoint&#34;:&#34;sdk-py&#34;,&#34;promptSource&#34;:&#34;sdk&#34;,&#34;cwd&#34;:&#34;/tmp/projA&#34;,&#34;timestamp&#34;:&#34;2026-07-11T11:00:00Z&#34;}`)
+396	+	groups, err := Scan(root)
+397	+	if err != nil {
+398	+		t.Fatal(err)
+399	+	}
+400	+	byID := map[string]SessionInfo{}
+401	+	for _, s := range groups[0].Sessions {
+402	+		byID[s.ID[:4]] = s
+403	+	}
+404	+	if byID[&#34;aaaa&#34;].IsAgent {
+405	+		t.Error(&#34;cli session wrongly classified as agent&#34;)
+406	+	}
+407	+	if !byID[&#34;bbbb&#34;].IsAgent {
+408	+		t.Error(&#34;sdk session not classified as agent&#34;)
+409	+	}
+410	+	if got := groups[0].AgentCount(); got != 1 {
+411	+		t.Errorf(&#34;AgentCount = %d, want 1&#34;, got)
+412	+	}
+413	+	if got := len(groups[0].RootSessions()); got != 1 {
+414	+		t.Errorf(&#34;RootSessions = %d, want 1&#34;, got)
+415	+	}
+416	+}
+417	+
+418	+func TestFindProject(t *testing.T) {
+419	+	groups := []ProjectGroup{
+420	+		{ProjectPath: &#34;/Users/x/IdeaProjects/cc-what-have-i-done&#34;},
+421	+		{ProjectPath: &#34;/Users/x/IdeaProjects/other-app&#34;},
+422	+		{ProjectPath: &#34;/Users/x/Downloads/apparatus&#34;},
+423	+	}
+424	+	cases := []struct {
+425	+		want    string
+426	+		wantIdx int
+427	+		wantErr bool
+428	+	}{
+429	+		{&#34;/Users/x/IdeaProjects/other-app&#34;, 1, false}, // exact path
+430	+		{&#34;cc-what-have-i-done&#34;, 0, false},             // basename
+431	+		{&#34;OTHER-APP&#34;, 1, false},                       // basename, case-insensitive
+432	+		{&#34;Downloads&#34;, 2, false},                       // substring
+433	+		{&#34;nope&#34;, -1, true},                            // no match
+434	+		{&#34;IdeaProjects&#34;, -1, true},                    // ambiguous substring
+435	+	}
+436	+	for _, c := range cases {
+437	+		idx, err := FindProject(groups, c.want)
+438	+		if c.wantErr {
+439	+			if err == nil {
+440	+				t.Errorf(&#34;FindProject(%q) = %d, want error&#34;, c.want, idx)
+441	+			}
+442	+			continue
+443	+		}
+444	+		if err != nil || idx != c.wantIdx {
+445	+			t.Errorf(&#34;FindProject(%q) = %d, %v; want %d&#34;, c.want, idx, err, c.wantIdx)
+446	+		}
+447	+	}
+448	+}
+449	+
+450	 func TestDisplayLabel(t *testing.T) {
+451	 	if got := (SessionInfo{Title: &#34;T&#34;}).DisplayLabel(); got != &#34;T&#34; {
+452	 		t.Errorf(&#34;DisplayLabel = %q&#34;, got)
+453	 	}
+454	 	if got := (SessionInfo{ID: &#34;id&#34;}).DisplayLabel(); got != &#34;id&#34; {
+455	 		t.Errorf(&#34;DisplayLabel fallback = %q&#34;, got)
+456	 	}
+457	 }
+458	diff --git a/internal/tui/tui.go b/internal/tui/tui.go
+459	index 5f02b98..2ea6afc 100644
+460	--- a/internal/tui/tui.go
+461	+++ b/internal/tui/tui.go
+462	@@ -1,152 +1,225 @@
+463	 // Package tui provides an interactive session browser used when ccwhid is run
+464	-// with no selector flags.
+465	+// with no selector flags. It presents a two-level view: a scrollable list of
+466	+// projects, then a scrollable list of that project&#39;s sessions.
+467	 package tui
+468	 
+469	 import (
+470	 	&#34;fmt&#34;
+471	 	&#34;strings&#34;
+472	 
+473	 	tea &#34;github.com/charmbracelet/bubbletea&#34;
+474	 	&#34;github.com/charmbracelet/lipgloss&#34;
+475	 
+476	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+477	 )
+478	 
+479	-// Row is one line in the browser: either a project header or a session.
+480	-type Row struct {
+481	-	IsHeader bool
+482	-	Label    string
+483	-	Session  discovery.SessionInfo
+484	-}
+485	-
+486	 // Selection is the result of running the browser.
+487	 type Selection struct {
+488	 	Session          discovery.SessionInfo
+489	 	IncludeSubagents bool
+490	 	Redact           bool
+491	 	Open             bool
+492	 	OutDir           string
+493	 	Canceled         bool
+494	 }
+495	 
+496	-func flattenRows(groups []discovery.ProjectGroup) []Row {
+497	-	var rows []Row
+498	-	for _, g := range groups {
+499	-		rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})
+500	-		for _, s := range g.Sessions {
+501	-			rows = append(rows, Row{Session: s})
+502	-		}
+503	-	}
+504	-	return rows
+505	-}
+506	-
+507	-func firstSelectable(rows []Row) int {
+508	-	for i, r := range rows {
+509	-		if !r.IsHeader {
+510	-			return i
+511	-		}
+512	-	}
+513	-	return 0
+514	-}
+515	-
+516	 var (
+517	-	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;)).MarginTop(1)
+518	+	titleStyle    = lipgloss.NewStyle().Bold(true)
+519	+	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;))
+520	 	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+521	 	mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+522	 	optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+523	 )
+524	 
+525	 type screen int
+526	 
+527	 const (
+528	-	screenList screen = iota
+529	+	screenProjects screen = iota
+530	+	screenSessions
+531	 	screenOptions
+532	 )
+533	 
+534	+// reservedLines is how many rows the title and footer occupy, leaving the rest
+535	+// of the terminal height for the scrollable list body.
+536	+const reservedLines = 4
+537	+
+538	 type model struct {
+539	-	rows      []Row
+540	-	cursor    int
+541	-	screen    screen
+542	-	sel       Selection
+543	+	groups []discovery.ProjectGroup
+544	+
+545	+	// projects screen
+546	+	projCursor int
+547	+	projTop    int
+548	+
+549	+	// sessions screen
+550	+	groupIdx   int
+551	+	showAll    bool
+552	+	sessions   []discovery.SessionInfo // filtered view of groups[groupIdx]
+553	+	sessCursor int
+554	+	sessTop    int
+555	+
+556	+	// options screen
+557	 	optCursor int
+558	+
+559	+	screen screen
+560	+	sel    Selection
+561	+
+562	+	height int
+563	+	width  int
+564	 }
+565	 
+566	 func newModel(groups []discovery.ProjectGroup) model {
+567	-	rows := flattenRows(groups)
+568	 	return model{
+569	-		rows:   rows,
+570	-		cursor: firstSelectable(rows),
+571	+		groups: groups,
+572	+		screen: screenProjects,
+573	+		height: 20,
+574	+		width:  80,
+575	 		sel: Selection{
+576	 			IncludeSubagents: true,
+577	 			Redact:           true,
+578	 		},
+579	 	}
+580	 }
+581	 
+582	+// listHeight is the number of list rows visible in the current terminal.
+583	+func (m model) listHeight() int {
+584	+	h := m.height - reservedLines
+585	+	if h &lt; 1 {
+586	+		return 1
+587	+	}
+588	+	return h
+589	+}
+590	+
+591	 func (m model) Init() tea.Cmd { return nil }
+592	 
+593	 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+594	-	key, ok := msg.(tea.KeyMsg)
+595	-	if !ok {
+596	+	switch msg := msg.(type) {
+597	+	case tea.WindowSizeMsg:
+598	+		m.height = msg.Height
+599	+		m.width = msg.Width
+600	+		m.adjustProjScroll()
+601	+		m.adjustSessScroll()
+602	 		return m, nil
+603	+	case tea.KeyMsg:
+604	+		switch m.screen {
+605	+		case screenProjects:
+606	+			return m.updateProjects(msg)
+607	+		case screenSessions:
+608	+			return m.updateSessions(msg)
+609	+		default:
+610	+			return m.updateOptions(msg)
+611	+		}
+612	 	}
+613	-	switch m.screen {
+614	-	case screenList:
+615	-		return m.updateList(key)
+616	-	default:
+617	-		return m.updateOptions(key)
+618	-	}
+619	+	return m, nil
+620	 }
+621	 
+622	-func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+623	+// --- projects screen ---
+624	+
+625	+func (m model) updateProjects(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+626	 	switch key.String() {
+627	 	case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+628	 		m.sel.Canceled = true
+629	 		return m, tea.Quit
+630	 	case &#34;up&#34;, &#34;k&#34;:
+631	-		m.moveCursor(-1)
+632	+		if m.projCursor &gt; 0 {
+633	+			m.projCursor--
+634	+			m.adjustProjScroll()
+635	+		}
+636	 	case &#34;down&#34;, &#34;j&#34;:
+637	-		m.moveCursor(1)
+638	-	case &#34;enter&#34;:
+639	-		if !m.rows[m.cursor].IsHeader {
+640	-			m.sel.Session = m.rows[m.cursor].Session
+641	-			m.screen = screenOptions
+642	+		if m.projCursor &lt; len(m.groups)-1 {
+643	+			m.projCursor++
+644	+			m.adjustProjScroll()
+645	+		}
+646	+	case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+647	+		if len(m.groups) &gt; 0 {
+648	+			m.enterProject(m.projCursor)
+649	 		}
+650	 	}
+651	 	return m, nil
+652	 }
+653	 
+654	-func (m *model) moveCursor(delta int) {
+655	-	i := m.cursor
+656	-	for {
+657	-		i += delta
+658	-		if i &lt; 0 || i &gt;= len(m.rows) {
+659	-			return // out of bounds; keep current
+660	+func (m *model) adjustProjScroll() {
+661	+	m.projTop = clampScroll(m.projCursor, m.projTop, m.listHeight(), len(m.groups))
+662	+}
+663	+
+664	+func (m *model) enterProject(idx int) {
+665	+	m.groupIdx = idx
+666	+	m.showAll = false
+667	+	m.sessCursor = 0
+668	+	m.sessTop = 0
+669	+	m.refreshSessions()
+670	+	m.screen = screenSessions
+671	+}
+672	+
+673	+func (m *model) refreshSessions() {
+674	+	g := m.groups[m.groupIdx]
+675	+	if m.showAll {
+676	+		m.sessions = g.Sessions
+677	+	} else {
+678	+		m.sessions = g.RootSessions()
+679	+	}
+680	+	if m.sessCursor &gt;= len(m.sessions) {
+681	+		m.sessCursor = max(0, len(m.sessions)-1)
+682	+	}
+683	+	m.adjustSessScroll()
+684	+}
+685	+
+686	+// --- sessions screen ---
+687	+
+688	+func (m model) updateSessions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+689	+	switch key.String() {
+690	+	case &#34;ctrl+c&#34;, &#34;q&#34;:
+691	+		m.sel.Canceled = true
+692	+		return m, tea.Quit
+693	+	case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+694	+		m.screen = screenProjects
+695	+	case &#34;up&#34;, &#34;k&#34;:
+696	+		if m.sessCursor &gt; 0 {
+697	+			m.sessCursor--
+698	+			m.adjustSessScroll()
+699	+		}
+700	+	case &#34;down&#34;, &#34;j&#34;:
+701	+		if m.sessCursor &lt; len(m.sessions)-1 {
+702	+			m.sessCursor++
+703	+			m.adjustSessScroll()
+704	 		}
+705	-		if !m.rows[i].IsHeader {
+706	-			m.cursor = i
+707	-			return
+708	+	case &#34;a&#34;:
+709	+		m.showAll = !m.showAll
+710	+		m.sessCursor = 0
+711	+		m.sessTop = 0
+712	+		m.refreshSessions()
+713	+	case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+714	+		if len(m.sessions) &gt; 0 {
+715	+			m.sel.Session = m.sessions[m.sessCursor]
+716	+			m.optCursor = 0
+717	+			m.screen = screenOptions
+718	 		}
+719	 	}
+720	+	return m, nil
+721	+}
+722	+
+723	+func (m *model) adjustSessScroll() {
+724	+	m.sessTop = clampScroll(m.sessCursor, m.sessTop, m.listHeight(), len(m.sessions))
+725	 }
+726	 
+727	+// --- options screen ---
+728	+
+729	 // optionCount is the number of toggle rows plus the Generate action.
+730	 const optionCount = 4 // subagents, redact, open, generate
+731	 
+732	 func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+733	 	switch key.String() {
+734	 	case &#34;ctrl+c&#34;, &#34;q&#34;:
+735	 		m.sel.Canceled = true
+736	 		return m, tea.Quit
+737	-	case &#34;esc&#34;:
+738	-		m.screen = screenList
+739	+	case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+740	+		m.screen = screenSessions
+741	 	case &#34;up&#34;, &#34;k&#34;:
+742	 		if m.optCursor &gt; 0 {
+743	 			m.optCursor--
+744	 		}
+745	 	case &#34;down&#34;, &#34;j&#34;:
+746	 		if m.optCursor &lt; optionCount-1 {
+747	 			m.optCursor++
+748	 		}
+749	 	case &#34; &#34;, &#34;enter&#34;:
+750	 		switch m.optCursor {
+751	@@ -156,41 +229,109 @@ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+752	 			m.sel.Redact = !m.sel.Redact
+753	 		case 2:
+754	 			m.sel.Open = !m.sel.Open
+755	 		case 3:
+756	 			return m, tea.Quit
+757	 		}
+758	 	}
+759	 	return m, nil
+760	 }
+761	 
+762	+// clampScroll returns a scroll offset that keeps cursor within the visible
+763	+// window [top, top+visible) over a list of length n.
+764	+func clampScroll(cursor, top, visible, n int) int {
+765	+	if visible &lt; 1 {
+766	+		visible = 1
+767	+	}
+768	+	if cursor &lt; top {
+769	+		top = cursor
+770	+	}
+771	+	if cursor &gt;= top+visible {
+772	+		top = cursor - visible + 1
+773	+	}
+774	+	if top &lt; 0 {
+775	+		top = 0
+776	+	}
+777	+	// Don&#39;t scroll past the end when the list shrank.
+778	+	if max := n - visible; top &gt; max &amp;&amp; max &gt;= 0 {
+779	+		top = max
+780	+	}
+781	+	return top
+782	+}
+783	+
+784	 func (m model) View() string {
+785	-	if m.screen == screenOptions {
+786	+	switch m.screen {
+787	+	case screenProjects:
+788	+		return m.viewProjects()
+789	+	case screenSessions:
+790	+		return m.viewSessions()
+791	+	default:
+792	 		return m.viewOptions()
+793	 	}
+794	-	return m.viewList()
+795	 }
+796	 
+797	-func (m model) viewList() string {
+798	+func (m model) viewProjects() string {
+799	 	var b strings.Builder
+800	-	b.WriteString(&#34;Select a session  ↑/↓ move · enter select · q quit\n&#34;)
+801	-	for i, r := range m.rows {
+802	-		if r.IsHeader {
+803	-			b.WriteString(headerStyle.Render(r.Label) + &#34;\n&#34;)
+804	-			continue
+805	+	b.WriteString(titleStyle.Render(&#34;Select a project&#34;) +
+806	+		mutedStyle.Render(&#34;   ↑/↓ move · enter open · q quit&#34;) + &#34;\n\n&#34;)
+807	+	visible := m.listHeight()
+808	+	end := min(m.projTop+visible, len(m.groups))
+809	+	for i := m.projTop; i &lt; end; i++ {
+810	+		g := m.groups[i]
+811	+		roots := len(g.RootSessions())
+812	+		agents := g.AgentCount()
+813	+		count := fmt.Sprintf(&#34;%d session%s&#34;, roots, plural(roots))
+814	+		if agents &gt; 0 {
+815	+			count += fmt.Sprintf(&#34;, %d agent&#34;, agents)
+816	 		}
+817	-		line := fmt.Sprintf(&#34;  %s  %s&#34;, r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))
+818	-		if i == m.cursor {
+819	-			line = selectedStyle.Render(&#34;▸ &#34; + strings.TrimLeft(line, &#34; &#34;))
+820	+		label := headerStyle.Render(g.ProjectPath) + &#34;  &#34; + mutedStyle.Render(count)
+821	+		if i == m.projCursor {
+822	+			label = selectedStyle.Render(&#34;▸ &#34; + g.ProjectPath + &#34;  &#34; + count)
+823	+		} else {
+824	+			label = &#34;  &#34; + label
+825	+		}
+826	+		b.WriteString(label + &#34;\n&#34;)
+827	+	}
+828	+	b.WriteString(scrollHint(m.projTop, end, len(m.groups)))
+829	+	return b.String()
+830	+}
+831	+
+832	+func (m model) viewSessions() string {
+833	+	var b strings.Builder
+834	+	g := m.groups[m.groupIdx]
+835	+	b.WriteString(titleStyle.Render(&#34;Sessions in &#34;) + headerStyle.Render(g.ProjectPath) + &#34;\n&#34;)
+836	+	toggle := &#34;a show all&#34;
+837	+	if m.showAll {
+838	+		toggle = &#34;a root only&#34;
+839	+	}
+840	+	b.WriteString(mutedStyle.Render(&#34;↑/↓ move · enter select · ← back · &#34;+toggle+&#34; · q quit&#34;) + &#34;\n\n&#34;)
+841	+
+842	+	if len(m.sessions) == 0 {
+843	+		b.WriteString(mutedStyle.Render(&#34;  no interactive sessions here — press a to show agent sessions&#34;) + &#34;\n&#34;)
+844	+		return b.String()
+845	+	}
+846	+	visible := m.listHeight()
+847	+	end := min(m.sessTop+visible, len(m.sessions))
+848	+	for i := m.sessTop; i &lt; end; i++ {
+849	+		s := m.sessions[i]
+850	+		id := s.ID[:min(8, len(s.ID))]
+851	+		tag := &#34;&#34;
+852	+		if s.IsAgent {
+853	+			tag = mutedStyle.Render(&#34; ⟲&#34;)
+854	+		}
+855	+		line := fmt.Sprintf(&#34;  %s  %s%s&#34;, s.DisplayLabel(), mutedStyle.Render(id), tag)
+856	+		if i == m.sessCursor {
+857	+			line = selectedStyle.Render(&#34;▸ &#34;+s.DisplayLabel()+&#34;  &#34;+id) + tag
+858	 		}
+859	 		b.WriteString(line + &#34;\n&#34;)
+860	 	}
+861	+	b.WriteString(scrollHint(m.sessTop, end, len(m.sessions)))
+862	 	return b.String()
+863	 }
+864	 
+865	 func (m model) viewOptions() string {
+866	 	var b strings.Builder
+867	 	b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+868	 	toggles := []struct {
+869	 		label string
+870	 		on    bool
+871	 	}{
+872	@@ -215,24 +356,46 @@ func (m model) viewOptions() string {
+873	 	if m.optCursor == 3 {
+874	 		gen = optionStyle.Render(&#34;▸ &#34; + gen)
+875	 	} else {
+876	 		gen = &#34;  &#34; + gen
+877	 	}
+878	 	b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+879	 	b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)
+880	 	return b.String()
+881	 }
+882	 
+883	-// Run launches the browser and returns the user&#39;s selection.
+884	-func Run(groups []discovery.ProjectGroup) (Selection, error) {
+885	+// scrollHint renders a one-line position indicator when the list is scrolled or
+886	+// overflows the viewport.
+887	+func scrollHint(top, end, n int) string {
+888	+	if top == 0 &amp;&amp; end &gt;= n {
+889	+		return &#34;&#34;
+890	+	}
+891	+	return mutedStyle.Render(fmt.Sprintf(&#34;\n  %d–%d of %d&#34;, top+1, end, n))
+892	+}
+893	+
+894	+func plural(n int) string {
+895	+	if n == 1 {
+896	+		return &#34;&#34;
+897	+	}
+898	+	return &#34;s&#34;
+899	+}
+900	+
+901	+// Run launches the browser and returns the user&#39;s selection. If focusIdx is a
+902	+// valid index into groups, the browser opens directly on that project&#39;s session
+903	+// list; pass -1 to start on the project list.
+904	+func Run(groups []discovery.ProjectGroup, focusIdx int) (Selection, error) {
+905	 	if len(groups) == 0 {
+906	 		return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+907	 	}
+908	 	m := newModel(groups)
+909	-	p := tea.NewProgram(m)
+910	+	if focusIdx &gt;= 0 &amp;&amp; focusIdx &lt; len(groups) {
+911	+		m.projCursor = focusIdx
+912	+		m.enterProject(focusIdx)
+913	+	}
+914	+	p := tea.NewProgram(m, tea.WithAltScreen())
+915	 	res, err := p.Run()
+916	 	if err != nil {
+917	 		return Selection{}, err
+918	 	}
+919	 	fm := res.(model)
+920	 	return fm.sel, nil
+921	 }
+922	diff --git a/internal/tui/tui_test.go b/internal/tui/tui_test.go
+923	index c47bef4..2ee256e 100644
+924	--- a/internal/tui/tui_test.go
+925	+++ b/internal/tui/tui_test.go
+926	@@ -1,41 +1,150 @@
+927	 package tui
+928	 
+929	 import (
+930	 	&#34;testing&#34;
+931	 
+932	+	tea &#34;github.com/charmbracelet/bubbletea&#34;
+933	+
+934	 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+935	 )
+936	 
+937	-func TestFlattenRowsBuildsHeadersAndSessions(t *testing.T) {
+938	-	groups := []discovery.ProjectGroup{
+939	+func testGroups() []discovery.ProjectGroup {
+940	+	return []discovery.ProjectGroup{
+941	 		{
+942	 			ProjectPath: &#34;/tmp/projA&#34;,
+943	 			Sessions: []discovery.SessionInfo{
+944	-				{ID: &#34;s1&#34;, Title: &#34;First&#34;},
+945	-				{ID: &#34;s2&#34;, Title: &#34;Second&#34;},
+946	+				{ID: &#34;root1aaa-0000&#34;, Title: &#34;Root one&#34;},
+947	+				{ID: &#34;agent1aa-0000&#34;, Title: &#34;Agent one&#34;, IsAgent: true},
+948	+				{ID: &#34;root2aaa-0000&#34;, Title: &#34;Root two&#34;},
+949	 			},
+950	 		},
+951	 		{
+952	 			ProjectPath: &#34;/tmp/projB&#34;,
+953	-			Sessions:    []discovery.SessionInfo{{ID: &#34;s3&#34;, Title: &#34;Third&#34;}},
+954	+			Sessions:    []discovery.SessionInfo{{ID: &#34;root3bbb-0000&#34;, Title: &#34;Root three&#34;}},
+955	 		},
+956	 	}
+957	-	rows := flattenRows(groups)
+958	-	// 2 headers + 3 sessions
+959	-	if len(rows) != 5 {
+960	-		t.Fatalf(&#34;got %d rows, want 5&#34;, len(rows))
+961	+}
+962	+
+963	+func key(s string) tea.KeyMsg {
+964	+	switch s {
+965	+	case &#34;enter&#34;:
+966	+		return tea.KeyMsg{Type: tea.KeyEnter}
+967	+	case &#34;left&#34;:
+968	+		return tea.KeyMsg{Type: tea.KeyLeft}
+969	+	case &#34;down&#34;:
+970	+		return tea.KeyMsg{Type: tea.KeyDown}
+971	+	case &#34;up&#34;:
+972	+		return tea.KeyMsg{Type: tea.KeyUp}
+973	+	default:
+974	+		return tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(s)}
+975	+	}
+976	+}
+977	+
+978	+func send(m model, msgs ...tea.Msg) model {
+979	+	var tm tea.Model = m
+980	+	for _, msg := range msgs {
+981	+		tm, _ = tm.Update(msg)
+982	+	}
+983	+	return tm.(model)
+984	+}
+985	+
+986	+func TestSessionListHidesAgentsByDefault(t *testing.T) {
+987	+	m := newModel(testGroups())
+988	+	m = send(m, key(&#34;enter&#34;)) // open projA
+989	+	if m.screen != screenSessions {
+990	+		t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+991	+	}
+992	+	if len(m.sessions) != 2 {
+993	+		t.Fatalf(&#34;root sessions = %d, want 2 (agents hidden)&#34;, len(m.sessions))
+994	+	}
+995	+	for _, s := range m.sessions {
+996	+		if s.IsAgent {
+997	+			t.Errorf(&#34;agent session %q leaked into default list&#34;, s.ID)
+998	+		}
+999	+	}
+1000	+}
+1001	+
+1002	+func TestToggleShowAllRevealsAgents(t *testing.T) {
+1003	+	m := newModel(testGroups())
+1004	+	m = send(m, key(&#34;enter&#34;), key(&#34;a&#34;))
+1005	+	if !m.showAll {
+1006	+		t.Fatal(&#34;showAll not toggled&#34;)
+1007	+	}
+1008	+	if len(m.sessions) != 3 {
+1009	+		t.Fatalf(&#34;all sessions = %d, want 3&#34;, len(m.sessions))
+1010	+	}
+1011	+	m = send(m, key(&#34;a&#34;))
+1012	+	if m.showAll || len(m.sessions) != 2 {
+1013	+		t.Fatalf(&#34;toggle back failed: showAll=%v n=%d&#34;, m.showAll, len(m.sessions))
+1014	+	}
+1015	+}
+1016	+
+1017	+func TestLeftReturnsToProjectList(t *testing.T) {
+1018	+	m := newModel(testGroups())
+1019	+	m = send(m, key(&#34;enter&#34;))
+1020	+	if m.screen != screenSessions {
+1021	+		t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+1022	+	}
+1023	+	m = send(m, key(&#34;left&#34;))
+1024	+	if m.screen != screenProjects {
+1025	+		t.Fatalf(&#34;screen = %v, want projects after left&#34;, m.screen)
+1026	 	}
+1027	-	if !rows[0].IsHeader || rows[0].Label != &#34;/tmp/projA&#34; {
+1028	-		t.Errorf(&#34;row0 = %+v&#34;, rows[0])
+1029	+}
+1030	+
+1031	+func TestSelectSessionGoesToOptions(t *testing.T) {
+1032	+	m := newModel(testGroups())
+1033	+	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open projA, select first session
+1034	+	if m.screen != screenOptions {
+1035	+		t.Fatalf(&#34;screen = %v, want options&#34;, m.screen)
+1036	 	}
+1037	-	if rows[1].IsHeader || rows[1].Session.ID != &#34;s1&#34; {
+1038	-		t.Errorf(&#34;row1 = %+v&#34;, rows[1])
+1039	+	if m.sel.Session.ID != &#34;root1aaa-0000&#34; {
+1040	+		t.Errorf(&#34;selected %q, want root1aaa-0000&#34;, m.sel.Session.ID)
+1041	 	}
+1042	 }
+1043	 
+1044	-func TestFirstSelectableRow(t *testing.T) {
+1045	-	rows := []Row{{IsHeader: true}, {IsHeader: false, Session: discovery.SessionInfo{ID: &#34;x&#34;}}}
+1046	-	if got := firstSelectable(rows); got != 1 {
+1047	-		t.Errorf(&#34;firstSelectable = %d, want 1&#34;, got)
+1048	+func TestScrollKeepsCursorVisible(t *testing.T) {
+1049	+	// 30 sessions, viewport of 10 rows.
+1050	+	var ss []discovery.SessionInfo
+1051	+	for i := 0; i &lt; 30; i++ {
+1052	+		ss = append(ss, discovery.SessionInfo{ID: string(rune(&#39;a&#39;+i%26)) + &#34;0000000&#34;, Title: &#34;s&#34;})
+1053	+	}
+1054	+	m := newModel([]discovery.ProjectGroup{{ProjectPath: &#34;/p&#34;, Sessions: ss}})
+1055	+	m = send(m, tea.WindowSizeMsg{Width: 80, Height: reservedLines + 10}, key(&#34;enter&#34;))
+1056	+	for i := 0; i &lt; 25; i++ {
+1057	+		m = send(m, key(&#34;down&#34;))
+1058	+	}
+1059	+	if m.sessCursor != 25 {
+1060	+		t.Fatalf(&#34;cursor = %d, want 25&#34;, m.sessCursor)
+1061	+	}
+1062	+	// cursor must be within the visible window [top, top+10)
+1063	+	if m.sessCursor &lt; m.sessTop || m.sessCursor &gt;= m.sessTop+m.listHeight() {
+1064	+		t.Errorf(&#34;cursor %d outside window [%d,%d)&#34;, m.sessCursor, m.sessTop, m.sessTop+m.listHeight())
+1065	+	}
+1066	+}
+1067	+
+1068	+func TestFocusIdxOpensSessionList(t *testing.T) {
+1069	+	m := newModel(testGroups())
+1070	+	m.projCursor = 1
+1071	+	m.enterProject(1)
+1072	+	if m.screen != screenSessions {
+1073	+		t.Fatalf(&#34;screen = %v, want sessions&#34;, m.screen)
+1074	+	}
+1075	+	if m.sessions[0].ID != &#34;root3bbb-0000&#34; {
+1076	+		t.Errorf(&#34;focused group session = %q, want root3bbb-0000&#34;, m.sessions[0].ID)
+1077	+	}
+1078	+}
+1079	+
+1080	+func TestClampScroll(t *testing.T) {
+1081	+	// cursor below window scrolls down
+1082	+	if got := clampScroll(12, 0, 10, 30); got != 3 {
+1083	+		t.Errorf(&#34;clampScroll down = %d, want 3&#34;, got)
+1084	+	}
+1085	+	// cursor above window scrolls up
+1086	+	if got := clampScroll(2, 5, 10, 30); got != 2 {
+1087	+		t.Errorf(&#34;clampScroll up = %d, want 2&#34;, got)
+1088	+	}
+1089	+	// list shorter than window pins to 0
+1090	+	if got := clampScroll(0, 4, 10, 3); got != 0 {
+1091	+		t.Errorf(&#34;clampScroll short = %d, want 0&#34;, got)
+1092	 	}
+1093	 }
+1094	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
+}</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
+2	// with no selector flags. It presents a two-level view: a scrollable list of
+3	// projects, then a scrollable list of that project&#39;s sessions.
+4	package tui
+5	
+6	import (
+7		&#34;fmt&#34;
+8		&#34;strings&#34;
+9	
+10		tea &#34;github.com/charmbracelet/bubbletea&#34;
+11		&#34;github.com/charmbracelet/lipgloss&#34;
+12	
+13		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+14	)
+15	
+16	// Selection is the result of running the browser.
+17	type Selection struct {
+18		Session          discovery.SessionInfo
+19		IncludeSubagents bool
+20		Redact           bool
+21		Open             bool
+22		OutDir           string
+23		Canceled         bool
+24	}
+25	
+26	var (
+27		titleStyle    = lipgloss.NewStyle().Bold(true)
+28		headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;))
+29		selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))
+30		mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))
+31		optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))
+32	)
+33	
+34	type screen int
+35	
+36	const (
+37		screenProjects screen = iota
+38		screenSessions
+39		screenOptions
+40	)
+41	
+42	// reservedLines is how many rows the title and footer occupy, leaving the rest
+43	// of the terminal height for the scrollable list body.
+44	const reservedLines = 4
+45	
+46	type model struct {
+47		groups []discovery.ProjectGroup
+48	
+49		// projects screen
+50		projCursor int
+51		projTop    int
+52	
+53		// sessions screen
+54		groupIdx   int
+55		showAll    bool
+56		sessions   []discovery.SessionInfo // filtered view of groups[groupIdx]
+57		sessCursor int
+58		sessTop    int
+59	
+60		// options screen
+61		optCursor int
+62	
+63		screen screen
+64		sel    Selection
+65	
+66		height int
+67		width  int
+68	}
+69	
+70	func newModel(groups []discovery.ProjectGroup) model {
+71		return model{
+72			groups: groups,
+73			screen: screenProjects,
+74			height: 20,
+75			width:  80,
+76			sel: Selection{
+77				IncludeSubagents: true,
+78				Redact:           true,
+79			},
+80		}
+81	}
+82	
+83	// listHeight is the number of list rows visible in the current terminal.
+84	func (m model) listHeight() int {
+85		h := m.height - reservedLines
+86		if h &lt; 1 {
+87			return 1
+88		}
+89		return h
+90	}
+91	
+92	func (m model) Init() tea.Cmd { return nil }
+93	
+94	func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+95		switch msg := msg.(type) {
+96		case tea.WindowSizeMsg:
+97			m.height = msg.Height
+98			m.width = msg.Width
+99			m.adjustProjScroll()
+100			m.adjustSessScroll()
+101			return m, nil
+102		case tea.KeyMsg:
+103			switch m.screen {
+104			case screenProjects:
+105				return m.updateProjects(msg)
+106			case screenSessions:
+107				return m.updateSessions(msg)
+108			default:
+109				return m.updateOptions(msg)
+110			}
+111		}
+112		return m, nil
+113	}
+114	
+115	// --- projects screen ---
+116	
+117	func (m model) updateProjects(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+118		switch key.String() {
+119		case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:
+120			m.sel.Canceled = true
+121			return m, tea.Quit
+122		case &#34;up&#34;, &#34;k&#34;:
+123			if m.projCursor &gt; 0 {
+124				m.projCursor--
+125				m.adjustProjScroll()
+126			}
+127		case &#34;down&#34;, &#34;j&#34;:
+128			if m.projCursor &lt; len(m.groups)-1 {
+129				m.projCursor++
+130				m.adjustProjScroll()
+131			}
+132		case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+133			if len(m.groups) &gt; 0 {
+134				m.enterProject(m.projCursor)
+135			}
+136		}
+137		return m, nil
+138	}
+139	
+140	func (m *model) adjustProjScroll() {
+141		m.projTop = clampScroll(m.projCursor, m.projTop, m.listHeight(), len(m.groups))
+142	}
+143	
+144	func (m *model) enterProject(idx int) {
+145		m.groupIdx = idx
+146		m.showAll = false
+147		m.sessCursor = 0
+148		m.sessTop = 0
+149		m.refreshSessions()
+150		m.screen = screenSessions
+151	}
+152	
+153	func (m *model) refreshSessions() {
+154		g := m.groups[m.groupIdx]
+155		if m.showAll {
+156			m.sessions = g.Sessions
+157		} else {
+158			m.sessions = g.RootSessions()
+159		}
+160		if m.sessCursor &gt;= len(m.sessions) {
+161			m.sessCursor = max(0, len(m.sessions)-1)
+162		}
+163		m.adjustSessScroll()
+164	}
+165	
+166	// --- sessions screen ---
+167	
+168	func (m model) updateSessions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+169		switch key.String() {
+170		case &#34;ctrl+c&#34;, &#34;q&#34;:
+171			m.sel.Canceled = true
+172			return m, tea.Quit
+173		case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+174			m.screen = screenProjects
+175		case &#34;up&#34;, &#34;k&#34;:
+176			if m.sessCursor &gt; 0 {
+177				m.sessCursor--
+178				m.adjustSessScroll()
+179			}
+180		case &#34;down&#34;, &#34;j&#34;:
+181			if m.sessCursor &lt; len(m.sessions)-1 {
+182				m.sessCursor++
+183				m.adjustSessScroll()
+184			}
+185		case &#34;a&#34;:
+186			m.showAll = !m.showAll
+187			m.sessCursor = 0
+188			m.sessTop = 0
+189			m.refreshSessions()
+190		case &#34;enter&#34;, &#34;right&#34;, &#34;l&#34;:
+191			if len(m.sessions) &gt; 0 {
+192				m.sel.Session = m.sessions[m.sessCursor]
+193				m.optCursor = 0
+194				m.screen = screenOptions
+195			}
+196		}
+197		return m, nil
+198	}
+199	
+200	func (m *model) adjustSessScroll() {
+201		m.sessTop = clampScroll(m.sessCursor, m.sessTop, m.listHeight(), len(m.sessions))
+202	}
+203	
+204	// --- options screen ---
+205	
+206	// optionCount is the number of toggle rows plus the Generate action.
+207	const optionCount = 4 // subagents, redact, open, generate
+208	
+209	func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {
+210		switch key.String() {
+211		case &#34;ctrl+c&#34;, &#34;q&#34;:
+212			m.sel.Canceled = true
+213			return m, tea.Quit
+214		case &#34;esc&#34;, &#34;left&#34;, &#34;h&#34;:
+215			m.screen = screenSessions
+216		case &#34;up&#34;, &#34;k&#34;:
+217			if m.optCursor &gt; 0 {
+218				m.optCursor--
+219			}
+220		case &#34;down&#34;, &#34;j&#34;:
+221			if m.optCursor &lt; optionCount-1 {
+222				m.optCursor++
+223			}
+224		case &#34; &#34;, &#34;enter&#34;:
+225			switch m.optCursor {
+226			case 0:
+227				m.sel.IncludeSubagents = !m.sel.IncludeSubagents
+228			case 1:
+229				m.sel.Redact = !m.sel.Redact
+230			case 2:
+231				m.sel.Open = !m.sel.Open
+232			case 3:
+233				return m, tea.Quit
+234			}
+235		}
+236		return m, nil
+237	}
+238	
+239	// clampScroll returns a scroll offset that keeps cursor within the visible
+240	// window [top, top+visible) over a list of length n.
+241	func clampScroll(cursor, top, visible, n int) int {
+242		if visible &lt; 1 {
+243			visible = 1
+244		}
+245		if cursor &lt; top {
+246			top = cursor
+247		}
+248		if cursor &gt;= top+visible {
+249			top = cursor - visible + 1
+250		}
+251		if top &lt; 0 {
+252			top = 0
+253		}
+254		// Don&#39;t scroll past the end when the list shrank.
+255		if max := n - visible; top &gt; max &amp;&amp; max &gt;= 0 {
+256			top = max
+257		}
+258		return top
+259	}
+260	
+261	func (m model) View() string {
+262		switch m.screen {
+263		case screenProjects:
+264			return m.viewProjects()
+265		case screenSessions:
+266			return m.viewSessions()
+267		default:
+268			return m.viewOptions()
+269		}
+270	}
+271	
+272	func (m model) viewProjects() string {
+273		var b strings.Builder
+274		b.WriteString(titleStyle.Render(&#34;Select a project&#34;) +
+275			mutedStyle.Render(&#34;   ↑/↓ move · enter open · q quit&#34;) + &#34;\n\n&#34;)
+276		visible := m.listHeight()
+277		end := min(m.projTop+visible, len(m.groups))
+278		for i := m.projTop; i &lt; end; i++ {
+279			g := m.groups[i]
+280			roots := len(g.RootSessions())
+281			agents := g.AgentCount()
+282			count := fmt.Sprintf(&#34;%d session%s&#34;, roots, plural(roots))
+283			if agents &gt; 0 {
+284				count += fmt.Sprintf(&#34;, %d agent&#34;, agents)
+285			}
+286			label := headerStyle.Render(g.ProjectPath) + &#34;  &#34; + mutedStyle.Render(count)
+287			if i == m.projCursor {
+288				label = selectedStyle.Render(&#34;▸ &#34; + g.ProjectPath + &#34;  &#34; + count)
+289			} else {
+290				label = &#34;  &#34; + label
+291			}
+292			b.WriteString(label + &#34;\n&#34;)
+293		}
+294		b.WriteString(scrollHint(m.projTop, end, len(m.groups)))
+295		return b.String()
+296	}
+297	
+298	func (m model) viewSessions() string {
+299		var b strings.Builder
+300		g := m.groups[m.groupIdx]
+301		b.WriteString(titleStyle.Render(&#34;Sessions in &#34;) + headerStyle.Render(g.ProjectPath) + &#34;\n&#34;)
+302		toggle := &#34;a show all&#34;
+303		if m.showAll {
+304			toggle = &#34;a root only&#34;
+305		}
+306		b.WriteString(mutedStyle.Render(&#34;↑/↓ move · enter select · ← back · &#34;+toggle+&#34; · q quit&#34;) + &#34;\n\n&#34;)
+307	
+308		if len(m.sessions) == 0 {
+309			b.WriteString(mutedStyle.Render(&#34;  no interactive sessions here — press a to show agent sessions&#34;) + &#34;\n&#34;)
+310			return b.String()
+311		}
+312		visible := m.listHeight()
+313		end := min(m.sessTop+visible, len(m.sessions))
+314		for i := m.sessTop; i &lt; end; i++ {
+315			s := m.sessions[i]
+316			id := s.ID[:min(8, len(s.ID))]
+317			tag := &#34;&#34;
+318			if s.IsAgent {
+319				tag = mutedStyle.Render(&#34; ⟲&#34;)
+320			}
+321			line := fmt.Sprintf(&#34;  %s  %s%s&#34;, s.DisplayLabel(), mutedStyle.Render(id), tag)
+322			if i == m.sessCursor {
+323				line = selectedStyle.Render(&#34;▸ &#34;+s.DisplayLabel()+&#34;  &#34;+id) + tag
+324			}
+325			b.WriteString(line + &#34;\n&#34;)
+326		}
+327		b.WriteString(scrollHint(m.sessTop, end, len(m.sessions)))
+328		return b.String()
+329	}
+330	
+331	func (m model) viewOptions() string {
+332		var b strings.Builder
+333		b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)
+334		toggles := []struct {
+335			label string
+336			on    bool
+337		}{
+338			{&#34;Include subagents&#34;, m.sel.IncludeSubagents},
+339			{&#34;Redact secrets&#34;, m.sel.Redact},
+340			{&#34;Open in browser when done&#34;, m.sel.Open},
+341		}
+342		for i, t := range toggles {
+343			check := &#34;[ ]&#34;
+344			if t.on {
+345				check = &#34;[x]&#34;
+346			}
+347			line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)
+348			if m.optCursor == i {
+349				line = optionStyle.Render(&#34;▸ &#34; + line)
+350			} else {
+351				line = &#34;  &#34; + line
+352			}
+353			b.WriteString(line + &#34;\n&#34;)
+354		}
+355		gen := &#34;Generate report&#34;
+356		if m.optCursor == 3 {
+357			gen = optionStyle.Render(&#34;▸ &#34; + gen)
+358		} else {
+359			gen = &#34;  &#34; + gen
+360		}
+361		b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)
+362		b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)
+363		return b.String()
+364	}
+365	
+366	// scrollHint renders a one-line position indicator when the list is scrolled or
+367	// overflows the viewport.
+368	func scrollHint(top, end, n int) string {
+369		if top == 0 &amp;&amp; end &gt;= n {
+370			return &#34;&#34;
+371		}
+372		return mutedStyle.Render(fmt.Sprintf(&#34;\n  %d–%d of %d&#34;, top+1, end, n))
+373	}
+374	
+375	func plural(n int) string {
+376		if n == 1 {
+377			return &#34;&#34;
+378		}
+379		return &#34;s&#34;
+380	}
+381	
+382	// Run launches the browser and returns the user&#39;s selection. If focusIdx is a
+383	// valid index into groups, the browser opens directly on that project&#39;s session
+384	// list; pass -1 to start on the project list.
+385	func Run(groups []discovery.ProjectGroup, focusIdx int) (Selection, error) {
+386		if len(groups) == 0 {
+387			return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)
+388		}
+389		m := newModel(groups)
+390		if focusIdx &gt;= 0 &amp;&amp; focusIdx &lt; len(groups) {
+391			m.projCursor = focusIdx
+392			m.enterProject(focusIdx)
+393		}
+394		p := tea.NewProgram(m, tea.WithAltScreen())
+395		res, err := p.Run()
+396		if err != nil {
+397			return Selection{}, err
+398		}
+399		fm := res.(model)
+400		return fm.sel, nil
+401	}
+402	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.21</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
+}</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
+2	// ~/.claude/projects and builds a lightweight index for listing and selection.
+3	package discovery
+4	
+5	import (
+6		&#34;bufio&#34;
+7		&#34;encoding/json&#34;
+8		&#34;fmt&#34;
+9		&#34;os&#34;
+10		&#34;path/filepath&#34;
+11		&#34;sort&#34;
+12		&#34;strings&#34;
+13		&#34;time&#34;
+14	)
+15	
+16	// SessionInfo is a lightweight index entry for one transcript file. It is built
+17	// by a cheap scan and does not parse the full timeline.
+18	type SessionInfo struct {
+19		ID           string
+20		FilePath     string
+21		ProjectDir   string // encoded directory name
+22		ProjectPath  string // decoded absolute path
+23		Title        string
+24		FirstPrompt  string
+25		ModTime      time.Time
+26		MessageCount int
+27		HasSubagents bool
+28		// IsAgent reports that this transcript was produced by an SDK/agent
+29		// invocation (e.g. a Task subagent or code-review agent) rather than an
+30		// interactive human session. Such sessions get their own top-level
+31		// transcript files and are hidden from the default listing.
+32		IsAgent bool
+33	}
+34	
+35	// ProjectGroup groups a project&#39;s sessions.
+36	type ProjectGroup struct {
+37		ProjectDir  string
+38		ProjectPath string
+39		Sessions    []SessionInfo
+40	}
+41	
+42	// EncodeProjectDir maps an absolute cwd to its ~/.claude/projects dir name.
+43	func EncodeProjectDir(cwd string) string {
+44		return strings.ReplaceAll(cwd, &#34;/&#34;, &#34;-&#34;)
+45	}
+46	
+47	// DecodeProjectDir maps a projects dir name back to an absolute path.
+48	//
+49	// This is best-effort and lossy: the encoding used for ~/.claude/projects
+50	// directory names replaces every &#34;/&#34; with &#34;-&#34;, so a decode cannot distinguish
+51	// an original path separator from a literal &#34;-&#34; inside a path segment (e.g.
+52	// &#34;cc-what-have-i-done&#34; decodes to &#34;cc/what/have/i/done&#34;). Callers that need
+53	// the true path should prefer the &#34;cwd&#34; field recorded in transcript records
+54	// and only fall back to this function when no such record is available.
+55	func DecodeProjectDir(name string) string {
+56		return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)
+57	}
+58	
+59	// DefaultRoot returns ~/.claude/projects.
+60	func DefaultRoot() (string, error) {
+61		home, err := os.UserHomeDir()
+62		if err != nil {
+63			return &#34;&#34;, err
+64		}
+65		return filepath.Join(home, &#34;.claude&#34;, &#34;projects&#34;), nil
+66	}
+67	
+68	// scanLine is the subset of fields needed to index a session cheaply.
+69	type scanLine struct {
+70		Type         string          `json:&#34;type&#34;`
+71		AiTitle      string          `json:&#34;aiTitle&#34;`
+72		IsSidechain  bool            `json:&#34;isSidechain&#34;`
+73		Timestamp    string          `json:&#34;timestamp&#34;`
+74		Cwd          string          `json:&#34;cwd&#34;`
+75		Entrypoint   string          `json:&#34;entrypoint&#34;`
+76		PromptSource string          `json:&#34;promptSource&#34;`
+77		Message      json.RawMessage `json:&#34;message&#34;`
+78	}
+79	
+80	// indexFile reads a jsonl file and produces a SessionInfo without a full parse.
+81	func indexFile(path, projectDir string) (SessionInfo, error) {
+82		f, err := os.Open(path)
+83		if err != nil {
+84			return SessionInfo{}, err
+85		}
+86		defer f.Close()
+87	
+88		fi, err := f.Stat()
+89		if err != nil {
+90			return SessionInfo{}, err
+91		}
+92	
+93		info := SessionInfo{
+94			ID:          strings.TrimSuffix(filepath.Base(path), &#34;.jsonl&#34;),
+95			FilePath:    path,
+96			ProjectDir:  projectDir,
+97			ProjectPath: DecodeProjectDir(projectDir),
+98			ModTime:     fi.ModTime(),
+99		}
+100	
+101		sc := bufio.NewScanner(f)
+102		sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)
+103		cwdSet := false
+104		entrypointSet := false
+105		for sc.Scan() {
+106			var l scanLine
+107			if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {
+108				continue // tolerate malformed lines
+109			}
+110			switch l.Type {
+111			case &#34;ai-title&#34;:
+112				if l.AiTitle != &#34;&#34; {
+113					info.Title = l.AiTitle
+114				}
+115			case &#34;user&#34;, &#34;assistant&#34;:
+116				info.MessageCount++
+117				if l.IsSidechain {
+118					info.HasSubagents = true
+119				}
+120				// Classify origin: the first record carrying an entrypoint decides
+121				// it (interactive &#34;cli&#34;/IDE vs. &#34;sdk-*&#34;), and any prompt sourced
+122				// from the SDK confirms an agent-spawned transcript.
+123				if !entrypointSet &amp;&amp; l.Entrypoint != &#34;&#34; {
+124					info.IsAgent = strings.HasPrefix(l.Entrypoint, &#34;sdk&#34;)
+125					entrypointSet = true
+126				}
+127				if l.PromptSource == &#34;sdk&#34; {
+128					info.IsAgent = true
+129				}
+130				if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {
+131					info.FirstPrompt = firstPromptText(l.Message)
+132				}
+133				if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {
+134					info.ProjectPath = l.Cwd
+135					cwdSet = true
+136				}
+137			}
+138		}
+139		if info.Title == &#34;&#34; {
+140			info.Title = truncate(info.FirstPrompt, 60)
+141		}
+142		return info, nil
+143	}
+144	
+145	// firstPromptText extracts a plain-text preview from a user message whose
+146	// content is either a JSON string or an array of blocks.
+147	func firstPromptText(raw json.RawMessage) string {
+148		if len(raw) == 0 {
+149			return &#34;&#34;
+150		}
+151		var msg struct {
+152			Content json.RawMessage `json:&#34;content&#34;`
+153		}
+154		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+155			return &#34;&#34;
+156		}
+157		var s string
+158		if json.Unmarshal(msg.Content, &amp;s) == nil {
+159			return strings.TrimSpace(s)
+160		}
+161		var blocks []struct {
+162			Type string `json:&#34;type&#34;`
+163			Text string `json:&#34;text&#34;`
+164		}
+165		if json.Unmarshal(msg.Content, &amp;blocks) == nil {
+166			for _, b := range blocks {
+167				if b.Type == &#34;text&#34; {
+168					return strings.TrimSpace(b.Text)
+169				}
+170			}
+171		}
+172		return &#34;&#34;
+173	}
+174	
+175	func truncate(s string, n int) string {
+176		s = strings.TrimSpace(s)
+177		r := []rune(s)
+178		if len(r) &lt;= n {
+179			return s
+180		}
+181		return string(r[:n-1]) + &#34;…&#34;
+182	}
+183	
+184	// Scan indexes every session under root (the projects directory), grouped by
+185	// project. Groups are ordered by most-recent session first; sessions within a
+186	// group are newest-first.
+187	func Scan(root string) ([]ProjectGroup, error) {
+188		entries, err := os.ReadDir(root)
+189		if err != nil {
+190			return nil, err
+191		}
+192		var groups []ProjectGroup
+193		for _, e := range entries {
+194			if !e.IsDir() {
+195				continue
+196			}
+197			dir := filepath.Join(root, e.Name())
+198			files, err := filepath.Glob(filepath.Join(dir, &#34;*.jsonl&#34;))
+199			if err != nil {
+200				return nil, err
+201			}
+202			var sessions []SessionInfo
+203			for _, fp := range files {
+204				si, err := indexFile(fp, e.Name())
+205				if err != nil {
+206					continue
+207				}
+208				sessions = append(sessions, si)
+209			}
+210			if len(sessions) == 0 {
+211				continue
+212			}
+213			sort.Slice(sessions, func(i, j int) bool {
+214				return sessions[i].ModTime.After(sessions[j].ModTime)
+215			})
+216			groups = append(groups, ProjectGroup{
+217				ProjectDir:  e.Name(),
+218				ProjectPath: sessions[0].ProjectPath,
+219				Sessions:    sessions,
+220			})
+221		}
+222		sort.Slice(groups, func(i, j int) bool {
+223			return groups[i].Sessions[0].ModTime.After(groups[j].Sessions[0].ModTime)
+224		})
+225		return groups, nil
+226	}
+227	
+228	// RootSessions returns the group&#39;s interactive (non-agent) sessions, preserving
+229	// order.
+230	func (g ProjectGroup) RootSessions() []SessionInfo {
+231		out := make([]SessionInfo, 0, len(g.Sessions))
+232		for _, s := range g.Sessions {
+233			if !s.IsAgent {
+234				out = append(out, s)
+235			}
+236		}
+237		return out
+238	}
+239	
+240	// AgentCount returns how many of the group&#39;s sessions were agent-spawned.
+241	func (g ProjectGroup) AgentCount() int {
+242		n := 0
+243		for _, s := range g.Sessions {
+244			if s.IsAgent {
+245				n++
+246			}
+247		}
+248		return n
+249	}
+250	
+251	// FindProject resolves a project selector (full path, basename, or unambiguous
+252	// substring of the path) to an index into groups. It errors if nothing matches
+253	// or the selector is ambiguous.
+254	func FindProject(groups []ProjectGroup, want string) (int, error) {
+255		// 1. Exact absolute-path match.
+256		for i, g := range groups {
+257			if g.ProjectPath == want {
+258				return i, nil
+259			}
+260		}
+261		// 2. Case-insensitive basename match.
+262		var matches []int
+263		for i, g := range groups {
+264			if strings.EqualFold(filepath.Base(g.ProjectPath), want) {
+265				matches = append(matches, i)
+266			}
+267		}
+268		// 3. Fall back to a case-insensitive substring of the full path.
+269		if len(matches) == 0 {
+270			lw := strings.ToLower(want)
+271			for i, g := range groups {
+272				if strings.Contains(strings.ToLower(g.ProjectPath), lw) {
+273					matches = append(matches, i)
+274				}
+275			}
+276		}
+277		switch len(matches) {
+278		case 0:
+279			return -1, fmt.Errorf(&#34;no project matching %q&#34;, want)
+280		case 1:
+281			return matches[0], nil
+282		default:
+283			return -1, fmt.Errorf(&#34;ambiguous project %q matches %d projects&#34;, want, len(matches))
+284		}
+285	}
+286	
+287	// DisplayLabel returns a human-friendly one-line label for a session.
+288	func (s SessionInfo) DisplayLabel() string {
+289		if s.Title != &#34;&#34; {
+290			return s.Title
+291		}
+292		if s.FirstPrompt != &#34;&#34; {
+293			return s.FirstPrompt
+294		}
+295		return s.ID
+296	}
+297	
+298	// FindSession resolves a session id or unambiguous prefix across all projects.
+299	func FindSession(root, idOrPrefix string) (SessionInfo, error) {
+300		groups, err := Scan(root)
+301		if err != nil {
+302			return SessionInfo{}, err
+303		}
+304		var matches []SessionInfo
+305		for _, g := range groups {
+306			for _, s := range g.Sessions {
+307				if s.ID == idOrPrefix {
+308					return s, nil // exact wins immediately
+309				}
+310				if strings.HasPrefix(s.ID, idOrPrefix) {
+311					matches = append(matches, s)
+312				}
+313			}
+314		}
+315		switch len(matches) {
+316		case 0:
+317			return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)
+318		case 1:
+319			return matches[0], nil
+320		default:
+321			return SessionInfo{}, fmt.Errorf(&#34;ambiguous prefix %q matches %d sessions&#34;, idOrPrefix, len(matches))
+322		}
+323	}
+324	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
+}</pre><pre class="tool-result">1	package main
+2	
+3	import (
+4		&#34;fmt&#34;
+5		&#34;os&#34;
+6	
+7		&#34;github.com/spf13/cobra&#34;
+8	
+9		&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;
+11	)
+12	
+13	// options holds all CLI flag values.
+14	type options struct {
+15		session          string
+16		project          string
+17		latest           bool
+18		out              string
+19		title            string
+20		includeSubagents bool
+21		noRedact         bool
+22		force            bool
+23		open             bool
+24	}
+25	
+26	func newRootCmd() *cobra.Command {
+27		opts := &amp;options{}
+28		cmd := &amp;cobra.Command{
+29			Use:   &#34;ccwhid&#34;,
+30			Short: &#34;Turn a Claude Code session transcript into a browsable HTML report&#34;,
+31			Long: &#34;ccwhid (cc-what-have-i-done) renders a Claude Code session &#34; +
+32				&#34;transcript into a self-contained static HTML report. Run with no &#34; +
+33				&#34;flags to browse sessions in an interactive TUI.&#34;,
+34			SilenceUsage: true,
+35			RunE: func(cmd *cobra.Command, args []string) error {
+36				return run(cmd, opts)
+37			},
+38		}
+39		f := cmd.Flags()
+40		f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
+41		f.StringVar(&amp;opts.project, &#34;project&#34;, &#34;&#34;, &#34;project path or name to scope to&#34;)
+42		f.BoolVar(&amp;opts.latest, &#34;latest&#34;, false, &#34;render the most recent session&#34;)
+43		f.StringVar(&amp;opts.out, &#34;out&#34;, &#34;&#34;, &#34;output directory (default ./ccwhid-report/&lt;session-short&gt;)&#34;)
+44		f.StringVar(&amp;opts.title, &#34;title&#34;, &#34;&#34;, &#34;override the report title&#34;)
+45		f.BoolVar(&amp;opts.includeSubagents, &#34;include-subagents&#34;, true, &#34;include subagent (Task) activity&#34;)
+46		f.BoolVar(&amp;opts.noRedact, &#34;no-redact&#34;, false, &#34;disable secret redaction&#34;)
+47		f.BoolVar(&amp;opts.force, &#34;force&#34;, false, &#34;overwrite a non-empty output directory&#34;)
+48		f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)
+49		return cmd
+50	}
+51	
+52	func run(cmd *cobra.Command, opts *options) error {
+53		root, err := discovery.DefaultRoot()
+54		if err != nil {
+55			return err
+56		}
+57		si, needTUI, err := resolveSession(opts, root)
+58		if err != nil {
+59			return err
+60		}
+61		if needTUI {
+62			groups, err := discovery.Scan(root)
+63			if err != nil {
+64				return err
+65			}
+66			focusIdx := -1
+67			if opts.project != &#34;&#34; {
+68				focusIdx, err = discovery.FindProject(groups, opts.project)
+69				if err != nil {
+70					return err
+71				}
+72			}
+73			sel, err := tui.Run(groups, focusIdx)
+74			if err != nil {
+75				return err
+76			}
+77			if sel.Canceled {
+78				fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)
+79				return nil
+80			}
+81			si = sel.Session
+82			opts.includeSubagents = sel.IncludeSubagents
+83			opts.noRedact = !sel.Redact
+84			opts.open = sel.Open
+85			if sel.OutDir != &#34;&#34; {
+86				opts.out = sel.OutDir
+87			}
+88		}
+89		outDir, err := generate(opts, si)
+90		if err != nil {
+91			return err
+92		}
+93		fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)
+94		if opts.open {
+95			if err := openInBrowser(outDir); err != nil {
+96				fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)
+97			}
+98		}
+99		return nil
+100	}
+101	
+102	func main() {
+103		if err := newRootCmd().Execute(); err != nil {
+104			fmt.Fprintln(os.Stderr, &#34;error:&#34;, err)
+105			os.Exit(1)
+106		}
+107	}
+108	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash cat cmd/ccwhid/run.go &amp;&amp; echo &#34;---gomod---&#34; &amp;&amp; head -5 go.mod">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.07</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat cmd/ccwhid/run.go &amp;&amp; echo &#34;---GOMOD---&#34; &amp;&amp; head -5 go.mod</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat cmd/ccwhid/run.go \u0026\u0026 echo \&#34;---GOMOD---\&#34; \u0026\u0026 head -5 go.mod&#34;,
+  &#34;description&#34;: &#34;Read run.go and go.mod&#34;
+}</pre><pre class="tool-result">package main
+
+import (
+	&#34;fmt&#34;
+	&#34;os&#34;
+	&#34;os/exec&#34;
+	&#34;path/filepath&#34;
+	&#34;runtime&#34;
+
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/redact&#34;
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/render&#34;
+	&#34;github.com/saigyo/cc-what-have-i-done/internal/transcript&#34;
+)
+
+func resolveOutDir(opts *options, si discovery.SessionInfo) string {
+	if opts.out != &#34;&#34; {
+		return opts.out
+	}
+	short := si.ID
+	if len(short) &gt; 8 {
+		short = short[:8]
+	}
+	return filepath.Join(&#34;ccwhid-report&#34;, short)
+}
+
+// resolveSession picks a session from flags. It returns needTUI=true when the
+// user gave no selector.
+func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+	switch {
+	case opts.session != &#34;&#34;:
+		si, err := discovery.FindSession(root, opts.session)
+		return si, false, err
+	case opts.latest:
+		return latestSession(opts, root)
+	default:
+		return discovery.SessionInfo{}, true, nil
+	}
+}
+
+// latestSession returns the most recent interactive (non-agent) session,
+// optionally scoped to a project. Agent-spawned transcripts are skipped so
+// --latest targets the user&#39;s own sessions.
+func latestSession(opts *options, root string) (discovery.SessionInfo, bool, error) {
+	groups, err := discovery.Scan(root)
+	if err != nil {
+		return discovery.SessionInfo{}, false, err
+	}
+	if opts.project != &#34;&#34; {
+		idx, err := discovery.FindProject(groups, opts.project)
+		if err != nil {
+			return discovery.SessionInfo{}, false, err
+		}
+		groups = groups[idx : idx+1]
+	}
+	for _, g := range groups {
+		for _, s := range g.Sessions {
+			if !s.IsAgent {
+				return s, false, nil
+			}
+		}
+	}
+	return discovery.SessionInfo{}, false, fmt.Errorf(&#34;no sessions found&#34;)
+}
+
+// generate parses, redacts, and renders a session, returning the output dir.
+func generate(opts *options, si discovery.SessionInfo) (string, error) {
+	outDir := resolveOutDir(opts, si)
+	if err := ensureOutDir(outDir, opts.force); err != nil {
+		return &#34;&#34;, err
+	}
+	sess, err := transcript.ParseFile(si.FilePath, transcript.Options{
+		IncludeSubagents: opts.includeSubagents,
+	})
+	if err != nil {
+		return &#34;&#34;, err
+	}
+	if si.ID != &#34;&#34; {
+		sess.ID = si.ID
+	}
+	if sess.SkippedLines &gt; 0 {
+		fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed line(s)\n&#34;, sess.SkippedLines)
+	}
+	if !opts.noRedact {
+		home, _ := os.UserHomeDir()
+		redact.Session(&amp;sess, home)
+	}
+	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+		return &#34;&#34;, err
+	}
+	return outDir, nil
+}
+
+func ensureOutDir(dir string, force bool) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return os.MkdirAll(dir, 0o755)
+		}
+		return err
+	}
+	if len(entries) &gt; 0 &amp;&amp; !force {
+		return fmt.Errorf(&#34;output directory %q is not empty (use --force to overwrite)&#34;, dir)
+	}
+	return nil
+}
+
+// openInBrowser opens path (a file or dir) in the default browser.
+func openInBrowser(path string) error {
+	index := filepath.Join(path, &#34;index.html&#34;)
+	abs, err := filepath.Abs(index)
+	if err != nil {
+		return err
+	}
+	url := &#34;file://&#34; + abs
+	switch runtime.GOOS {
+	case &#34;darwin&#34;:
+		return exec.Command(&#34;open&#34;, url).Start()
+	case &#34;windows&#34;:
+		return exec.Command(&#34;rundll32&#34;, &#34;url.dll,FileProtocolHandler&#34;, url).Start()
+	default:
+		return exec.Command(&#34;xdg-open&#34;, url).Start()
+	}
+}
+---GOMOD---
+module github.com/saigyo/cc-what-have-i-done
+
+go 1.26
+
+require (</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1 | tail -30">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build ./... \u0026\u0026 go vet ./... \u0026\u0026 go test ./... 2\u003e\u00261 | tail -30&#34;,
+  &#34;description&#34;: &#34;Build, vet, test&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="let me verify the `--latest` ordering hypothesis with a throwaway test.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.07</span></div>
+      <div class="turn-body"><p>Let me verify the <code>--latest</code> ordering hypothesis with a throwaway test.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash cat &gt; /tmp/latest_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/latest_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e /tmp/latest_test.go \u003c\u003c&#39;EOF&#39;\npackage discovery\n\nimport \&#34;testing\&#34;\n\nfunc TestLatestOrderingBug(t *testing.T) {\n\t// Group A newest session is an AGENT at T=100, interactive at T=50.\n\t// Group B newest session is INTERACTIVE at T=90.\n\t// Global newest interactive is B@90, but current latestSession loop\n\t// returns A@50 because A sorts first (its Sessions[0] modtime 100 \u003e 90).\n\tgroups := []ProjectGroup{} // simulate Scan output ordering\n\t_ = groups\n\tt.Log(\&#34;logic check only\&#34;)\n}\nEOF\necho \&#34;skip file test; reasoning verified manually\&#34;&#34;,
+  &#34;description&#34;: &#34;Note reasoning&#34;
+}</pre><pre class="tool-result">skip file test; reasoning verified manually</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="all tests pass, build and vet are clean. i verified the classification, scroll math, findproject, and tui empty-state paths against the actual code. here is the review.
+
+## findings
+
+### important — `latestsession` does not return the globally newest interactive session
+file: `cmd/ccwhid/run.go:54-63` (the skip loop in `latestsession`)
+
+spec item 4 says `--latest` should &#34;target the newest interactive session (in or out of a project scope).&#34; the implementation instead returns the first non-agent session in **group order**, and groups are ordered by each group&#39;s *newest session including agents* (`scan` sorts by `groups[i].sessions[0].modtime`, and `sessions[0]` may be an agent transcript). so it finds &#34;the newest interactive session inside whichever project had the most recent activity of any kind,&#34; not the newest interactive session overall.
+
+failure scenario (no `--project`):
+- project a sessions: `agent@t=100`, `interactive@t=50`
+- project b sessions: `interactive@t=90`
+
+`scan` orders a before b (100 &gt; 90). the loop enters a, skips the agent, and returns `interactive@t=50`. but the newest interactive session is b&#39;s `@t=90`. `--latest` renders the wrong (older) session. this is very plausible in practice: running a code-review/task agent in project a writes a fresh top-level transcript with a recent mtime, while your actual latest human session was in project b.
+
+note the old code (`return groups[0].sessions[0]`) was correct for &#34;newest session&#34; because the group sort key *is* `sessions[0].modtime`; adding the agent-skip broke that invariant without switching to a global max.
+
+suggested fix: scan all sessions and pick the non-agent one with the maximum `modtime`, e.g.
+```go
+var best *discovery.sessioninfo
+for _, g := range groups {
+    for i := range g.sessions {
+        s := g.sessions[i]
+        if s.isagent {
+            continue
+        }
+        if best == nil || s.modtime.after(best.modtime) {
+            best = &amp;s
+        }
+    }
+}
+if best == nil { return ..., fmt.errorf(&#34;no sessions found&#34;) }
+return *best, false, nil
+```
+(the `--project` scoped path narrows to one group first, where this reduces to the correct newest-interactive-in-group.)
+
+## verified correct (no defect)
+
+- **`clampscroll`** — boundary math is correct. for `n=0`/empty lists it returns 0 (the `max := n - visible; max &gt;= 0` guard is skipped, and the cursor-pull clauses keep `top=0`). i checked the potential &#34;stale large `top` when `visible &gt; n`&#34; stranding case: `sesstop`/`sesscursor` are reset to 0 on both `enterproject` and the `a` toggle (the only places `n` changes), and `windowsizemsg` changes only `visible`, never `n`, so a stale oversized `top` is unreachable. the `max &gt;= 0` guard is effectively dead but harmless.
+- **windowsizemsg / defaults** — `height` defaults to 20; `listheight()` clamps to `&gt;= 1`; keys before the first size msg are safe.
+- **empty states** — `enter`/`right` in both screens is guarded by `len(...) &gt; 0`; `viewsessions` early-returns the &#34;press a&#34; hint on empty; `refreshsessions` clamps `sesscursor` via `max(0, len-1)`. no slicing panics. a `--project` match with zero root sessions opens a non-crashing empty session list. all confirmed.
+- **agent classification** (`discovery.go:120-129`) — matches the spec: first entrypoint-bearing user/assistant record decides via `hasprefix(&#34;sdk&#34;)` and latches with `entrypointset`; `promptsource==&#34;sdk&#34;` can only set `isagent=true` (never resets), so an sdk session can&#39;t be un-classified by a later non-sdk record, and a cli session flips to agent only if a record actually carries `promptsource==&#34;sdk&#34;`. entrypoint-absent &#43; `promptsource==&#34;sdk&#34;` correctly yields agent. a file with no user/assistant records stays `isagent=false` (shown by default) — acceptable per spec.
+- **`findproject`** — exact path precedence, then case-insensitive basename, then case-insensitive substring; ambiguity/no-match errors are correct. `groups[idx:idx&#43;1]` is bounds-safe.
+
+## minor
+
+- **test gap for the important bug:** `latestsession` in `run.go` has no test at all — neither the agent-skip nor the ordering. a cheap table test over synthetic groups (like the counterexample above) would have caught the ordering defect. the new discovery/tui tests are meaningful and non-vacuous, but this untested seam is exactly where the bug lives.
+- **entrypoint only read on `user`/`assistant` records** (`discovery.go:110-137`): if a real transcript carries `entrypoint` only on some other record type (e.g. a summary/system line), classification would miss it. the author&#39;s test assumes entrypoint-on-user, so this is a schema-assumption risk rather than a confirmed bug — worth a comment or a quick check against a real agent transcript.
+
+no other issues above minor.">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.11</span></div>
+      <div class="turn-body"><p>All tests pass, build and vet are clean. I verified the classification, scroll math, FindProject, and TUI empty-state paths against the actual code. Here is the review.</p>
+<h2>Findings</h2>
+<h3>Important — <code>latestSession</code> does not return the globally newest interactive session</h3>
+<p>File: <code>cmd/ccwhid/run.go:54-63</code> (the skip loop in <code>latestSession</code>)</p>
+<p>Spec item 4 says <code>--latest</code> should &quot;target the newest interactive session (in or out of a project scope).&quot; The implementation instead returns the first non-agent session in <strong>group order</strong>, and groups are ordered by each group's <em>newest session including agents</em> (<code>Scan</code> sorts by <code>groups[i].Sessions[0].ModTime</code>, and <code>Sessions[0]</code> may be an agent transcript). So it finds &quot;the newest interactive session inside whichever project had the most recent activity of any kind,&quot; not the newest interactive session overall.</p>
+<p>Failure scenario (no <code>--project</code>):</p>
+<ul>
+<li>Project A sessions: <code>agent@T=100</code>, <code>interactive@T=50</code></li>
+<li>Project B sessions: <code>interactive@T=90</code></li>
+</ul>
+<p><code>Scan</code> orders A before B (100 &gt; 90). The loop enters A, skips the agent, and returns <code>interactive@T=50</code>. But the newest interactive session is B's <code>@T=90</code>. <code>--latest</code> renders the wrong (older) session. This is very plausible in practice: running a code-review/Task agent in project A writes a fresh top-level transcript with a recent mtime, while your actual latest human session was in project B.</p>
+<p>Note the old code (<code>return groups[0].Sessions[0]</code>) was correct for &quot;newest session&quot; because the group sort key <em>is</em> <code>Sessions[0].ModTime</code>; adding the agent-skip broke that invariant without switching to a global max.</p>
+<p>Suggested fix: scan all sessions and pick the non-agent one with the maximum <code>ModTime</code>, e.g.</p>
+<pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">var</span><span style="color:#fff"> </span><span style="color:#1f2328">best</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#1f2328">discovery</span><span style="color:#1f2328">.</span><span style="color:#1f2328">SessionInfo</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#cf222e">for</span><span style="color:#fff"> </span><span style="color:#1f2328">_</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">g</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#cf222e">range</span><span style="color:#fff"> </span><span style="color:#1f2328">groups</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">for</span><span style="color:#fff"> </span><span style="color:#1f2328">i</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#cf222e">range</span><span style="color:#fff"> </span><span style="color:#1f2328">g</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Sessions</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">        </span><span style="color:#1f2328">s</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#1f2328">g</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Sessions</span><span style="color:#1f2328">[</span><span style="color:#1f2328">i</span><span style="color:#1f2328">]</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">        </span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">IsAgent</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">            </span><span style="color:#cf222e">continue</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">        </span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">        </span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">best</span><span style="color:#fff"> </span><span style="color:#0550ae">==</span><span style="color:#fff"> </span><span style="color:#cf222e">nil</span><span style="color:#fff"> </span><span style="color:#0550ae">||</span><span style="color:#fff"> </span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ModTime</span><span style="color:#1f2328">.</span><span style="color:#6639ba">After</span><span style="color:#1f2328">(</span><span style="color:#1f2328">best</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ModTime</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">            </span><span style="color:#1f2328">best</span><span style="color:#fff"> </span><span style="color:#1f2328">=</span><span style="color:#fff"> </span><span style="color:#0550ae">&amp;</span><span style="color:#1f2328">s</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">        </span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">best</span><span style="color:#fff"> </span><span style="color:#0550ae">==</span><span style="color:#fff"> </span><span style="color:#cf222e">nil</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff"> </span><span style="color:#cf222e">return</span><span style="color:#fff"> </span><span style="color:#0550ae">...</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">fmt</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Errorf</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;no sessions found&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">}</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#cf222e">return</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#1f2328">best</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#cf222e">false</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#cf222e">nil</span><span style="color:#fff">
+</span></span></span></code></pre><p>(The <code>--project</code> scoped path narrows to one group first, where this reduces to the correct newest-interactive-in-group.)</p>
+<h2>Verified correct (no defect)</h2>
+<ul>
+<li><strong><code>clampScroll</code></strong> — Boundary math is correct. For <code>n=0</code>/empty lists it returns 0 (the <code>max := n - visible; max &gt;= 0</code> guard is skipped, and the cursor-pull clauses keep <code>top=0</code>). I checked the potential &quot;stale large <code>top</code> when <code>visible &gt; n</code>&quot; stranding case: <code>sessTop</code>/<code>sessCursor</code> are reset to 0 on both <code>enterProject</code> and the <code>a</code> toggle (the only places <code>n</code> changes), and <code>WindowSizeMsg</code> changes only <code>visible</code>, never <code>n</code>, so a stale oversized <code>top</code> is unreachable. The <code>max &gt;= 0</code> guard is effectively dead but harmless.</li>
+<li><strong>WindowSizeMsg / defaults</strong> — <code>height</code> defaults to 20; <code>listHeight()</code> clamps to <code>&gt;= 1</code>; keys before the first size msg are safe.</li>
+<li><strong>Empty states</strong> — <code>enter</code>/<code>right</code> in both screens is guarded by <code>len(...) &gt; 0</code>; <code>viewSessions</code> early-returns the &quot;press a&quot; hint on empty; <code>refreshSessions</code> clamps <code>sessCursor</code> via <code>max(0, len-1)</code>. No slicing panics. A <code>--project</code> match with zero root sessions opens a non-crashing empty session list. All confirmed.</li>
+<li><strong>Agent classification</strong> (<code>discovery.go:120-129</code>) — Matches the spec: first entrypoint-bearing user/assistant record decides via <code>HasPrefix(&quot;sdk&quot;)</code> and latches with <code>entrypointSet</code>; <code>promptSource==&quot;sdk&quot;</code> can only set <code>IsAgent=true</code> (never resets), so an sdk session can't be un-classified by a later non-sdk record, and a cli session flips to agent only if a record actually carries <code>promptSource==&quot;sdk&quot;</code>. Entrypoint-absent + <code>promptSource==&quot;sdk&quot;</code> correctly yields agent. A file with no user/assistant records stays <code>IsAgent=false</code> (shown by default) — acceptable per spec.</li>
+<li><strong><code>FindProject</code></strong> — Exact path precedence, then case-insensitive basename, then case-insensitive substring; ambiguity/no-match errors are correct. <code>groups[idx:idx+1]</code> is bounds-safe.</li>
+</ul>
+<h2>Minor</h2>
+<ul>
+<li><strong>Test gap for the Important bug:</strong> <code>latestSession</code> in <code>run.go</code> has no test at all — neither the agent-skip nor the ordering. A cheap table test over synthetic groups (like the counterexample above) would have caught the ordering defect. The new discovery/tui tests are meaningful and non-vacuous, but this untested seam is exactly where the bug lives.</li>
+<li><strong>Entrypoint only read on <code>user</code>/<code>assistant</code> records</strong> (<code>discovery.go:110-137</code>): if a real transcript carries <code>entrypoint</code> only on some other record type (e.g. a summary/system line), classification would miss it. The author's test assumes entrypoint-on-user, so this is a schema-assumption risk rather than a confirmed bug — worth a comment or a quick check against a real agent transcript.</li>
+</ul>
+<p>No other issues above Minor.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

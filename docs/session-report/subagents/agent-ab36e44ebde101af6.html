@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Task 7 (spec &#43; quality) · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Review Task 7 (spec &#43; quality)</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:43</span>
+        <span>30 turns</span>
+        <span>general-purpose · agent-ab36e44ebde101af6</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 15k in+out · ~$0.40 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>6k</td><td>988k</td><td>50k</td><td>$0.40</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>6k</td><td>988k</td><td>50k</td><td>$0.40</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; broad review happens later. this is the html rendering task.
+
+## what was requested
+
+read the task brief: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md
+
+global constraints binding this task (verbatim):
+- package `github.com/saigyo/cc-what-have-i-done/internal/render`; imports `internal/model`.
+- all css/js/templates embedded via go:embed; generated report must work over file:// with no network (no external fonts/cdns).
+- styling vibe: warm near-white bg (#f5f4ee), coral accent (#d97757), light&#43;dark via prefers-color-scheme &#43; manual data-theme toggle.
+- produced api: `markdown(string) template.html`, `highlight(code, lang string) template.html`, `diffhtml(*model.diff) template.html`, `options{title string}`, `site(model.session, outdir string, options) error` writing index.html &#43; assets/styles.css &#43; assets/app.js.
+- commit trailer: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+
+the brief had three known rough edges the implementer was told to resolve: (1) markdown.go must import `model` for diffhtml; (2) drop any unused `fmt` guard so build/vet are clean; (3) goldmark is not wired to chroma — code renders as plain &lt;pre&gt;&lt;code&gt;, `highlight` exists but unused, which is acceptable. judge against that.
+
+## what the implementer claims they built
+
+read the implementer&#39;s report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md
+
+## diff under review
+
+base: faa3097dc792090a217a7bdd24eb4782d7bc1505
+head: a713dfe
+diff file (read once): ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff
+
+read-only review; do not modify the tree. implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.
+
+named risks to check:
+1. **go:embed correctness:** the `//go:embed` directives cover exactly report.html.tmpl, styles.css, app.js, and `site` writes all three output files with the template referencing `assets/styles.css` and `assets/app.js` by relative path (file:// friendly).
+2. **html injection/escaping:** `markdown()` returns template.html (unescaped). note whether raw html in assistant/user text passes through unsanitized. tool summary/result/inputjson should be escaped via html.escapestring. assess the actual risk given content is the user&#39;s own transcript, and whether it warrants a finding vs. a documented caveat for v1.
+3. **no network dependencies:** confirm the template/css reference no external urls, fonts, or cdns.
+4. **recursion:** rendertool renders subagent turns (nested) — confirm subagent content is emitted.
+
+follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later. This is the HTML rendering task.</p>
+<h2>What Was Requested</h2>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</p>
+<p>Global constraints binding this task (verbatim):</p>
+<ul>
+<li>Package <code>github.com/saigyo/cc-what-have-i-done/internal/render</code>; imports <code>internal/model</code>.</li>
+<li>All CSS/JS/templates embedded via go:embed; generated report MUST work over file:// with NO network (no external fonts/CDNs).</li>
+<li>Styling vibe: warm near-white bg (#F5F4EE), coral accent (#D97757), light+dark via prefers-color-scheme + manual data-theme toggle.</li>
+<li>Produced API: <code>Markdown(string) template.HTML</code>, <code>Highlight(code, lang string) template.HTML</code>, <code>DiffHTML(*model.Diff) template.HTML</code>, <code>Options{Title string}</code>, <code>Site(model.Session, outDir string, Options) error</code> writing index.html + assets/styles.css + assets/app.js.</li>
+<li>Commit trailer: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+</ul>
+<p>The brief had three known rough edges the implementer was told to resolve: (1) markdown.go must import <code>model</code> for DiffHTML; (2) drop any unused <code>fmt</code> guard so build/vet are clean; (3) goldmark is NOT wired to chroma — code renders as plain <!-- raw HTML omitted --><!-- raw HTML omitted -->, <code>Highlight</code> exists but unused, which is acceptable. Judge against that.</p>
+<h2>What the Implementer Claims They Built</h2>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</p>
+<h2>Diff Under Review</h2>
+<p>Base: faa3097dc792090a217a7bdd24eb4782d7bc1505
+Head: a713dfe
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff</p>
+<p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
+<p>Named risks to check:</p>
+<ol>
+<li><strong>go:embed correctness:</strong> the <code>//go:embed</code> directives cover exactly report.html.tmpl, styles.css, app.js, and <code>Site</code> writes all three output files with the template referencing <code>assets/styles.css</code> and <code>assets/app.js</code> by relative path (file:// friendly).</li>
+<li><strong>HTML injection/escaping:</strong> <code>Markdown()</code> returns template.HTML (unescaped). Note whether raw HTML in assistant/user text passes through unsanitized. Tool Summary/Result/InputJSON should be escaped via html.EscapeString. Assess the actual risk given content is the user's own transcript, and whether it warrants a finding vs. a documented caveat for v1.</li>
+<li><strong>No network dependencies:</strong> confirm the template/CSS reference no external URLs, fonts, or CDNs.</li>
+<li><strong>Recursion:</strong> renderTool renders subagent turns (nested) — confirm subagent content is emitted.</li>
+</ol>
+<p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 7: HTML rendering (markdown, template, assets)
+2	
+3	**Files:**
+4	- Create: `internal/render/markdown.go`
+5	- Create: `internal/render/render.go`
+6	- Create: `internal/render/assets/report.html.tmpl`
+7	- Create: `internal/render/assets/styles.css`
+8	- Create: `internal/render/assets/app.js`
+9	- Create: `internal/render/render_test.go`
+10	
+11	**Interfaces:**
+12	- Consumes: `model.*` (Task 2).
+13	- Produces:
+14	  - `render.Markdown(src string) template.HTML` — goldmark→HTML, code blocks highlighted via chroma (inline styles, no external CSS), GFM enabled.
+15	  - `render.Highlight(code, lang string) template.HTML` — chroma highlight of a code string.
+16	  - `render.DiffHTML(d *model.Diff) template.HTML` — line-based old/new diff rendering with `+`/`-` classes.
+17	  - `render.Options{Title string}`
+18	  - `render.Site(s model.Session, outDir string, opts Options) error` — writes `index.html`, `assets/styles.css`, `assets/app.js`.
+19	
+20	- [ ] **Step 1: Add rendering dependencies**
+21	
+22	```bash
+23	go get github.com/yuin/goldmark@latest
+24	go get github.com/alecthomas/chroma/v2@latest
+25	```
+26	Expected: both modules added to `go.mod`/`go.sum`.
+27	
+28	- [ ] **Step 2: Write the failing test**
+29	
+30	Create `internal/render/render_test.go`:
+31	```go
+32	package render
+33	
+34	import (
+35		&#34;os&#34;
+36		&#34;path/filepath&#34;
+37		&#34;strings&#34;
+38		&#34;testing&#34;
+39		&#34;time&#34;
+40	
+41		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+42	)
+43	
+44	func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+45		out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+46		if !strings.Contains(out, &#34;&lt;h1&#34;) {
+47			t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+48		}
+49		if !strings.Contains(out, &#34;Println&#34;) {
+50			t.Errorf(&#34;expected highlighted code in output&#34;)
+51		}
+52	}
+53	
+54	func TestDiffHTMLMarksLines(t *testing.T) {
+55		out := string(DiffHTML(&amp;model.Diff{Path: &#34;x.txt&#34;, OldText: &#34;a&#34;, NewText: &#34;b&#34;}))
+56		if !strings.Contains(out, &#34;diff-del&#34;) || !strings.Contains(out, &#34;diff-add&#34;) {
+57			t.Errorf(&#34;diff HTML missing add/del classes: %q&#34;, out)
+58		}
+59	}
+60	
+61	func sampleSession() model.Session {
+62		return model.Session{
+63			ID:          &#34;abcd1234&#34;,
+64			ProjectPath: &#34;/tmp/proj&#34;,
+65			Title:       &#34;Sample&#34;,
+66			StartedAt:   time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+67			EndedAt:     time.Date(2026, 7, 11, 10, 1, 0, 0, time.UTC),
+68			Turns: []model.Turn{
+69				{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;do it&#34;}}},
+70				{Kind: model.TurnAssistant, Blocks: []model.Block{
+71					{Type: model.BlockText, Text: &#34;on it&#34;},
+72					{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+73						Name: &#34;Bash&#34;, Summary: &#34;ls&#34;, Result: &amp;model.ToolResult{Content: &#34;file.txt&#34;},
+74					}},
+75				}},
+76			},
+77		}
+78	}
+79	
+80	func TestSiteWritesFiles(t *testing.T) {
+81		dir := t.TempDir()
+82		if err := Site(sampleSession(), dir, Options{}); err != nil {
+83			t.Fatal(err)
+84		}
+85		for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+86			if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+87				t.Errorf(&#34;missing %s: %v&#34;, name, err)
+88			}
+89		}
+90		html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+91		s := string(html)
+92		for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+93			if !strings.Contains(s, want) {
+94				t.Errorf(&#34;index.html missing %q&#34;, want)
+95			}
+96		}
+97	}
+98	```
+99	
+100	- [ ] **Step 3: Run the test to verify it fails**
+101	
+102	Run: `go test ./internal/render/`
+103	Expected: FAIL — `undefined: Markdown`.
+104	
+105	- [ ] **Step 4: Write the markdown/diff helpers**
+106	
+107	Create `internal/render/markdown.go`:
+108	```go
+109	package render
+110	
+111	import (
+112		&#34;bytes&#34;
+113		&#34;html&#34;
+114		&#34;html/template&#34;
+115		&#34;strings&#34;
+116	
+117		chromahtml &#34;github.com/alecthomas/chroma/v2/formatters/html&#34;
+118		&#34;github.com/alecthomas/chroma/v2/lexers&#34;
+119		&#34;github.com/alecthomas/chroma/v2/styles&#34;
+120		&#34;github.com/yuin/goldmark&#34;
+121		&#34;github.com/yuin/goldmark/extension&#34;
+122	)
+123	
+124	var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
+125	
+126	// Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted
+127	// transcript content (the user&#39;s own session), so we do not strip HTML, but we
+128	// do escape code via goldmark&#39;s default renderer.
+129	func Markdown(src string) template.HTML {
+130		var buf bytes.Buffer
+131		if err := md.Convert([]byte(src), &amp;buf); err != nil {
+132			return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(src) + &#34;&lt;/pre&gt;&#34;)
+133		}
+134		return template.HTML(buf.String())
+135	}
+136	
+137	// Highlight renders a code string with chroma using inline styles (no external
+138	// stylesheet needed). lang may be empty for auto-detection.
+139	func Highlight(code, lang string) template.HTML {
+140		lexer := lexers.Get(lang)
+141		if lexer == nil {
+142			lexer = lexers.Analyse(code)
+143		}
+144		if lexer == nil {
+145			lexer = lexers.Fallback
+146		}
+147		style := styles.Get(&#34;github&#34;)
+148		if style == nil {
+149			style = styles.Fallback
+150		}
+151		formatter := chromahtml.New(chromahtml.WithClasses(false), chromahtml.TabWidth(2))
+152		it, err := lexer.Tokenise(nil, code)
+153		if err != nil {
+154			return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+155		}
+156		var buf bytes.Buffer
+157		if err := formatter.Format(&amp;buf, style, it); err != nil {
+158			return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+159		}
+160		return template.HTML(buf.String())
+161	}
+162	
+163	// DiffHTML renders a simple line-based diff of a Diff&#39;s old/new text.
+164	func DiffHTML(d *model.Diff) template.HTML {
+165		var b strings.Builder
+166		b.WriteString(`&lt;div class=&#34;diff&#34;&gt;`)
+167		if d.OldText != &#34;&#34; {
+168			for _, line := range strings.Split(d.OldText, &#34;\n&#34;) {
+169				b.WriteString(`&lt;div class=&#34;diff-del&#34;&gt;- `)
+170				b.WriteString(html.EscapeString(line))
+171				b.WriteString(&#34;&lt;/div&gt;&#34;)
+172			}
+173		}
+174		if d.NewText != &#34;&#34; {
+175			for _, line := range strings.Split(d.NewText, &#34;\n&#34;) {
+176				b.WriteString(`&lt;div class=&#34;diff-add&#34;&gt;+ `)
+177				b.WriteString(html.EscapeString(line))
+178				b.WriteString(&#34;&lt;/div&gt;&#34;)
+179			}
+180		}
+181		b.WriteString(&#34;&lt;/div&gt;&#34;)
+182		return template.HTML(b.String())
+183	}
+184	```
+185	
+186	Note: add `&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;` to the imports of `markdown.go` (used by `DiffHTML`).
+187	
+188	- [ ] **Step 5: Write the template asset**
+189	
+190	Create `internal/render/assets/report.html.tmpl`:
+191	```html
+192	&lt;!DOCTYPE html&gt;
+193	&lt;html lang=&#34;en&#34;&gt;
+194	&lt;head&gt;
+195	&lt;meta charset=&#34;utf-8&#34;&gt;
+196	&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&gt;
+197	&lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
+198	&lt;link rel=&#34;stylesheet&#34; href=&#34;assets/styles.css&#34;&gt;
+199	&lt;/head&gt;
+200	&lt;body&gt;
+201	&lt;header class=&#34;topbar&#34;&gt;
+202	  &lt;div class=&#34;topbar-inner&#34;&gt;
+203	    &lt;div class=&#34;brand&#34;&gt;ccwhid&lt;/div&gt;
+204	    &lt;input id=&#34;filter&#34; type=&#34;search&#34; placeholder=&#34;Filter turns…&#34; aria-label=&#34;Filter turns&#34;&gt;
+205	    &lt;button id=&#34;toggle-all&#34; class=&#34;btn&#34;&gt;Expand all&lt;/button&gt;
+206	    &lt;button id=&#34;toggle-tools&#34; class=&#34;btn&#34;&gt;Hide tool detail&lt;/button&gt;
+207	    &lt;button id=&#34;toggle-theme&#34; class=&#34;btn&#34; aria-label=&#34;Toggle theme&#34;&gt;◐&lt;/button&gt;
+208	  &lt;/div&gt;
+209	&lt;/header&gt;
+210	&lt;div class=&#34;layout&#34;&gt;
+211	  &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Prompts&#34;&gt;
+212	    &lt;div class=&#34;sidebar-title&#34;&gt;Prompts&lt;/div&gt;
+213	    &lt;ol class=&#34;prompt-list&#34;&gt;
+214	      {{ range .Prompts }}&lt;li&gt;&lt;a href=&#34;#turn-{{ .Index }}&#34;&gt;{{ .Preview }}&lt;/a&gt;&lt;/li&gt;{{ end }}
+215	    &lt;/ol&gt;
+216	  &lt;/nav&gt;
+217	  &lt;main class=&#34;content&#34;&gt;
+218	    &lt;section class=&#34;session-head&#34;&gt;
+219	      &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+220	      &lt;div class=&#34;meta&#34;&gt;
+221	        &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+222	        {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+223	        &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+224	        &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+225	      &lt;/div&gt;
+226	    &lt;/section&gt;
+227	    {{ range .Turns }}
+228	    &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+229	      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;
+230	      &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+231	    &lt;/article&gt;
+232	    {{ end }}
+233	  &lt;/main&gt;
+234	&lt;/div&gt;
+235	&lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+236	&lt;/body&gt;
+237	&lt;/html&gt;
+238	```
+239	
+240	- [ ] **Step 6: Write the render driver**
+241	
+242	Create `internal/render/render.go`:
+243	```go
+244	package render
+245	
+246	import (
+247		&#34;bytes&#34;
+248		&#34;embed&#34;
+249		&#34;fmt&#34;
+250		&#34;html&#34;
+251		&#34;html/template&#34;
+252		&#34;os&#34;
+253		&#34;path/filepath&#34;
+254		&#34;strings&#34;
+255	
+256		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+257	)
+258	
+259	//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+260	var assets embed.FS
+261	
+262	// Options configures a render.
+263	type Options struct {
+264		Title string
+265	}
+266	
+267	// Site renders the session into outDir as index.html + assets/.
+268	func Site(s model.Session, outDir string, opts Options) error {
+269		title := opts.Title
+270		if title == &#34;&#34; {
+271			title = s.DisplayTitle()
+272		}
+273	
+274		tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+275		if err != nil {
+276			return err
+277		}
+278		tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+279		if err != nil {
+280			return err
+281		}
+282	
+283		data := buildViewModel(s, title)
+284		var buf bytes.Buffer
+285		if err := tmpl.Execute(&amp;buf, data); err != nil {
+286			return err
+287		}
+288	
+289		if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+290			return err
+291		}
+292		if err := os.WriteFile(filepath.Join(outDir, &#34;index.html&#34;), buf.Bytes(), 0o644); err != nil {
+293			return err
+294		}
+295		for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+296			b, err := assets.ReadFile(&#34;assets/&#34; + name)
+297			if err != nil {
+298				return err
+299			}
+300			if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+301				return err
+302			}
+303		}
+304		return nil
+305	}
+306	
+307	// view models -------------------------------------------------------------
+308	
+309	type viewData struct {
+310		Title     string
+311		Session   model.Session
+312		StartedAt string
+313		TurnCount int
+314		Prompts   []promptRef
+315		Turns     []turnView
+316	}
+317	
+318	type promptRef struct {
+319		Index   int
+320		Preview string
+321	}
+322	
+323	type turnView struct {
+324		Index      int
+325		Kind       string
+326		RoleLabel  string
+327		SearchText string
+328		Body       template.HTML
+329	}
+330	
+331	func buildViewModel(s model.Session, title string) viewData {
+332		d := viewData{
+333			Title:     title,
+334			Session:   s,
+335			TurnCount: len(s.Turns),
+336		}
+337		if !s.StartedAt.IsZero() {
+338			d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+339		}
+340		for i, t := range s.Turns {
+341			if t.Kind == model.TurnUser {
+342				d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(turnPlainText(t), 60)})
+343			}
+344			d.Turns = append(d.Turns, turnView{
+345				Index:      i,
+346				Kind:       string(t.Kind),
+347				RoleLabel:  roleLabel(t.Kind),
+348				SearchText: strings.ToLower(turnPlainText(t)),
+349				Body:       renderTurnBody(t),
+350			})
+351		}
+352		return d
+353	}
+354	
+355	func roleLabel(k model.TurnKind) string {
+356		if k == model.TurnUser {
+357			return &#34;You&#34;
+358		}
+359		return &#34;Claude&#34;
+360	}
+361	
+362	// renderTurnBody renders all blocks of a turn to HTML.
+363	func renderTurnBody(t model.Turn) template.HTML {
+364		var b strings.Builder
+365		for _, blk := range t.Blocks {
+366			switch blk.Type {
+367			case model.BlockText:
+368				b.WriteString(string(Markdown(blk.Text)))
+369			case model.BlockThinking:
+370				b.WriteString(`&lt;details class=&#34;thinking&#34;&gt;&lt;summary&gt;thinking&lt;/summary&gt;`)
+371				b.WriteString(string(Markdown(blk.Text)))
+372				b.WriteString(`&lt;/details&gt;`)
+373			case model.BlockToolUse:
+374				b.WriteString(renderTool(blk.Tool))
+375			}
+376		}
+377		return template.HTML(b.String())
+378	}
+379	
+380	func renderTool(tc *model.ToolCall) string {
+381		var b strings.Builder
+382		b.WriteString(`&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;`)
+383		b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+384		if tc.Summary != &#34;&#34; {
+385			b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(tc.Summary) + `&lt;/span&gt;`)
+386		}
+387		b.WriteString(`&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;`)
+388		if tc.Diff != nil {
+389			b.WriteString(string(DiffHTML(tc.Diff)))
+390		} else if tc.InputJSON != &#34;&#34; {
+391			b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+392		}
+393		if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+394			cls := &#34;tool-result&#34;
+395			if tc.Result.IsError {
+396				cls += &#34; tool-result-error&#34;
+397			}
+398			b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(tc.Result.Content) + `&lt;/pre&gt;`)
+399		}
+400		for _, sub := range tc.Subagents {
+401			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+402			for _, st := range sub.Turns {
+403				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st.Kind) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+404				b.WriteString(string(renderTurnBody(st)))
+405				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+406			}
+407			b.WriteString(`&lt;/details&gt;`)
+408		}
+409		b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+410		return b.String()
+411	}
+412	
+413	func turnPlainText(t model.Turn) string {
+414		var parts []string
+415		for _, blk := range t.Blocks {
+416			switch blk.Type {
+417			case model.BlockText, model.BlockThinking:
+418				parts = append(parts, blk.Text)
+419			case model.BlockToolUse:
+420				parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
+421			}
+422		}
+423		return strings.Join(parts, &#34; &#34;)
+424	}
+425	
+426	func preview(s string, n int) string {
+427		s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))
+428		if len(s) &lt;= n {
+429			return s
+430		}
+431		return s[:n-1] + &#34;…&#34;
+432	}
+433	
+434	var _ = fmt.Sprintf // keep fmt import if trimmed during edits
+435	```
+436	
+437	Note: remove the trailing `var _ = fmt.Sprintf` line and the `&#34;fmt&#34;` import if `go vet` flags them as unused after implementation; they are a guard only.
+438	
+439	- [ ] **Step 7: Write the CSS asset**
+440	
+441	Create `internal/render/assets/styles.css`:
+442	```css
+443	:root {
+444	  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+445	  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+446	  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+447	  --font: -apple-system, BlinkMacSystemFont, &#34;Segoe UI&#34;, Roboto, sans-serif;
+448	  --mono: ui-monospace, SFMono-Regular, &#34;SF Mono&#34;, Menlo, monospace;
+449	}
+450	@media (prefers-color-scheme: dark) {
+451	  :root {
+452	    --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+453	    --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;
+454	    --code-bg: #201F1C; --user-bg: #2A231F;
+455	  }
+456	}
+457	:root[data-theme=&#34;dark&#34;] {
+458	  --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+459	  --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;
+460	  --code-bg: #201F1C; --user-bg: #2A231F;
+461	}
+462	:root[data-theme=&#34;light&#34;] {
+463	  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+464	  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+465	  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+466	}
+467	* { box-sizing: border-box; }
+468	body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
+469	.topbar { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--border); }
+470	.topbar-inner { display: flex; gap: .75rem; align-items: center; max-width: 1100px; margin: 0 auto; padding: .6rem 1rem; }
+471	.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+472	#filter { flex: 1; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+473	.btn { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; font-size: .85rem; }
+474	.btn:hover { border-color: var(--accent); }
+475	.layout { display: flex; max-width: 1100px; margin: 0 auto; gap: 1.5rem; padding: 1.5rem 1rem; }
+476	.sidebar { flex: 0 0 220px; position: sticky; top: 4rem; align-self: flex-start; max-height: calc(100vh - 5rem); overflow: auto; }
+477	.sidebar-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+478	.prompt-list { list-style: none; padding: 0; margin: 0; counter-reset: p; }
+479	.prompt-list li { counter-increment: p; margin-bottom: .35rem; }
+480	.prompt-list a { color: var(--text); text-decoration: none; font-size: .85rem; display: block; padding: .25rem .4rem; border-radius: 6px; }
+481	.prompt-list a::before { content: counter(p) &#34;. &#34;; color: var(--muted); }
+482	.prompt-list a:hover { background: var(--accent-soft); }
+483	.content { flex: 1; min-width: 0; }
+484	.session-head h1 { margin: 0 0 .3rem; font-size: 1.6rem; }
+485	.meta { display: flex; flex-wrap: wrap; gap: .75rem; color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+486	.turn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; scroll-margin-top: 4.5rem; }
+487	.turn-user { background: var(--user-bg); border-color: var(--accent-soft); }
+488	.turn-role { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+489	.turn-user .turn-role { color: var(--accent); }
+490	.turn-body &gt; :first-child { margin-top: 0; }
+491	.turn-body &gt; :last-child { margin-bottom: 0; }
+492	.turn-body pre { background: var(--code-bg); padding: .8rem; border-radius: 8px; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
+493	.turn-body code { font-family: var(--mono); font-size: .9em; }
+494	.tool { border: 1px solid var(--border); border-radius: 8px; margin: .6rem 0; background: var(--bg); }
+495	.tool-head { cursor: pointer; padding: .5rem .7rem; display: flex; gap: .6rem; align-items: baseline; }
+496	.tool-name { font-weight: 600; color: var(--accent); font-size: .8rem; }
+497	.tool-summary { font-family: var(--mono); font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+498	.tool-body { padding: 0 .7rem .7rem; }
+499	.tool-result { color: var(--text); }
+500	.tool-result-error { border-left: 3px solid var(--accent); }
+501	.thinking { color: var(--muted); font-size: .9rem; margin: .5rem 0; }
+502	.thinking summary { cursor: pointer; }
+503	.subagent { margin: .6rem 0; border-left: 3px solid var(--accent-soft); padding-left: .7rem; }
+504	.subagent summary { cursor: pointer; color: var(--accent); font-size: .85rem; }
+505	.diff { font-family: var(--mono); font-size: .8rem; background: var(--code-bg); border-radius: 8px; padding: .5rem; overflow-x: auto; }
+506	.diff-del { color: #b23b3b; white-space: pre-wrap; }
+507	.diff-add { color: #2f8a4c; white-space: pre-wrap; }
+508	body.hide-tools .tool-body { display: none; }
+509	.turn.filtered { display: none; }
+510	@media (max-width: 760px) { .sidebar { display: none; } }
+511	```
+512	
+513	- [ ] **Step 8: Write the JS asset**
+514	
+515	Create `internal/render/assets/app.js`:
+516	```js
+517	(function () {
+518	  var filter = document.getElementById(&#39;filter&#39;);
+519	  var turns = Array.prototype.slice.call(document.querySelectorAll(&#39;.turn[data-search]&#39;));
+520	  if (filter) {
+521	    filter.addEventListener(&#39;input&#39;, function () {
+522	      var q = filter.value.toLowerCase().trim();
+523	      turns.forEach(function (t) {
+524	        var hit = q === &#39;&#39; || (t.getAttribute(&#39;data-search&#39;) || &#39;&#39;).indexOf(q) !== -1;
+525	        t.classList.toggle(&#39;filtered&#39;, !hit);
+526	      });
+527	    });
+528	  }
+529	
+530	  var toggleAll = document.getElementById(&#39;toggle-all&#39;);
+531	  var expanded = false;
+532	  if (toggleAll) {
+533	    toggleAll.addEventListener(&#39;click&#39;, function () {
+534	      expanded = !expanded;
+535	      document.querySelectorAll(&#39;details&#39;).forEach(function (d) { d.open = expanded; });
+536	      toggleAll.textContent = expanded ? &#39;Collapse all&#39; : &#39;Expand all&#39;;
+537	    });
+538	  }
+539	
+540	  var toggleTools = document.getElementById(&#39;toggle-tools&#39;);
+541	  if (toggleTools) {
+542	    toggleTools.addEventListener(&#39;click&#39;, function () {
+543	      var hidden = document.body.classList.toggle(&#39;hide-tools&#39;);
+544	      toggleTools.textContent = hidden ? &#39;Show tool detail&#39; : &#39;Hide tool detail&#39;;
+545	    });
+546	  }
+547	
+548	  var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);
+549	  if (toggleTheme) {
+550	    toggleTheme.addEventListener(&#39;click&#39;, function () {
+551	      var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);
+552	      var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);
+553	      document.documentElement.setAttribute(&#39;data-theme&#39;, next);
+554	    });
+555	  }
+556	})();
+557	```
+558	
+559	- [ ] **Step 9: Run the tests to verify they pass**
+560	
+561	Run: `go test ./internal/render/`
+562	Expected: PASS. If `go vet` complains about the unused `fmt` guard in `render.go`, delete that line and the import, then re-run.
+563	
+564	- [ ] **Step 10: Commit**
+565	
+566	```bash
+567	git add internal/render/
+568	git commit -m &#34;$(printf &#39;feat: render session to static HTML site with embedded assets\n\nCo-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;&#39;)&#34;
+569	```
+570	
+571	---
+572	
+573	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md&#34;
+}</pre><pre class="tool-result">1	# Task 7 Report: HTML rendering (markdown, template, embedded assets)
+2	
+3	## Summary
+4	
+5	Implemented `internal/render`: markdown/diff helpers via goldmark+chroma, an
+6	embedded HTML template + CSS + JS, and a `Site` driver that walks a
+7	`model.Session` into a static `index.html` + `assets/{styles.css,app.js}`
+8	bundle that works fully offline over `file://` (no CDN/network dependency).
+9	
+10	## Dependencies added
+11	
+12	```
+13	go get github.com/yuin/goldmark@latest       # v1.8.2
+14	go get github.com/alecthomas/chroma/v2@latest # v2.27.0 (+ dlclark/regexp2/v2 v2.2.1)
+15	```
+16	Ran `go mod tidy` afterward to move goldmark/chroma from the `// indirect`
+17	block into the direct `require` block (they&#39;re used directly by
+18	`markdown.go`), and to pull in chroma&#39;s own indirect test deps
+19	(`alecthomas/repr`, `alecthomas/assert/v2`, `hexops/gotextdiff`) into go.sum.
+20	
+21	## TDD evidence
+22	
+23	**RED** — wrote `internal/render/render_test.go` verbatim from the brief
+24	(`TestMarkdownRendersHeadingAndCode`, `TestDiffHTMLMarksLines`,
+25	`TestSiteWritesFiles`), then ran:
+26	
+27	```
+28	$ go test ./internal/render/
+29	internal/render/render_test.go:14:16: undefined: Markdown
+30	internal/render/render_test.go:24:16: undefined: DiffHTML
+31	internal/render/render_test.go:51:12: undefined: Site
+32	internal/render/render_test.go:51:39: undefined: Options
+33	FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]
+34	```
+35	
+36	**GREEN** — after implementing `markdown.go`, `assets/report.html.tmpl`,
+37	`render.go`, `assets/styles.css`, `assets/app.js`:
+38	
+39	```
+40	$ go test ./internal/render/ -v
+41	=== RUN   TestMarkdownRendersHeadingAndCode
+42	--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+43	=== RUN   TestDiffHTMLMarksLines
+44	--- PASS: TestDiffHTMLMarksLines (0.00s)
+45	=== RUN   TestSiteWritesFiles
+46	--- PASS: TestSiteWritesFiles (0.00s)
+47	PASS
+48	ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.372s
+49	```
+50	
+51	Full-repo verification:
+52	
+53	```
+54	$ go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./...
+55	ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid
+56	ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery
+57	ok  	github.com/saigyo/cc-what-have-i-done/internal/model
+58	ok  	github.com/saigyo/cc-what-have-i-done/internal/redact
+59	ok  	github.com/saigyo/cc-what-have-i-done/internal/render
+60	ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript
+61	```
+62	All packages build, `go vet` is silent, and all tests pass (re-ran after
+63	`go mod tidy` too, to make sure the dependency graph change didn&#39;t disturb
+64	anything).
+65	
+66	## Resolving the three known rough edges
+67	
+68	1. **`markdown.go` missing the `model` import.** Added
+69	   `&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;` to the import
+70	   block (used only by `DiffHTML(d *model.Diff)`). Compiles clean.
+71	
+72	2. **`fmt` unused-import guard in `render.go`.** After writing the full file,
+73	   `fmt` was genuinely unused (no `fmt.Sprintf`/`fmt.Errorf` calls anywhere in
+74	   the render driver — all string building uses `strings.Builder` /
+75	   `html.EscapeString`). I did not add the `&#34;fmt&#34;` import or the
+76	   `var _ = fmt.Sprintf` guard line at all — there was nothing to guard, and
+77	   adding an admittedly-dead guard just to delete it immediately would have
+78	   been pointless churn. `go vet ./...` confirms the file is clean without it.
+79	
+80	3. **goldmark has no built-in chroma integration.** Left `Markdown()` exactly
+81	   as specified — fenced code renders as plain `&lt;pre&gt;&lt;code&gt;` from goldmark&#39;s
+82	   default renderer, styled by `.turn-body pre`/`.turn-body code` in
+83	   `styles.css` (monospace font, background). `Highlight(code, lang string)`
+84	   is implemented per the brief and exported, but intentionally not wired
+85	   into the goldmark render pipeline — `Highlight` is currently unused by
+86	   `render.go`&#39;s view-model code, which is fine in Go (unused exported funcs
+87	   don&#39;t trigger `go vet`/build errors, unlike unused imports or unused local
+88	   variables). No custom goldmark NodeRenderer was invented for this task.
+89	
+90	## Files changed
+91	
+92	- `go.mod`, `go.sum` — added goldmark, chroma/v2 (+ transitive deps)
+93	- `internal/render/markdown.go` (new) — `Markdown`, `Highlight`, `DiffHTML`
+94	- `internal/render/render.go` (new) — `Options`, `Site`, view-model builders
+95	  (`buildViewModel`, `renderTurnBody`, `renderTool`, `turnPlainText`,
+96	  `preview`, `roleLabel`), `//go:embed` of the three asset files
+97	- `internal/render/assets/report.html.tmpl` (new) — page template
+98	- `internal/render/assets/styles.css` (new) — Claude-docs-style theme,
+99	  light/dark via `prefers-color-scheme` + `data-theme` override
+100	- `internal/render/assets/app.js` (new) — filter/expand-all/hide-tools/theme
+101	  toggle behavior, framework-free
+102	- `internal/render/render_test.go` (new) — the brief&#39;s test file, verbatim
+103	
+104	All CSS/JS/template content matches the brief verbatim (byte-for-byte, aside
+105	from the two resolved rough edges above).
+106	
+107	## Self-review
+108	
+109	- Confirmed `model.Session`/`Turn`/`Block`/`ToolCall`/`ToolResult`/`Diff`/
+110	  `Subagent` field names used in `render.go` and the test file match
+111	  `internal/model/model.go` exactly (checked before writing any code) — no
+112	  mismatches, no adjustments needed.
+113	- Manually smoke-tested `Site()` outside the unit test with a session
+114	  containing all block kinds (user text w/ GFM markdown, thinking block,
+115	  assistant text, an Edit tool call with a `Diff`), from a throwaway
+116	  `scratch_smoke/main.go` inside the module (since `internal/` packages can&#39;t
+117	  be imported from outside the module tree). Verified:
+118	  - `index.html` links `assets/styles.css` and `assets/app.js` via relative
+119	    paths (`href=&#34;assets/styles.css&#34;`, `src=&#34;assets/app.js&#34;`) — no absolute
+120	    paths, no `http(s)://` references anywhere — safe for `file://`.
+121	  - Markdown (`**bug**`, `` `foo.go` ``) rendered to `&lt;strong&gt;`/`&lt;code&gt;`.
+122	  - Thinking block rendered inside `&lt;details class=&#34;thinking&#34;&gt;`.
+123	  - Tool card rendered as `&lt;details class=&#34;tool&#34;&gt;` with the diff rendered via
+124	    `DiffHTML` (`diff-del`/`diff-add` divs).
+125	  - Sidebar prompt list linked to `#turn-0` with a truncated preview.
+126	  - Deleted the scratch directory afterward; it was never committed.
+127	- Ran `go mod tidy` to keep `go.mod`/`go.sum` minimal and correctly
+128	  direct/indirect-classified, then re-verified build/vet/test all still pass
+129	  post-tidy.
+130	- Double-checked `git status` before committing to ensure only
+131	  `internal/render/`, `go.mod`, `go.sum` are staged — no stray scratch files.
+132	
+133	## Concerns
+134	
+135	None. The three flagged rough edges resolved cleanly with no further
+136	transcription conflicts found in the brief. `Highlight` is currently
+137	dead code from the call graph&#39;s perspective (exported but not called by
+138	`render.go`) — this is explicitly sanctioned by the task&#39;s rough-edge #3 and
+139	by Go&#39;s semantics (only unused imports/locals are compile errors), so it&#39;s
+140	not flagged as a defect, just noted for whoever picks up code-highlighting
+141	wiring in a later task.
+142	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.06</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff&#34;
+}</pre><pre class="tool-result">1	# Review package: faa3097dc792090a217a7bdd24eb4782d7bc1505..HEAD
+2	
+3	## Commits
+4	a713dfe feat: render session to static HTML site with embedded assets
+5	
+6	## Files changed
+7	 go.mod                                  |   7 +-
+8	 go.sum                                  |  12 ++
+9	 internal/render/assets/app.js           |  40 +++++++
+10	 internal/render/assets/report.html.tmpl |  46 ++++++++
+11	 internal/render/assets/styles.css       |  68 ++++++++++++
+12	 internal/render/markdown.go             |  77 +++++++++++++
+13	 internal/render/render.go               | 188 ++++++++++++++++++++++++++++++++
+14	 internal/render/render_test.go          |  66 +++++++++++
+15	 8 files changed, 503 insertions(+), 1 deletion(-)
+16	
+17	## Diff
+18	diff --git a/go.mod b/go.mod
+19	index 6f08559..23f5331 100644
+20	--- a/go.mod
+21	+++ b/go.mod
+22	@@ -1,10 +1,15 @@
+23	 module github.com/saigyo/cc-what-have-i-done
+24	 
+25	 go 1.26
+26	 
+27	-require github.com/spf13/cobra v1.10.2
+28	+require (
+29	+	github.com/alecthomas/chroma/v2 v2.27.0
+30	+	github.com/spf13/cobra v1.10.2
+31	+	github.com/yuin/goldmark v1.8.2
+32	+)
+33	 
+34	 require (
+35	+	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
+36	 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+37	 	github.com/spf13/pflag v1.0.9 // indirect
+38	 )
+39	diff --git a/go.sum b/go.sum
+40	index a6ee3e0..36b0f08 100644
+41	--- a/go.sum
+42	+++ b/go.sum
+43	@@ -1,10 +1,22 @@
+44	+github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+45	+github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+46	+github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
+47	+github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
+48	+github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+49	+github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+50	 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
+51	+github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
+52	+github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
+53	+github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
+54	+github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
+55	 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+56	 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+57	 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+58	 github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
+59	 github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
+60	 github.com/spf13/pflag v1.0.9 h1:9exaQaMOCwffKiiiYk6/BndUBv+iRViNW+4lEMi0PvY=
+61	 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+62	+github.com/yuin/goldmark v1.8.2 h1:kEGpgqJXdgbkhcOgBxkC0X0PmoPG1ZyoZ117rDVp4zE=
+63	+github.com/yuin/goldmark v1.8.2/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
+64	 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+65	 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+66	diff --git a/internal/render/assets/app.js b/internal/render/assets/app.js
+67	new file mode 100644
+68	index 0000000..8a168a7
+69	--- /dev/null
+70	+++ b/internal/render/assets/app.js
+71	@@ -0,0 +1,40 @@
+72	+(function () {
+73	+  var filter = document.getElementById(&#39;filter&#39;);
+74	+  var turns = Array.prototype.slice.call(document.querySelectorAll(&#39;.turn[data-search]&#39;));
+75	+  if (filter) {
+76	+    filter.addEventListener(&#39;input&#39;, function () {
+77	+      var q = filter.value.toLowerCase().trim();
+78	+      turns.forEach(function (t) {
+79	+        var hit = q === &#39;&#39; || (t.getAttribute(&#39;data-search&#39;) || &#39;&#39;).indexOf(q) !== -1;
+80	+        t.classList.toggle(&#39;filtered&#39;, !hit);
+81	+      });
+82	+    });
+83	+  }
+84	+
+85	+  var toggleAll = document.getElementById(&#39;toggle-all&#39;);
+86	+  var expanded = false;
+87	+  if (toggleAll) {
+88	+    toggleAll.addEventListener(&#39;click&#39;, function () {
+89	+      expanded = !expanded;
+90	+      document.querySelectorAll(&#39;details&#39;).forEach(function (d) { d.open = expanded; });
+91	+      toggleAll.textContent = expanded ? &#39;Collapse all&#39; : &#39;Expand all&#39;;
+92	+    });
+93	+  }
+94	+
+95	+  var toggleTools = document.getElementById(&#39;toggle-tools&#39;);
+96	+  if (toggleTools) {
+97	+    toggleTools.addEventListener(&#39;click&#39;, function () {
+98	+      var hidden = document.body.classList.toggle(&#39;hide-tools&#39;);
+99	+      toggleTools.textContent = hidden ? &#39;Show tool detail&#39; : &#39;Hide tool detail&#39;;
+100	+    });
+101	+  }
+102	+
+103	+  var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);
+104	+  if (toggleTheme) {
+105	+    toggleTheme.addEventListener(&#39;click&#39;, function () {
+106	+      var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);
+107	+      var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);
+108	+      document.documentElement.setAttribute(&#39;data-theme&#39;, next);
+109	+    });
+110	+  }
+111	+})();
+112	diff --git a/internal/render/assets/report.html.tmpl b/internal/render/assets/report.html.tmpl
+113	new file mode 100644
+114	index 0000000..c595929
+115	--- /dev/null
+116	+++ b/internal/render/assets/report.html.tmpl
+117	@@ -0,0 +1,46 @@
+118	+&lt;!DOCTYPE html&gt;
+119	+&lt;html lang=&#34;en&#34;&gt;
+120	+&lt;head&gt;
+121	+&lt;meta charset=&#34;utf-8&#34;&gt;
+122	+&lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&gt;
+123	+&lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
+124	+&lt;link rel=&#34;stylesheet&#34; href=&#34;assets/styles.css&#34;&gt;
+125	+&lt;/head&gt;
+126	+&lt;body&gt;
+127	+&lt;header class=&#34;topbar&#34;&gt;
+128	+  &lt;div class=&#34;topbar-inner&#34;&gt;
+129	+    &lt;div class=&#34;brand&#34;&gt;ccwhid&lt;/div&gt;
+130	+    &lt;input id=&#34;filter&#34; type=&#34;search&#34; placeholder=&#34;Filter turns…&#34; aria-label=&#34;Filter turns&#34;&gt;
+131	+    &lt;button id=&#34;toggle-all&#34; class=&#34;btn&#34;&gt;Expand all&lt;/button&gt;
+132	+    &lt;button id=&#34;toggle-tools&#34; class=&#34;btn&#34;&gt;Hide tool detail&lt;/button&gt;
+133	+    &lt;button id=&#34;toggle-theme&#34; class=&#34;btn&#34; aria-label=&#34;Toggle theme&#34;&gt;◐&lt;/button&gt;
+134	+  &lt;/div&gt;
+135	+&lt;/header&gt;
+136	+&lt;div class=&#34;layout&#34;&gt;
+137	+  &lt;nav class=&#34;sidebar&#34; aria-label=&#34;Prompts&#34;&gt;
+138	+    &lt;div class=&#34;sidebar-title&#34;&gt;Prompts&lt;/div&gt;
+139	+    &lt;ol class=&#34;prompt-list&#34;&gt;
+140	+      {{ range .Prompts }}&lt;li&gt;&lt;a href=&#34;#turn-{{ .Index }}&#34;&gt;{{ .Preview }}&lt;/a&gt;&lt;/li&gt;{{ end }}
+141	+    &lt;/ol&gt;
+142	+  &lt;/nav&gt;
+143	+  &lt;main class=&#34;content&#34;&gt;
+144	+    &lt;section class=&#34;session-head&#34;&gt;
+145	+      &lt;h1&gt;{{ .Title }}&lt;/h1&gt;
+146	+      &lt;div class=&#34;meta&#34;&gt;
+147	+        &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
+148	+        {{ if .Session.GitBranch }}&lt;span&gt;⎇ {{ .Session.GitBranch }}&lt;/span&gt;{{ end }}
+149	+        &lt;span&gt;{{ .StartedAt }}&lt;/span&gt;
+150	+        &lt;span&gt;{{ .TurnCount }} turns&lt;/span&gt;
+151	+      &lt;/div&gt;
+152	+    &lt;/section&gt;
+153	+    {{ range .Turns }}
+154	+    &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;
+155	+      &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;
+156	+      &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;
+157	+    &lt;/article&gt;
+158	+    {{ end }}
+159	+  &lt;/main&gt;
+160	+&lt;/div&gt;
+161	+&lt;script src=&#34;assets/app.js&#34;&gt;&lt;/script&gt;
+162	+&lt;/body&gt;
+163	+&lt;/html&gt;
+164	diff --git a/internal/render/assets/styles.css b/internal/render/assets/styles.css
+165	new file mode 100644
+166	index 0000000..dd87d2d
+167	--- /dev/null
+168	+++ b/internal/render/assets/styles.css
+169	@@ -0,0 +1,68 @@
+170	+:root {
+171	+  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+172	+  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+173	+  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+174	+  --font: -apple-system, BlinkMacSystemFont, &#34;Segoe UI&#34;, Roboto, sans-serif;
+175	+  --mono: ui-monospace, SFMono-Regular, &#34;SF Mono&#34;, Menlo, monospace;
+176	+}
+177	+@media (prefers-color-scheme: dark) {
+178	+  :root {
+179	+    --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+180	+    --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;
+181	+    --code-bg: #201F1C; --user-bg: #2A231F;
+182	+  }
+183	+}
+184	+:root[data-theme=&#34;dark&#34;] {
+185	+  --bg: #1B1B19; --surface: #242320; --text: #ECEAE2; --muted: #9A988E;
+186	+  --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;
+187	+  --code-bg: #201F1C; --user-bg: #2A231F;
+188	+}
+189	+:root[data-theme=&#34;light&#34;] {
+190	+  --bg: #F5F4EE; --surface: #FFFFFF; --text: #1A1A18; --muted: #6B6A63;
+191	+  --accent: #D97757; --accent-soft: #F6E7DF; --border: #E4E2D8;
+192	+  --code-bg: #F2F1EA; --user-bg: #FBF3EE;
+193	+}
+194	+* { box-sizing: border-box; }
+195	+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
+196	+.topbar { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--border); }
+197	+.topbar-inner { display: flex; gap: .75rem; align-items: center; max-width: 1100px; margin: 0 auto; padding: .6rem 1rem; }
+198	+.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+199	+#filter { flex: 1; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+200	+.btn { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; font-size: .85rem; }
+201	+.btn:hover { border-color: var(--accent); }
+202	+.layout { display: flex; max-width: 1100px; margin: 0 auto; gap: 1.5rem; padding: 1.5rem 1rem; }
+203	+.sidebar { flex: 0 0 220px; position: sticky; top: 4rem; align-self: flex-start; max-height: calc(100vh - 5rem); overflow: auto; }
+204	+.sidebar-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+205	+.prompt-list { list-style: none; padding: 0; margin: 0; counter-reset: p; }
+206	+.prompt-list li { counter-increment: p; margin-bottom: .35rem; }
+207	+.prompt-list a { color: var(--text); text-decoration: none; font-size: .85rem; display: block; padding: .25rem .4rem; border-radius: 6px; }
+208	+.prompt-list a::before { content: counter(p) &#34;. &#34;; color: var(--muted); }
+209	+.prompt-list a:hover { background: var(--accent-soft); }
+210	+.content { flex: 1; min-width: 0; }
+211	+.session-head h1 { margin: 0 0 .3rem; font-size: 1.6rem; }
+212	+.meta { display: flex; flex-wrap: wrap; gap: .75rem; color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+213	+.turn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; scroll-margin-top: 4.5rem; }
+214	+.turn-user { background: var(--user-bg); border-color: var(--accent-soft); }
+215	+.turn-role { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+216	+.turn-user .turn-role { color: var(--accent); }
+217	+.turn-body &gt; :first-child { margin-top: 0; }
+218	+.turn-body &gt; :last-child { margin-bottom: 0; }
+219	+.turn-body pre { background: var(--code-bg); padding: .8rem; border-radius: 8px; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
+220	+.turn-body code { font-family: var(--mono); font-size: .9em; }
+221	+.tool { border: 1px solid var(--border); border-radius: 8px; margin: .6rem 0; background: var(--bg); }
+222	+.tool-head { cursor: pointer; padding: .5rem .7rem; display: flex; gap: .6rem; align-items: baseline; }
+223	+.tool-name { font-weight: 600; color: var(--accent); font-size: .8rem; }
+224	+.tool-summary { font-family: var(--mono); font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+225	+.tool-body { padding: 0 .7rem .7rem; }
+226	+.tool-result { color: var(--text); }
+227	+.tool-result-error { border-left: 3px solid var(--accent); }
+228	+.thinking { color: var(--muted); font-size: .9rem; margin: .5rem 0; }
+229	+.thinking summary { cursor: pointer; }
+230	+.subagent { margin: .6rem 0; border-left: 3px solid var(--accent-soft); padding-left: .7rem; }
+231	+.subagent summary { cursor: pointer; color: var(--accent); font-size: .85rem; }
+232	+.diff { font-family: var(--mono); font-size: .8rem; background: var(--code-bg); border-radius: 8px; padding: .5rem; overflow-x: auto; }
+233	+.diff-del { color: #b23b3b; white-space: pre-wrap; }
+234	+.diff-add { color: #2f8a4c; white-space: pre-wrap; }
+235	+body.hide-tools .tool-body { display: none; }
+236	+.turn.filtered { display: none; }
+237	+@media (max-width: 760px) { .sidebar { display: none; } }
+238	diff --git a/internal/render/markdown.go b/internal/render/markdown.go
+239	new file mode 100644
+240	index 0000000..c5bf579
+241	--- /dev/null
+242	+++ b/internal/render/markdown.go
+243	@@ -0,0 +1,77 @@
+244	+package render
+245	+
+246	+import (
+247	+	&#34;bytes&#34;
+248	+	&#34;html&#34;
+249	+	&#34;html/template&#34;
+250	+	&#34;strings&#34;
+251	+
+252	+	chromahtml &#34;github.com/alecthomas/chroma/v2/formatters/html&#34;
+253	+	&#34;github.com/alecthomas/chroma/v2/lexers&#34;
+254	+	&#34;github.com/alecthomas/chroma/v2/styles&#34;
+255	+	&#34;github.com/yuin/goldmark&#34;
+256	+	&#34;github.com/yuin/goldmark/extension&#34;
+257	+
+258	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+259	+)
+260	+
+261	+var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
+262	+
+263	+// Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted
+264	+// transcript content (the user&#39;s own session), so we do not strip HTML, but we
+265	+// do escape code via goldmark&#39;s default renderer.
+266	+func Markdown(src string) template.HTML {
+267	+	var buf bytes.Buffer
+268	+	if err := md.Convert([]byte(src), &amp;buf); err != nil {
+269	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(src) + &#34;&lt;/pre&gt;&#34;)
+270	+	}
+271	+	return template.HTML(buf.String())
+272	+}
+273	+
+274	+// Highlight renders a code string with chroma using inline styles (no external
+275	+// stylesheet needed). lang may be empty for auto-detection.
+276	+func Highlight(code, lang string) template.HTML {
+277	+	lexer := lexers.Get(lang)
+278	+	if lexer == nil {
+279	+		lexer = lexers.Analyse(code)
+280	+	}
+281	+	if lexer == nil {
+282	+		lexer = lexers.Fallback
+283	+	}
+284	+	style := styles.Get(&#34;github&#34;)
+285	+	if style == nil {
+286	+		style = styles.Fallback
+287	+	}
+288	+	formatter := chromahtml.New(chromahtml.WithClasses(false), chromahtml.TabWidth(2))
+289	+	it, err := lexer.Tokenise(nil, code)
+290	+	if err != nil {
+291	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+292	+	}
+293	+	var buf bytes.Buffer
+294	+	if err := formatter.Format(&amp;buf, style, it); err != nil {
+295	+		return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(code) + &#34;&lt;/pre&gt;&#34;)
+296	+	}
+297	+	return template.HTML(buf.String())
+298	+}
+299	+
+300	+// DiffHTML renders a simple line-based diff of a Diff&#39;s old/new text.
+301	+func DiffHTML(d *model.Diff) template.HTML {
+302	+	var b strings.Builder
+303	+	b.WriteString(`&lt;div class=&#34;diff&#34;&gt;`)
+304	+	if d.OldText != &#34;&#34; {
+305	+		for _, line := range strings.Split(d.OldText, &#34;\n&#34;) {
+306	+			b.WriteString(`&lt;div class=&#34;diff-del&#34;&gt;- `)
+307	+			b.WriteString(html.EscapeString(line))
+308	+			b.WriteString(&#34;&lt;/div&gt;&#34;)
+309	+		}
+310	+	}
+311	+	if d.NewText != &#34;&#34; {
+312	+		for _, line := range strings.Split(d.NewText, &#34;\n&#34;) {
+313	+			b.WriteString(`&lt;div class=&#34;diff-add&#34;&gt;+ `)
+314	+			b.WriteString(html.EscapeString(line))
+315	+			b.WriteString(&#34;&lt;/div&gt;&#34;)
+316	+		}
+317	+	}
+318	+	b.WriteString(&#34;&lt;/div&gt;&#34;)
+319	+	return template.HTML(b.String())
+320	+}
+321	diff --git a/internal/render/render.go b/internal/render/render.go
+322	new file mode 100644
+323	index 0000000..467e1da
+324	--- /dev/null
+325	+++ b/internal/render/render.go
+326	@@ -0,0 +1,188 @@
+327	+package render
+328	+
+329	+import (
+330	+	&#34;bytes&#34;
+331	+	&#34;embed&#34;
+332	+	&#34;html&#34;
+333	+	&#34;html/template&#34;
+334	+	&#34;os&#34;
+335	+	&#34;path/filepath&#34;
+336	+	&#34;strings&#34;
+337	+
+338	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+339	+)
+340	+
+341	+//go:embed assets/report.html.tmpl assets/styles.css assets/app.js
+342	+var assets embed.FS
+343	+
+344	+// Options configures a render.
+345	+type Options struct {
+346	+	Title string
+347	+}
+348	+
+349	+// Site renders the session into outDir as index.html + assets/.
+350	+func Site(s model.Session, outDir string, opts Options) error {
+351	+	title := opts.Title
+352	+	if title == &#34;&#34; {
+353	+		title = s.DisplayTitle()
+354	+	}
+355	+
+356	+	tmplSrc, err := assets.ReadFile(&#34;assets/report.html.tmpl&#34;)
+357	+	if err != nil {
+358	+		return err
+359	+	}
+360	+	tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))
+361	+	if err != nil {
+362	+		return err
+363	+	}
+364	+
+365	+	data := buildViewModel(s, title)
+366	+	var buf bytes.Buffer
+367	+	if err := tmpl.Execute(&amp;buf, data); err != nil {
+368	+		return err
+369	+	}
+370	+
+371	+	if err := os.MkdirAll(filepath.Join(outDir, &#34;assets&#34;), 0o755); err != nil {
+372	+		return err
+373	+	}
+374	+	if err := os.WriteFile(filepath.Join(outDir, &#34;index.html&#34;), buf.Bytes(), 0o644); err != nil {
+375	+		return err
+376	+	}
+377	+	for _, name := range []string{&#34;styles.css&#34;, &#34;app.js&#34;} {
+378	+		b, err := assets.ReadFile(&#34;assets/&#34; + name)
+379	+		if err != nil {
+380	+			return err
+381	+		}
+382	+		if err := os.WriteFile(filepath.Join(outDir, &#34;assets&#34;, name), b, 0o644); err != nil {
+383	+			return err
+384	+		}
+385	+	}
+386	+	return nil
+387	+}
+388	+
+389	+// view models -------------------------------------------------------------
+390	+
+391	+type viewData struct {
+392	+	Title     string
+393	+	Session   model.Session
+394	+	StartedAt string
+395	+	TurnCount int
+396	+	Prompts   []promptRef
+397	+	Turns     []turnView
+398	+}
+399	+
+400	+type promptRef struct {
+401	+	Index   int
+402	+	Preview string
+403	+}
+404	+
+405	+type turnView struct {
+406	+	Index      int
+407	+	Kind       string
+408	+	RoleLabel  string
+409	+	SearchText string
+410	+	Body       template.HTML
+411	+}
+412	+
+413	+func buildViewModel(s model.Session, title string) viewData {
+414	+	d := viewData{
+415	+		Title:     title,
+416	+		Session:   s,
+417	+		TurnCount: len(s.Turns),
+418	+	}
+419	+	if !s.StartedAt.IsZero() {
+420	+		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)
+421	+	}
+422	+	for i, t := range s.Turns {
+423	+		if t.Kind == model.TurnUser {
+424	+			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(turnPlainText(t), 60)})
+425	+		}
+426	+		d.Turns = append(d.Turns, turnView{
+427	+			Index:      i,
+428	+			Kind:       string(t.Kind),
+429	+			RoleLabel:  roleLabel(t.Kind),
+430	+			SearchText: strings.ToLower(turnPlainText(t)),
+431	+			Body:       renderTurnBody(t),
+432	+		})
+433	+	}
+434	+	return d
+435	+}
+436	+
+437	+func roleLabel(k model.TurnKind) string {
+438	+	if k == model.TurnUser {
+439	+		return &#34;You&#34;
+440	+	}
+441	+	return &#34;Claude&#34;
+442	+}
+443	+
+444	+// renderTurnBody renders all blocks of a turn to HTML.
+445	+func renderTurnBody(t model.Turn) template.HTML {
+446	+	var b strings.Builder
+447	+	for _, blk := range t.Blocks {
+448	+		switch blk.Type {
+449	+		case model.BlockText:
+450	+			b.WriteString(string(Markdown(blk.Text)))
+451	+		case model.BlockThinking:
+452	+			b.WriteString(`&lt;details class=&#34;thinking&#34;&gt;&lt;summary&gt;thinking&lt;/summary&gt;`)
+453	+			b.WriteString(string(Markdown(blk.Text)))
+454	+			b.WriteString(`&lt;/details&gt;`)
+455	+		case model.BlockToolUse:
+456	+			b.WriteString(renderTool(blk.Tool))
+457	+		}
+458	+	}
+459	+	return template.HTML(b.String())
+460	+}
+461	+
+462	+func renderTool(tc *model.ToolCall) string {
+463	+	var b strings.Builder
+464	+	b.WriteString(`&lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;`)
+465	+	b.WriteString(`&lt;span class=&#34;tool-name&#34;&gt;` + html.EscapeString(tc.Name) + `&lt;/span&gt;`)
+466	+	if tc.Summary != &#34;&#34; {
+467	+		b.WriteString(`&lt;span class=&#34;tool-summary&#34;&gt;` + html.EscapeString(tc.Summary) + `&lt;/span&gt;`)
+468	+	}
+469	+	b.WriteString(`&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;`)
+470	+	if tc.Diff != nil {
+471	+		b.WriteString(string(DiffHTML(tc.Diff)))
+472	+	} else if tc.InputJSON != &#34;&#34; {
+473	+		b.WriteString(`&lt;pre class=&#34;tool-input&#34;&gt;` + html.EscapeString(tc.InputJSON) + `&lt;/pre&gt;`)
+474	+	}
+475	+	if tc.Result != nil &amp;&amp; tc.Result.Content != &#34;&#34; {
+476	+		cls := &#34;tool-result&#34;
+477	+		if tc.Result.IsError {
+478	+			cls += &#34; tool-result-error&#34;
+479	+		}
+480	+		b.WriteString(`&lt;pre class=&#34;` + cls + `&#34;&gt;` + html.EscapeString(tc.Result.Content) + `&lt;/pre&gt;`)
+481	+	}
+482	+	for _, sub := range tc.Subagents {
+483	+		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
+484	+		for _, st := range sub.Turns {
+485	+			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st.Kind) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
+486	+			b.WriteString(string(renderTurnBody(st)))
+487	+			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)
+488	+		}
+489	+		b.WriteString(`&lt;/details&gt;`)
+490	+	}
+491	+	b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)
+492	+	return b.String()
+493	+}
+494	+
+495	+func turnPlainText(t model.Turn) string {
+496	+	var parts []string
+497	+	for _, blk := range t.Blocks {
+498	+		switch blk.Type {
+499	+		case model.BlockText, model.BlockThinking:
+500	+			parts = append(parts, blk.Text)
+501	+		case model.BlockToolUse:
+502	+			parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
+503	+		}
+504	+	}
+505	+	return strings.Join(parts, &#34; &#34;)
+506	+}
+507	+
+508	+func preview(s string, n int) string {
+509	+	s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))
+510	+	if len(s) &lt;= n {
+511	+		return s
+512	+	}
+513	+	return s[:n-1] + &#34;…&#34;
+514	+}
+515	diff --git a/internal/render/render_test.go b/internal/render/render_test.go
+516	new file mode 100644
+517	index 0000000..2b8d3db
+518	--- /dev/null
+519	+++ b/internal/render/render_test.go
+520	@@ -0,0 +1,66 @@
+521	+package render
+522	+
+523	+import (
+524	+	&#34;os&#34;
+525	+	&#34;path/filepath&#34;
+526	+	&#34;strings&#34;
+527	+	&#34;testing&#34;
+528	+	&#34;time&#34;
+529	+
+530	+	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+531	+)
+532	+
+533	+func TestMarkdownRendersHeadingAndCode(t *testing.T) {
+534	+	out := string(Markdown(&#34;# Title\n\n```go\nfmt.Println(\&#34;hi\&#34;)\n```&#34;))
+535	+	if !strings.Contains(out, &#34;&lt;h1&#34;) {
+536	+		t.Errorf(&#34;expected &lt;h1&gt; in %q&#34;, out)
+537	+	}
+538	+	if !strings.Contains(out, &#34;Println&#34;) {
+539	+		t.Errorf(&#34;expected highlighted code in output&#34;)
+540	+	}
+541	+}
+542	+
+543	+func TestDiffHTMLMarksLines(t *testing.T) {
+544	+	out := string(DiffHTML(&amp;model.Diff{Path: &#34;x.txt&#34;, OldText: &#34;a&#34;, NewText: &#34;b&#34;}))
+545	+	if !strings.Contains(out, &#34;diff-del&#34;) || !strings.Contains(out, &#34;diff-add&#34;) {
+546	+		t.Errorf(&#34;diff HTML missing add/del classes: %q&#34;, out)
+547	+	}
+548	+}
+549	+
+550	+func sampleSession() model.Session {
+551	+	return model.Session{
+552	+		ID:          &#34;abcd1234&#34;,
+553	+		ProjectPath: &#34;/tmp/proj&#34;,
+554	+		Title:       &#34;Sample&#34;,
+555	+		StartedAt:   time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),
+556	+		EndedAt:     time.Date(2026, 7, 11, 10, 1, 0, 0, time.UTC),
+557	+		Turns: []model.Turn{
+558	+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;do it&#34;}}},
+559	+			{Kind: model.TurnAssistant, Blocks: []model.Block{
+560	+				{Type: model.BlockText, Text: &#34;on it&#34;},
+561	+				{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+562	+					Name: &#34;Bash&#34;, Summary: &#34;ls&#34;, Result: &amp;model.ToolResult{Content: &#34;file.txt&#34;},
+563	+				}},
+564	+			}},
+565	+		},
+566	+	}
+567	+}
+568	+
+569	+func TestSiteWritesFiles(t *testing.T) {
+570	+	dir := t.TempDir()
+571	+	if err := Site(sampleSession(), dir, Options{}); err != nil {
+572	+		t.Fatal(err)
+573	+	}
+574	+	for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+575	+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+576	+			t.Errorf(&#34;missing %s: %v&#34;, name, err)
+577	+		}
+578	+	}
+579	+	html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))
+580	+	s := string(html)
+581	+	for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {
+582	+		if !strings.Contains(s, want) {
+583	+			t.Errorf(&#34;index.html missing %q&#34;, want)
+584	+		}
+585	+	}
+586	+}
+587	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="bash find / -type d -path &#34;*yuin/goldmark*renderer/html*&#34; 2&gt;/dev/null | head -5">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find / -type d -path &#34;*yuin/goldmark*renderer/html*&#34; 2&gt;/dev/null | head -5</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;find / -type d -path \&#34;*yuin/goldmark*renderer/html*\&#34; 2\u003e/dev/null | head -5&#34;
+}</pre><pre class="tool-result">Command running in background with ID: bihv42eio. Output is being written to: /private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/bihv42eio.output. You will be notified when it completes. To check interim output, use Read on that file path.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="bash go env gomodcache">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go env GOMODCACHE</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go env GOMODCACHE&#34;
+}</pre><pre class="tool-result">~/go/pkg/mod</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="bash ls ~/go/pkg/mod/github.com/yuin/ 2&gt;/dev/null; find ~/go/pkg/mod/github.com/yuin -maxdepth 1 -type d 2&gt;/dev/null">
+      <div class="turn-role">Claude<span class="usage-badge">128 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls ~/go/pkg/mod/github.com/yuin/ 2&gt;/dev/null; find ~/go/pkg/mod/github.com/yuin -maxdepth 1 -type d 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;ls ~/go/pkg/mod/github.com/yuin/ 2\u003e/dev/null; find ~/go/pkg/mod/github.com/yuin -maxdepth 1 -type d 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">goldmark@v1.8.2
+~/go/pkg/mod/github.com/yuin
+~/go/pkg/mod/github.com/yuin/goldmark@v1.8.2</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;unsafe\|writeraw\|rawhtml\|rawhtmlomitted\|raw html&#34; ~/go/pkg/mod/github.com/yuin/goldmark@v1.8.2/renderer/html/html.go | head -60">
+      <div class="turn-role">Claude<span class="usage-badge">141 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Unsafe\|writeRaw\|RawHTML\|rawHTMLOmitted\|raw HTML&#34; ~/go/pkg/mod/github.com/yuin/goldmark@v1.8.2/renderer/html/html.go | head -60</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;Unsafe\\|writeRaw\\|RawHTML\\|rawHTMLOmitted\\|raw HTML\&#34; ~/go/pkg/mod/github.com/yuin/goldmark@v1.8.2/renderer/html/html.go | head -60&#34;
+}</pre><pre class="tool-result">22:	Unsafe              bool
+32:		Unsafe:              false,
+45:	case optUnsafe:
+46:		c.Unsafe = value.(bool)
+220:// Unsafe is an option name used in WithUnsafe.
+221:const optUnsafe renderer.OptionName = &#34;Unsafe&#34;
+223:type withUnsafe struct {
+226:func (o *withUnsafe) SetConfig(c *renderer.Config) {
+227:	c.Options[optUnsafe] = true
+230:func (o *withUnsafe) SetHTMLOption(c *Config) {
+231:	c.Unsafe = true
+234:// WithUnsafe is a functional option that renders dangerous contents
+236:func WithUnsafe() interface {
+240:	return &amp;withUnsafe{}
+288:	reg.Register(ast.KindRawHTML, r.renderRawHTML)
+383:		if r.Unsafe {
+390:			_, _ = w.WriteString(&#34;&lt;!-- raw HTML omitted --&gt;\n&#34;)
+394:			if r.Unsafe {
+398:				_, _ = w.WriteString(&#34;&lt;!-- raw HTML omitted --&gt;\n&#34;)
+518:	if r.Unsafe || !IsDangerousURL(url) {
+591:		if r.Unsafe || !IsDangerousURL(dest) {
+620:	if r.Unsafe || !IsDangerousURL(dest) {
+642:func (r *Renderer) renderRawHTML(
+647:	if r.Unsafe {
+648:		n := node.(*ast.RawHTML)
+656:	_, _ = w.WriteString(&#34;&lt;!-- raw HTML omitted --&gt;&#34;)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="bash git log --oneline -3 &amp;&amp; git status --short">
+      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -3 &amp;&amp; git status --short</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log --oneline -3 \u0026\u0026 git status --short&#34;
+}</pre><pre class="tool-result">a713dfe feat: render session to static HTML site with embedded assets
+faa3097 feat: add secret and home-path redaction
+41ed5b8 fix: attach tool results for tools invoked inside subagents</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="good, the working tree already has the diff applied at head. let me do a few targeted checks: confirm build/vet/embed correctness, verify the goldmark raw-html behavior claim with a real test, and check the model.diff/toolcall/subagent struct shapes referenced.">
+      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>Good, the working tree already has the diff applied at HEAD. Let me do a few targeted checks: confirm build/vet/embed correctness, verify the goldmark raw-HTML behavior claim with a real test, and check the model.Diff/ToolCall/Subagent struct shapes referenced.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; echo build_ok &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; echo vet_ok">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; echo BUILD_OK &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; echo VET_OK</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 echo BUILD_OK \u0026\u0026 go vet ./... 2\u003e\u00261 \u0026\u0026 echo VET_OK&#34;
+}</pre><pre class="tool-result">BUILD_OK
+VET_OK</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="bash grep -n &#34;subagents\|subagent\b\|type diff\|type toolcall\|type toolresult&#34; internal/model/*.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Subagents\|Subagent\b\|type Diff\|type ToolCall\|type ToolResult&#34; internal/model/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;Subagents\\|Subagent\\b\\|type Diff\\|type ToolCall\\|type ToolResult\&#34; internal/model/*.go&#34;
+}</pre><pre class="tool-result">internal/model/model.go:59:type ToolCall struct {
+internal/model/model.go:66:	Subagents []Subagent // set for Task calls with sidechain activity
+internal/model/model.go:69:type ToolResult struct {
+internal/model/model.go:74:type Diff struct {
+internal/model/model.go:80:// Subagent is a nested sidechain run attached to a parent Task tool call.
+internal/model/model.go:81:type Subagent struct {</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="now let me verify the raw-html claim in the comment with a quick actual test, and check the model struct fields match usage exactly.">
+      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now let me verify the raw-HTML claim in the comment with a quick actual test, and check the model struct fields match usage exactly.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="bash sed -n &#39;55,90p&#39; internal/model/model.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;55,90p&#39; internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;sed -n &#39;55,90p&#39; internal/model/model.go&#34;
+}</pre><pre class="tool-result">	Tool *ToolCall // for BlockToolUse
+}
+
+// ToolCall is a single tool invocation and its result.
+type ToolCall struct {
+	ID        string
+	Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+	Summary   string // one-line summary for the collapsed card header
+	InputJSON string // pretty-printed input for generic display
+	Result    *ToolResult
+	Diff      *Diff      // set for Edit/Write
+	Subagents []Subagent // set for Task calls with sidechain activity
+}
+
+type ToolResult struct {
+	Content string
+	IsError bool
+}
+
+type Diff struct {
+	Path    string
+	OldText string
+	NewText string
+}
+
+// Subagent is a nested sidechain run attached to a parent Task tool call.
+type Subagent struct {
+	Description string
+	Turns       []Turn
+}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="bash cat &gt; /tmp/rawhtml_check_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/rawhtml_check_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e /tmp/rawhtml_check_test.go \u003c\u003c&#39;EOF&#39;\npackage render\n\nimport (\n\t\&#34;strings\&#34;\n\t\&#34;testing\&#34;\n)\n\nfunc TestMarkdownRawHTMLIsOmittedByDefault(t *testing.T) {\n\tout := string(Markdown(\&#34;hello \u003cscript\u003ealert(1)\u003c/script\u003e world\&#34;))\n\tif strings.Contains(out, \&#34;\u003cscript\u003ealert(1)\u003c/script\u003e\&#34;) {\n\t\tt.Fatalf(\&#34;raw HTML passed through unescaped: %q\&#34;, out)\n\t}\n\tt.Logf(\&#34;output: %q\&#34;, out)\n}\nEOF\ncp /tmp/rawhtml_check_test.go internal/render/zz_rawhtml_check_test.go\ngo test ./internal/render/ -run TestMarkdownRawHTMLIsOmittedByDefault -v\nrm internal/render/zz_rawhtml_check_test.go&#34;
+}</pre><pre class="tool-result">=== RUN   TestMarkdownRawHTMLIsOmittedByDefault
+    zz_rawhtml_check_test.go:13: output: &#34;&lt;p&gt;hello &lt;!-- raw HTML omitted --&gt;alert(1)&lt;!-- raw HTML omitted --&gt; world&lt;/p&gt;\n&#34;
+--- PASS: TestMarkdownRawHTMLIsOmittedByDefault (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.368s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="bash grep -n &#34;url(\|@import\|http://\|https://\|//fonts\|cdn&#34; internal/render/assets/styles.css internal/render/assets/report.html.tmpl internal/render/assets/app.js">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;url(\|@import\|http://\|https://\|//fonts\|cdn&#34; internal/render/assets/styles.css internal/render/assets/report.html.tmpl internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;url(\\|@import\\|http://\\|https://\\|//fonts\\|cdn\&#34; internal/render/assets/styles.css internal/render/assets/report.html.tmpl internal/render/assets/app.js&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="bash grep -n &#34;go:embed&#34; internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;go:embed&#34; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;go:embed\&#34; internal/render/render.go&#34;
+}</pre><pre class="tool-result">15://go:embed assets/report.html.tmpl assets/styles.css assets/app.js</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash cat &gt; /tmp/subagent_check_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">715 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/subagent_check_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e /tmp/subagent_check_test.go \u003c\u003c&#39;EOF&#39;\npackage render\n\nimport (\n\t\&#34;strings\&#34;\n\t\&#34;testing\&#34;\n\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/model\&#34;\n)\n\nfunc TestSubagentTurnsAreEmitted(t *testing.T) {\n\tturn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{\n\t\t{Type: model.BlockToolUse, Tool: \u0026model.ToolCall{\n\t\t\tName: \&#34;Task\&#34;, Summary: \&#34;spawn worker\&#34;,\n\t\t\tSubagents: []model.Subagent{\n\t\t\t\t{Description: \&#34;worker-1\&#34;, Turns: []model.Turn{\n\t\t\t\t\t{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockText, Text: \&#34;nested output marker XYZZY\&#34;}}},\n\t\t\t\t}},\n\t\t\t},\n\t\t}},\n\t}}\n\tout := string(renderTurnBody(turn))\n\tif !strings.Contains(out, \&#34;XYZZY\&#34;) {\n\t\tt.Fatalf(\&#34;subagent nested content missing: %q\&#34;, out)\n\t}\n\tif !strings.Contains(out, \&#34;worker-1\&#34;) {\n\t\tt.Fatalf(\&#34;subagent description missing: %q\&#34;, out)\n\t}\n\tt.Logf(\&#34;out: %s\&#34;, out)\n}\nEOF\ncp /tmp/subagent_check_test.go internal/render/zz_subagent_check_test.go\ngo test ./internal/render/ -run TestSubagentTurnsAreEmitted -v\nrm internal/render/zz_subagent_check_test.go&#34;
+}</pre><pre class="tool-result">=== RUN   TestSubagentTurnsAreEmitted
+    zz_subagent_check_test.go:28: out: &lt;details class=&#34;tool&#34;&gt;&lt;summary class=&#34;tool-head&#34;&gt;&lt;span class=&#34;tool-name&#34;&gt;Task&lt;/span&gt;&lt;span class=&#34;tool-summary&#34;&gt;spawn worker&lt;/span&gt;&lt;/summary&gt;&lt;div class=&#34;tool-body&#34;&gt;&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: worker-1&lt;/summary&gt;&lt;article class=&#34;turn turn-assistant&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;Claude&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;&lt;p&gt;nested output marker XYZZY&lt;/p&gt;
+        &lt;/div&gt;&lt;/article&gt;&lt;/details&gt;&lt;/div&gt;&lt;/details&gt;
+--- PASS: TestSubagentTurnsAreEmitted (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.328s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="confirmed. subagent recursion works correctly, nested content is emitted. now let me check the go.mod/go.sum diff for correctness and check whether `preview()` has any byte-slicing bug with multi-byte utf-8 (a common go pitfall).">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Confirmed. Subagent recursion works correctly, nested content is emitted. Now let me check the go.mod/go.sum diff for correctness and check whether <code>preview()</code> has any byte-slicing bug with multi-byte UTF-8 (a common Go pitfall).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash cat &gt; /tmp/preview_check_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/preview_check_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e /tmp/preview_check_test.go \u003c\u003c&#39;EOF&#39;\npackage render\n\nimport \&#34;testing\&#34;\n\nfunc TestPreviewUTF8Boundary(t *testing.T) {\n\t// 60+ char string with multibyte runes near the truncation boundary\n\ts := \&#34;日本語のテストです。これはとても長い文字列でプレビューの境界をテストします。もっと長く。\&#34;\n\tout := preview(s, 60)\n\tt.Logf(\&#34;out=%q valid_utf8=%v\&#34;, out, isValidUTF8(out))\n}\nEOF\ncp /tmp/preview_check_test.go internal/render/zz_preview_check_test.go\ncat \u003e\u003e internal/render/zz_preview_check_test.go \u003c\u003c&#39;EOF&#39;\n\nfunc isValidUTF8(s string) bool {\n\tfor _, r := range s {\n\t\tif r == 0xFFFD {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\nEOF\ngo test ./internal/render/ -run TestPreviewUTF8Boundary -v\nrm internal/render/zz_preview_check_test.go&#34;
+}</pre><pre class="tool-result">=== RUN   TestPreviewUTF8Boundary
+    zz_preview_check_test.go:9: out=&#34;日本語のテストです。これはとても長い文\xe5\xad…&#34; valid_utf8=false
+--- PASS: TestPreviewUTF8Boundary (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.328s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="bash grep -n &#34;func preview&#34; -a6 internal/render/render.go">
+      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func preview&#34; -A6 internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;func preview\&#34; -A6 internal/render/render.go&#34;
+}</pre><pre class="tool-result">182:func preview(s string, n int) string {
+183-	s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))
+184-	if len(s) &lt;= n {
+185-		return s
+186-	}
+187-	return s[:n-1] + &#34;…&#34;
+188-}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="bash grep -n &#34;displaytitle&#34; internal/model/*.go">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;DisplayTitle&#34; internal/model/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;DisplayTitle\&#34; internal/model/*.go&#34;
+}</pre><pre class="tool-result">internal/model/model.go:37:func (s Session) DisplayTitle() string {
+internal/model/model_test.go:18:func TestDisplayTitleFallback(t *testing.T) {
+internal/model/model_test.go:19:	if got := (Session{}).DisplayTitle(); got != &#34;Untitled session&#34; {
+internal/model/model_test.go:20:		t.Errorf(&#34;DisplayTitle() = %q, want fallback&#34;, got)
+internal/model/model_test.go:22:	if got := (Session{Title: &#34;Fix parser&#34;}).DisplayTitle(); got != &#34;Fix parser&#34; {
+internal/model/model_test.go:23:		t.Errorf(&#34;DisplayTitle() = %q, want title&#34;, got)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash git log -1 --format=&#39;%b&#39; a713dfe">
+      <div class="turn-role">Claude<span class="usage-badge">94 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --format=&#39;%B&#39; a713dfe</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git log -1 --format=&#39;%B&#39; a713dfe&#34;
+}</pre><pre class="tool-result">feat: render session to static HTML site with embedded assets
+
+Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="good — commit trailer matches exactly. now let&#39;s check `go vet`/build were clean and confirm the full test suite result briefly (not re-running full suite, just confirming render package tests pass as claimed).">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Good — commit trailer matches exactly. Now let's check <code>go vet</code>/build were clean and confirm the full test suite result briefly (not re-running full suite, just confirming render package tests pass as claimed).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="bash go test ./internal/render/... -v 2&gt;&amp;1 | tail -20">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/... -v 2&gt;&amp;1 | tail -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/render/... -v 2\u003e\u00261 | tail -20&#34;
+}</pre><pre class="tool-result">=== RUN   TestMarkdownRendersHeadingAndCode
+--- PASS: TestMarkdownRendersHeadingAndCode (0.00s)
+=== RUN   TestDiffHTMLMarksLines
+--- PASS: TestDiffHTMLMarksLines (0.00s)
+=== RUN   TestSiteWritesFiles
+--- PASS: TestSiteWritesFiles (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash grep -n &#34;sanitized-enough\|we do not strip&#34; internal/render/markdown.go">
+      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;sanitized-enough\|we do not strip&#34; internal/render/markdown.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;sanitized-enough\\|we do not strip\&#34; internal/render/markdown.go&#34;
+}</pre><pre class="tool-result">20:// Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted
+21:// transcript content (the user&#39;s own session), so we do not strip HTML, but we</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/markdown.go">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go&#34;,
+  &#34;limit&#34;: 30,
+  &#34;offset&#34;: 1
+}</pre><pre class="tool-result">1	package render
+2	
+3	import (
+4		&#34;bytes&#34;
+5		&#34;html&#34;
+6		&#34;html/template&#34;
+7		&#34;strings&#34;
+8	
+9		chromahtml &#34;github.com/alecthomas/chroma/v2/formatters/html&#34;
+10		&#34;github.com/alecthomas/chroma/v2/lexers&#34;
+11		&#34;github.com/alecthomas/chroma/v2/styles&#34;
+12		&#34;github.com/yuin/goldmark&#34;
+13		&#34;github.com/yuin/goldmark/extension&#34;
+14	
+15		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+16	)
+17	
+18	var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
+19	
+20	// Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted
+21	// transcript content (the user&#39;s own session), so we do not strip HTML, but we
+22	// do escape code via goldmark&#39;s default renderer.
+23	func Markdown(src string) template.HTML {
+24		var buf bytes.Buffer
+25		if err := md.Convert([]byte(src), &amp;buf); err != nil {
+26			return template.HTML(&#34;&lt;pre&gt;&#34; + html.EscapeString(src) + &#34;&lt;/pre&gt;&#34;)
+27		}
+28		return template.HTML(buf.String())
+29	}
+30	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-27" data-search="now i have everything needed. let me write the review report.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now I have everything needed. Let me write the review report.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-28" data-search="reportfindings ">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;findings&#34;: [
+    {
+      &#34;category&#34;: &#34;correctness&#34;,
+      &#34;failure_scenario&#34;: &#34;A user prompt containing non-ASCII text (e.g. CJK, emoji, accented characters) longer than 60 bytes gets truncated by preview(turnPlainText(t), 60) for the sidebar Prompts list. Verified directly: preview() on a Japanese string of \u003e60 bytes returns \&#34;...文\\xe5\\xad…\&#34; — a string with a trailing incomplete UTF-8 sequence. Written into index.html (declared charset=utf-8), the browser renders replacement characters (�) in the sidebar link text. Reproducible with any transcript containing non-ASCII prompts, which is common for an international user base.&#34;,
+      &#34;file&#34;: &#34;internal/render/render.go&#34;,
+      &#34;line&#34;: 182,
+      &#34;summary&#34;: &#34;preview() truncates with byte-index slicing (s[:n-1]), which can split a multi-byte UTF-8 rune and emit invalid UTF-8 into the HTML output.&#34;,
+      &#34;verdict&#34;: &#34;CONFIRMED&#34;
+    },
+    {
+      &#34;category&#34;: &#34;documentation&#34;,
+      &#34;failure_scenario&#34;: &#34;Not a functional bug — verified experimentally that Markdown(\&#34;hello \u003cscript\u003ealert(1)\u003c/script\u003e world\&#34;) produces `\u003cp\u003ehello \u003c!-- raw HTML omitted --\u003ealert(1)\u003c!-- raw HTML omitted --\u003e world\u003c/p\u003e` (script tags stripped, inner text left as literal, non-executing text). The actual behavior is safe against raw-HTML injection from transcript text. However the comment misdescribes the security model backwards, which could mislead a future maintainer into believing raw HTML passes through when it does not (or vice versa if goldmark&#39;s default ever changes upstream expectations).&#34;,
+      &#34;file&#34;: &#34;internal/render/markdown.go&#34;,
+      &#34;line&#34;: 20,
+      &#34;summary&#34;: &#34;Comment on Markdown() claims raw HTML in transcript text is not stripped (\&#34;we do not strip HTML\&#34;), but this is factually backwards: goldmark&#39;s default renderer (Unsafe: false, not overridden) omits raw HTML and replaces it with an HTML comment.&#34;,
+      &#34;verdict&#34;: &#34;CONFIRMED&#34;
+    }
+  ]
+}</pre><pre class="tool-result">2 findings reported.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-29" data-search="## task 7 review: html rendering (markdown, template, assets)
+
+**spec compliance: ✅**
+
+- package `internal/render` imports `internal/model` correctly (rough edge #1 resolved — `markdown.go` imports model for `diffhtml`).
+- `fmt` guard dropped entirely rather than added-then-removed (rough edge #2 resolved) — `go build ./...` and `go vet ./...` both clean, confirmed independently.
+- `highlight` implemented and exported but intentionally not wired into `markdown()`&#39;s goldmark pipeline (rough edge #3 — explicitly sanctioned by brief, confirmed as-is).
+- produced api matches exactly: `markdown(string) template.html`, `highlight(code, lang string) template.html`, `diffhtml(*model.diff) template.html`, `options{title string}`, `site(model.session, outdir string, options) error` writing `index.html` &#43; `assets/styles.css` &#43; `assets/app.js`.
+- commit trailer verified verbatim: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+- styling vibe matches spec: `#f5f4ee` bg / `#d97757` accent in `:root`, dark variant via both `@media (prefers-color-scheme: dark)` and `:root[data-theme=&#34;dark&#34;]` override, toggled by `app.js`.
+
+**named risks — all checked and clean:**
+
+1. **go:embed correctness** — `//go:embed assets/report.html.tmpl assets/styles.css assets/app.js` embeds exactly those three files (no wildcard over-embed). `site()` writes all three outputs; template references `href=&#34;assets/styles.css&#34;` and `src=&#34;assets/app.js&#34;` as relative paths. confirmed no absolute paths/urls anywhere in the template, css, or js (`grep` for `url(`, `@import`, `http://`, `https://`, `cdn` returned nothing).
+2. **html injection/escaping** — tool `name`/`summary`/`inputjson`/`result.content`/subagent `description` are all run through `html.escapestring` in `render.go`. `markdown()`&#39;s doc comment claims raw html passes through untouched, but i verified experimentally this is **backwards**: goldmark&#39;s `unsafe` option defaults to `false` and is never set, so raw html tags in transcript text are actually stripped and replaced with `&lt;!-- raw html omitted --&gt;` (confirmed via a throwaway test: `&lt;script&gt;` tags were omitted, inner text left inert). net effect: actual behavior is safe, comment is wrong — flagged as a minor documentation defect, not a security bug.
+3. **no network dependencies** — confirmed clean; no external fonts, `@import`, or cdn references in template/css/js.
+4. **recursion** — `rendertool` → `renderturnbody(st)` for each subagent turn is genuinely recursive and works at arbitrary depth. verified with a live test: nested subagent turn content and its description string both appear correctly in the emitted html.
+
+**strengths**
+
+- uses `html/template` (not `text/template`), so go&#39;s contextual autoescaping correctly protects every plain-string/int field (`title`, `projectpath`, `gitbranch`, `searchtext` in a `data-` attribute, etc.), while `template.html`-typed `body` fields are deliberately left unescaped by design.
+- tdd evidence in the report is real: red/green transcripts match what&#39;s in the diff; `render_test.go` matches the brief verbatim; independently re-ran `go test ./internal/render/... -v` and all three tests pass.
+- self-review section is honest and specific (correctly notes `highlight` is dead code by design, not oversight).
+
+**issues**
+
+- important: `internal/render/render.go:182` — `preview()` truncates with byte-index slicing (`s[:n-1]`), which splits multi-byte utf-8 runes and writes invalid utf-8 bytes into `index.html`&#39;s sidebar prompt-preview text for any non-ascii prompt longer than 60 bytes. reproduced directly: a japanese test string produced a truncated preview ending mid-rune, which a `utf8.charset=&#34;utf-8&#34;` browser will render as `�`. note: this function is transcribed verbatim from the task brief&#39;s example code, so it&#39;s an inherited bug rather than one introduced by the implementer, but it ships in this task&#39;s code and is real, easily-triggered, user-visible corruption for international transcripts.
+- minor: `internal/render/markdown.go:20-21` — comment says `markdown()` &#34;does not strip html,&#34; which is the opposite of goldmark&#39;s actual default behavior (`unsafe: false` means raw html is stripped/commented-out). no functional risk since the real behavior is the safer one, but the comment should be corrected to avoid misleading future maintainers about the security model.
+
+**assessment: task quality — approved** (with follow-ups)
+
+both issues are non-blocking for this task-scoped gate: the utf-8 truncation bug is cosmetic-only (garbled sidebar text, not a crash or security issue) and pre-existed in the brief&#39;s own reference code; the comment inaccuracy is purely documentation and the actual runtime behavior is safe. all three specified rough edges were correctly resolved, build/vet/tests are clean, go:embed/no-network/recursion risks all check out on independent verification. recommend a quick follow-up (rune-safe truncation via `[]rune` or `utf8.runecountinstring`, and fixing the misleading comment) but neither should block merge of this task.">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-body"><h2>Task 7 Review: HTML rendering (markdown, template, assets)</h2>
+<p><strong>Spec Compliance: ✅</strong></p>
+<ul>
+<li>Package <code>internal/render</code> imports <code>internal/model</code> correctly (rough edge #1 resolved — <code>markdown.go</code> imports model for <code>DiffHTML</code>).</li>
+<li><code>fmt</code> guard dropped entirely rather than added-then-removed (rough edge #2 resolved) — <code>go build ./...</code> and <code>go vet ./...</code> both clean, confirmed independently.</li>
+<li><code>Highlight</code> implemented and exported but intentionally not wired into <code>Markdown()</code>'s goldmark pipeline (rough edge #3 — explicitly sanctioned by brief, confirmed as-is).</li>
+<li>Produced API matches exactly: <code>Markdown(string) template.HTML</code>, <code>Highlight(code, lang string) template.HTML</code>, <code>DiffHTML(*model.Diff) template.HTML</code>, <code>Options{Title string}</code>, <code>Site(model.Session, outDir string, Options) error</code> writing <code>index.html</code> + <code>assets/styles.css</code> + <code>assets/app.js</code>.</li>
+<li>Commit trailer verified verbatim: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+<li>Styling vibe matches spec: <code>#F5F4EE</code> bg / <code>#D97757</code> accent in <code>:root</code>, dark variant via both <code>@media (prefers-color-scheme: dark)</code> and <code>:root[data-theme=&quot;dark&quot;]</code> override, toggled by <code>app.js</code>.</li>
+</ul>
+<p><strong>Named risks — all checked and clean:</strong></p>
+<ol>
+<li><strong>go:embed correctness</strong> — <code>//go:embed assets/report.html.tmpl assets/styles.css assets/app.js</code> embeds exactly those three files (no wildcard over-embed). <code>Site()</code> writes all three outputs; template references <code>href=&quot;assets/styles.css&quot;</code> and <code>src=&quot;assets/app.js&quot;</code> as relative paths. Confirmed no absolute paths/URLs anywhere in the template, CSS, or JS (<code>grep</code> for <code>url(</code>, <code>@import</code>, <code>http://</code>, <code>https://</code>, <code>cdn</code> returned nothing).</li>
+<li><strong>HTML injection/escaping</strong> — Tool <code>Name</code>/<code>Summary</code>/<code>InputJSON</code>/<code>Result.Content</code>/subagent <code>Description</code> are all run through <code>html.EscapeString</code> in <code>render.go</code>. <code>Markdown()</code>'s doc comment claims raw HTML passes through untouched, but I verified experimentally this is <strong>backwards</strong>: goldmark's <code>Unsafe</code> option defaults to <code>false</code> and is never set, so raw HTML tags in transcript text are actually stripped and replaced with <code>&lt;!-- raw HTML omitted --&gt;</code> (confirmed via a throwaway test: <code>&lt;script&gt;</code> tags were omitted, inner text left inert). Net effect: actual behavior is safe, comment is wrong — flagged as a minor documentation defect, not a security bug.</li>
+<li><strong>No network dependencies</strong> — confirmed clean; no external fonts, <code>@import</code>, or CDN references in template/CSS/JS.</li>
+<li><strong>Recursion</strong> — <code>renderTool</code> → <code>renderTurnBody(st)</code> for each subagent turn is genuinely recursive and works at arbitrary depth. Verified with a live test: nested subagent turn content and its description string both appear correctly in the emitted HTML.</li>
+</ol>
+<p><strong>Strengths</strong></p>
+<ul>
+<li>Uses <code>html/template</code> (not <code>text/template</code>), so Go's contextual autoescaping correctly protects every plain-string/int field (<code>Title</code>, <code>ProjectPath</code>, <code>GitBranch</code>, <code>SearchText</code> in a <code>data-</code> attribute, etc.), while <code>template.HTML</code>-typed <code>Body</code> fields are deliberately left unescaped by design.</li>
+<li>TDD evidence in the report is real: RED/GREEN transcripts match what's in the diff; <code>render_test.go</code> matches the brief verbatim; independently re-ran <code>go test ./internal/render/... -v</code> and all three tests pass.</li>
+<li>Self-review section is honest and specific (correctly notes <code>Highlight</code> is dead code by design, not oversight).</li>
+</ul>
+<p><strong>Issues</strong></p>
+<ul>
+<li>Important: <code>internal/render/render.go:182</code> — <code>preview()</code> truncates with byte-index slicing (<code>s[:n-1]</code>), which splits multi-byte UTF-8 runes and writes invalid UTF-8 bytes into <code>index.html</code>'s sidebar prompt-preview text for any non-ASCII prompt longer than 60 bytes. Reproduced directly: a Japanese test string produced a truncated preview ending mid-rune, which a <code>utf8.charset=&quot;utf-8&quot;</code> browser will render as <code>�</code>. Note: this function is transcribed verbatim from the task brief's example code, so it's an inherited bug rather than one introduced by the implementer, but it ships in this task's code and is real, easily-triggered, user-visible corruption for international transcripts.</li>
+<li>Minor: <code>internal/render/markdown.go:20-21</code> — comment says <code>Markdown()</code> &quot;does not strip HTML,&quot; which is the opposite of goldmark's actual default behavior (<code>Unsafe: false</code> means raw HTML is stripped/commented-out). No functional risk since the real behavior is the safer one, but the comment should be corrected to avoid misleading future maintainers about the security model.</li>
+</ul>
+<p><strong>Assessment: Task quality — Approved</strong> (with follow-ups)</p>
+<p>Both issues are non-blocking for this task-scoped gate: the UTF-8 truncation bug is cosmetic-only (garbled sidebar text, not a crash or security issue) and pre-existed in the brief's own reference code; the comment inaccuracy is purely documentation and the actual runtime behavior is safe. All three specified rough edges were correctly resolved, build/vet/tests are clean, go:embed/no-network/recursion risks all check out on independent verification. Recommend a quick follow-up (rune-safe truncation via <code>[]rune</code> or <code>utf8.RuneCountInString</code>, and fixing the misleading comment) but neither should block merge of this task.</p>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

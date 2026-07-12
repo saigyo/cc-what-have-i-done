@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implement Task 5: timeline folding · ccwhid</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">ccwhid</div>
+    <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
+    <button id="toggle-all" class="btn">Expand all</button>
+    <button id="toggle-tools" class="btn">Hide tool detail</button>
+    <button id="toggle-theme" class="btn" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" aria-label="Prompts">
+    <div class="sidebar-title">Prompts</div>
+    <ol class="prompt-list">
+      <li><a href="#turn-0">You are implementing Task 5: Fold records into a Session ti…</a></li>
+    </ol>
+  </nav>
+  <main class="content">
+    <section class="session-head">
+      <h1>Implement Task 5: timeline folding</h1>
+      <a class="back-link" href="../index.html">← main session</a>
+      <div class="meta">
+        <span>~/IdeaProjects/cc-what-have-i-done</span>
+        <span>⎇ feat/ccwhid-impl</span>
+        <span>2026-07-11 10:12</span>
+        <span>27 turns</span>
+        <span>general-purpose · agent-ad4a0b00cbc11c87c</span>
+      </div>
+    </section>
+    
+    <details class="usage-card">
+      <summary class="usage-summary">Usage · 12k in+out · ~$0.25 (est.)</summary>
+      <div class="usage-body">
+        
+        <table class="usage-models">
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          <tr><td>claude-sonnet-5</td><td>9k</td><td>3k</td><td>611k</td><td>32k</td><td>$0.25</td></tr>
+          <tr class="usage-total"><td>Total</td><td>9k</td><td>3k</td><td>611k</td><td>32k</td><td>$0.25</td></tr>
+        </table>
+        
+        
+        <p class="usage-note">Estimated — Anthropic list prices as of 2026-07. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.</p>
+      </div>
+    </details>
+    
+    
+    <article class="turn turn-user" id="turn-0" data-search="you are implementing task 5: fold records into a session timeline, for the go cli `ccwhid`. this is the core parsing task.
+
+## task description
+
+read your task brief first — it is your requirements, with the exact code, fixtures, and commands to use verbatim:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
+
+## context
+
+tasks 1–4 are done. available to you:
+- `github.com/saigyo/cc-what-have-i-done/internal/model` — domain types (session, turn, block, toolcall, toolresult, diff, subagent; consts turnuser/turnassistant, blocktext/blockthinking/blocktooluse).
+- same-package (unexported) helpers from task 4 in `internal/transcript/raw.go`: `rawrecord`, `apiblock`, `decodemessagecontent(json.rawmessage) (string, []apiblock)`, `toolresulttext(json.rawmessage) string`, `parsetime(string) time.time`.
+
+you are adding `internal/transcript/parse.go` (and two testdata fixtures) that fold the flat jsonl records into an ordered timeline of turns. key folding rules (per the brief): text/thinking/tool_use blocks become model.blocks in a turn; a `tool_result` block matches its `tool_use` by id and fills that toolcall.result (it does not create a user turn); `ismeta` records and non-user/assistant records (except `ai-title`) are ignored; `ai-title` sets session.title; edit/write inputs populate toolcall.diff; sidechain records attach as subagents to the nearest preceding task tool call when includesubagents is true, else are dropped.
+
+the brief splits the implementation across step 4 (core parse) and step 5 (tool-call builders appended to the same file). implement both.
+
+constraints:
+- package `transcript` at `internal/transcript/parse.go`; fixtures at `internal/transcript/testdata/`.
+- work in ~/ideaprojects/cc-what-have-i-done on branch feat/ccwhid-impl. do not create/switch branches.
+- commit message ends with: `co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;`.
+
+## before you begin
+
+if anything is unclear, ask before starting. the brief has complete code — implement it as written. pay close attention to the sidechain-attachment logic (the `sidechainowner`/`lasttask` bookkeeping and how the task tool seeds its first subagent slot); reproduce it exactly.
+
+## your job
+
+follow the brief&#39;s tdd steps: create the two testdata fixtures, write the failing tests (`parse_test.go`), verify they fail, implement `parse.go` (core &#43; builders), verify all three parse tests plus the task 4 raw tests pass, commit. focused run: `go test ./internal/transcript/`; run `go test ./...` once before committing.
+
+if a test genuinely reveals a bug in the brief&#39;s logic (not just a transcription slip), stop and report done_with_concerns or blocked with specifics rather than silently altering the intended behavior.
+
+## report
+
+write your full report to:
+~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md
+
+include: what you implemented, tdd evidence (red &#43; green command output), files changed, self-review, concerns.
+
+then reply with only (under 15 lines):
+- status: done | done_with_concerns | blocked | needs_context
+- commits created (short sha &#43; subject)
+- one-line test summary
+- concerns, if any
+- the report file path">
+      <div class="turn-role">You</div>
+      <div class="turn-body"><p>You are implementing Task 5: Fold records into a Session timeline, for the Go CLI <code>ccwhid</code>. This is the core parsing task.</p>
+<h2>Task Description</h2>
+<p>Read your task brief first — it is your requirements, with the exact code, fixtures, and commands to use verbatim:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<h2>Context</h2>
+<p>Tasks 1–4 are done. Available to you:</p>
+<ul>
+<li><code>github.com/saigyo/cc-what-have-i-done/internal/model</code> — domain types (Session, Turn, Block, ToolCall, ToolResult, Diff, Subagent; consts TurnUser/TurnAssistant, BlockText/BlockThinking/BlockToolUse).</li>
+<li>Same-package (unexported) helpers from Task 4 in <code>internal/transcript/raw.go</code>: <code>rawRecord</code>, <code>apiBlock</code>, <code>decodeMessageContent(json.RawMessage) (string, []apiBlock)</code>, <code>toolResultText(json.RawMessage) string</code>, <code>parseTime(string) time.Time</code>.</li>
+</ul>
+<p>You are adding <code>internal/transcript/parse.go</code> (and two testdata fixtures) that fold the flat JSONL records into an ordered timeline of turns. Key folding rules (per the brief): text/thinking/tool_use blocks become model.Blocks in a turn; a <code>tool_result</code> block matches its <code>tool_use</code> by id and fills that ToolCall.Result (it does NOT create a user turn); <code>isMeta</code> records and non-user/assistant records (except <code>ai-title</code>) are ignored; <code>ai-title</code> sets Session.Title; Edit/Write inputs populate ToolCall.Diff; sidechain records attach as Subagents to the nearest preceding Task tool call when IncludeSubagents is true, else are dropped.</p>
+<p>The brief splits the implementation across Step 4 (core Parse) and Step 5 (tool-call builders appended to the same file). Implement both.</p>
+<p>Constraints:</p>
+<ul>
+<li>Package <code>transcript</code> at <code>internal/transcript/parse.go</code>; fixtures at <code>internal/transcript/testdata/</code>.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
+</ul>
+<h2>Before You Begin</h2>
+<p>If anything is unclear, ask before starting. The brief has complete code — implement it as written. Pay close attention to the sidechain-attachment logic (the <code>sidechainOwner</code>/<code>lastTask</code> bookkeeping and how the Task tool seeds its first Subagent slot); reproduce it exactly.</p>
+<h2>Your Job</h2>
+<p>Follow the brief's TDD steps: create the two testdata fixtures, write the failing tests (<code>parse_test.go</code>), verify they fail, implement <code>parse.go</code> (core + builders), verify all three parse tests plus the Task 4 raw tests pass, commit. Focused run: <code>go test ./internal/transcript/</code>; run <code>go test ./...</code> once before committing.</p>
+<p>If a test genuinely reveals a bug in the brief's logic (not just a transcription slip), STOP and report DONE_WITH_CONCERNS or BLOCKED with specifics rather than silently altering the intended behavior.</p>
+<h2>Report</h2>
+<p>Write your full report to:
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>Include: what you implemented, TDD evidence (RED + GREEN command output), files changed, self-review, concerns.</p>
+<p>Then reply with ONLY (under 15 lines):</p>
+<ul>
+<li>Status: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT</li>
+<li>Commits created (short SHA + subject)</li>
+<li>One-line test summary</li>
+<li>Concerns, if any</li>
+<li>The report file path</li>
+</ul>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
+      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
+}</pre><pre class="tool-result">1	### Task 5: Fold records into a Session timeline
+2	
+3	**Files:**
+4	- Create: `internal/transcript/parse.go`
+5	- Create: `internal/transcript/parse_test.go`
+6	- Create: `internal/transcript/testdata/basic.jsonl`
+7	- Create: `internal/transcript/testdata/subagent.jsonl`
+8	
+9	**Interfaces:**
+10	- Consumes: `model.*` (Task 2); `rawRecord`, `apiBlock`, `decodeMessageContent`, `toolResultText`, `parseTime` (Task 4).
+11	- Produces:
+12	  - `transcript.Options{IncludeSubagents bool}`
+13	  - `transcript.Parse(r io.Reader, opts Options) (model.Session, error)`
+14	  - `transcript.ParseFile(path string, opts Options) (model.Session, error)`
+15	  - Folding rules: `text`/`thinking`/`tool_use` blocks become `model.Block`s in an assistant turn; a `tool_result` block matches its `tool_use` by id and fills that `ToolCall.Result` (it does NOT create a user turn); `isMeta` records and non-user/assistant records (except `ai-title`) are ignored for the timeline; `ai-title` sets `Session.Title`; `Edit`/`Write` tool inputs populate `ToolCall.Diff`; a summary string is derived per tool; sidechain records (when `IncludeSubagents`) are collected and attached to the nearest preceding `Task` tool call, else dropped.
+16	
+17	- [ ] **Step 1: Create the test fixtures**
+18	
+19	Create `internal/transcript/testdata/basic.jsonl`:
+20	```
+21	{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Say hello&#34;}
+22	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi there&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;,&#34;gitBranch&#34;:&#34;main&#34;,&#34;version&#34;:&#34;1.0.0&#34;}
+23	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;consider&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;Hello!&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo hi&#34;,&#34;description&#34;:&#34;greet&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+24	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool1&#34;,&#34;content&#34;:&#34;hi&#34;,&#34;is_error&#34;:false}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+25	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a2&#34;,&#34;parentUuid&#34;:&#34;u2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool2&#34;,&#34;name&#34;:&#34;Edit&#34;,&#34;input&#34;:{&#34;file_path&#34;:&#34;/tmp/x.txt&#34;,&#34;old_string&#34;:&#34;a&#34;,&#34;new_string&#34;:&#34;b&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+26	not valid json at all
+27	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u3&#34;,&#34;parentUuid&#34;:&#34;a2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool2&#34;,&#34;content&#34;:&#34;ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+28	```
+29	
+30	Create `internal/transcript/testdata/subagent.jsonl`:
+31	```
+32	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}
+33	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}
+34	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}
+35	{&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}
+36	{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}
+37	```
+38	
+39	- [ ] **Step 2: Write the failing test**
+40	
+41	Create `internal/transcript/parse_test.go`:
+42	```go
+43	package transcript
+44	
+45	import (
+46		&#34;testing&#34;
+47	
+48		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+49	)
+50	
+51	func TestParseBasicTimeline(t *testing.T) {
+52		s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})
+53		if err != nil {
+54			t.Fatal(err)
+55		}
+56		if s.Title != &#34;Say hello&#34; {
+57			t.Errorf(&#34;Title = %q&#34;, s.Title)
+58		}
+59		if s.SkippedLines != 1 {
+60			t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)
+61		}
+62		if s.GitBranch != &#34;main&#34; {
+63			t.Errorf(&#34;GitBranch = %q&#34;, s.GitBranch)
+64		}
+65		// Expect: user turn, assistant turn (thinking+text+tool_use), assistant turn (Edit tool)
+66		if len(s.Turns) != 3 {
+67			t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))
+68		}
+69		if s.Turns[0].Kind != model.TurnUser {
+70			t.Errorf(&#34;turn0 kind = %q&#34;, s.Turns[0].Kind)
+71		}
+72		a := s.Turns[1]
+73		if len(a.Blocks) != 3 {
+74			t.Fatalf(&#34;assistant turn has %d blocks, want 3&#34;, len(a.Blocks))
+75		}
+76		tool := a.Blocks[2].Tool
+77		if tool == nil || tool.Name != &#34;Bash&#34; {
+78			t.Fatalf(&#34;expected Bash tool, got %+v&#34;, tool)
+79		}
+80		if tool.Result == nil || tool.Result.Content != &#34;hi&#34; {
+81			t.Errorf(&#34;Bash result = %+v&#34;, tool.Result)
+82		}
+83		if tool.Summary != &#34;echo hi&#34; {
+84			t.Errorf(&#34;Bash summary = %q&#34;, tool.Summary)
+85		}
+86		// Edit tool should have a diff.
+87		edit := s.Turns[2].Blocks[0].Tool
+88		if edit.Diff == nil || edit.Diff.Path != &#34;/tmp/x.txt&#34; || edit.Diff.NewText != &#34;b&#34; {
+89			t.Errorf(&#34;Edit diff = %+v&#34;, edit.Diff)
+90		}
+91	}
+92	
+93	func TestParseSubagentAttachment(t *testing.T) {
+94		s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: true})
+95		if err != nil {
+96			t.Fatal(err)
+97		}
+98		task := s.Turns[1].Blocks[0].Tool
+99		if task.Name != &#34;Task&#34; {
+100			t.Fatalf(&#34;expected Task tool, got %q&#34;, task.Name)
+101		}
+102		if len(task.Subagents) != 1 {
+103			t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))
+104		}
+105		sub := task.Subagents[0]
+106		if sub.Description != &#34;research topic&#34; {
+107			t.Errorf(&#34;subagent description = %q&#34;, sub.Description)
+108		}
+109		if len(sub.Turns) != 2 {
+110			t.Errorf(&#34;subagent turns = %d, want 2&#34;, len(sub.Turns))
+111		}
+112	}
+113	
+114	func TestParseExcludeSubagents(t *testing.T) {
+115		s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: false})
+116		if err != nil {
+117			t.Fatal(err)
+118		}
+119		task := s.Turns[1].Blocks[0].Tool
+120		if len(task.Subagents) != 0 {
+121			t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))
+122		}
+123	}
+124	```
+125	
+126	- [ ] **Step 3: Run the test to verify it fails**
+127	
+128	Run: `go test ./internal/transcript/`
+129	Expected: FAIL — `undefined: ParseFile`.
+130	
+131	- [ ] **Step 4: Write minimal implementation**
+132	
+133	Create `internal/transcript/parse.go`:
+134	```go
+135	package transcript
+136	
+137	import (
+138		&#34;bufio&#34;
+139		&#34;encoding/json&#34;
+140		&#34;io&#34;
+141		&#34;os&#34;
+142	
+143		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+144	)
+145	
+146	// Options controls how a transcript is folded into a Session.
+147	type Options struct {
+148		IncludeSubagents bool
+149	}
+150	
+151	// ParseFile parses a transcript file at path.
+152	func ParseFile(path string, opts Options) (model.Session, error) {
+153		f, err := os.Open(path)
+154		if err != nil {
+155			return model.Session{}, err
+156		}
+157		defer f.Close()
+158		s, err := Parse(f, opts)
+159		if err != nil {
+160			return model.Session{}, err
+161		}
+162		s.ID = sessionIDFromPath(path)
+163		return s, nil
+164	}
+165	
+166	func sessionIDFromPath(path string) string {
+167		base := path
+168		if i := lastSlash(path); i &gt;= 0 {
+169			base = path[i+1:]
+170		}
+171		if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {
+172			return base[:len(base)-len(&#34;.jsonl&#34;)]
+173		}
+174		return base
+175	}
+176	
+177	func lastSlash(s string) int {
+178		for i := len(s) - 1; i &gt;= 0; i-- {
+179			if s[i] == &#39;/&#39; {
+180				return i
+181			}
+182		}
+183		return -1
+184	}
+185	
+186	// Parse reads a transcript stream and folds it into a Session timeline.
+187	func Parse(r io.Reader, opts Options) (model.Session, error) {
+188		var s model.Session
+189		// toolIndex maps a tool_use id to the ToolCall pointer so results and
+190		// sidechains can be attached after the fact.
+191		toolIndex := map[string]*model.ToolCall{}
+192		// lastTask tracks the most recent Task tool call for sidechain attachment.
+193		var lastTask *model.ToolCall
+194		// subByFirstUUID lets sidechain turns append to the right subagent; keyed
+195		// by the Task tool that owns them.
+196		sidechainOwner := lastTask
+197	
+198		sc := bufio.NewScanner(r)
+199		sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
+200		for sc.Scan() {
+201			line := sc.Bytes()
+202			if len(trimSpace(line)) == 0 {
+203				continue
+204			}
+205			var rec rawRecord
+206			if err := json.Unmarshal(line, &amp;rec); err != nil {
+207				s.SkippedLines++
+208				continue
+209			}
+210			switch rec.Type {
+211			case &#34;ai-title&#34;:
+212				if rec.AiTitle != &#34;&#34; {
+213					s.Title = rec.AiTitle
+214				}
+215				continue
+216			case &#34;user&#34;, &#34;assistant&#34;:
+217				// fallthrough to handling below
+218			default:
+219				continue // ignore mode/permission/attachment/etc. for the timeline
+220			}
+221			if rec.IsMeta {
+222				continue
+223			}
+224	
+225			// Capture session-level metadata from the first record that has it.
+226			if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {
+227				s.GitBranch = rec.GitBranch
+228			}
+229			if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {
+230				s.Version = rec.Version
+231			}
+232			if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {
+233				s.ProjectPath = rec.Cwd
+234			}
+235			ts := parseTime(rec.Timestamp)
+236			if !ts.IsZero() {
+237				if s.StartedAt.IsZero() {
+238					s.StartedAt = ts
+239				}
+240				s.EndedAt = ts
+241			}
+242	
+243			_, blocks := decodeMessageContent(rec.Message)
+244	
+245			// Sidechain (subagent) records.
+246			if rec.IsSidechain {
+247				if !opts.IncludeSubagents || sidechainOwner == nil {
+248					continue
+249				}
+250				turn := buildTurn(rec, blocks, toolIndex)
+251				if turn == nil {
+252					continue
+253				}
+254				sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]
+255				sub.Turns = append(sub.Turns, *turn)
+256				continue
+257			}
+258	
+259			// Main-chain records.
+260			turn := buildTurn(rec, blocks, toolIndex)
+261			if turn == nil {
+262				continue // e.g. a user record that only carried a tool_result
+263			}
+264			s.Turns = append(s.Turns, *turn)
+265	
+266			// After appending, register any Task tool call as the new sidechain
+267			// owner and seed its first subagent slot.
+268			for i := range turn.Blocks {
+269				b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]
+270				if b.Tool != nil {
+271					toolIndex[b.Tool.ID] = b.Tool
+272					if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {
+273						b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{
+274							Description: taskDescription(b.Tool),
+275						})
+276						lastTask = b.Tool
+277						sidechainOwner = lastTask
+278					}
+279				}
+280			}
+281		}
+282		if err := sc.Err(); err != nil {
+283			return s, err
+284		}
+285		return s, nil
+286	}
+287	
+288	// buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are
+289	// attached to their originating ToolCall via toolIndex and do not themselves
+290	// produce turn content. Returns nil if the record yields no displayable blocks.
+291	func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {
+292		turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}
+293		if rec.Type == &#34;user&#34; {
+294			turn.Kind = model.TurnUser
+295		} else {
+296			turn.Kind = model.TurnAssistant
+297		}
+298		for _, b := range blocks {
+299			switch b.Type {
+300			case &#34;text&#34;:
+301				if b.Text != &#34;&#34; {
+302					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})
+303				}
+304			case &#34;thinking&#34;:
+305				if b.Thinking != &#34;&#34; {
+306					turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
+307				}
+308			case &#34;tool_use&#34;:
+309				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})
+310			case &#34;tool_result&#34;:
+311				if tc := toolIndex[b.ToolUseID]; tc != nil {
+312					tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+313				}
+314			}
+315		}
+316		if len(turn.Blocks) == 0 {
+317			return nil
+318		}
+319		return turn
+320	}
+321	
+322	func trimSpace(b []byte) []byte {
+323		start, end := 0, len(b)
+324		for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {
+325			start++
+326		}
+327		for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {
+328			end--
+329		}
+330		return b[start:end]
+331	}
+332	```
+333	
+334	- [ ] **Step 5: Add the tool-call builders**
+335	
+336	Append to `internal/transcript/parse.go`:
+337	```go
+338	// buildToolCall constructs a ToolCall from a tool_use block, deriving a summary
+339	// and, for Edit/Write, a Diff.
+340	func buildToolCall(b apiBlock) *model.ToolCall {
+341		tc := &amp;model.ToolCall{
+342			ID:        b.ID,
+343			Name:      b.Name,
+344			InputJSON: prettyJSON(b.Input),
+345		}
+346		input := decodeInput(b.Input)
+347		tc.Summary = toolSummary(b.Name, input)
+348		switch b.Name {
+349		case &#34;Edit&#34;, &#34;Write&#34;:
+350			tc.Diff = buildDiff(b.Name, input)
+351		}
+352		return tc
+353	}
+354	
+355	func decodeInput(raw json.RawMessage) map[string]any {
+356		m := map[string]any{}
+357		if len(raw) &gt; 0 {
+358			_ = json.Unmarshal(raw, &amp;m)
+359		}
+360		return m
+361	}
+362	
+363	func str(m map[string]any, key string) string {
+364		if v, ok := m[key].(string); ok {
+365			return v
+366		}
+367		return &#34;&#34;
+368	}
+369	
+370	// toolSummary produces a compact one-line header for a tool card.
+371	func toolSummary(name string, in map[string]any) string {
+372		switch name {
+373		case &#34;Bash&#34;:
+374			if c := str(in, &#34;command&#34;); c != &#34;&#34; {
+375				return firstLine(c)
+376			}
+377		case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:
+378			if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {
+379				return p
+380			}
+381		case &#34;Glob&#34;:
+382			return str(in, &#34;pattern&#34;)
+383		case &#34;Grep&#34;:
+384			return str(in, &#34;pattern&#34;)
+385		case &#34;Task&#34;:
+386			return str(in, &#34;description&#34;)
+387		case &#34;WebFetch&#34;:
+388			return str(in, &#34;url&#34;)
+389		case &#34;WebSearch&#34;:
+390			return str(in, &#34;query&#34;)
+391		}
+392		return &#34;&#34;
+393	}
+394	
+395	func buildDiff(name string, in map[string]any) *model.Diff {
+396		d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}
+397		if name == &#34;Write&#34; {
+398			d.NewText = str(in, &#34;content&#34;)
+399			return d
+400		}
+401		d.OldText = str(in, &#34;old_string&#34;)
+402		d.NewText = str(in, &#34;new_string&#34;)
+403		return d
+404	}
+405	
+406	func taskDescription(tc *model.ToolCall) string {
+407		if tc.Summary != &#34;&#34; {
+408			return tc.Summary
+409		}
+410		return &#34;subagent&#34;
+411	}
+412	
+413	func firstLine(s string) string {
+414		for i := 0; i &lt; len(s); i++ {
+415			if s[i] == &#39;\n&#39; {
+416				return s[:i]
+417			}
+418		}
+419		return s
+420	}
+421	
+422	func prettyJSON(raw json.RawMessage) string {
+423		if len(raw) == 0 {
+424			return &#34;&#34;
+425		}
+426		var v any
+427		if err := json.Unmarshal(raw, &amp;v); err != nil {
+428			return string(raw)
+429		}
+430		out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)
+431		if err != nil {
+432			return string(raw)
+433		}
+434		return string(out)
+435	}
+436	```
+437	
+438	- [ ] **Step 6: Run the tests to verify they pass**
+439	
+440	Run: `go test ./internal/transcript/`
+441	Expected: PASS (all three parse tests plus the Task 4 raw tests).
+442	
+443	- [ ] **Step 7: Commit**
+444	
+445	```bash
+446	git add internal/transcript/
+447	git commit -m &#34;$(printf &#39;feat: fold transcript records into a session timeline\n\nCo-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;&#39;)&#34;
+448	```
+449	
+450	---
+451	
+452	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-2" data-search="bash git branch --show-current &amp;&amp; ls internal/transcript/ &amp;&amp; ls internal/model/ 2&gt;/dev/null">
+      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git branch --show-current &amp;&amp; ls internal/transcript/ &amp;&amp; ls internal/model/ 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git branch --show-current \u0026\u0026 ls internal/transcript/ \u0026\u0026 ls internal/model/ 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">feat/ccwhid-impl
+raw_test.go
+raw.go
+model_test.go
+model.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
+}</pre><pre class="tool-result">1	package transcript
+2	
+3	import (
+4		&#34;encoding/json&#34;
+5		&#34;strings&#34;
+6		&#34;time&#34;
+7	)
+8	
+9	// rawRecord is one decoded line of a session .jsonl file.
+10	type rawRecord struct {
+11		Type        string          `json:&#34;type&#34;`
+12		UUID        string          `json:&#34;uuid&#34;`
+13		ParentUUID  string          `json:&#34;parentUuid&#34;`
+14		Timestamp   string          `json:&#34;timestamp&#34;`
+15		GitBranch   string          `json:&#34;gitBranch&#34;`
+16		Version     string          `json:&#34;version&#34;`
+17		Cwd         string          `json:&#34;cwd&#34;`
+18		AiTitle     string          `json:&#34;aiTitle&#34;`
+19		IsSidechain bool            `json:&#34;isSidechain&#34;`
+20		IsMeta      bool            `json:&#34;isMeta&#34;`
+21		Message     json.RawMessage `json:&#34;message&#34;`
+22	}
+23	
+24	// apiBlock is one content block of an Anthropic message.
+25	type apiBlock struct {
+26		Type      string          `json:&#34;type&#34;`
+27		Text      string          `json:&#34;text&#34;`
+28		Thinking  string          `json:&#34;thinking&#34;`
+29		ID        string          `json:&#34;id&#34;`
+30		Name      string          `json:&#34;name&#34;`
+31		Input     json.RawMessage `json:&#34;input&#34;`
+32		ToolUseID string          `json:&#34;tool_use_id&#34;`
+33		Content   json.RawMessage `json:&#34;content&#34;`
+34		IsError   bool            `json:&#34;is_error&#34;`
+35	}
+36	
+37	// decodeMessageContent extracts the role and content blocks from a raw message
+38	// object. Content may be a plain string (wrapped as a single text block) or an
+39	// array of blocks.
+40	func decodeMessageContent(raw json.RawMessage) (string, []apiBlock) {
+41		if len(raw) == 0 {
+42			return &#34;&#34;, nil
+43		}
+44		var msg struct {
+45			Role    string          `json:&#34;role&#34;`
+46			Content json.RawMessage `json:&#34;content&#34;`
+47		}
+48		if err := json.Unmarshal(raw, &amp;msg); err != nil {
+49			return &#34;&#34;, nil
+50		}
+51		var s string
+52		if json.Unmarshal(msg.Content, &amp;s) == nil {
+53			return msg.Role, []apiBlock{{Type: &#34;text&#34;, Text: s}}
+54		}
+55		var blocks []apiBlock
+56		_ = json.Unmarshal(msg.Content, &amp;blocks) // tolerate; empty on failure
+57		return msg.Role, blocks
+58	}
+59	
+60	// toolResultText flattens a tool_result content payload to plain text.
+61	func toolResultText(raw json.RawMessage) string {
+62		if len(raw) == 0 {
+63			return &#34;&#34;
+64		}
+65		var s string
+66		if json.Unmarshal(raw, &amp;s) == nil {
+67			return s
+68		}
+69		var blocks []struct {
+70			Type string `json:&#34;type&#34;`
+71			Text string `json:&#34;text&#34;`
+72		}
+73		if json.Unmarshal(raw, &amp;blocks) == nil {
+74			var parts []string
+75			for _, b := range blocks {
+76				if b.Text != &#34;&#34; {
+77					parts = append(parts, b.Text)
+78				}
+79			}
+80			return strings.Join(parts, &#34;\n&#34;)
+81		}
+82		return &#34;&#34;
+83	}
+84	
+85	func parseTime(s string) time.Time {
+86		if s == &#34;&#34; {
+87			return time.Time{}
+88		}
+89		t, err := time.Parse(time.RFC3339, s)
+90		if err != nil {
+91			return time.Time{}
+92		}
+93		return t
+94	}
+95	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-4" data-search="now let me check the model package for the exact types used (session, turn, block, toolcall, toolresult, diff, subagent).">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-body"><p>Now let me check the model package for the exact types used (Session, Turn, Block, ToolCall, ToolResult, Diff, Subagent).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
+}</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
+2	// Session and the timeline of Turns, Blocks and ToolCalls within it.
+3	package model
+4	
+5	import &#34;time&#34;
+6	
+7	type TurnKind string
+8	
+9	const (
+10		TurnUser      TurnKind = &#34;user&#34;
+11		TurnAssistant TurnKind = &#34;assistant&#34;
+12	)
+13	
+14	type BlockType string
+15	
+16	const (
+17		BlockText     BlockType = &#34;text&#34;
+18		BlockThinking BlockType = &#34;thinking&#34;
+19		BlockToolUse  BlockType = &#34;tool_use&#34;
+20	)
+21	
+22	// Session is one fully-parsed Claude Code transcript.
+23	type Session struct {
+24		ID           string
+25		ProjectPath  string // decoded absolute cwd
+26		Title        string
+27		GitBranch    string
+28		Version      string
+29		StartedAt    time.Time
+30		EndedAt      time.Time
+31		Turns        []Turn
+32		SkippedLines int // count of malformed lines skipped while parsing
+33	}
+34	
+35	func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }
+36	
+37	func (s Session) DisplayTitle() string {
+38		if s.Title != &#34;&#34; {
+39			return s.Title
+40		}
+41		return &#34;Untitled session&#34;
+42	}
+43	
+44	// Turn is a single user or assistant message, holding ordered content blocks.
+45	type Turn struct {
+46		Kind      TurnKind
+47		Timestamp time.Time
+48		Blocks    []Block
+49	}
+50	
+51	// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+52	type Block struct {
+53		Type BlockType
+54		Text string    // for BlockText and BlockThinking
+55		Tool *ToolCall // for BlockToolUse
+56	}
+57	
+58	// ToolCall is a single tool invocation and its result.
+59	type ToolCall struct {
+60		ID        string
+61		Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;
+62		Summary   string // one-line summary for the collapsed card header
+63		InputJSON string // pretty-printed input for generic display
+64		Result    *ToolResult
+65		Diff      *Diff      // set for Edit/Write
+66		Subagents []Subagent // set for Task calls with sidechain activity
+67	}
+68	
+69	type ToolResult struct {
+70		Content string
+71		IsError bool
+72	}
+73	
+74	type Diff struct {
+75		Path    string
+76		OldText string
+77		NewText string
+78	}
+79	
+80	// Subagent is a nested sidechain run attached to a parent Task tool call.
+81	type Subagent struct {
+82		Description string
+83		Turns       []Turn
+84	}
+85	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-6" data-search="everything matches the brief&#39;s expectations. now let me create the testdata fixtures and the test file exactly as specified.">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Everything matches the brief's expectations. Now let me create the testdata fixtures and the test file exactly as specified.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-7" data-search="bash mkdir -p ~/ideaprojects/cc-what-have-i-done/internal/transcript/testdata">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-8" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/testdata/basic.jsonl">
+      <div class="turn-role">Claude<span class="usage-badge">678 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/basic.jsonl</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ {&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Say hello&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi there&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;,&#34;gitBranch&#34;:&#34;main&#34;,&#34;version&#34;:&#34;1.0.0&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;thinking&#34;,&#34;thinking&#34;:&#34;consider&#34;},{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;Hello!&#34;},{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo hi&#34;,&#34;description&#34;:&#34;greet&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool1&#34;,&#34;content&#34;:&#34;hi&#34;,&#34;is_error&#34;:false}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a2&#34;,&#34;parentUuid&#34;:&#34;u2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;tool2&#34;,&#34;name&#34;:&#34;Edit&#34;,&#34;input&#34;:{&#34;file_path&#34;:&#34;/tmp/x.txt&#34;,&#34;old_string&#34;:&#34;a&#34;,&#34;new_string&#34;:&#34;b&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}</div><div class="diff-add">+ not valid json at all</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u3&#34;,&#34;parentUuid&#34;:&#34;a2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;tool2&#34;,&#34;content&#34;:&#34;ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/basic.jsonl (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-9" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/testdata/subagent.jsonl">
+      <div class="turn-role">Claude<span class="usage-badge">536 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/subagent.jsonl</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/subagent.jsonl (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-10" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseBasicTimeline(t *testing.T) {</div><div class="diff-add">+ 	s, err := ParseFile(&#34;testdata/basic.jsonl&#34;, Options{IncludeSubagents: true})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.Title != &#34;Say hello&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Title = %q&#34;, s.Title)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.SkippedLines != 1 {</div><div class="diff-add">+ 		t.Errorf(&#34;SkippedLines = %d, want 1&#34;, s.SkippedLines)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.GitBranch != &#34;main&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;GitBranch = %q&#34;, s.GitBranch)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	// Expect: user turn, assistant turn (thinking+text+tool_use), assistant turn (Edit tool)</div><div class="diff-add">+ 	if len(s.Turns) != 3 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d turns, want 3&#34;, len(s.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.Turns[0].Kind != model.TurnUser {</div><div class="diff-add">+ 		t.Errorf(&#34;turn0 kind = %q&#34;, s.Turns[0].Kind)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	a := s.Turns[1]</div><div class="diff-add">+ 	if len(a.Blocks) != 3 {</div><div class="diff-add">+ 		t.Fatalf(&#34;assistant turn has %d blocks, want 3&#34;, len(a.Blocks))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	tool := a.Blocks[2].Tool</div><div class="diff-add">+ 	if tool == nil || tool.Name != &#34;Bash&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected Bash tool, got %+v&#34;, tool)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if tool.Result == nil || tool.Result.Content != &#34;hi&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Bash result = %+v&#34;, tool.Result)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if tool.Summary != &#34;echo hi&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Bash summary = %q&#34;, tool.Summary)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	// Edit tool should have a diff.</div><div class="diff-add">+ 	edit := s.Turns[2].Blocks[0].Tool</div><div class="diff-add">+ 	if edit.Diff == nil || edit.Diff.Path != &#34;/tmp/x.txt&#34; || edit.Diff.NewText != &#34;b&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Edit diff = %+v&#34;, edit.Diff)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseSubagentAttachment(t *testing.T) {</div><div class="diff-add">+ 	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: true})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if task.Name != &#34;Task&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected Task tool, got %q&#34;, task.Name)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(task.Subagents) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	sub := task.Subagents[0]</div><div class="diff-add">+ 	if sub.Description != &#34;research topic&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;subagent description = %q&#34;, sub.Description)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(sub.Turns) != 2 {</div><div class="diff-add">+ 		t.Errorf(&#34;subagent turns = %d, want 2&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseExcludeSubagents(t *testing.T) {</div><div class="diff-add">+ 	s, err := ParseFile(&#34;testdata/subagent.jsonl&#34;, Options{IncludeSubagents: false})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if len(task.Subagents) != 0 {</div><div class="diff-add">+ 		t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-11" data-search="now run the test to verify red (expect failure: undefined parsefile).">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Now run the test to verify RED (expect failure: undefined ParseFile).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-12" data-search="bash go test ./internal/transcript/ 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ 2\u003e\u00261&#34;
+}</pre><pre class="tool-result tool-result-error">Exit code 1
+# github.com/saigyo/cc-what-have-i-done/internal/transcript [github.com/saigyo/cc-what-have-i-done/internal/transcript.test]
+internal/transcript/parse_test.go:10:12: undefined: ParseFile
+internal/transcript/parse_test.go:10:46: undefined: Options
+internal/transcript/parse_test.go:52:12: undefined: ParseFile
+internal/transcript/parse_test.go:52:49: undefined: Options
+internal/transcript/parse_test.go:73:12: undefined: ParseFile
+internal/transcript/parse_test.go:73:49: undefined: Options
+FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]
+FAIL</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-13" data-search="red confirmed as expected. now implementing `parse.go` per the brief (step 4 &#43; step 5 combined).">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>RED confirmed as expected. Now implementing <code>parse.go</code> per the brief (Step 4 + Step 5 combined).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-14" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;bufio&#34;</div><div class="diff-add">+ 	&#34;encoding/json&#34;</div><div class="diff-add">+ 	&#34;io&#34;</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Options controls how a transcript is folded into a Session.</div><div class="diff-add">+ type Options struct {</div><div class="diff-add">+ 	IncludeSubagents bool</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // ParseFile parses a transcript file at path.</div><div class="diff-add">+ func ParseFile(path string, opts Options) (model.Session, error) {</div><div class="diff-add">+ 	f, err := os.Open(path)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return model.Session{}, err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	defer f.Close()</div><div class="diff-add">+ 	s, err := Parse(f, opts)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return model.Session{}, err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	s.ID = sessionIDFromPath(path)</div><div class="diff-add">+ 	return s, nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func sessionIDFromPath(path string) string {</div><div class="diff-add">+ 	base := path</div><div class="diff-add">+ 	if i := lastSlash(path); i &gt;= 0 {</div><div class="diff-add">+ 		base = path[i+1:]</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(base) &gt; len(&#34;.jsonl&#34;) &amp;&amp; base[len(base)-len(&#34;.jsonl&#34;):] == &#34;.jsonl&#34; {</div><div class="diff-add">+ 		return base[:len(base)-len(&#34;.jsonl&#34;)]</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return base</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func lastSlash(s string) int {</div><div class="diff-add">+ 	for i := len(s) - 1; i &gt;= 0; i-- {</div><div class="diff-add">+ 		if s[i] == &#39;/&#39; {</div><div class="diff-add">+ 			return i</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return -1</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Parse reads a transcript stream and folds it into a Session timeline.</div><div class="diff-add">+ func Parse(r io.Reader, opts Options) (model.Session, error) {</div><div class="diff-add">+ 	var s model.Session</div><div class="diff-add">+ 	// toolIndex maps a tool_use id to the ToolCall pointer so results and</div><div class="diff-add">+ 	// sidechains can be attached after the fact.</div><div class="diff-add">+ 	toolIndex := map[string]*model.ToolCall{}</div><div class="diff-add">+ 	// lastTask tracks the most recent Task tool call for sidechain attachment.</div><div class="diff-add">+ 	var lastTask *model.ToolCall</div><div class="diff-add">+ 	// subByFirstUUID lets sidechain turns append to the right subagent; keyed</div><div class="diff-add">+ 	// by the Task tool that owns them.</div><div class="diff-add">+ 	sidechainOwner := lastTask</div><div class="diff-add">+ </div><div class="diff-add">+ 	sc := bufio.NewScanner(r)</div><div class="diff-add">+ 	sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)</div><div class="diff-add">+ 	for sc.Scan() {</div><div class="diff-add">+ 		line := sc.Bytes()</div><div class="diff-add">+ 		if len(trimSpace(line)) == 0 {</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		var rec rawRecord</div><div class="diff-add">+ 		if err := json.Unmarshal(line, &amp;rec); err != nil {</div><div class="diff-add">+ 			s.SkippedLines++</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		switch rec.Type {</div><div class="diff-add">+ 		case &#34;ai-title&#34;:</div><div class="diff-add">+ 			if rec.AiTitle != &#34;&#34; {</div><div class="diff-add">+ 				s.Title = rec.AiTitle</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		case &#34;user&#34;, &#34;assistant&#34;:</div><div class="diff-add">+ 			// fallthrough to handling below</div><div class="diff-add">+ 		default:</div><div class="diff-add">+ 			continue // ignore mode/permission/attachment/etc. for the timeline</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if rec.IsMeta {</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		}</div><div class="diff-add">+ </div><div class="diff-add">+ 		// Capture session-level metadata from the first record that has it.</div><div class="diff-add">+ 		if s.GitBranch == &#34;&#34; &amp;&amp; rec.GitBranch != &#34;&#34; {</div><div class="diff-add">+ 			s.GitBranch = rec.GitBranch</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if s.Version == &#34;&#34; &amp;&amp; rec.Version != &#34;&#34; {</div><div class="diff-add">+ 			s.Version = rec.Version</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if s.ProjectPath == &#34;&#34; &amp;&amp; rec.Cwd != &#34;&#34; {</div><div class="diff-add">+ 			s.ProjectPath = rec.Cwd</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		ts := parseTime(rec.Timestamp)</div><div class="diff-add">+ 		if !ts.IsZero() {</div><div class="diff-add">+ 			if s.StartedAt.IsZero() {</div><div class="diff-add">+ 				s.StartedAt = ts</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			s.EndedAt = ts</div><div class="diff-add">+ 		}</div><div class="diff-add">+ </div><div class="diff-add">+ 		_, blocks := decodeMessageContent(rec.Message)</div><div class="diff-add">+ </div><div class="diff-add">+ 		// Sidechain (subagent) records.</div><div class="diff-add">+ 		if rec.IsSidechain {</div><div class="diff-add">+ 			if !opts.IncludeSubagents || sidechainOwner == nil {</div><div class="diff-add">+ 				continue</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			turn := buildTurn(rec, blocks, toolIndex)</div><div class="diff-add">+ 			if turn == nil {</div><div class="diff-add">+ 				continue</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			sub := &amp;sidechainOwner.Subagents[len(sidechainOwner.Subagents)-1]</div><div class="diff-add">+ 			sub.Turns = append(sub.Turns, *turn)</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		}</div><div class="diff-add">+ </div><div class="diff-add">+ 		// Main-chain records.</div><div class="diff-add">+ 		turn := buildTurn(rec, blocks, toolIndex)</div><div class="diff-add">+ 		if turn == nil {</div><div class="diff-add">+ 			continue // e.g. a user record that only carried a tool_result</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		s.Turns = append(s.Turns, *turn)</div><div class="diff-add">+ </div><div class="diff-add">+ 		// After appending, register any Task tool call as the new sidechain</div><div class="diff-add">+ 		// owner and seed its first subagent slot.</div><div class="diff-add">+ 		for i := range turn.Blocks {</div><div class="diff-add">+ 			b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]</div><div class="diff-add">+ 			if b.Tool != nil {</div><div class="diff-add">+ 				toolIndex[b.Tool.ID] = b.Tool</div><div class="diff-add">+ 				if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {</div><div class="diff-add">+ 					b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{</div><div class="diff-add">+ 						Description: taskDescription(b.Tool),</div><div class="diff-add">+ 					})</div><div class="diff-add">+ 					lastTask = b.Tool</div><div class="diff-add">+ 					sidechainOwner = lastTask</div><div class="diff-add">+ 				}</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if err := sc.Err(); err != nil {</div><div class="diff-add">+ 		return s, err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return s, nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // buildTurn converts a record&#39;s blocks into a model.Turn. tool_result blocks are</div><div class="diff-add">+ // attached to their originating ToolCall via toolIndex and do not themselves</div><div class="diff-add">+ // produce turn content. Returns nil if the record yields no displayable blocks.</div><div class="diff-add">+ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.ToolCall) *model.Turn {</div><div class="diff-add">+ 	turn := &amp;model.Turn{Timestamp: parseTime(rec.Timestamp)}</div><div class="diff-add">+ 	if rec.Type == &#34;user&#34; {</div><div class="diff-add">+ 		turn.Kind = model.TurnUser</div><div class="diff-add">+ 	} else {</div><div class="diff-add">+ 		turn.Kind = model.TurnAssistant</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, b := range blocks {</div><div class="diff-add">+ 		switch b.Type {</div><div class="diff-add">+ 		case &#34;text&#34;:</div><div class="diff-add">+ 			if b.Text != &#34;&#34; {</div><div class="diff-add">+ 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockText, Text: b.Text})</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		case &#34;thinking&#34;:</div><div class="diff-add">+ 			if b.Thinking != &#34;&#34; {</div><div class="diff-add">+ 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		case &#34;tool_use&#34;:</div><div class="diff-add">+ 			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})</div><div class="diff-add">+ 		case &#34;tool_result&#34;:</div><div class="diff-add">+ 			if tc := toolIndex[b.ToolUseID]; tc != nil {</div><div class="diff-add">+ 				tc.Result = &amp;model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(turn.Blocks) == 0 {</div><div class="diff-add">+ 		return nil</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return turn</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func trimSpace(b []byte) []byte {</div><div class="diff-add">+ 	start, end := 0, len(b)</div><div class="diff-add">+ 	for start &lt; end &amp;&amp; (b[start] == &#39; &#39; || b[start] == &#39;\t&#39; || b[start] == &#39;\r&#39; || b[start] == &#39;\n&#39;) {</div><div class="diff-add">+ 		start++</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for end &gt; start &amp;&amp; (b[end-1] == &#39; &#39; || b[end-1] == &#39;\t&#39; || b[end-1] == &#39;\r&#39; || b[end-1] == &#39;\n&#39;) {</div><div class="diff-add">+ 		end--</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return b[start:end]</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // buildToolCall constructs a ToolCall from a tool_use block, deriving a summary</div><div class="diff-add">+ // and, for Edit/Write, a Diff.</div><div class="diff-add">+ func buildToolCall(b apiBlock) *model.ToolCall {</div><div class="diff-add">+ 	tc := &amp;model.ToolCall{</div><div class="diff-add">+ 		ID:        b.ID,</div><div class="diff-add">+ 		Name:      b.Name,</div><div class="diff-add">+ 		InputJSON: prettyJSON(b.Input),</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	input := decodeInput(b.Input)</div><div class="diff-add">+ 	tc.Summary = toolSummary(b.Name, input)</div><div class="diff-add">+ 	switch b.Name {</div><div class="diff-add">+ 	case &#34;Edit&#34;, &#34;Write&#34;:</div><div class="diff-add">+ 		tc.Diff = buildDiff(b.Name, input)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return tc</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func decodeInput(raw json.RawMessage) map[string]any {</div><div class="diff-add">+ 	m := map[string]any{}</div><div class="diff-add">+ 	if len(raw) &gt; 0 {</div><div class="diff-add">+ 		_ = json.Unmarshal(raw, &amp;m)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return m</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func str(m map[string]any, key string) string {</div><div class="diff-add">+ 	if v, ok := m[key].(string); ok {</div><div class="diff-add">+ 		return v</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return &#34;&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // toolSummary produces a compact one-line header for a tool card.</div><div class="diff-add">+ func toolSummary(name string, in map[string]any) string {</div><div class="diff-add">+ 	switch name {</div><div class="diff-add">+ 	case &#34;Bash&#34;:</div><div class="diff-add">+ 		if c := str(in, &#34;command&#34;); c != &#34;&#34; {</div><div class="diff-add">+ 			return firstLine(c)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	case &#34;Read&#34;, &#34;Edit&#34;, &#34;Write&#34;, &#34;NotebookEdit&#34;:</div><div class="diff-add">+ 		if p := str(in, &#34;file_path&#34;); p != &#34;&#34; {</div><div class="diff-add">+ 			return p</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	case &#34;Glob&#34;:</div><div class="diff-add">+ 		return str(in, &#34;pattern&#34;)</div><div class="diff-add">+ 	case &#34;Grep&#34;:</div><div class="diff-add">+ 		return str(in, &#34;pattern&#34;)</div><div class="diff-add">+ 	case &#34;Task&#34;:</div><div class="diff-add">+ 		return str(in, &#34;description&#34;)</div><div class="diff-add">+ 	case &#34;WebFetch&#34;:</div><div class="diff-add">+ 		return str(in, &#34;url&#34;)</div><div class="diff-add">+ 	case &#34;WebSearch&#34;:</div><div class="diff-add">+ 		return str(in, &#34;query&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return &#34;&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func buildDiff(name string, in map[string]any) *model.Diff {</div><div class="diff-add">+ 	d := &amp;model.Diff{Path: str(in, &#34;file_path&#34;)}</div><div class="diff-add">+ 	if name == &#34;Write&#34; {</div><div class="diff-add">+ 		d.NewText = str(in, &#34;content&#34;)</div><div class="diff-add">+ 		return d</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	d.OldText = str(in, &#34;old_string&#34;)</div><div class="diff-add">+ 	d.NewText = str(in, &#34;new_string&#34;)</div><div class="diff-add">+ 	return d</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func taskDescription(tc *model.ToolCall) string {</div><div class="diff-add">+ 	if tc.Summary != &#34;&#34; {</div><div class="diff-add">+ 		return tc.Summary</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return &#34;subagent&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func firstLine(s string) string {</div><div class="diff-add">+ 	for i := 0; i &lt; len(s); i++ {</div><div class="diff-add">+ 		if s[i] == &#39;\n&#39; {</div><div class="diff-add">+ 			return s[:i]</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return s</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func prettyJSON(raw json.RawMessage) string {</div><div class="diff-add">+ 	if len(raw) == 0 {</div><div class="diff-add">+ 		return &#34;&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	var v any</div><div class="diff-add">+ 	if err := json.Unmarshal(raw, &amp;v); err != nil {</div><div class="diff-add">+ 		return string(raw)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	out, err := json.MarshalIndent(v, &#34;&#34;, &#34;  &#34;)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return string(raw)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return string(out)</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-15" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; go vet ./... 2&gt;&amp;1">
+      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; go vet ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 go vet ./... 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-16" data-search="build and vet are clean. now run the focused test package, then the full suite.">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Build and vet are clean. Now run the focused test package, then the full suite.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/transcript/ -v 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./internal/transcript/ -v 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">=== RUN   TestParseBasicTimeline
+--- PASS: TestParseBasicTimeline (0.00s)
+=== RUN   TestParseSubagentAttachment
+--- PASS: TestParseSubagentAttachment (0.00s)
+=== RUN   TestParseExcludeSubagents
+--- PASS: TestParseExcludeSubagents (0.00s)
+=== RUN   TestDecodeMessageContentString
+--- PASS: TestDecodeMessageContentString (0.00s)
+=== RUN   TestDecodeMessageContentArray
+--- PASS: TestDecodeMessageContentArray (0.00s)
+=== RUN   TestToolResultTextArray
+--- PASS: TestToolResultTextArray (0.00s)
+=== RUN   TestToolResultTextString
+--- PASS: TestToolResultTextString (0.00s)
+PASS
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.307s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-18" data-search="all 3 new parse tests plus the 4 existing task 4 raw tests pass. now run full suite.">
+      <div class="turn-role">Claude<span class="usage-badge">95 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All 3 new parse tests plus the 4 existing Task 4 raw tests pass. Now run full suite.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./... 2&gt;&amp;1">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go test ./... 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.157s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-20" data-search="bash gofmt -l internal/transcript/ 2&gt;&amp;1">
+      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/transcript/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gofmt -l internal/transcript/ 2\u003e\u00261&#34;
+}</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-21" data-search="no formatting issues. now let&#39;s review the sidechain logic for correctness (self-review), then commit.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>No formatting issues. Now let's review the sidechain logic for correctness (self-review), then commit.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-22" data-search="bash git status --short">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status --short&#34;
+}</pre><pre class="tool-result">?? internal/transcript/parse.go
+?? internal/transcript/parse_test.go
+?? internal/transcript/testdata/</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-23" data-search="all new files, nothing else touched. let me write the report and commit.">
+      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>All new files, nothing else touched. Let me write the report and commit.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-24" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 5 Report: Fold records into a Session timeline</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented `internal/transcript/parse.go`, folding the flat JSONL `rawRecord`</div><div class="diff-add">+ stream (from Task 4&#39;s `raw.go`) into an ordered `model.Session` timeline of</div><div class="diff-add">+ `model.Turn`s, `model.Block`s and `model.ToolCall`s, exactly per the brief</div><div class="diff-add">+ (Step 4 core `Parse`/`ParseFile`/`buildTurn` plus Step 5 tool-call builders</div><div class="diff-add">+ `buildToolCall`, `toolSummary`, `buildDiff`, `taskDescription`, helpers).</div><div class="diff-add">+ </div><div class="diff-add">+ Followed the brief&#39;s TDD steps verbatim: fixtures first, failing test,</div><div class="diff-add">+ implementation, passing test, commit.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/transcript/testdata/basic.jsonl` (new) — 6 lines: ai-title, user</div><div class="diff-add">+   turn, assistant turn (thinking+text+tool_use Bash), user tool_result,</div><div class="diff-add">+   assistant turn (Edit tool_use), one malformed line (`not valid json at</div><div class="diff-add">+   all`), user tool_result for Edit.</div><div class="diff-add">+ - `internal/transcript/testdata/subagent.jsonl` (new) — 5 lines: user turn,</div><div class="diff-add">+   assistant turn with a `Task` tool_use, two sidechain records (user +</div><div class="diff-add">+   assistant), and the tool_result closing the Task call.</div><div class="diff-add">+ - `internal/transcript/parse_test.go` (new) — `TestParseBasicTimeline`,</div><div class="diff-add">+   `TestParseSubagentAttachment`, `TestParseExcludeSubagents`, copied verbatim</div><div class="diff-add">+   from the brief.</div><div class="diff-add">+ - `internal/transcript/parse.go` (new) — `Options`, `Parse`, `ParseFile`,</div><div class="diff-add">+   `sessionIDFromPath`, `lastSlash`, `buildTurn`, `trimSpace`,</div><div class="diff-add">+   `buildToolCall`, `decodeInput`, `str`, `toolSummary`, `buildDiff`,</div><div class="diff-add">+   `taskDescription`, `firstLine`, `prettyJSON`. Implemented exactly as</div><div class="diff-add">+   specified in the brief&#39;s Step 4 and Step 5 code blocks, with no</div><div class="diff-add">+   deviations.</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED — fixtures + test written, implementation absent</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/transcript/</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/transcript [github.com/saigyo/cc-what-have-i-done/internal/transcript.test]</div><div class="diff-add">+ internal/transcript/parse_test.go:10:12: undefined: ParseFile</div><div class="diff-add">+ internal/transcript/parse_test.go:10:46: undefined: Options</div><div class="diff-add">+ internal/transcript/parse_test.go:52:12: undefined: ParseFile</div><div class="diff-add">+ internal/transcript/parse_test.go:52:49: undefined: Options</div><div class="diff-add">+ internal/transcript/parse_test.go:73:12: undefined: ParseFile</div><div class="diff-add">+ internal/transcript/parse_test.go:73:49: undefined: Options</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript [build failed]</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Matches the brief&#39;s expected failure (`undefined: ParseFile`).</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN — after implementing parse.go</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/transcript/ -v</div><div class="diff-add">+ === RUN   TestParseBasicTimeline</div><div class="diff-add">+ --- PASS: TestParseBasicTimeline (0.00s)</div><div class="diff-add">+ === RUN   TestParseSubagentAttachment</div><div class="diff-add">+ --- PASS: TestParseSubagentAttachment (0.00s)</div><div class="diff-add">+ === RUN   TestParseExcludeSubagents</div><div class="diff-add">+ --- PASS: TestParseExcludeSubagents (0.00s)</div><div class="diff-add">+ === RUN   TestDecodeMessageContentString</div><div class="diff-add">+ --- PASS: TestDecodeMessageContentString (0.00s)</div><div class="diff-add">+ === RUN   TestDecodeMessageContentArray</div><div class="diff-add">+ --- PASS: TestDecodeMessageContentArray (0.00s)</div><div class="diff-add">+ === RUN   TestToolResultTextArray</div><div class="diff-add">+ --- PASS: TestToolResultTextArray (0.00s)</div><div class="diff-add">+ === RUN   TestToolResultTextString</div><div class="diff-add">+ --- PASS: TestToolResultTextString (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.307s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ All 3 new parse tests plus all 4 existing Task 4 raw tests pass.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full suite</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./...</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.157s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Also verified: `go build ./...`, `go vet ./...`, and `gofmt -l</div><div class="diff-add">+ internal/transcript/` all clean (no output/errors).</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - **Sidechain attachment bookkeeping**: reproduced the brief&#39;s</div><div class="diff-add">+   `lastTask`/`sidechainOwner` pattern exactly, including the slightly odd</div><div class="diff-add">+   `sidechainOwner := lastTask` initialization (both nil at start — a no-op</div><div class="diff-add">+   assignment, but harmless and matches the brief verbatim). When a `Task`</div><div class="diff-add">+   tool_use is folded into the main-chain timeline, its `Subagents` slice is</div><div class="diff-add">+   seeded with one `model.Subagent{Description: taskDescription(tc)}` entry,</div><div class="diff-add">+   and `sidechainOwner` is repointed to that `*model.ToolCall`. Subsequent</div><div class="diff-add">+   sidechain records append their turns to</div><div class="diff-add">+   `sidechainOwner.Subagents[len(...)-1]` — i.e. always the most recently</div><div class="diff-add">+   seeded slot on the most recent Task call. This means if two Task calls</div><div class="diff-add">+   happen before any sidechain output arrives, sidechain turns attach only to</div><div class="diff-add">+   the second (most recent) Task&#39;s subagent slot — this is &#34;nearest preceding</div><div class="diff-add">+   Task&#34; as specified, verified by `TestParseSubagentAttachment`.</div><div class="diff-add">+ - **IncludeSubagents=false**: sidechain records are dropped entirely (`continue`</div><div class="diff-add">+   before building a turn), and Task tool calls never get a seeded Subagent</div><div class="diff-add">+   slot (`opts.IncludeSubagents` gated), so `Subagents` is `nil`/empty as</div><div class="diff-add">+   asserted by `TestParseExcludeSubagents`.</div><div class="diff-add">+ - **tool_result folding**: a user record containing only a `tool_result`</div><div class="diff-add">+   block produces no `model.Block` (handled in the `tool_result` case of</div><div class="diff-add">+   `buildTurn`&#39;s switch, which does not append to `turn.Blocks`), so</div><div class="diff-add">+   `buildTurn` returns `nil` for such records and no spurious user turn is</div><div class="diff-add">+   added to the timeline — confirmed by `basic.jsonl` producing exactly 3</div><div class="diff-add">+   turns (not 5) despite 5 user/assistant records.</div><div class="diff-add">+ - **isMeta / non-user-assistant / malformed lines**: `isMeta` records are</div><div class="diff-add">+   skipped after the `ai-title`/type switch; record types other than</div><div class="diff-add">+   `user`/`assistant`/`ai-title` are skipped via the `default: continue`</div><div class="diff-add">+   branch; JSON-malformed lines increment `SkippedLines` — `basic.jsonl`&#39;s one</div><div class="diff-add">+   malformed line (`not valid json at all`) yields `SkippedLines == 1` as</div><div class="diff-add">+   asserted.</div><div class="diff-add">+ - **Edit/Write diff population**: `buildDiff` sets `OldText`/`NewText` from</div><div class="diff-add">+   `old_string`/`new_string` for Edit, and `NewText` from `content` for Write;</div><div class="diff-add">+   confirmed via the Edit case in `TestParseBasicTimeline`.</div><div class="diff-add">+ - **Session metadata**: `GitBranch`/`Version`/`ProjectPath` are captured from</div><div class="diff-add">+   the first record carrying a non-empty value; `StartedAt`/`EndedAt` track</div><div class="diff-add">+   the earliest/latest parsed timestamp across all folded records.</div><div class="diff-add">+ - No changes were made to Task 4&#39;s `raw.go`, `raw_test.go`, or</div><div class="diff-add">+   `internal/model`; `parse.go` is purely additive and consumes the existing</div><div class="diff-add">+   unexported helpers as specified in the brief&#39;s Interfaces section.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ None. The brief&#39;s code was implemented verbatim and all specified tests</div><div class="diff-add">+ (including the two Task 4 regression tests already in the package) pass. No</div><div class="diff-add">+ bugs were found in the brief&#39;s logic during implementation or review.</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-25" data-search="bash git add internal/transcript/ &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">180 tok · ~$0.02</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/transcript/ &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git add internal/transcript/ \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: fold transcript records into a session timeline\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34; \u0026\u0026 git log --oneline -1 \u0026\u0026 git status --short&#34;
+}</pre><pre class="tool-result">[feat/ccwhid-impl 09d5d88] feat: fold transcript records into a session timeline
+ 4 files changed, 389 insertions(+)
+ create mode 100644 internal/transcript/parse.go
+ create mode 100644 internal/transcript/parse_test.go
+ create mode 100644 internal/transcript/testdata/basic.jsonl
+ create mode 100644 internal/transcript/testdata/subagent.jsonl
+09d5d88 feat: fold transcript records into a session timeline</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-26" data-search="committed on the correct branch, working tree clean.
+
+- status: done
+- commits created: 09d5d88 &#34;feat: fold transcript records into a session timeline&#34;
+- test summary: red confirmed (`undefined: parsefile`) → green, all 7 tests pass (3 new parse tests &#43; 4 task 4 raw tests); `go test ./...`, `go vet ./...`, `gofmt -l` all clean
+- concerns: none — brief implemented verbatim, no logic bugs found
+- report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
+      <div class="turn-role">Claude<span class="usage-badge">223 tok · ~$0.01</span></div>
+      <div class="turn-body"><p>Committed on the correct branch, working tree clean.</p>
+<ul>
+<li>Status: DONE</li>
+<li>Commits created: 09d5d88 &quot;feat: fold transcript records into a session timeline&quot;</li>
+<li>Test summary: RED confirmed (<code>undefined: ParseFile</code>) → GREEN, all 7 tests pass (3 new parse tests + 4 Task 4 raw tests); <code>go test ./...</code>, <code>go vet ./...</code>, <code>gofmt -l</code> all clean</li>
+<li>Concerns: none — brief implemented verbatim, no logic bugs found</li>
+<li>Report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</li>
+</ul>
+</div>
+    </article>
+    
+  </main>
+</div>
+<script src="../assets/app.js"></script>
+</body>
+</html>
