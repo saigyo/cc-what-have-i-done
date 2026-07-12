@@ -76,10 +76,11 @@ type Block struct {
 // ToolCall is a single tool invocation and its result.
 type ToolCall struct {
 	ID          string
-	Name        string // e.g. "Bash", "Edit", "Read", "Task"
-	Summary     string // one-line summary for the collapsed card header
-	InputJSON   string // pretty-printed input for generic display
-	AgentPrompt string // for Task/Agent calls: the subagent prompt, rendered as markdown
+	Name        string     // e.g. "Bash", "Edit", "Read", "Task"
+	Summary     string     // one-line summary for the collapsed card header
+	InputJSON   string     // pretty-printed input for generic display
+	AgentPrompt string     // for Task/Agent calls: the subagent prompt, rendered as markdown
+	Questions   []Question // set for AskUserQuestion calls
 	Result      *ToolResult
 	Diff        *Diff      // set for Edit/Write
 	Subagents   []Subagent // set for Task calls with sidechain activity
@@ -89,6 +90,26 @@ type ToolCall struct {
 // "Task" tool or the modern "Agent" tool.
 func (t *ToolCall) IsAgent() bool {
 	return t.Name == "Task" || t.Name == "Agent"
+}
+
+// IsAskUserQuestion reports whether this tool call is an AskUserQuestion prompt.
+func (t *ToolCall) IsAskUserQuestion() bool {
+	return t.Name == "AskUserQuestion"
+}
+
+// Question is one question posed by an AskUserQuestion call, with its options.
+type Question struct {
+	Header      string // short chip label, e.g. "Language"
+	Prompt      string // the full question text
+	MultiSelect bool
+	Options     []QuestionOption
+}
+
+// QuestionOption is one selectable answer of a Question.
+type QuestionOption struct {
+	Label       string
+	Description string
+	Preview     string // optional monospace preview block
 }
 
 type ToolResult struct {

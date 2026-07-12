@@ -207,6 +207,40 @@ func TestBuildToolCallAgentSummaryAndPrompt(t *testing.T) {
 	}
 }
 
+func TestBuildToolCallAskUserQuestionSummaryAndQuestions(t *testing.T) {
+	b := apiBlock{
+		Type: "tool_use",
+		ID:   "t3",
+		Name: "AskUserQuestion",
+		Input: json.RawMessage(`{"questions":[
+			{"header":"Language","question":"Go or Rust?","multiSelect":false,
+			 "options":[
+				{"label":"Go","description":"single binary","preview":"$ go build"},
+				{"label":"Rust","description":"also single binary"}]},
+			{"header":"Scope","question":"How big?","multiSelect":true,"options":[]}]}`),
+	}
+	tc := buildToolCall(b)
+	if tc.Summary != "Language · Scope" {
+		t.Errorf("Summary = %q, want the joined question headers", tc.Summary)
+	}
+	if !tc.IsAskUserQuestion() {
+		t.Error("AskUserQuestion tool should report IsAskUserQuestion")
+	}
+	if len(tc.Questions) != 2 {
+		t.Fatalf("got %d questions, want 2", len(tc.Questions))
+	}
+	q := tc.Questions[0]
+	if q.Header != "Language" || q.Prompt != "Go or Rust?" || q.MultiSelect {
+		t.Errorf("question 0 = %+v", q)
+	}
+	if len(q.Options) != 2 || q.Options[0].Label != "Go" || q.Options[0].Preview != "$ go build" {
+		t.Errorf("question 0 options = %+v", q.Options)
+	}
+	if !tc.Questions[1].MultiSelect {
+		t.Errorf("question 1 should be multiSelect")
+	}
+}
+
 func TestBuildToolCallSkillSummaryIsSkillName(t *testing.T) {
 	b := apiBlock{
 		Type:  "tool_use",
