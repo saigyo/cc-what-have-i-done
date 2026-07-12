@@ -90,8 +90,13 @@ Run `ccwhid` with no selector to open the interactive browser:
 
 By default, ccwhid scrubs common secret shapes (AWS keys, API tokens, JWTs,
 `KEY=`/`TOKEN=`/`SECRET=` assignments) and rewrites your home directory to `~`.
-This is best-effort defense-in-depth — **review generated reports before
-committing them.** Disable with `--no-redact`.
+It also scrubs account names from home-directory paths in any form — plain
+(`/Users/alice`, `/home/alice`), Windows (`C:\Users\alice`), and Claude Code's
+dash-encoded project dirs (`-Users-alice-IdeaProjects-…`) — plus standalone
+mentions of your own login name (e.g. the owner column of `ls -l` output),
+replacing them with `[user]`. This is best-effort defense-in-depth — **review
+generated reports before committing them** (a real name embedded in a URL or
+module path, for instance, is out of scope). Disable with `--no-redact`.
 
 ## What's included
 
