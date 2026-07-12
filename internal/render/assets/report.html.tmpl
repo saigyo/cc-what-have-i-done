@@ -38,12 +38,10 @@
       <summary class="usage-summary">{{ .Headline }}</summary>
       <div class="usage-body">
         {{ if .HasAny }}
-        <table class="usage-tokens">
-          {{ range .Rows }}<tr><td>{{ .Label }}</td><td>{{ .Value }}</td></tr>{{ end }}
-        </table>
         <table class="usage-models">
-          <tr><th>model</th><th>in+out</th><th>est. cost</th></tr>
-          {{ range .Models }}<tr><td>{{ .Model }}</td><td>{{ .Tokens }}</td><td>{{ .Cost }}</td></tr>{{ end }}
+          <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
+          {{ range .Models }}<tr><td>{{ .Model }}</td><td>{{ .Input }}</td><td>{{ .Output }}</td><td>{{ .CacheRead }}</td><td>{{ .CacheWrite }}</td><td>{{ .Cost }}</td></tr>{{ end }}
+          <tr class="usage-total"><td>{{ .Total.Model }}</td><td>{{ .Total.Input }}</td><td>{{ .Total.Output }}</td><td>{{ .Total.CacheRead }}</td><td>{{ .Total.CacheWrite }}</td><td>{{ .Total.Cost }}</td></tr>
         </table>
         {{ end }}
         <p class="usage-note">{{ .Footnote }}</p>

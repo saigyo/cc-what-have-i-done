@@ -91,20 +91,20 @@ type turnView struct {
 type usageView struct {
 	HasAny   bool
 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
-	Rows     []usageRow    // token breakdown
-	Models   []usageModel  // per-model table rows
+	Models   []usageModel  // per-model rows, full token breakdown
+	Total    usageModel    // grand-total row
 	Footnote string
 }
 
-type usageRow struct {
-	Label string
-	Value string
-}
-
+// usageModel is one row of the per-model table (or the Total row). All fields
+// are plain formatted strings, auto-escaped by html/template.
 type usageModel struct {
-	Model  string
-	Tokens template.HTML // safe, built only from our own formatted numbers/words
-	Cost   string        // "$1.23" or "n/a"
+	Model      string // model id, or "Total" for the summary row
+	Input      string
+	Output     string
+	CacheRead  string
+	CacheWrite string
+	Cost       string // "$1.23" or "n/a"
 }
 
 func buildViewModel(s model.Session, title string, opts Options) viewData {
@@ -168,25 +168,33 @@ func buildUsageView(r usage.Report) *usageView {
 	// formatted numbers and literal words, so this is safe to mark as raw HTML.
 	v.Headline = template.HTML(html.EscapeString(headline))
 
-	v.Rows = []usageRow{
-		{"input", formatTokens(r.Total.Input)},
-		{"output", formatTokens(r.Total.Output)},
-		{"cache read", formatTokens(r.Total.CacheRead)},
-		{"cache write", formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},
-	}
 	for _, m := range r.ByModel {
-		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + " in+out")), Cost: "n/a"}
-		if m.CostUSD != nil {
-			row.Cost = formatCost(*m.CostUSD)
-		}
-		v.Models = append(v.Models, row)
+		v.Models = append(v.Models, modelRow(m.Model, m.Tokens, m.CostUSD))
 	}
+	v.Total = modelRow("Total", r.Total, r.TotalCostUSD)
 	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf + "; excludes server-tool fees."
 	if r.HasUnknownModel {
 		foot += " Totals exclude unpriced models (shown as n/a)."
 	}
 	v.Footnote = foot
 	return v
+}
+
+// modelRow formats one per-model (or Total) table row from a token bucket and
+// optional cost.
+func modelRow(name string, t usage.TokenCounts, costUSD *float64) usageModel {
+	row := usageModel{
+		Model:      name,
+		Input:      formatTokens(t.Input),
+		Output:     formatTokens(t.Output),
+		CacheRead:  formatTokens(t.CacheRead),
+		CacheWrite: formatTokens(t.CacheWrite5m + t.CacheWrite1h),
+		Cost:       "n/a",
+	}
+	if costUSD != nil {
+		row.Cost = formatCost(*costUSD)
+	}
+	return row
 }
 
 func roleLabel(k model.TurnKind) string {

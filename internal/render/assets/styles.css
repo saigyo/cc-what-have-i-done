@@ -69,8 +69,10 @@ body.hide-tools .tool-body { display: none; }
 .usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
 .usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
 .usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
-.usage-tokens td:last-child, .usage-models td, .usage-models th { text-align: right; padding: 0.1rem 0.6rem; }
-.usage-tokens td:first-child, .usage-models td:first-child { text-align: left; }
-.usage-models { margin-top: 0.6rem; border-collapse: collapse; }
+.usage-models { margin-top: 0.4rem; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.usage-models td, .usage-models th { text-align: right; padding: 0.15rem 0.7rem; white-space: nowrap; }
+.usage-models td:first-child, .usage-models th:first-child { text-align: left; }
+.usage-models th { color: var(--muted); font-weight: 600; }
+.usage-total td { font-weight: 600; border-top: 1px solid var(--border); }
 .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
 .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
