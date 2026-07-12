@@ -92,3 +92,68 @@ func TestRedactAgentPrompt(t *testing.T) {
 		t.Errorf("agent prompt secret not redacted: %q", got)
 	}
 }
+
+func TestRedactDashEncodedHomePath(t *testing.T) {
+	// Claude Code encodes project dirs by replacing "/" with "-", so the $HOME
+	// rewrite never sees them.
+	r := New("/Users/markus")
+	got := r.String("~/.claude/projects/-Users-markus-IdeaProjects-cc-what-have-i-done/x.jsonl")
+	if strings.Contains(got, "markus") {
+		t.Errorf("dash-encoded username not scrubbed: %q", got)
+	}
+	if !strings.Contains(got, "-Users-[user]-IdeaProjects-") {
+		t.Errorf("expected scrubbed encoded segment: %q", got)
+	}
+}
+
+func TestRedactOtherUsersPath(t *testing.T) {
+	// A foreign home path (different account) is scrubbed even though it isn't
+	// our $HOME.
+	r := New("/Users/markus")
+	for _, in := range []string{"/Users/alice/secret", `C:\Users\bob\file`, "/home/carol/x"} {
+		got := r.String(in)
+		for _, leak := range []string{"alice", "bob", "carol"} {
+			if strings.Contains(got, leak) {
+				t.Errorf("foreign account name leaked: %q -> %q", in, got)
+			}
+		}
+	}
+}
+
+func TestRedactOwnerColumn(t *testing.T) {
+	// `ls -l` owner column carries the username with no path context.
+	r := New("/Users/markus")
+	got := r.String("drwx------@ 8 markus staff 256 baufinanzierung")
+	if strings.Contains(got, "markus") {
+		t.Errorf("bare username in owner column not scrubbed: %q", got)
+	}
+	if !strings.Contains(got, "[user] staff") {
+		t.Errorf("expected scrubbed owner column: %q", got)
+	}
+}
+
+func TestRedactKeepsHomeTilde(t *testing.T) {
+	// The friendly ~ rewrite for our own home must survive.
+	r := New("/Users/markus")
+	if got := r.String("/Users/markus/IdeaProjects/app"); got != "~/IdeaProjects/app" {
+		t.Errorf("home tilde rewrite broken: %q", got)
+	}
+}
+
+func TestAccountNameSkipsSystemAndShortNames(t *testing.T) {
+	for _, h := range []string{"/root", "/home/ab", "/var/empty", ""} {
+		if got := accountName(h); got != "" {
+			t.Errorf("accountName(%q) = %q, want empty (system/short)", h, got)
+		}
+	}
+	if got := accountName("/Users/markus"); got != "markus" {
+		t.Errorf("accountName = %q, want markus", got)
+	}
+}
+
+func TestRedactDoubledBackslashWindowsPath(t *testing.T) {
+	r := New("/Users/markus")
+	if got := r.String(`C:\\Users\\bob\\file`); strings.Contains(got, "bob") {
+		t.Errorf("doubled-backslash Windows path not scrubbed: %q", got)
+	}
+}

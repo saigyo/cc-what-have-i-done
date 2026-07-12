@@ -23,12 +23,50 @@ var rules = []rule{
 	{"assignment", regexp.MustCompile(`(?i)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\s*[=:]\s*['"]?([^\s'"]{6,})`)},
 }
 
-// Redactor applies redaction rules and a home-directory rewrite.
+// userPathRe matches a home-directory segment in slash, backslash, or Claude
+// Code's dash-encoded form — "/Users/alice", "C:\Users\alice", or
+// "-Users-alice-IdeaProjects" — capturing the account name that follows
+// "Users"/"home". It scrubs account names even in paths outside our own home
+// (other users, dash-encoded project dirs) that the $HOME rewrite never sees.
+// The separator runs use "+" so JSON-escaped Windows paths (`\\Users\\bob`)
+// match as well as single-separator forms.
+var userPathRe = regexp.MustCompile(`(?i)([/\\-]+)(Users|home)([/\\-]+)([^/\\-]+)`)
+
+// userPlaceholder replaces a scrubbed account name.
+const userPlaceholder = "[user]"
+
+// Redactor applies redaction rules, a home-directory rewrite, and account-name
+// heuristics.
 type Redactor struct {
 	homeDir string
+	userRe  *regexp.Regexp // standalone mentions of our own account name; nil when unknown/unsafe
 }
 
-func New(homeDir string) *Redactor { return &Redactor{homeDir: homeDir} }
+func New(homeDir string) *Redactor {
+	r := &Redactor{homeDir: homeDir}
+	if name := accountName(homeDir); name != "" {
+		r.userRe = regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(name) + `\b`)
+	}
+	return r
+}
+
+// accountName extracts the login name from a home-directory path. It returns ""
+// for very short names or common system accounts, where scrubbing the bare word
+// would mangle unrelated output (e.g. "root" in log lines).
+func accountName(homeDir string) string {
+	name := strings.TrimRight(homeDir, `/\`)
+	if i := strings.LastIndexAny(name, `/\`); i >= 0 {
+		name = name[i+1:]
+	}
+	if len(name) < 3 {
+		return ""
+	}
+	switch strings.ToLower(name) {
+	case "root", "home", "user", "users", "admin", "ubuntu", "shared", "guest", "empty", "nobody", "daemon":
+		return ""
+	}
+	return name
+}
 
 // String redacts a single string.
 func (r *Redactor) String(s string) string {
@@ -39,8 +77,18 @@ func (r *Redactor) String(s string) string {
 		}
 		s = ru.re.ReplaceAllString(s, "[REDACTED:"+ru.kind+"]")
 	}
+	// Rewrite our own home directory to ~ first, so the common case stays
+	// readable ("~/foo" rather than "/Users/[user]/foo").
 	if r.homeDir != "" {
 		s = strings.ReplaceAll(s, r.homeDir, "~")
+	}
+	// Scrub account names in any remaining home-style path: dash-encoded project
+	// dirs, other users' home paths, Windows paths.
+	s = userPathRe.ReplaceAllString(s, "$1$2$3"+userPlaceholder)
+	// Scrub standalone mentions of our own account name that carry no path
+	// context — e.g. the owner column of `ls -l` output.
+	if r.userRe != nil {
+		s = r.userRe.ReplaceAllString(s, userPlaceholder)
 	}
 	return s
 }
