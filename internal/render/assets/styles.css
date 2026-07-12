@@ -76,3 +76,7 @@ body.hide-tools .tool-body { display: none; }
 .usage-total td { font-weight: 600; border-top: 1px solid var(--border); }
 .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
 .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+.turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }
+.turn-agent-result .turn-role { color: var(--accent); }
+.agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
+.usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
