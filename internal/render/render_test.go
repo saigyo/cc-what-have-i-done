@@ -107,6 +107,52 @@ func TestPreviewRuneSafe(t *testing.T) {
 	}
 }
 
+func TestSiteRendersUsageWhenEnabled(t *testing.T) {
+	s := model.Session{
+		ID: "x", Title: "T",
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}},
+			{Kind: model.TurnAssistant, Model: "claude-opus-4-8",
+				Usage:  &model.Usage{Input: 1000, Output: 200},
+				Blocks: []model.Block{{Type: model.BlockText, Text: "ok"}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{Usage: true}); err != nil {
+		t.Fatal(err)
+	}
+	html := readIndex(t, dir)
+	for _, want := range []string{"usage-card", "usage-badge", "in+out", "prices as of", "claude-opus-4-8"} {
+		if !strings.Contains(html, want) {
+			t.Errorf("usage output missing %q", want)
+		}
+	}
+}
+
+func TestSiteOmitsUsageByDefault(t *testing.T) {
+	s := model.Session{ID: "x", Title: "T", Turns: []model.Turn{
+		{Kind: model.TurnAssistant, Model: "claude-opus-4-8", Usage: &model.Usage{Input: 1000, Output: 200},
+			Blocks: []model.Block{{Type: model.BlockText, Text: "ok"}}},
+	}}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(readIndex(t, dir), "usage-card") {
+		t.Error("usage card should be absent without Options.Usage")
+	}
+}
+
+// readIndex reads the generated index.html.
+func readIndex(t *testing.T, dir string) string {
+	t.Helper()
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
 func TestSiteWritesFiles(t *testing.T) {
 	dir := t.TempDir()
 	if err := Site(sampleSession(), dir, Options{}); err != nil {

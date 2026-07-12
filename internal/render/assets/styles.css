@@ -66,3 +66,11 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 body.hide-tools .tool-body { display: none; }
 .turn.filtered { display: none; }
 @media (max-width: 760px) { .sidebar { display: none; } }
+.usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border, #e5e2d8); border-radius: 8px; background: var(--card, #fff); }
+.usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }
+.usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }
+.usage-tokens td:last-child, .usage-models td, .usage-models th { text-align: right; padding: 0.1rem 0.6rem; }
+.usage-tokens td:first-child, .usage-models td:first-child { text-align: left; }
+.usage-models { margin-top: 0.6rem; border-collapse: collapse; }
+.usage-note { color: #8a8578; font-size: 0.8rem; margin-top: 0.6rem; }
+.usage-badge { margin-left: 0.5rem; color: #8a8578; font-size: 0.78rem; font-weight: 400; }
