@@ -103,6 +103,28 @@ func TestRepeatNotificationsEachProduceATurn(t *testing.T) {
 	}
 }
 
+func TestParseNotificationResultQuotingOtherTags(t *testing.T) {
+	// A <result> body that quotes another notification's envelope must not
+	// corrupt the simple fields: task-id/summary match their FIRST closing tag.
+	body := "<task-notification>\n<task-id>real-id</task-id>\n<status>completed</status>\n" +
+		"<summary>Agent \"x\" finished</summary>\n" +
+		"<result>the agent saw `</task-id>` and `</summary>` in a quoted envelope</result>\n" +
+		"</task-notification>"
+	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnAgentResult {
+		t.Fatalf("want one agent-result turn, got %+v", s.Turns)
+	}
+	if s.Turns[0].AgentID != "real-id" {
+		t.Errorf("AgentID = %q, want real-id (must not span into the result body)", s.Turns[0].AgentID)
+	}
+	if want := `Agent "x" finished`; s.Turns[0].AgentSummary != want {
+		t.Errorf("AgentSummary = %q, want %q", s.Turns[0].AgentSummary, want)
+	}
+}
+
 // jsonMarshalString wraps a string as a JSON string literal.
 func jsonMarshalString(s string) (string, error) {
 	b, err := json.Marshal(s)

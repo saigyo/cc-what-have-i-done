@@ -226,9 +226,10 @@ func parseTaskNotification(s string) (taskNotification, bool) {
 	return n, true
 }
 
-// tagContent returns the text between the first <name> and the last </name>,
-// trimmed. The last closing tag guards <result> bodies that themselves contain
-// XML-looking text.
+// tagContent returns the text between the first <name> and its closing
+// </name>, trimmed. Simple fields match the first closing tag; <result> keeps
+// matching the last one so bodies that quote XML-looking text (even a literal
+// </result>) stay intact.
 func tagContent(s, name string) string {
 	open, close := "<"+name+">", "</"+name+">"
 	i := strings.Index(s, open)
@@ -236,7 +237,12 @@ func tagContent(s, name string) string {
 		return ""
 	}
 	rest := s[i+len(open):]
-	j := strings.LastIndex(rest, close)
+	var j int
+	if name == "result" {
+		j = strings.LastIndex(rest, close)
+	} else {
+		j = strings.Index(rest, close)
+	}
 	if j < 0 {
 		return ""
 	}
