@@ -80,7 +80,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--latest` | Render the most recent interactive session (skips agent transcripts) |
 | `--out <dir>` | Output directory |
 | `--title <str>` | Override the report title |
-| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; --include-subagents=false to omit) |
+| `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; `--include-subagents=false` to omit) |
 | `--no-redact` | Disable secret redaction |
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
