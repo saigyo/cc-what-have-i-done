@@ -348,7 +348,49 @@ func buildToolCall(b apiBlock) *model.ToolCall {
 	if tc.IsAgent() {
 		tc.AgentPrompt = str(input, "prompt")
 	}
+	if tc.IsAskUserQuestion() {
+		tc.Questions = parseQuestions(input)
+	}
 	return tc
+}
+
+// parseQuestions extracts the structured question list from an AskUserQuestion
+// input map. Missing or malformed fields degrade to empty values rather than
+// failing, so a partial card still renders.
+func parseQuestions(in map[string]any) []model.Question {
+	raw, ok := in["questions"].([]any)
+	if !ok {
+		return nil
+	}
+	var out []model.Question
+	for _, rq := range raw {
+		qm, ok := rq.(map[string]any)
+		if !ok {
+			continue
+		}
+		q := model.Question{
+			Header: str(qm, "header"),
+			Prompt: str(qm, "question"),
+		}
+		if v, ok := qm["multiSelect"].(bool); ok {
+			q.MultiSelect = v
+		}
+		if opts, ok := qm["options"].([]any); ok {
+			for _, ro := range opts {
+				om, ok := ro.(map[string]any)
+				if !ok {
+					continue
+				}
+				q.Options = append(q.Options, model.QuestionOption{
+					Label:       str(om, "label"),
+					Description: str(om, "description"),
+					Preview:     str(om, "preview"),
+				})
+			}
+		}
+		out = append(out, q)
+	}
+	return out
 }
 
 func decodeInput(raw json.RawMessage) map[string]any {
@@ -385,12 +427,39 @@ func toolSummary(name string, in map[string]any) string {
 		return str(in, "description")
 	case "Skill":
 		return str(in, "skill")
+	case "AskUserQuestion":
+		return askQuestionSummary(in)
 	case "WebFetch":
 		return str(in, "url")
 	case "WebSearch":
 		return str(in, "query")
 	}
 	return ""
+}
+
+// askQuestionSummary derives the collapsed-card header for an AskUserQuestion
+// call: the questions' headers joined with " · " (falling back to the question
+// text when a header is missing).
+func askQuestionSummary(in map[string]any) string {
+	raw, ok := in["questions"].([]any)
+	if !ok {
+		return ""
+	}
+	var headers []string
+	for _, rq := range raw {
+		qm, ok := rq.(map[string]any)
+		if !ok {
+			continue
+		}
+		h := str(qm, "header")
+		if h == "" {
+			h = firstLine(str(qm, "question"))
+		}
+		if h != "" {
+			headers = append(headers, h)
+		}
+	}
+	return strings.Join(headers, " · ")
 }
 
 func buildDiff(name string, in map[string]any) *model.Diff {

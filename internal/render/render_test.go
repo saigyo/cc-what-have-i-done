@@ -340,6 +340,65 @@ func TestNonAgentToolResultStaysMonospace(t *testing.T) {
 	}
 }
 
+func TestAskUserQuestionCardRendersOptionsAndAnswers(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:    "AskUserQuestion",
+		Summary: "Language",
+		Questions: []model.Question{{
+			Header: "Language",
+			Prompt: "Go or explore an alternative?",
+			Options: []model.QuestionOption{
+				{Label: "Go (Recommended)", Description: "Single static **binary**."},
+				{Label: "Rust", Description: "Also single-binary.", Preview: "$ cargo build"},
+			},
+		}},
+		InputJSON: `{"questions":[...]}`,
+		Result:    &model.ToolResult{Content: `Your questions have been answered: "Go or explore an alternative?"="Go (Recommended)". You can now continue.`},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+
+	if !strings.Contains(out, `class="ask-header"`) || !strings.Contains(out, ">Language<") {
+		t.Errorf("expected header chip with the question header: %q", out)
+	}
+	if !strings.Contains(out, "<strong>binary</strong>") {
+		t.Errorf("option description should render as markdown: %q", out)
+	}
+	if !strings.Contains(out, `class="ask-option-preview"`) || !strings.Contains(out, "cargo build") {
+		t.Errorf("expected preview block for the option that has one: %q", out)
+	}
+	if !strings.Contains(out, `class="ask-option ask-option-selected"`) {
+		t.Errorf("the chosen option should be marked selected: %q", out)
+	}
+	if !strings.Contains(out, `class="ask-answers"`) || !strings.Contains(out, `class="ask-answers-a">Go (Recommended)<`) {
+		t.Errorf("expected an answers summary with the chosen answer: %q", out)
+	}
+	if strings.Contains(out, `class="tool-input"`) {
+		t.Errorf("AskUserQuestion card must not dump raw JSON input: %q", out)
+	}
+	if strings.Contains(out, "questions have been answered") {
+		t.Errorf("raw result sentence should be replaced by the answers summary: %q", out)
+	}
+}
+
+func TestAskUserQuestionFallsBackToRawResultWhenUnparsed(t *testing.T) {
+	// A result whose prompt does not match the question falls back to raw text.
+	tc := &model.ToolCall{
+		Name: "AskUserQuestion",
+		Questions: []model.Question{{
+			Header:  "Scope",
+			Prompt:  "What scope?",
+			Options: []model.QuestionOption{{Label: "Small"}},
+		}},
+		Result: &model.ToolResult{Content: "some unexpected result text"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) || !strings.Contains(out, "some unexpected result text") {
+		t.Errorf("unparseable result should fall back to the raw monospace block: %q", out)
+	}
+}
+
 func TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {
 	tc := &model.ToolCall{
 		Name:   "Agent",

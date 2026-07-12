@@ -353,11 +353,16 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 		// The agent prompt is markdown and often long; render it readably
 		// instead of dumping the raw one-line JSON input.
 		b.WriteString(`<div class="agent-prompt">` + string(Markdown(tc.AgentPrompt)) + `</div>`)
+	case tc.IsAskUserQuestion() && len(tc.Questions) > 0:
+		// Render the questions and options as a readable list, highlighting the
+		// answer chosen, instead of dumping the raw JSON input.
+		b.WriteString(renderQuestions(tc.Questions, resultContent(tc)))
 	case tc.InputJSON != "":
 		b.WriteString(`<pre class="tool-input">` + html.EscapeString(tc.InputJSON) + `</pre>`)
 	}
 	if tc.Result != nil && tc.Result.Content != "" {
-		if tc.IsAgent() {
+		switch {
+		case tc.IsAgent():
 			// A subagent's result is markdown too; render it rather than showing
 			// a monospace block — but keep the error affordance for failed runs.
 			cls := "agent-result-body"
@@ -365,7 +370,15 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 				cls += " tool-result-error"
 			}
 			b.WriteString(`<div class="` + cls + `">` + string(Markdown(tc.Result.Content)) + `</div>`)
-		} else {
+		case tc.IsAskUserQuestion() && len(tc.Questions) > 0:
+			// Turn the "Your questions have been answered…" sentence into a tidy
+			// header → answer list; fall back to the raw text if none parse.
+			if ans := renderAnswers(tc.Questions, tc.Result.Content); ans != "" {
+				b.WriteString(ans)
+			} else {
+				b.WriteString(`<pre class="tool-result">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
+			}
+		default:
 			cls := "tool-result"
 			if tc.Result.IsError {
 				cls += " tool-result-error"
@@ -384,6 +397,100 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 	}
 	b.WriteString(`</div></details>`)
 	return b.String()
+}
+
+// resultContent returns a tool call's result text, or "" when it has no result.
+func resultContent(tc *model.ToolCall) string {
+	if tc.Result != nil {
+		return tc.Result.Content
+	}
+	return ""
+}
+
+// renderQuestions renders an AskUserQuestion prompt as a list of questions, each
+// with its header, question text, and options. The option the user picked (found
+// in the result string) is marked selected.
+func renderQuestions(qs []model.Question, result string) string {
+	var b strings.Builder
+	b.WriteString(`<div class="ask">`)
+	for _, q := range qs {
+		b.WriteString(`<div class="ask-q">`)
+		if q.Header != "" {
+			b.WriteString(`<span class="ask-header">` + html.EscapeString(q.Header) + `</span>`)
+		}
+		if q.Prompt != "" {
+			b.WriteString(`<div class="ask-prompt">` + string(Markdown(q.Prompt)) + `</div>`)
+		}
+		b.WriteString(`<ul class="ask-options">`)
+		for _, o := range q.Options {
+			cls := "ask-option"
+			if optionChosen(result, o.Label) {
+				cls += " ask-option-selected"
+			}
+			b.WriteString(`<li class="` + cls + `">`)
+			b.WriteString(`<div class="ask-option-label">` + html.EscapeString(o.Label) + `</div>`)
+			if o.Description != "" {
+				b.WriteString(`<div class="ask-option-desc">` + string(Markdown(o.Description)) + `</div>`)
+			}
+			if o.Preview != "" {
+				b.WriteString(`<pre class="ask-option-preview">` + html.EscapeString(o.Preview) + `</pre>`)
+			}
+			b.WriteString(`</li>`)
+		}
+		b.WriteString(`</ul></div>`)
+	}
+	b.WriteString(`</div>`)
+	return b.String()
+}
+
+// renderAnswers renders the chosen answers as a header → answer list. It returns
+// "" when no answer could be parsed, so the caller can fall back to raw text.
+func renderAnswers(qs []model.Question, result string) string {
+	var rows strings.Builder
+	any := false
+	for _, q := range qs {
+		ans := answerFor(result, q.Prompt)
+		if ans == "" {
+			continue
+		}
+		any = true
+		label := q.Header
+		if label == "" {
+			label = preview(q.Prompt, 40)
+		}
+		rows.WriteString(`<li><span class="ask-answers-q">` + html.EscapeString(label) +
+			`</span><span class="ask-answers-a">` + html.EscapeString(ans) + `</span></li>`)
+	}
+	if !any {
+		return ""
+	}
+	return `<div class="ask-answers"><div class="ask-answers-title">answered</div><ul>` +
+		rows.String() + `</ul></div>`
+}
+
+// optionChosen reports whether an option label appears as a chosen answer in an
+// AskUserQuestion result string, which encodes answers as `="<label>"`.
+func optionChosen(result, label string) bool {
+	return label != "" && strings.Contains(result, `="`+label+`"`)
+}
+
+// answerFor extracts the answer for a given question prompt from an
+// AskUserQuestion result string of the form `…"<prompt>"="<answer>"…`. It returns
+// "" when the prompt is not found.
+func answerFor(result, prompt string) string {
+	if prompt == "" {
+		return ""
+	}
+	marker := `"` + prompt + `"="`
+	i := strings.Index(result, marker)
+	if i < 0 {
+		return ""
+	}
+	rest := result[i+len(marker):]
+	if j := strings.Index(rest, `"`); j >= 0 {
+		return rest[:j]
+	}
+	return ""
 }
 
 func turnPlainText(t model.Turn) string {
