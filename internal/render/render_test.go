@@ -122,7 +122,12 @@ func TestSiteRendersUsageWhenEnabled(t *testing.T) {
 		t.Fatal(err)
 	}
 	html := readIndex(t, dir)
-	for _, want := range []string{"usage-card", "usage-badge", "in+out", "prices as of", "claude-opus-4-8"} {
+	for _, want := range []string{
+		"usage-card", "usage-badge", "in+out", "prices as of", "claude-opus-4-8",
+		// per-model table carries the full breakdown + a Total row
+		"<th>input</th>", "<th>output</th>", "<th>cache read</th>", "<th>cache write</th>",
+		"usage-total", "Total",
+	} {
 		if !strings.Contains(html, want) {
 			t.Errorf("usage output missing %q", want)
 		}
