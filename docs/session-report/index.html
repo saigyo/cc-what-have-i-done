@@ -31,19 +31,19 @@
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ main</span>
         <span>2026-07-11 09:15</span>
-        <span>1010 turns</span>
+        <span>1045 turns</span>
         
       </div>
     </section>
     
     <details class="usage-card">
-      <summary class="usage-summary">Usage · 1.4M in+out · ~$141.74 (est.)</summary>
+      <summary class="usage-summary">Usage · 1.4M in+out · ~$145.62 (est.)</summary>
       <div class="usage-body">
         
         <table class="usage-models">
           <tr><th>model</th><th>input</th><th>output</th><th>cache read</th><th>cache write</th><th>est. cost</th></tr>
-          <tr><td>claude-opus-4-8</td><td>125k</td><td>502k</td><td>129.7M</td><td>2.1M</td><td>$97.68</td></tr><tr><td>claude-sonnet-5</td><td>388k</td><td>171k</td><td>22.0M</td><td>1.5M</td><td>$10.59</td></tr><tr><td>claude-fable-5</td><td>42k</td><td>96k</td><td>21.7M</td><td>239k</td><td>$31.68</td></tr><tr><td>claude-haiku-4-5</td><td>3k</td><td>50k</td><td>9.4M</td><td>480k</td><td>$1.79</td></tr>
-          <tr class="usage-total"><td>Total</td><td>557k</td><td>817k</td><td>182.8M</td><td>4.3M</td><td>$141.74</td></tr>
+          <tr><td>claude-opus-4-8</td><td>125k</td><td>512k</td><td>132.1M</td><td>2.3M</td><td>$101.55</td></tr><tr><td>claude-sonnet-5</td><td>388k</td><td>171k</td><td>22.0M</td><td>1.5M</td><td>$10.59</td></tr><tr><td>claude-fable-5</td><td>42k</td><td>96k</td><td>21.7M</td><td>239k</td><td>$31.68</td></tr><tr><td>claude-haiku-4-5</td><td>3k</td><td>50k</td><td>9.4M</td><td>480k</td><td>$1.79</td></tr>
+          <tr class="usage-total"><td>Total</td><td>558k</td><td>828k</td><td>185.1M</td><td>4.5M</td><td>$145.62</td></tr>
         </table>
         
         <p class="usage-sub">of which subagents: 660k in&#43;out · ~$15.57 (59 sessions)</p>
@@ -1243,14 +1243,14 @@ let me generate the task 1 brief and dispatch the first implementer.">
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 1: scaffold</span><a class="agent-link" href="subagents/agent-a4312192de9330557.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 1: Project scaffold + cobra root, for a brand-new Go CLI called <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
 <h2>Context</h2>
 <p>This is the first task of a fresh Go project (empty repo except docs). You are creating the module and the cobra root command with all CLI flags wired to a placeholder run. Later tasks add the internal packages and real dispatch. The binary lives at <code>cmd/ccwhid</code>.</p>
 <p>Key global constraints (also in the brief):</p>
 <ul>
 <li>Module path MUST be exactly <code>github.com/saigyo/cc-what-have-i-done</code> (the binary is under <code>cmd/ccwhid</code>).</li>
 <li><code>go 1.26</code> in go.mod (Go 1.26.4 is installed).</li>
-<li>Work in the repo at /Users/markus/IdeaProjects/cc-what-have-i-done on the current branch (feat/ccwhid-impl). Do NOT create branches or switch branches.</li>
+<li>Work in the repo at ~/IdeaProjects/cc-what-have-i-done on the current branch (feat/ccwhid-impl). Do NOT create branches or switch branches.</li>
 </ul>
 <h2>Before You Begin</h2>
 <p>If anything is unclear, ask before starting. The brief contains complete code — implement it as written.</p>
@@ -1259,7 +1259,7 @@ let me generate the task 1 brief and dispatch the first implementer.">
 <p>When iterating, run the focused test; run <code>go test ./...</code> and <code>go build ./...</code> once before committing.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, any concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -1303,7 +1303,7 @@ duration_ms: 89185<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">953 tok · ~$0.09</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 1 (spec + quality)</span><a class="agent-link" href="subagents/agent-ac685206469a6fed5.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for a new Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
 <p>Global constraints that bind this task (verbatim):</p>
 <ul>
 <li>Module path MUST be exactly <code>github.com/saigyo/cc-what-have-i-done</code>; binary at <code>cmd/ccwhid</code>.</li>
@@ -1313,11 +1313,11 @@ duration_ms: 89185<!-- raw HTML omitted --></p>
 <li>Flags that must exist: session, project, latest, out, title, include-subagents, no-redact, force, open — with include-subagents defaulting to true.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 2ff127ac3e943c5fc1ccd4c4ad5247ce7dbcf3ac
 Head: c2f4251
-Diff file (read once, it is your view of the change): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..c2f4251.diff</p>
+Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..c2f4251.diff</p>
 <p>Read-only review. Do not modify the working tree. The implementer already ran the tests — do not re-run the suite; run a focused test only if a specific doubt arises.</p>
 <p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report — begin with the spec verdict, no preamble.</p>
 </div><div class="agent-result-body"><h2>Spec Compliance: ⚠️ (compliant, one hygiene defect)</h2>
@@ -1399,13 +1399,13 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md: 159 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 2: model types</span><a class="agent-link" href="subagents/agent-ad6ec3321c3c806cc.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 2: Domain model types, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
 <h2>Context</h2>
 <p>Task 1 is done: the module <code>github.com/saigyo/cc-what-have-i-done</code> exists with a cobra root command under <code>cmd/ccwhid</code>. You are now adding <code>internal/model/model.go</code> — the shared domain types (Session, Turn, Block, ToolCall, ToolResult, Diff, Subagent) that every later package consumes. Pure types plus two small methods (Duration, DisplayTitle) with tests.</p>
 <p>Constraints:</p>
 <ul>
 <li>Package import path is <code>github.com/saigyo/cc-what-have-i-done/internal/model</code>.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on the current branch (feat/ccwhid-impl). Do NOT create or switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on the current branch (feat/ccwhid-impl). Do NOT create or switch branches.</li>
 <li>Commit message must end with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -1414,7 +1414,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md: 159 l
 <p>Follow the brief's TDD steps: write the failing test, verify it fails, implement, verify it passes, commit. Run <code>go test ./internal/model/</code> for the focused run and <code>go test ./...</code> once before committing.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN commands and output), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -1454,7 +1454,7 @@ duration_ms: 59678<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 2 (spec + quality)</span><a class="agent-link" href="subagents/agent-a0c5c8d82977d9732.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package import path: <code>github.com/saigyo/cc-what-have-i-done/internal/model</code>.</li>
@@ -1462,11 +1462,11 @@ duration_ms: 59678<!-- raw HTML omitted --></p>
 <li>These exact type names/signatures matter because every later task consumes them: <code>Session{ID, ProjectPath, Title, GitBranch, Version string; StartedAt, EndedAt time.Time; Turns []Turn; SkippedLines int}</code>, <code>Turn{Kind TurnKind; Timestamp time.Time; Blocks []Block}</code> with <code>TurnUser</code>/<code>TurnAssistant</code>, <code>Block{Type BlockType; Text string; Tool *ToolCall}</code> with <code>BlockText</code>/<code>BlockThinking</code>/<code>BlockToolUse</code>, <code>ToolCall{ID, Name, Summary, InputJSON string; Result *ToolResult; Diff *Diff; Subagents []Subagent}</code>, <code>ToolResult{Content string; IsError bool}</code>, <code>Diff{Path, OldText, NewText string}</code>, <code>Subagent{Description string; Turns []Turn}</code>, plus methods <code>Session.Duration() time.Duration</code> and <code>Session.DisplayTitle() string</code> (fallback &quot;Untitled session&quot;).</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 37ba8bcae61a1ad559c48bf2ae255835ec8acc51
 Head: 7b11575
-Diff file (read once, it is your view of the change): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-37ba8bc..7b11575.diff</p>
+Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-37ba8bc..7b11575.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Pay particular attention to exact field names, types, and const values matching the constraints above, since downstream tasks reference them verbatim.</p>
 <p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
@@ -1526,7 +1526,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md: 349 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 3: discovery</span><a class="agent-link" href="subagents/agent-aecbf11aeab457289.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 3: Session discovery, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–2 are done: the module <code>github.com/saigyo/cc-what-have-i-done</code> exists, with a cobra root (<code>cmd/ccwhid</code>) and the domain types in <code>internal/model</code>. You are now adding <code>internal/discovery/discovery.go</code> — it scans <code>~/.claude/projects/*/*.jsonl</code>, decodes the encoded project dir names (<code>/</code>↔<code>-</code>), and builds a lightweight index (SessionInfo, ProjectGroup) without a full parse, plus <code>Scan</code>, <code>DefaultRoot</code>, and <code>FindSession</code>.</p>
 <p>Constraints:</p>
@@ -1534,7 +1534,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md: 349 l
 <li>Package import path: <code>github.com/saigyo/cc-what-have-i-done/internal/discovery</code>.</li>
 <li>Encoded project dir is the absolute cwd with every <code>/</code> replaced by <code>-</code> (decode reverses it).</li>
 <li>Malformed JSONL lines must be tolerated (skipped), never abort.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create or switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create or switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -1543,7 +1543,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md: 349 l
 <p>Follow the brief's TDD steps: write failing tests, verify they fail, implement, verify pass, commit. Focused run: <code>go test ./internal/discovery/</code>; run <code>go test ./...</code> once before committing.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN commands and output), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -1596,9 +1596,9 @@ the robust fix: the transcript records themselves carry the true `cwd` field, so
     
     <article class="turn turn-assistant" id="turn-84" data-search="agent fix task 3: cwd-based project path">
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.16</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 3: cwd-based project path</span><a class="agent-link" href="subagents/agent-a90de89394c5fc960.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying a correctness fix to Task 3 (session discovery) in the Go CLI <code>ccwhid</code>. The file <code>internal/discovery/discovery.go</code> and its test already exist (commit 9def244). Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 3: cwd-based project path</span><a class="agent-link" href="subagents/agent-a90de89394c5fc960.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying a correctness fix to Task 3 (session discovery) in the Go CLI <code>ccwhid</code>. The file <code>internal/discovery/discovery.go</code> and its test already exist (commit 9def244). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The problem</h2>
-<p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>/Users/markus/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-markus-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>/Users/markus/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
+<p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>~/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-markus-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>~/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
 <h2>The fix: use the real cwd from the transcript</h2>
 <p>Every <code>user</code>/<code>assistant</code> record in a transcript carries a <code>&quot;cwd&quot;</code> field with the true absolute path. Use it as the authoritative project path; fall back to the lossy decode only when no cwd is present.</p>
 <h3>Changes to <code>internal/discovery/discovery.go</code></h3>
@@ -1665,7 +1665,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </li>
 </ol>
 <h2>Report</h2>
-<p>Append a &quot;## Fix: transcript cwd for project path&quot; section to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md with: what you changed, the covering test command run and its output, and confirmation <code>go test ./...</code> is green.</p>
+<p>Append a &quot;## Fix: transcript cwd for project path&quot; section to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md with: what you changed, the covering test command run and its output, and confirmation <code>go test ./...</code> is green.</p>
 <p>Reply with ONLY (under 12 lines): Status (DONE/BLOCKED), commit SHA+subject, one-line test summary (name the covering test file), concerns.</p>
 </div><div class="agent-result-body"><p>Status: DONE
 Commit: 159ee65 — &quot;fix: use transcript cwd for authoritative project path&quot;
@@ -1697,7 +1697,7 @@ duration_ms: 85123<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 3 (spec + quality)</span><a class="agent-link" href="subagents/agent-a68a6e1992118331f.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
 <p>Note: after the initial implementation, a controller-directed correctness fix was applied (second commit) because the brief's <code>/</code>↔<code>-</code> decode scheme is lossy for paths whose segments contain hyphens. The agreed design: discovery uses the true <code>cwd</code> field carried in transcript records as the authoritative <code>ProjectPath</code>, falling back to <code>DecodeProjectDir</code> only when no cwd is present. Judge the task against this corrected design, not the brief's original lossy round-trip assumption.</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
@@ -1708,11 +1708,11 @@ duration_ms: 85123<!-- raw HTML omitted --></p>
 <li>Produced API (names/signatures consumed by later tasks): <code>EncodeProjectDir(string) string</code>, <code>DecodeProjectDir(string) string</code>, <code>SessionInfo{ID, FilePath, ProjectDir, ProjectPath, Title, FirstPrompt string; ModTime time.Time; MessageCount int; HasSubagents bool}</code>, <code>ProjectGroup{ProjectDir, ProjectPath string; Sessions []SessionInfo}</code>, <code>Scan(root string) ([]ProjectGroup, error)</code>, <code>DefaultRoot() (string, error)</code>, <code>FindSession(root, idOrPrefix string) (SessionInfo, error)</code>.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report (includes the fix section): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+<p>Read the implementer's report (includes the fix section): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 7b11575cdfb3d3e6a0eef9a70f30ddaddd199c30
 Head: 159ee65
-Diff file (read once, it is your view of the change): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff</p>
+Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff</p>
 <p>Read-only review; do not modify the tree. The implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risks worth a focused check: (a) that malformed lines are truly skipped and don't abort <code>indexFile</code>/<code>Scan</code>; (b) that <code>FindSession</code> prefix resolution correctly reports ambiguous vs. not-found; (c) that the cwd-capture logic sets ProjectPath once and the fallback still works when no cwd is present.</p>
 <p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
@@ -1773,13 +1773,13 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md: 181 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 4: raw decoding</span><a class="agent-link" href="subagents/agent-aadff7553053c0d38.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 4: Raw JSONL record decoding, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–3 are done (module, cobra root, model types, discovery). You are creating <code>internal/transcript/raw.go</code> — unexported helpers that decode one raw JSONL record and an Anthropic message's content blocks: <code>rawRecord</code>, <code>apiBlock</code>, <code>decodeMessageContent</code>, <code>toolResultText</code>, <code>parseTime</code>. Message <code>content</code> may be a plain string OR an array of blocks — handle both. This file is internal to the <code>transcript</code> package and will be consumed by Task 5.</p>
 <p>Constraints:</p>
 <ul>
 <li>Package: <code>package transcript</code> at <code>internal/transcript/raw.go</code>.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -1788,7 +1788,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md: 181 l
 <p>Follow the brief's TDD steps: write the failing test (<code>raw_test.go</code>), verify it fails, implement <code>raw.go</code>, verify pass, commit. Focused run: <code>go test ./internal/transcript/</code>; run <code>go test ./...</code> once before committing.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -1823,7 +1823,7 @@ duration_ms: 66040<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 4 (spec + quality)</span><a class="agent-link" href="subagents/agent-a5f129206c44f260a.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package <code>transcript</code> at <code>internal/transcript/raw.go</code> (module <code>github.com/saigyo/cc-what-have-i-done</code>).</li>
@@ -1832,11 +1832,11 @@ duration_ms: 66040<!-- raw HTML omitted --></p>
 <li>Produced (unexported, consumed by Task 5): <code>rawRecord</code> (fields Type, UUID, ParentUUID, Timestamp, GitBranch, Version, Cwd, AiTitle string; IsSidechain, IsMeta bool; Message json.RawMessage), <code>apiBlock</code> (Type, Text, Thinking, ID, Name, ToolUseID string; Input, Content json.RawMessage; IsError bool), <code>decodeMessageContent(json.RawMessage) (string, []apiBlock)</code> handling content-as-string and content-as-array, <code>toolResultText(json.RawMessage) string</code> flattening string or []{type:text,text} blocks, <code>parseTime(string) time.Time</code> (RFC3339, zero on empty/invalid).</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 159ee6522adfcbfd4824ad4dd48f419ab084fc47
 Head: 5980a02
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-159ee65..5980a02.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-159ee65..5980a02.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risk to check: that a bare-string message content becomes exactly one <code>{Type:&quot;text&quot;}</code> block, and that malformed JSON in any of the three functions returns zero values rather than panicking.</p>
 <p>Follow the task-reviewer output format: Spec Compliance (✅/❌/⚠️), Strengths, Issues (Critical/Important/Minor with file:line), Assessment (Task quality: Approved | Needs fixes). Your final message IS the report.</p>
@@ -1900,7 +1900,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md: 451 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 5: timeline folding</span><a class="agent-link" href="subagents/agent-ad4a0b00cbc11c87c.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 5: Fold records into a Session timeline, for the Go CLI <code>ccwhid</code>. This is the core parsing task.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code, fixtures, and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–4 are done. Available to you:</p>
 <ul>
@@ -1912,7 +1912,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md: 451 l
 <p>Constraints:</p>
 <ul>
 <li>Package <code>transcript</code> at <code>internal/transcript/parse.go</code>; fixtures at <code>internal/transcript/testdata/</code>.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -1922,7 +1922,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md: 451 l
 <p>If a test genuinely reveals a bug in the brief's logic (not just a transcription slip), STOP and report DONE_WITH_CONCERNS or BLOCKED with specifics rather than silently altering the intended behavior.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN command output), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -1965,7 +1965,7 @@ duration_ms: 109787<!-- raw HTML omitted --></li>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.12</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 5 (spec + quality)</span><a class="agent-link" href="subagents/agent-ad2854fd6cb35911d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later. This is the core transcript-folding task — review carefully.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package <code>transcript</code> at <code>internal/transcript/parse.go</code>; fixtures at <code>internal/transcript/testdata/</code>.</li>
@@ -1975,11 +1975,11 @@ duration_ms: 109787<!-- raw HTML omitted --></li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2
 Head: 09d5d88
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; run a focused test only if a specific doubt arises (this is the one task where writing a small throwaway test to probe a real doubt is justified — delete it and leave the tree clean if you do).</p>
 <p>Named risks to check specifically:</p>
 <ol>
@@ -2191,7 +2191,7 @@ duration_ms: 234585<!-- raw HTML omitted --></p>
     
     <article class="turn turn-assistant" id="turn-105" data-search="agent fix task 5: sidechain tool results">
       <div class="turn-role">Claude</div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 5: sidechain tool results</span><a class="agent-link" href="subagents/agent-a9776e9f9e43d30ab.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying a Critical correctness fix to Task 5 (transcript folding) in the Go CLI <code>ccwhid</code>. The file <code>internal/transcript/parse.go</code> exists (commit 09d5d88). Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 5: sidechain tool results</span><a class="agent-link" href="subagents/agent-a9776e9f9e43d30ab.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying a Critical correctness fix to Task 5 (transcript folding) in the Go CLI <code>ccwhid</code>. The file <code>internal/transcript/parse.go</code> exists (commit 09d5d88). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The bug</h2>
 <p><code>toolIndex[b.Tool.ID] = b.Tool</code> registration only happens in the main-chain block. So when a tool_use occurs INSIDE a sidechain (a subagent running Bash/Read/etc.), its id is never registered, and the following tool_result inside that sidechain finds nothing in toolIndex and silently drops the result. Tool calls made by subagents are the common case, so this breaks real transcripts.</p>
 <h2>The fix</h2>
@@ -2301,7 +2301,7 @@ attribution limitation.
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </code></pre>
 <h2>Report</h2>
-<p>Append a &quot;## Fix: sidechain-internal tool results&quot; section to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md with: the RED output (test failing before fix), the GREEN output (passing after), the full <code>go test ./internal/transcript/</code> result, and confirmation <code>go test ./...</code> is green. The covering test file is internal/transcript/parse_test.go.</p>
+<p>Append a &quot;## Fix: sidechain-internal tool results&quot; section to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md with: the RED output (test failing before fix), the GREEN output (passing after), the full <code>go test ./internal/transcript/</code> result, and confirmation <code>go test ./...</code> is green. The covering test file is internal/transcript/parse_test.go.</p>
 <p>Reply with ONLY (under 12 lines): Status (DONE/BLOCKED), commit SHA+subject, one-line test summary naming the covering file, and confirmation the RED→GREEN transition was observed.</p>
 </div><div class="agent-result-body"><p>Report file is gitignored (per <code>.superpowers/sdd/.gitignore</code>), so working tree is clean after the commit — consistent with expectations.</p>
 <p>Status: DONE
@@ -2333,14 +2333,14 @@ duration_ms: 104733<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.12</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Re-review Task 5 after fix</span><a class="agent-link" href="subagents/agent-a2a5eae2bcbc85447.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are re-reviewing Task 5 (transcript timeline folding) for the Go CLI <code>ccwhid</code> after a fix. A prior review found a Critical bug: tool calls made inside a subagent never had their results attached because tool_use ids were only registered on the main chain. The fix (commit 41ed5b8) moves tool_use registration into <code>buildTurn</code> so both main-chain and sidechain tool calls register, and documents a parallel-Task attribution limitation. Verify the fix is correct and complete, and that nothing regressed.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <p>Binding rules: text/thinking/tool_use → model.Blocks; a <code>tool_result</code> matches its <code>tool_use</code> by id and fills that ToolCall.Result (main-chain AND inside sidechains) and must NOT create a user turn; <code>isMeta</code> and non-user/assistant records (except <code>ai-title</code>) ignored; <code>ai-title</code> sets Title; Edit/Write → Diff; sidechains attach as Subagents to nearest preceding Task when IncludeSubagents; malformed lines skipped-and-counted; commit trailer <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</p>
 <h2>Implementer report (includes the fix section)</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <h2>Diff Under Review (both commits: original + fix)</h2>
 <p>Base: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2
 Head: 41ed5b8
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..41ed5b8.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..41ed5b8.diff</p>
 <p>Read-only review; do not modify the tree. The implementer ran the tests and reported a RED→GREEN transition for the new regression test — do not re-run the full suite; a focused throwaway probe is acceptable only for a specific new doubt (delete it, leave the tree clean).</p>
 <p>Specifically verify:</p>
 <ol>
@@ -2466,14 +2466,14 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md: 183 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 6: redaction</span><a class="agent-link" href="subagents/agent-ad4b208f2d22b5303.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 6: Redaction, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–5 are done. The <code>internal/model</code> package holds the domain types. You are creating <code>internal/redact/redact.go</code> — a Redactor that scrubs common secret shapes (AWS keys, sk-/ghp_/github_pat_/xox tokens, JWTs, KEY/TOKEN/SECRET/PASSWORD assignments) and rewrites the user's home dir to <code>~</code>, plus a <code>redact.Session(*model.Session, homeDir)</code> that walks every user-visible text field (block text, tool summary/InputJSON/result, diffs, and subagent turns recursively) in place. Matches become <code>[REDACTED:&lt;kind&gt;]</code>.</p>
 <p>Constraints:</p>
 <ul>
 <li>Package import path: <code>github.com/saigyo/cc-what-have-i-done/internal/redact</code>; imports <code>github.com/saigyo/cc-what-have-i-done/internal/model</code>.</li>
 <li>Redaction is ON by default in the app (this package just provides the capability).</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -2482,7 +2482,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md: 183 l
 <p>Follow the brief's TDD steps: write the failing test (<code>redact_test.go</code>), verify it fails, implement <code>redact.go</code>, verify pass, commit. Focused run: <code>go test ./internal/redact/</code>; run <code>go test ./...</code> once before committing.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -2541,21 +2541,21 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-41ed5b8..faa309
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.12</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 6 (spec + quality)</span><a class="agent-link" href="subagents/agent-a8bdecd46cd3c39cf.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package <code>github.com/saigyo/cc-what-have-i-done/internal/redact</code>; imports <code>internal/model</code>.</li>
 <li>Redaction replaces matches with <code>[REDACTED:&lt;kind&gt;]</code> and rewrites homeDir → <code>~</code>.</li>
-<li>Kinds: <code>aws-key</code>, <code>token</code> (sk-/ghp_/github_pat_/xox), <code>jwt</code>, <code>assignment</code> (KEY/TOKEN/SECRET/PASSWORD=value).</li>
+<li>Kinds: <code>aws-key</code>, <code>token</code> (sk-/ghp_/github_pat_/xox), <code>jwt</code>, <code>assignment</code> (KEY/TOKEN/SECRET/PASSWORD=[REDACTED:assignment]</li>
 <li><code>Session(s *model.Session, homeDir string)</code> must walk EVERY user-visible text field: block text, tool Summary, tool InputJSON, tool Result.Content, Diff (OldText/NewText/Path), and subagent turns recursively.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-6-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 41ed5b8793a7638f54a02f92445ce22eb2f9f5a4
 Head: faa3097
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-41ed5b8..faa3097.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-41ed5b8..faa3097.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risks to check:</p>
 <ol>
@@ -2680,7 +2680,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md: 572 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 7: HTML rendering</span><a class="agent-link" href="subagents/agent-adfcdcd002ab23505.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 7: HTML rendering (markdown, template, embedded assets), for the Go CLI <code>ccwhid</code>. This is the largest task.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code, templates, CSS, JS, and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–6 are done. Available: <code>internal/model</code> (Session, Turn, Block, ToolCall, ToolResult, Diff, Subagent). You are creating the <code>internal/render</code> package: <code>markdown.go</code> (goldmark+chroma helpers: <code>Markdown</code>, <code>Highlight</code>, <code>DiffHTML</code>), <code>render.go</code> (the <code>Site</code> driver + view models that walk a Session into HTML), and the embedded assets <code>assets/report.html.tmpl</code>, <code>assets/styles.css</code>, <code>assets/app.js</code>, wired via <code>go:embed</code>. Output is <code>index.html</code> + <code>assets/styles.css</code> + <code>assets/app.js</code>.</p>
 <p>Constraints:</p>
@@ -2689,7 +2689,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md: 572 l
 <li>Add deps: <code>go get github.com/yuin/goldmark@latest</code> and <code>go get github.com/alecthomas/chroma/v2@latest</code>.</li>
 <li>All CSS/JS/templates embedded via go:embed — the generated report must work over file:// with NO network (no external fonts/CDNs).</li>
 <li>Styling: Claude docs/artifacts vibe — warm near-white bg (#F5F4EE), coral accent (#D97757), light+dark via prefers-color-scheme + a manual data-theme toggle. Use the CSS/JS from the brief verbatim.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Known rough edges in the brief — resolve these, don't blindly transcribe</h2>
@@ -2703,7 +2703,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md: 572 l
 <p>Follow the brief's steps: add deps, write the failing test (<code>render_test.go</code>), verify it fails, implement markdown.go, the template, render.go, the CSS, the JS, then verify tests pass and the build/vet are clean. Focused run: <code>go test ./internal/render/</code>; run <code>go test ./...</code> and <code>go vet ./...</code> once before committing. Confirm the generated index.html references <code>assets/styles.css</code> and <code>assets/app.js</code> and contains the session content (the brief's <code>TestSiteWritesFiles</code> checks this).</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN), how you resolved the three known rough edges, files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -2745,7 +2745,7 @@ duration_ms: 176460<!-- raw HTML omitted --></li>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 7 (spec + quality)</span><a class="agent-link" href="subagents/agent-ab36e44ebde101af6.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later. This is the HTML rendering task.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package <code>github.com/saigyo/cc-what-have-i-done/internal/render</code>; imports <code>internal/model</code>.</li>
@@ -2756,11 +2756,11 @@ duration_ms: 176460<!-- raw HTML omitted --></li>
 </ul>
 <p>The brief had three known rough edges the implementer was told to resolve: (1) markdown.go must import <code>model</code> for DiffHTML; (2) drop any unused <code>fmt</code> guard so build/vet are clean; (3) goldmark is NOT wired to chroma — code renders as plain <!-- raw HTML omitted --><!-- raw HTML omitted -->, <code>Highlight</code> exists but unused, which is acceptable. Judge against that.</p>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: faa3097dc792090a217a7bdd24eb4782d7bc1505
 Head: a713dfe
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-faa3097..a713dfe.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risks to check:</p>
 <ol>
@@ -2845,7 +2845,7 @@ func Markdown(src string) template.HTML {</pre></div></details></div>
     
     <article class="turn turn-assistant" id="turn-130" data-search="agent fix task 7: rune-safe truncation">
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.16</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 7: rune-safe truncation</span><a class="agent-link" href="subagents/agent-a0953132c67874c97.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying an Important correctness fix to the Go CLI <code>ccwhid</code>. Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Task 7: rune-safe truncation</span><a class="agent-link" href="subagents/agent-a0953132c67874c97.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying an Important correctness fix to the Go CLI <code>ccwhid</code>. Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The bug</h2>
 <p>Two truncation helpers slice strings by byte index (<code>s[:n-1]</code>), which splits multi-byte UTF-8 runes and emits invalid UTF-8 for non-ASCII text (e.g. German umlauts, CJK) longer than the limit — producing garbled <code>�</code> in the report sidebar and session list. Fix both to be rune-safe. Also a doc comment in markdown.go is factually backwards.</p>
 <h2>Edit 1 — <code>internal/render/render.go</code>, function <code>preview</code></h2>
@@ -2931,7 +2931,7 @@ comment to reflect goldmark's safe default (raw HTML stripped).
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </code></pre>
 <h2>Report</h2>
-<p>Append a &quot;## Fix: rune-safe truncation&quot; section to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md with the RED and GREEN output for both focused tests and confirmation <code>go test ./...</code> + <code>go vet ./...</code> are clean. Covering test files: internal/render/render_test.go, internal/discovery/discovery_test.go.</p>
+<p>Append a &quot;## Fix: rune-safe truncation&quot; section to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md with the RED and GREEN output for both focused tests and confirmation <code>go test ./...</code> + <code>go vet ./...</code> are clean. Covering test files: internal/render/render_test.go, internal/discovery/discovery_test.go.</p>
 <p>Reply with ONLY (under 12 lines): Status (DONE/BLOCKED), commit SHA+subject, one-line test summary naming both covering files, confirmation RED→GREEN observed for both tests.</p>
 </div><div class="agent-result-body"><p>Status: DONE
 Commit: 6d415b6 &quot;fix: rune-safe truncation for non-ASCII previews&quot;
@@ -2970,7 +2970,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md: 220 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 8: CLI wiring</span><a class="agent-link" href="subagents/agent-a31eb1c9e09cf11a1.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 8: Wire the CLI end-to-end, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–7 are done. Available packages: <code>internal/discovery</code> (SessionInfo, ProjectGroup, Scan, DefaultRoot, FindSession), <code>internal/transcript</code> (Options{IncludeSubagents}, ParseFile), <code>internal/redact</code> (Session), <code>internal/render</code> (Options{Title}, Site), <code>internal/model</code>. The cobra root command and <code>options</code> flag struct already exist in <code>cmd/ccwhid/main.go</code> (Task 1).</p>
 <p>You are creating <code>cmd/ccwhid/run.go</code> with: <code>generate(opts, si)</code> (parse → redact unless noRedact → render, returns out dir), <code>resolveOutDir</code>, <code>resolveSession</code> (returns session, needTUI, error — needTUI true when no selector given), <code>latestSession</code>, <code>matchProject</code>, <code>ensureOutDir</code> (collision → error unless force), <code>openInBrowser</code>, and an <code>errNeedTUI</code> sentinel. Plus <code>cmd/ccwhid/run_test.go</code>.</p>
@@ -2979,7 +2979,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md: 220 l
 <li>Package <code>main</code> in <code>cmd/ccwhid/</code>; module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
 <li>Redaction ON by default (redact unless <code>opts.noRedact</code>); subagents included per <code>opts.includeSubagents</code>.</li>
 <li>Default out dir: <code>ccwhid-report/&lt;first 8 chars of session id&gt;</code>.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Before You Begin</h2>
@@ -2988,7 +2988,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md: 220 l
 <p>Follow the brief's steps: write the failing test (<code>run_test.go</code>), verify it fails, implement <code>run.go</code>, verify pass. Focused run: <code>go test ./cmd/ccwhid/</code>; run <code>go test ./...</code> and <code>go vet ./...</code> once before committing. Commit.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN), files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -3030,7 +3030,7 @@ duration_ms: 75402<!-- raw HTML omitted --></li>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 8 (spec + quality)</span><a class="agent-link" href="subagents/agent-a71883234be81e1c3.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Package <code>main</code> in <code>cmd/ccwhid/</code>; module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
@@ -3042,11 +3042,11 @@ duration_ms: 75402<!-- raw HTML omitted --></li>
 <li>This task creates run.go + run_test.go and intentionally does NOT wire run() into cobra RunE (deferred to Task 9); errNeedTUI/openInBrowser may be unused until then.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 6d415b6273a77964da771d395f7b7ccda4a12680
 Head: fd591f4
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6d415b6..fd591f4.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6d415b6..fd591f4.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risks to check:</p>
 <ol>
@@ -3129,7 +3129,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md: 430 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 9: TUI + dispatch</span><a class="agent-link" href="subagents/agent-a65777ba75f86732e.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 9: TUI browser + final dispatch, for the Go CLI <code>ccwhid</code>. This is the last implementation task.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–8 are done. You are:</p>
 <ol>
@@ -3143,7 +3143,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md: 430 l
 <li>Packages: <code>github.com/saigyo/cc-what-have-i-done/internal/tui</code>; module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
 <li>Add deps: <code>go get github.com/charmbracelet/bubbletea@latest</code> and <code>go get github.com/charmbracelet/lipgloss@latest</code>.</li>
 <li>TUI browses ALL projects grouped, current project effectively surfaced by recency; options screen toggles include-subagents, redact, open, then Generate.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Known rough edge — resolve it</h2>
@@ -3154,7 +3154,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md: 430 l
 <p>Focused runs: <code>go test ./internal/tui/ ./internal/discovery/</code>.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</p>
 <p>Include: what you implemented, TDD evidence (RED + GREEN), how you resolved the <code>min</code> rough edge, the smoke-test result, files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -3196,7 +3196,7 @@ duration_ms: 153612<!-- raw HTML omitted --></li>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 9 (spec + quality)</span><a class="agent-link" href="subagents/agent-a519365f4b098044d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad whole-branch review happens after this. This is the final implementation task: the Bubble Tea TUI and the cobra RunE wiring.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
 <p>Global constraints binding this task (verbatim):</p>
 <ul>
 <li>Packages <code>github.com/saigyo/cc-what-have-i-done/internal/tui</code>; module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
@@ -3207,11 +3207,11 @@ duration_ms: 153612<!-- raw HTML omitted --></li>
 <li>Go 1.26 builtin <code>min</code>: the implementer omitted the brief's local <code>min</code> and relies on the builtin — this is acceptable.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: fd591f472cef397c4fdae967b347c4f1c9c18bbb
 Head: 777b116
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests and a <code>--latest</code> smoke test — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Named risks to check:</p>
 <ol>
@@ -3310,21 +3310,21 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md: 97 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 10: e2e test</span><a class="agent-link" href="subagents/agent-ac40361002238f5f6.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 10: End-to-end verification, for the Go CLI <code>ccwhid</code>. This is the final task.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–9 are done and the CLI works end-to-end (parse → redact → render → HTML site; TUI browser). You are adding one real end-to-end test that runs the full pipeline (transcript.ParseFile → redact.Session → render.Site) on a crafted fixture and asserts the output (secrets redacted, tool result present). No new production code is expected.</p>
 <p>Note: <code>README.md</code>, <code>LICENSE</code>, and <code>.gitignore</code> ALREADY EXIST in the repo — do NOT recreate them. Step 3 of the brief only asks you to reconcile the README with the actual CLI flags; if the flags/usage already match, leave it unchanged.</p>
 <p>Constraints:</p>
 <ul>
 <li>Test file <code>internal/render/render_e2e_test.go</code>, package <code>render_test</code> (external test package), module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
-<li>Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
+<li>Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</li>
 <li>Commit message ends with: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Your Job</h2>
 <p>Follow the brief's steps: write the e2e test, run it (it should PASS — it exercises existing code), reconcile the README against the real flags in <code>cmd/ccwhid/main.go</code> (edit only if drifted), run the final full verification <code>go build ./... &amp;&amp; go test ./... &amp;&amp; go vet ./...</code> (all must pass/clean), commit.</p>
 <h2>Report</h2>
 <p>Write your full report to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md</p>
 <p>Include: what you implemented, the e2e test result, whether the README needed changes (and what), the final <code>go build</code>/<code>go test</code>/<code>go vet</code> output, files changed, self-review, concerns.</p>
 <p>Then reply with ONLY (under 15 lines):</p>
 <ul>
@@ -3385,7 +3385,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb
       <div class="turn-role">Claude</div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 10 (spec + quality)</span><a class="agent-link" href="subagents/agent-a14e514d14572d3cc.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing the final task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. A broad whole-branch review happens separately after this.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</p>
 <p>Binding constraints:</p>
 <ul>
 <li>Test file <code>internal/render/render_e2e_test.go</code>, external test package <code>render_test</code>, module <code>github.com/saigyo/cc-what-have-i-done</code>.</li>
@@ -3394,11 +3394,11 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb
 <li>Commit trailer: <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code>.</li>
 </ul>
 <h2>Implementer report</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 19a5d33e723076e058a1b7d43bee24c627e1adda
 Head: 6678bb5
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb5.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb5.diff</p>
 <p>Read-only review; do not modify the tree. Implementer already ran tests — do not re-run the suite; focused test only on a specific doubt.</p>
 <p>Check specifically:</p>
 <ol>
@@ -3645,13 +3645,13 @@ SKILL.md</pre></div></details></div>
 <p><code>ccwhid</code> (cc-what-have-i-done): a single-binary Go CLI that turns a Claude Code session transcript (<code>.jsonl</code>) into a self-contained static HTML report, styled like Claude's docs. Run with no flags it opens a Bubble Tea TUI to browse and select a session; with flags it renders directly. Pipeline: <code>discovery</code> (find/index sessions) → <code>transcript</code> (fold JSONL into a model.Session timeline, incl. subagent sidechains) → <code>redact</code> (scrub secrets, on by default) → <code>render</code> (goldmark/chroma + embedded template/CSS/JS → index.html + assets). Layers: cmd/ccwhid (cobra + wiring), internal/{model,discovery,transcript,redact,render,tui}.</p>
 <h2>Requirements / Plan</h2>
 <ul>
-<li>Design spec: /Users/markus/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md</li>
-<li>Implementation plan: /Users/markus/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-11-ccwhid.md</li>
+<li>Design spec: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md</li>
+<li>Implementation plan: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-11-ccwhid.md</li>
 </ul>
 <h2>Git Range to Review</h2>
 <p>Base: 2ff127a
 Head: 6678bb5
-Diff package (read once — commit list, stat summary, full diff with context): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</p>
+Diff package (read once — commit list, stat summary, full diff with context): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</p>
 <h2>Known Minor findings already triaged (assess whether any should block merge; don't re-litigate as new unless you find them more severe than logged)</h2>
 <ol>
 <li>redact.go assignment regex over-matches (e.g. MONKEY=, across newlines) — safe over-redaction, never leaks.</li>
@@ -3986,7 +3986,7 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
     
     <article class="turn turn-assistant" id="turn-169" data-search="agent final cleanup: whole-branch findings">
       <div class="turn-role">Claude</div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Final cleanup: whole-branch findings</span><a class="agent-link" href="subagents/agent-ab4efef273d241e7f.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying the consolidated fix for the whole-branch review of the Go CLI <code>ccwhid</code>. Work in /Users/markus/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches. Module path is <code>github.com/saigyo/cc-what-have-i-done</code>. Make ALL the changes below, then verify and commit ONCE.</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Final cleanup: whole-branch findings</span><a class="agent-link" href="subagents/agent-ab4efef273d241e7f.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying the consolidated fix for the whole-branch review of the Go CLI <code>ccwhid</code>. Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches. Module path is <code>github.com/saigyo/cc-what-have-i-done</code>. Make ALL the changes below, then verify and commit ONCE.</p>
 <p>═══════════════════════════════════════════════
 FIX 1 (Important) — redact ProjectPath / Title / GitBranch and Subagent.Description
 ═══════════════════════════════════════════════
@@ -4026,17 +4026,17 @@ FIX 1 (Important) — redact ProjectPath / Title / GitBranch and Subagent.Descri
 </span></span></span></code></pre><p>Add this regression test to <code>internal/redact/redact_test.go</code>:</p>
 <pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">func</span><span style="color:#fff"> </span><span style="color:#6639ba">TestRedactSessionLevelFields</span><span style="color:#1f2328">(</span><span style="color:#1f2328">t</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#1f2328">testing</span><span style="color:#1f2328">.</span><span style="color:#1f2328">T</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">s</span><span style="color:#fff"> </span><span style="color:#0550ae">:=</span><span style="color:#fff"> </span><span style="color:#0550ae">&amp;</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Session</span><span style="color:#1f2328">{</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;/Users/markus/IdeaProjects/app&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;~/IdeaProjects/app&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">Turns</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Turn</span><span style="color:#1f2328">{{</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">Kind</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">TurnAssistant</span><span style="color:#1f2328">,</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">Blocks</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Block</span><span style="color:#1f2328">{{</span><span style="color:#1f2328">Type</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">BlockToolUse</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">Tool</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0550ae">&amp;</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ToolCall</span><span style="color:#1f2328">{</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">				</span><span style="color:#1f2328">Name</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;Task&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">				</span><span style="color:#1f2328">Subagents</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Subagent</span><span style="color:#1f2328">{{</span><span style="color:#1f2328">Description</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;run AKIAIOSFODNN7EXAMPLE&#34;</span><span style="color:#1f2328">}},</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">				</span><span style="color:#1f2328">Subagents</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#1f2328">[]</span><span style="color:#1f2328">model</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Subagent</span><span style="color:#1f2328">{{</span><span style="color:#1f2328">Description</span><span style="color:#1f2328">:</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;run [REDACTED:aws-key]&#34;</span><span style="color:#1f2328">}},</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">			</span><span style="color:#1f2328">}}},</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">}},</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#6639ba">Session</span><span style="color:#1f2328">(</span><span style="color:#1f2328">s</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;/Users/markus&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">strings</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Contains</span><span style="color:#1f2328">(</span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;/Users/markus&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#6639ba">Session</span><span style="color:#1f2328">(</span><span style="color:#1f2328">s</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;~&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff">
+</span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">strings</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Contains</span><span style="color:#1f2328">(</span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;~&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">		</span><span style="color:#1f2328">t</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Errorf</span><span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;ProjectPath home not rewritten: %q&#34;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">ProjectPath</span><span style="color:#1f2328">)</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#1f2328">}</span><span style="color:#fff">
 </span></span></span><span style="display:flex;"><span><span style="color:#fff">	</span><span style="color:#cf222e">if</span><span style="color:#fff"> </span><span style="color:#1f2328">strings</span><span style="color:#1f2328">.</span><span style="color:#6639ba">Contains</span><span style="color:#1f2328">(</span><span style="color:#1f2328">s</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Turns</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">Blocks</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">Tool</span><span style="color:#1f2328">.</span><span style="color:#1f2328">Subagents</span><span style="color:#1f2328">[</span><span style="color:#0550ae">0</span><span style="color:#1f2328">].</span><span style="color:#1f2328">Description</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#34;AKIA&#34;</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
@@ -4167,7 +4167,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 <p>═══════════════════════════════════════════════
 REPORT
 ═══════════════════════════════════════════════
-Write your report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md covering each of the 6 fixes, the test output for steps 2-4, and the vet/gofmt/tidy results.</p>
+Write your report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md covering each of the 6 fixes, the test output for steps 2-4, and the vet/gofmt/tidy results.</p>
 <p>Reply with ONLY (under 15 lines): Status (DONE/BLOCKED), commit SHA+subject, one-line test summary (name the covering test files), any fix you had to adapt, concerns.</p>
 </div><div class="agent-result-body"><p>Status: DONE</p>
 <p>Commit: b2f6fc7 — &quot;fix: address whole-branch review findings&quot;</p>
@@ -4215,11 +4215,11 @@ errNeedTUI removed</pre></div></details></div>
 <li>dead code removed: <code>errNeedTUI</code> var (cmd/ccwhid/run.go) and <code>model.done</code> field (internal/tui/tui.go).</li>
 </ol>
 <h2>Report</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 6678bb55877f95a4a677c7cfef841cde7e218e7d
 Head: b2f6fc7
-Diff file (read once): /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff</p>
+Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff</p>
 <p>Read-only review; do not modify the tree. The implementer reported <code>go test ./...</code>, <code>go vet ./...</code>, <code>gofmt -l</code>, and <code>go mod tidy</code> all clean — do not re-run the full suite; a focused test only for a specific doubt.</p>
 <p>Verify specifically:</p>
 <ol>
@@ -6249,12 +6249,12 @@ and separately: want me to run an independent code review of this last change be
 <code>/private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</code></p>
 <p>Then read the current full files as needed to verify (do not trust the diff alone):</p>
 <ul>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</li>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</li>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</li>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</li>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</li>
-<li>/Users/markus/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</li>
+<li>~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</li>
 </ul>
 <h2>What the change is supposed to do (the spec for this change)</h2>
 <ol>
@@ -6275,7 +6275,7 @@ and separately: want me to run an independent code review of this last change be
 <li><strong>Test quality</strong>: do the new tests actually assert meaningful behavior, or are any vacuous? Is there a gap for any of the above risks that a cheap test would close?</li>
 </ul>
 <h2>How to report</h2>
-<p>Classify each finding as Critical / Important / Minor. For each: file:line, what's wrong, a concrete failure scenario (inputs → wrong result/panic), and a suggested fix. If you find nothing above Minor, say so plainly. Be precise and do not invent issues to seem thorough. You may run <code>go test ./...</code>, <code>go vet ./...</code>, and <code>go build ./...</code> from /Users/markus/IdeaProjects/cc-what-have-i-done to confirm hypotheses. Return your review as your final message (it is consumed by the controller, not shown to a human — be concise and structured).</p>
+<p>Classify each finding as Critical / Important / Minor. For each: file:line, what's wrong, a concrete failure scenario (inputs → wrong result/panic), and a suggested fix. If you find nothing above Minor, say so plainly. Be precise and do not invent issues to seem thorough. You may run <code>go test ./...</code>, <code>go vet ./...</code>, and <code>go build ./...</code> from ~/IdeaProjects/cc-what-have-i-done to confirm hypotheses. Return your review as your final message (it is consumed by the controller, not shown to a human — be concise and structured).</p>
 </div><div class="agent-result-body"><p>All tests pass, build and vet are clean. I verified the classification, scroll math, FindProject, and TUI empty-state paths against the actual code. Here is the review.</p>
 <h2>Findings</h2>
 <h3>Important — <code>latestSession</code> does not return the globally newest interactive session</h3>
@@ -11653,7 +11653,7 @@ Subagent (general-purpose):
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 1: parse model &amp; usage</span><a class="agent-link" href="subagents/agent-ab90453a4e9e96ae6.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 1: Parse per-turn model &amp; usage — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code and test cases to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
 <h2>Context</h2>
 <p>ccwhid renders a Claude Code session transcript (JSONL) into an HTML report. This is the first of five tasks adding a token-usage &amp; cost feature. Your task threads per-assistant-turn token usage and model id from the raw transcript into the domain model, so later tasks (a usage/pricing package, then rendering) can consume it.</p>
 <p>Key facts about the code you're touching:</p>
@@ -11671,11 +11671,11 @@ Subagent (general-purpose):
 <li>Commit exactly as the brief's Step 7 specifies.</li>
 <li>Self-review, then report.</li>
 </ol>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
 <p>If anything in the brief is ambiguous or seems wrong, STOP and report BLOCKED/NEEDS_CONTEXT with specifics rather than guessing.</p>
 <h2>Report</h2>
 <p>Write your full report (what you implemented, TDD RED/GREEN evidence with commands+output, files changed, self-review) to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
 <p>Then reply with ONLY (under 15 lines): Status (DONE/DONE_WITH_CONCERNS/BLOCKED/NEEDS_CONTEXT), commits (short SHA + subject), one-line test summary, any concerns, and the report file path.</p>
 </div><div class="agent-result-body"><p><strong>Status:</strong> DONE</p>
 <p><strong>Commit:</strong> 1753ede feat(transcript): parse per-turn model and token usage</p>
@@ -11910,7 +11910,7 @@ re-review after fixes covers both verdicts.</pre></div></details></div>
       <div class="turn-role">Claude</div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 1 (spec + quality)</span><a class="agent-link" href="subagents/agent-a7a0fa1f230b1881e.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
 <p>Global constraints from the spec that bind this task:</p>
 <ul>
 <li>Self-contained/offline tool; this task adds no dependencies.</li>
@@ -11921,11 +11921,11 @@ re-review after fixes covers both verdicts.</pre></div></details></div>
 <li>Attaching usage inside <code>buildTurn</code> (for rec.Type==&quot;assistant&quot;) must cover BOTH main-chain and sidechain/subagent records.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md
 Treat it as unverified claims; verify against the diff. A stated rationale never downgrades a finding.</p>
 <h2>Diff Under Review</h2>
 <p>Base: 0bd5a25  Head: 1753ede
-Diff file: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff
 Read the diff file once — it is your view of the change (commit list + stat + full diff with context). Do not re-run git. Inspect code outside the diff only to evaluate a concrete named risk (one focused check per risk). Read-only; do not mutate the working tree.</p>
 <h2>Tests</h2>
 <p>The implementer already ran tests with TDD evidence for exactly this code. Do not re-run the suite. Run a focused test only if reading the code raises a specific doubt no existing run answers; otherwise name the test you would run. Non-pristine test output is a finding.</p>
@@ -11997,7 +11997,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md: 164 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 2: price table</span><a class="agent-link" href="subagents/agent-a2d4933a5f1507c85.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 2: Embedded price table — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code and data to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
 <h2>Context</h2>
 <p>This is Task 2 of a token-usage &amp; cost feature. You create a NEW package <code>internal/usage</code> that owns an embedded price table. Task 3 (a later task) will add cost computation in the same package and depends on the exact names you create here: <code>usage.Price{Input, Output float64}</code>, <code>usage.Lookup(modelID string) (Price, bool)</code>, the const <code>usage.PricesAsOf</code>, and the unexported cache-multiplier consts <code>cacheWrite5mMult=1.25</code>, <code>cacheWrite1hMult=2.0</code>, <code>cacheReadMult=0.1</code>.</p>
 <p>Notes:</p>
@@ -12015,11 +12015,11 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md: 164 l
 <li>Commit exactly as the brief specifies.</li>
 <li>Self-review, then report.</li>
 </ol>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
 <p>If anything is ambiguous or seems wrong, STOP and report BLOCKED/NEEDS_CONTEXT rather than guessing.</p>
 <h2>Report</h2>
 <p>Write your full report (implemented, TDD RED/GREEN evidence with commands+output, files changed, self-review) to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
 <p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
 </div><div class="agent-result-body"><h2>Task 2 Complete</h2>
 <p><strong>Status:</strong> COMPLETE</p>
@@ -12069,7 +12069,7 @@ duration_ms: 117590<!-- raw HTML omitted --></li>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 2 (spec + quality)</span><a class="agent-link" href="subagents/agent-abdd3de6a5bfdbdb8.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate, not a merge review.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>Self-contained/offline: the price table is embedded (<code>go:embed prices.json</code>); no runtime network access; no new dependencies.</li>
@@ -12079,10 +12079,10 @@ duration_ms: 117590<!-- raw HTML omitted --></li>
 <li>Prices are the real Anthropic list prices from the brief — verify the JSON values match the brief EXACTLY (no altered numbers).</li>
 </ul>
 <h2>Implementer's Report (unverified claims — verify against the diff)</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 1753ede  Head: 08d3928
-Diff file: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-1753ede..08d3928.diff
 Read the diff file once (commit list + stat + full diff). Do not re-run git. Read-only; do not mutate the tree. Inspect outside the diff only for a concrete named risk.</p>
 <h2>Tests</h2>
 <p>Implementer already ran tests with TDD evidence. Don't re-run the suite; run a focused test only for a specific doubt, else name it. Non-pristine output is a finding.</p>
@@ -12148,7 +12148,7 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md: 269 l
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 3: usage computation</span><a class="agent-link" href="subagents/agent-a4b5fff9e8d98f303.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 3: Usage computation — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code and test cases to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
 <h2>Context</h2>
 <p>This is Task 3 of a token-usage &amp; cost feature. You add the aggregation + cost math to the existing <code>internal/usage</code> package.</p>
 <ul>
@@ -12171,11 +12171,11 @@ wrote ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md: 269 l
 <li>Commit exactly as the brief specifies.</li>
 <li>Self-review, then report.</li>
 </ol>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
 <p>If anything is ambiguous or seems wrong, STOP and report BLOCKED/NEEDS_CONTEXT rather than guessing.</p>
 <h2>Report</h2>
 <p>Write your full report (implemented, TDD RED/GREEN evidence with commands+output, files changed, self-review) to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
 <p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
 </div><div class="agent-result-body"><h2>Task 3: Usage Computation — COMPLETED</h2>
 <p><strong>Status:</strong> COMPLETED</p>
@@ -12225,7 +12225,7 @@ duration_ms: 206563<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 3 (spec + quality)</span><a class="agent-link" href="subagents/agent-ace1d6a2e9d4eca91.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>Aggregate totals &amp; per-model include nested subagent turns; per-turn costs are for top-level turns only.</li>
@@ -12235,10 +12235,10 @@ duration_ms: 206563<!-- raw HTML omitted --></p>
 <li><code>TotalCostUSD</code> nil only when nothing priced. <code>PerTurnCost[i]</code> present-with-nil for unpriced assistant turn, absent for user turns (nil Usage).</li>
 </ul>
 <h2>Implementer's Report (unverified — verify against diff)</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 08d3928  Head: 4140bfb
-Diff file: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-08d3928..4140bfb.diff
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-08d3928..4140bfb.diff
 Read the diff file once (commit list + stat + full diff). Do not re-run git. Read-only. Inspect outside the diff only for a concrete named risk.</p>
 <h2>Tests</h2>
 <p>Implementer ran tests with TDD evidence; don't re-run the suite. Focused test only for a specific doubt, else name it. Non-pristine output is a finding.</p>
@@ -12297,7 +12297,7 @@ duration_ms: 109389<!-- raw HTML omitted --></p>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 4: render usage card</span><a class="agent-link" href="subagents/agent-ad7aac3afd5c8da7d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 4: Render the usage card and per-turn badges — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
 <h2>Context</h2>
 <p>This is Task 4 of a token-usage &amp; cost feature. It wires the <code>internal/usage</code> package (built in Tasks 2–3) into the HTML renderer.</p>
 <ul>
@@ -12320,11 +12320,11 @@ duration_ms: 109389<!-- raw HTML omitted --></p>
 <li>Commit exactly as the brief specifies.</li>
 <li>Self-review (especially: card absent without --usage; badge only on turns with usage; no external refs in CSS), then report.</li>
 </ol>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
 <p>If a hunk in the brief doesn't match the current file (e.g. buildViewModel changed by an earlier task), adapt carefully and note it; if genuinely blocked or ambiguous, STOP and report BLOCKED/NEEDS_CONTEXT with specifics.</p>
 <h2>Report</h2>
 <p>Write your full report (implemented, TDD RED/GREEN evidence with commands+output, files changed, self-review) to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
 <p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
 </div><div class="agent-result-body"><p>Status: DONE
 Commit: <code>4de9666</code> &quot;feat(render): usage &amp; cost card and per-turn badges&quot;
@@ -12356,7 +12356,7 @@ duration_ms: 341729<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 4 (spec + quality)</span><a class="agent-link" href="subagents/agent-a4a0f2c1a18950550.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>Opt-in: the usage card/badges render ONLY when <code>Options.Usage</code> is true; absent otherwise. Existing render tests (no usage option) must still pass with no card.</li>
@@ -12366,10 +12366,10 @@ duration_ms: 341729<!-- raw HTML omitted --></p>
 <li>Redaction is untouched by this task.</li>
 </ul>
 <h2>Implementer's Report (unverified — verify against the diff). Note the implementer DEVIATED from the brief.</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 4140bfb  Head: 4de9666
-Diff file: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff
 Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff only for a concrete named risk.</p>
 <h2>PRIORITY: scrutinize the deviation</h2>
 <p>The brief specified <code>usageView.Headline string</code> and <code>usageModel.Tokens string</code> (plain strings, auto-escaped by html/template). The implementer changed BOTH to <code>template.HTML</code> built via <code>html.EscapeString(...)</code>, because html/template escapes the literal <code>+</code> in &quot;in+out&quot; to <code>&amp;#43;</code>, which broke the <code>strings.Contains(html, &quot;in+out&quot;)</code> test.</p>
@@ -12447,7 +12447,7 @@ duration_ms: 174807<!-- raw HTML omitted --></p>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 5: CLI/TUI/README</span><a class="agent-link" href="subagents/agent-af0beb7f8d1b0d24b.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 5: CLI flag, TUI toggle, and docs — the final task of the usage &amp; cost feature for ccwhid (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code to use verbatim:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <h2>Context</h2>
 <p>Tasks 1–4 added parsing, pricing, computation, and rendering of a usage section gated on <code>render.Options.Usage bool</code>. Your task exposes it to users:</p>
 <ul>
@@ -12471,11 +12471,11 @@ duration_ms: 174807<!-- raw HTML omitted --></p>
 <li>Commit as the brief specifies.</li>
 <li>Self-review, then report.</li>
 </ol>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done</p>
 <p>If the TUI layout reconciliation is genuinely ambiguous or something is inconsistent, STOP and report NEEDS_CONTEXT with specifics rather than guessing.</p>
 <h2>Report</h2>
 <p>Write your full report (implemented, TDD RED/GREEN evidence, files changed, how you reconciled the TUI index layout, self-review) to:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <p>Then reply with ONLY (under 15 lines): Status, commits (short SHA + subject), one-line test summary, concerns, and the report file path.</p>
 </div><div class="agent-result-body"><p>Status: COMPLETE
 Commit: 6fef39b — feat: --usage flag and TUI toggle for the usage section (branch feat/usage-cost)
@@ -12507,7 +12507,7 @@ duration_ms: 141720<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.26</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 5 (spec + quality)</span><a class="agent-link" href="subagents/agent-ad4bf7ee324e11d5f.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate (this is the final task).</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>Opt-in: <code>--usage</code> defaults to false; the section renders only when set.</li>
@@ -12515,10 +12515,10 @@ duration_ms: 141720<!-- raw HTML omitted --></p>
 <li>The TUI options screen already had rows (subagents, redact, open, output-dir, generate) from a prior feature; the new usage toggle had to be inserted WITHOUT breaking the existing index↔row alignment.</li>
 </ul>
 <h2>Implementer's Report (unverified — verify against the diff)</h2>
-<p>/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <h2>Diff Under Review</h2>
 <p>Base: 4de9666  Head: 6fef39b
-Diff file: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4de9666..6fef39b.diff
+Diff file: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4de9666..6fef39b.diff
 Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only for a concrete named risk.</p>
 <h2>PRIORITY: verify the TUI index↔row alignment (the main risk)</h2>
 <p>The TUI options screen maps a cursor index to both (a) a <code>toggles[i]</code> slice entry in <code>viewOptions</code> and (b) a <code>case opt*</code> in the <code>updateOptions</code> space/enter switch. Inserting <code>optUsage</code> shifts <code>optOutDir</code>/<code>optGenerate</code>. Verify RIGOROUSLY:</p>
@@ -12708,8 +12708,8 @@ Subagent (general-purpose):
 <h2>What Was Implemented</h2>
 <p>An opt-in token-usage &amp; estimated-cost section for ccwhid (a Go CLI that renders a Claude Code session transcript into a self-contained HTML report). Built across 5 tasks: (1) parse per-turn model+usage; (2) embedded price table; (3) usage aggregation + cost math (new <code>internal/usage</code>); (4) render a collapsible usage card + per-turn badges; (5) <code>--usage</code> CLI flag + TUI toggle + README. Each task already passed an independent task-level review; this is the cross-cutting pass.</p>
 <h2>Requirements / Design</h2>
-<p>Spec: /Users/markus/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-usage-cost-section-design.md
-Plan: /Users/markus/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-12-usage-cost.md
+<p>Spec: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-usage-cost-section-design.md
+Plan: ~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-12-usage-cost.md
 Read both. Key invariants to check the WHOLE feature against:</p>
 <ul>
 <li>Opt-in: nothing renders/among cost unless <code>--usage</code>/TUI toggle set.</li>
@@ -12723,7 +12723,7 @@ Read both. Key invariants to check the WHOLE feature against:</p>
 <h2>Git Range to Review</h2>
 <p>Base: fcd7fbd  Head: 6fef39b
 Review package (commit list + stat + full diff with context), read it once:
-/Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fcd7fbd..6fef39b.diff
+~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fcd7fbd..6fef39b.diff
 (The range includes two docs-only commits for the spec/plan — focus on the code.) You may also Read the actual current files to judge integration and to inspect code just outside the diff for a concrete named risk. Read-only: do not mutate the working tree/index/HEAD.</p>
 <h2>Cross-cutting things the per-task reviews could NOT fully see — check these hardest</h2>
 <ol>
@@ -17128,11 +17128,11 @@ Zu neuem Branch &#39;feat/subagent-sessions&#39; gewechselt
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 1: notification parsing</span><a class="agent-link" href="subagents/agent-a13c2d2af050dfd73.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 1: Parse <code>&lt;task-notification&gt;</code> records into agent-result turns, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
-<p>Read your task brief first: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md
 It contains the full task text from the plan, including the exact test code and implementation code to use verbatim.</p>
 <h2>Context</h2>
 <p>ccwhid parses Claude Code JSONL transcripts into a <code>model.Session</code> and renders an HTML report. Today, a background agent's completion notification (a <code>user</code> record whose content is a <code>&lt;task-notification&gt;</code> string) renders as a user turn attributed to &quot;You&quot; — this task makes the parser surface it as a new turn kind <code>agent-result</code> instead. This is Task 1 of 5; later tasks build the loader and renderer on top of the model fields you add.</p>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>The fix is unconditional — no dependence on any Options flag.</li>
@@ -17156,7 +17156,7 @@ It contains the full task text from the plan, including the exact test code and 
 <h2>After Review Findings</h2>
 <p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
 <h2>Report Format</h2>
-<p>Write your full report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md:</p>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md:</p>
 <ul>
 <li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
 </ul>
@@ -17416,7 +17416,7 @@ duration_ms: 211705<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 1 (spec + quality)</span><a class="agent-link" href="subagents/agent-a72c1702495c21e82.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
 <p>Global constraints from the spec/design that bind this task:</p>
 <ul>
 <li>The task-notification fix is unconditional — independent of <code>--include-subagents</code> and <code>--usage</code>.</li>
@@ -17426,11 +17426,11 @@ duration_ms: 211705<!-- raw HTML omitted --></p>
 <li><code>gofmt -l .</code> must print nothing.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> 608d700
 <strong>Head:</strong> b1bc70e
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff</p>
 <p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report.</p>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
 <h2>Do Not Trust the Report</h2>
@@ -17523,11 +17523,11 @@ b1bc70e</pre></div></details></div>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 2: agent-session loader</span><a class="agent-link" href="subagents/agent-afc224140cdd349a8.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 2: Load linked agent-session files, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
-<p>Read your task brief first: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md
 It contains the full task text from the plan, including the exact test code and implementation code to use verbatim.</p>
 <h2>Context</h2>
 <p>ccwhid parses Claude Code JSONL transcripts. Modern Claude Code stores each subagent's transcript as <code>&lt;projectDir&gt;/&lt;sessionId&gt;/subagents/agent-&lt;ID&gt;.jsonl</code> with a sibling <code>agent-&lt;ID&gt;.meta.json</code>. This task adds the <code>model.AgentSession</code> type, a <code>transcript.Options.AgentFile</code> flag, and <code>transcript.LoadAgentSessions</code> to load those files. This is Task 2 of 5; Task 1 (already merged on this branch) added <code>model.TurnAgentResult</code> and notification parsing — do not touch that code. Later tasks consume <code>model.Session.Agents</code>.</p>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>A missing <code>subagents/</code> dir must yield <code>(nil, nil)</code>; an unparsable agent file is skipped with a warning on stderr; a missing/unreadable meta.json falls back to Description = ID. None of these may fail the run.</li>
@@ -17549,7 +17549,7 @@ It contains the full task text from the plan, including the exact test code and 
 <h2>After Review Findings</h2>
 <p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
 <h2>Report Format</h2>
-<p>Write your full report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md:</p>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md:</p>
 <ul>
 <li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
 </ul>
@@ -17610,7 +17610,7 @@ duration_ms: 207172<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 2 (spec + quality)</span><a class="agent-link" href="subagents/agent-a001edb26aa56558d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
 <p>Global constraints from the spec/design that bind this task:</p>
 <ul>
 <li>A missing <code>subagents/</code> dir yields <code>(nil, nil)</code>; an unparsable agent file is skipped with a warning on stderr; missing/unreadable meta.json falls back to Description = ID. None of these may fail the run.</li>
@@ -17620,11 +17620,11 @@ duration_ms: 207172<!-- raw HTML omitted --></p>
 <li><code>gofmt -l .</code> must print nothing.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> b1bc70e
 <strong>Head:</strong> 10aff40
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b1bc70e..10aff40.diff</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b1bc70e..10aff40.diff</p>
 <p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report.</p>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
 <h2>Do Not Trust the Report</h2>
@@ -17718,11 +17718,11 @@ duration_ms: 113045<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 3: usage rollup</span><a class="agent-link" href="subagents/agent-aa45117265cc26f4f.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 3: Usage rollup for agent sessions, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
-<p>Read your task brief first: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md
 It contains the full task text from the plan, including the exact test code and implementation code to use verbatim.</p>
 <h2>Context</h2>
 <p>ccwhid computes token usage &amp; estimated cost per session (<code>internal/usage</code>). Task 2 (already on this branch) added <code>model.Session.Agents []model.AgentSession</code> — linked subagent session transcripts, each with a nested <code>Session</code>. This task makes <code>usage.Compute</code> merge those agent sessions into the totals and per-model rows while tracking a separate subagent subtotal. This is Task 3 of 5; Task 4 will render the new <code>Report</code> fields.</p>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>With no <code>Agents</code>, behavior is unchanged: <code>Subagents</code> stays zero, <code>SubagentsCost</code> nil, <code>AgentSessions</code> 0 — existing tests must keep passing untouched.</li>
@@ -17745,7 +17745,7 @@ It contains the full task text from the plan, including the exact test code and 
 <h2>After Review Findings</h2>
 <p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
 <h2>Report Format</h2>
-<p>Write your full report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md:</p>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md:</p>
 <ul>
 <li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
 </ul>
@@ -17795,7 +17795,7 @@ duration_ms: 194669<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.28</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 3 (spec + quality)</span><a class="agent-link" href="subagents/agent-a32af6bd7209c32e2.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
 <p>Global constraints from the spec/design that bind this task:</p>
 <ul>
 <li>Linked agent-session tokens merge into the SAME totals (<code>Report.Total</code>) and per-model rows (<code>ByModel</code>, same model-id normalization) while also being tracked separately in <code>Report.Subagents</code>/<code>SubagentsCost</code>/<code>AgentSessions</code>.</li>
@@ -17805,11 +17805,11 @@ duration_ms: 194669<!-- raw HTML omitted --></p>
 <li><code>gofmt -l .</code> must print nothing.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> 10aff40
 <strong>Head:</strong> a6bc8fb
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-10aff40..a6bc8fb.diff</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-10aff40..a6bc8fb.diff</p>
 <p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report.</p>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
 <h2>Do Not Trust the Report</h2>
@@ -17903,12 +17903,12 @@ duration_ms: 105236<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 4: agent-result cards</span><a class="agent-link" href="subagents/agent-ab4c2d6c21dfc4ae2.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 4: Render agent-result cards and the subagent usage line, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
-<p>Read your task brief first: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md
 It contains the full task text from the plan, including the exact test code and implementation code to use verbatim.</p>
 <h2>Context</h2>
 <p>ccwhid renders parsed sessions to HTML (<code>internal/render</code>). Earlier tasks on this branch added: <code>model.TurnAgentResult</code> with <code>Turn.AgentStatus</code>/<code>AgentSummary</code> fields (Task 1), and <code>usage.Report.Subagents</code>/<code>SubagentsCost</code>/<code>AgentSessions</code> (Task 3). This task renders agent-result turns as agent-attributed cards (role label like <code>Agent · Implement Task 12: Profiles view</code>, status chip) and adds the &quot;of which subagents&quot; line + footnote variants to the usage card. This is Task 4 of 5; Task 5 will add subagent transcript pages and links (and will further change some of the same code — implement exactly this task, nothing from Task 5).</p>
 <p>Note: the brief changes <code>roleLabel</code> to take a <code>model.Turn</code> instead of a <code>model.TurnKind</code> — update BOTH existing call sites (<code>buildViewModel</code> and <code>renderTool</code>'s inline sidechain rendering) as the brief shows.</p>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>The agent-result card rendering is unconditional (not gated on any Options flag); the usage SubLine/footnote changes live inside the existing usage view which is already gated on <code>--usage</code>.</li>
@@ -17932,7 +17932,7 @@ It contains the full task text from the plan, including the exact test code and 
 <h2>After Review Findings</h2>
 <p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
 <h2>Report Format</h2>
-<p>Write your full report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md:</p>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md:</p>
 <ul>
 <li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
 </ul>
@@ -17987,7 +17987,7 @@ duration_ms: 266353<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 4 (spec + quality)</span><a class="agent-link" href="subagents/agent-a4a39d149092571c9.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
 <p>Global constraints from the spec/design that bind this task:</p>
 <ul>
 <li>Agent-result card rendering is unconditional (not gated on any Options flag); the SubLine/footnote live inside the usage view (gated on <code>--usage</code> upstream).</li>
@@ -17998,11 +17998,11 @@ duration_ms: 266353<!-- raw HTML omitted --></p>
 <li><code>gofmt -l .</code> must print nothing.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> a6bc8fb
 <strong>Head:</strong> b66ed79
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff</p>
 <p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. One concrete named risk worth a focused check: <code>roleLabel</code> changed signature from <code>model.TurnKind</code> to <code>model.Turn</code> — verify no remaining call site passes a <code>TurnKind</code>.</p>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
 <h2>Do Not Trust the Report</h2>
@@ -18107,7 +18107,7 @@ b66ed79 feat: agent-attributed result cards and subagent usage line</pre></div><
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Implement Task 5: subagent pages</span><a class="agent-link" href="subagents/agent-a9d94d4212d41bfea.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are implementing Task 5: Subagent pages, links, and wiring — the final task of the subagent-sessions milestone for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
-<p>Read your task brief first: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
+<p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md
 It contains the full task text from the plan, including exact code for the new types and the restructured <code>Site</code> function.</p>
 <h2>Context</h2>
 <p>ccwhid renders parsed Claude Code sessions to a static HTML report. Already on this branch: <code>model.Session.Agents []model.AgentSession</code> (each with <code>ID</code>, <code>Description</code>, <code>AgentType</code>, <code>ToolUseID</code>, nested <code>Session</code>) loaded by <code>transcript.LoadAgentSessions</code> (Task 2); <code>model.TurnAgentResult</code> turns with <code>Turn.AgentID</code> (Task 1); agent-attributed cards + <code>roleLabel(model.Turn)</code> (Task 4). This task makes <code>render.Site</code> emit one page per agent session under <code>outDir/subagents/agent-&lt;ID&gt;.html</code> and link to them from Agent/Task tool cards (via <code>ToolUseID</code>) and agent-result cards (via <code>AgentID</code>), then wires loading into the CLI, TUI label, and README.</p>
@@ -18120,7 +18120,7 @@ It contains the full task text from the plan, including exact code for the new t
 <li>In <code>cmd/ccwhid/run.go</code>, <code>generate()</code> currently calls <code>transcript.ParseFile(...)</code> then redaction; insert the <code>LoadAgentSessions</code> block between them exactly as the brief shows (gated on <code>opts.includeSubagents</code>).</li>
 <li>In <code>internal/tui/tui.go</code> the option label to change is the string <code>&quot;Include subagents&quot;</code> (around line 376).</li>
 </ul>
-<p>Work from: /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
+<p>Work from: ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions, already checked out).</p>
 <p>Global constraints that bind this task:</p>
 <ul>
 <li>Agent page path exactly <code>subagents/agent-&lt;ID&gt;.html</code> relative to outDir; no <code>subagents/</code> dir is created when the session has no agents.</li>
@@ -18145,7 +18145,7 @@ It contains the full task text from the plan, including exact code for the new t
 <h2>After Review Findings</h2>
 <p>If a reviewer finds issues and you fix them, re-run the tests that cover the amended code and append the results to your report file.</p>
 <h2>Report Format</h2>
-<p>Write your full report to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md:</p>
+<p>Write your full report to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md:</p>
 <ul>
 <li>What you implemented, TDD evidence (RED command+output, GREEN command+output), files changed, self-review findings, concerns.</li>
 </ul>
@@ -18182,7 +18182,7 @@ duration_ms: 314830<!-- raw HTML omitted --></p>
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Review Task 5 (spec + quality)</span><a class="agent-link" href="subagents/agent-a31cf203cf21e4233.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
-<p>Read the task brief: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
+<p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
 <p>Global constraints from the spec/design that bind this task:</p>
 <ul>
 <li>Agent page path exactly <code>subagents/agent-&lt;ID&gt;.html</code> relative to outDir; NO <code>subagents/</code> dir created when the session has no agents.</li>
@@ -18194,11 +18194,11 @@ duration_ms: 314830<!-- raw HTML omitted --></p>
 <li><code>gofmt -l .</code> silent; <code>go vet ./...</code> clean.</li>
 </ul>
 <h2>What the Implementer Claims They Built</h2>
-<p>Read the implementer's report: /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
+<p>Read the implementer's report: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> b66ed79
 <strong>Head:</strong> b703c81
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff</p>
 <p>Read the diff file once — it contains the commit list, a stat summary, and the full diff with surrounding context, and it is your view of the change. The diff's context lines ARE the changed files: do not Read a changed file separately unless a hunk you must judge is cut off mid-function — and say so in your report. Do not re-run git commands. Do not crawl the broader codebase. Inspect code outside the diff only to evaluate a concrete risk you can name — one focused check per named risk, and name both the risk and what you checked in your report. Two concrete named risks worth focused checks: (1) <code>renderTurnBody</code>/<code>renderTool</code> signature changes — verify no call site was missed; (2) redaction ordering in <code>cmd/ccwhid/run.go</code> — agents must be attached to the session BEFORE <code>redact.Session</code> runs, or agent content ships unredacted.</p>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state in any way.</p>
 <h2>Do Not Trust the Report</h2>
@@ -18487,7 +18487,7 @@ duration_ms: 155082<!-- raw HTML omitted --></p>
 <h2>Git Range to Review</h2>
 <p><strong>Base:</strong> 608d700
 <strong>Head:</strong> b703c81
-<strong>Review package (read this first — commit list, stat, full diff with context):</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff</p>
+<strong>Review package (read this first — commit list, stat, full diff with context):</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff</p>
 <h2>Read-Only Review</h2>
 <p>Your review is read-only on this checkout. Do not mutate the working tree, the index, HEAD, or branch state. You may read any file in the repo and run focused read-only commands (go test on a package is OK if a specific doubt warrants it).</p>
 <h2>Specific attention items (from per-task reviews and a background security scan)</h2>
@@ -18580,7 +18580,7 @@ duration_ms: 198533<!-- raw HTML omitted --></p>
     
     <article class="turn turn-assistant" id="turn-883" data-search="agent fix final-review findings">
       <div class="turn-role">Claude</div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix final-review findings</span><a class="agent-link" href="subagents/agent-ae36a349eae01457d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying the final-review fixes on the Go CLI <code>ccwhid</code>. Work from /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix final-review findings</span><a class="agent-link" href="subagents/agent-ae36a349eae01457d.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are applying the final-review fixes on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <p>Two fixes, one commit:</p>
 <h2>Fix 1 (Important — escaping regression)</h2>
 <p>In <code>internal/render/render.go</code>, inside <code>renderTool</code>, the inline-sidechain rendering loop writes the role label raw:</p>
@@ -18622,7 +18622,7 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 <p>Commit both changes as one commit, message ending with the trailer:
 <code>Co-Authored-By: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</code></p>
 <h2>Report</h2>
-<p>Append a short fix report (what changed, RED/GREEN evidence for the escaping test, commands + output for the verify step) to /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md under a heading &quot;## Final-review fixes&quot;.</p>
+<p>Append a short fix report (what changed, RED/GREEN evidence for the escaping test, commands + output for the verify step) to ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md under a heading &quot;## Final-review fixes&quot;.</p>
 <p>Then report back with ONLY: status, commit SHA + subject, one-line test summary.</p>
 </div><div class="agent-result-body"><p><strong>Status:</strong> All fixes applied and verified.</p>
 <p><strong>Commit:</strong> <code>92f3646</code> — Fix escaping regression in sidechain rendering and update Compute doc</p>
@@ -18653,8 +18653,8 @@ duration_ms: 114155<!-- raw HTML omitted --></p>
 <h2>Diff Under Review</h2>
 <p><strong>Base:</strong> b703c81
 <strong>Head:</strong> 92f3646
-<strong>Diff file:</strong> /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b703c81..92f3646.diff</p>
-<p>Read the diff file once. Check: (a) the escaping fix is on the correct sink and doesn't double-escape anything already escaped elsewhere; (b) the regression test actually exercises the sidechain path (renderTool with a Subagent containing a TurnAgentResult turn) and would fail without the fix; (c) the doc comment is accurate; (d) nothing unrelated changed. The fix report with RED/GREEN evidence is appended under &quot;## Final-review fixes&quot; in /Users/markus/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md — treat its claims as unverified and check them against the diff.</p>
+<strong>Diff file:</strong> ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b703c81..92f3646.diff</p>
+<p>Read the diff file once. Check: (a) the escaping fix is on the correct sink and doesn't double-escape anything already escaped elsewhere; (b) the regression test actually exercises the sidechain path (renderTool with a Subagent containing a TurnAgentResult turn) and would fail without the fix; (c) the doc comment is accurate; (d) nothing unrelated changed. The fix report with RED/GREEN evidence is appended under &quot;## Final-review fixes&quot; in ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md — treat its claims as unverified and check them against the diff.</p>
 <p>Your review is read-only. Do not mutate the working tree, index, HEAD, or branch state.</p>
 <h2>Output</h2>
 <p>Begin directly with the verdict. For each of the two findings: FIXED / NOT FIXED / PARTIAL with file:line evidence. Then any new issues the fix introduced (severity-labeled), then a one-line overall verdict (clean / needs another pass).</p>
@@ -18859,7 +18859,7 @@ A safer approach is to use the first closing tag (strings.Index) for all tags ex
     
     <article class="turn turn-assistant" id="turn-901" data-search="agent fix copilot finding: tagcontent">
       <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.36</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Copilot finding: tagContent</span><a class="agent-link" href="subagents/agent-a5c71d55e0b26ef8e.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are fixing one code-review finding on the Go CLI <code>ccwhid</code>. Work from /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Copilot finding: tagContent</span><a class="agent-link" href="subagents/agent-a5c71d55e0b26ef8e.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are fixing one code-review finding on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <h2>The finding (from Copilot on PR #7, valid)</h2>
 <p><code>internal/transcript/parse.go</code> — <code>tagContent()</code> uses <code>strings.LastIndex</code> for the closing tag for ALL fields. If a <code>&lt;task-notification&gt;</code> payload's <code>&lt;result&gt;</code> markdown contains a literal <code>&lt;/task-id&gt;</code> or <code>&lt;/summary&gt;</code> (e.g. an agent report quoting another notification envelope), LastIndex matches that later occurrence and the extracted TaskID/Summary span far beyond the intended tag — corrupting AgentID and breaking result-card links.</p>
 <h2>The fix</h2>
@@ -19026,7 +19026,7 @@ The `--include-subagents` flag description no longer mentions how to disable it 
     
     <article class="turn turn-assistant" id="turn-914" data-search="agent fix copilot round-2 findings">
       <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.36</span></div>
-      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Copilot round-2 findings</span><a class="agent-link" href="subagents/agent-a2e10427331a80ab4.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are fixing two code-review findings on the Go CLI <code>ccwhid</code>. Work from /Users/markus/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Fix Copilot round-2 findings</span><a class="agent-link" href="subagents/agent-a2e10427331a80ab4.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>You are fixing two code-review findings on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <h2>Fix 1 — README flag description regression</h2>
 <p>In <code>README.md</code>, the flag table row for <code>--include-subagents</code> was reworded on this branch and dropped the disable hint. Find that row and make sure it ends with the previous guidance, i.e. the description should read:</p>
 <p><code>Include subagent work: inline Task sidechains and linked agent-session transcript pages under subagents/ (default true; --include-subagents=false to omit)</code></p>
@@ -21439,6 +21439,451 @@ subagents
 &lt;h1&gt;Build ccwhid CLI tool for session transcripts&lt;/h1&gt;
 === subagent count / usage subline in current demo ===
 of which subagents: 660k in&amp;#43;out · ~$15.57 (59 sessions)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1010" data-search="let me create a branch and regenerate the demo from this session&#39;s transcript:">
+      <div class="turn-role">Claude<span class="usage-badge">312 tok · ~$0.08</span></div>
+      <div class="turn-body"><p>Let me create a branch and regenerate the demo from this session's transcript:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1011" data-search="bash \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">\</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;\\\ngit checkout -b feat/agent-skill-card-rendering \u0026\u0026 \\\ngo build -o /tmp/ccwhid ./cmd/ccwhid \u0026\u0026 \\\n/tmp/ccwhid --session 41f7e8f4 --include-subagents --usage --out docs/session-report --force 2\u003e\u00261 | tail -3&#34;
+}</pre><pre class="tool-result">Zu neuem Branch &#39;feat/agent-skill-card-rendering&#39; gewechselt
+report written to docs/session-report</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1012" data-search="bash \">
+      <div class="turn-role">Claude<span class="usage-badge">565 tok · ~$0.08</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">\</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;\\\necho \&#34;=== new demo checks ===\&#34; \u0026\u0026 \\\necho \&#34;agent-prompt:      $(grep -o &#39;class=\\\&#34;agent-prompt\\\&#34;&#39; docs/session-report/index.html | wc -l | tr -d &#39; &#39;)\&#34; \u0026\u0026 \\\necho \&#34;agent-result-body: $(grep -o &#39;class=\\\&#34;agent-result-body\\\&#34;&#39; docs/session-report/index.html | wc -l | tr -d &#39; &#39;)\&#34; \u0026\u0026 \\\necho \&#34;Skill cards:       $(grep -o &#39;\u003cspan class=\\\&#34;tool-name\\\&#34;\u003eSkill\u003c/span\u003e&#39; docs/session-report/index.html | wc -l | tr -d &#39; &#39;)\&#34; \u0026\u0026 \\\necho \&#34;Agent cards:       $(grep -o &#39;\u003cspan class=\\\&#34;tool-name\\\&#34;\u003eAgent\u003c/span\u003e&#39; docs/session-report/index.html | wc -l | tr -d &#39; &#39;)\&#34; \u0026\u0026 \\\necho \&#34;subagent pages:    $(ls docs/session-report/subagents | wc -l | tr -d &#39; &#39;)\&#34; \u0026\u0026 \\\ngrep -o &#39;of which subagents:[^\u003c]*&#39; docs/session-report/index.html | head -1 \u0026\u0026 \\\necho \&#34;=== git status ===\&#34; \u0026\u0026 git status --short | head&#34;
+}</pre><pre class="tool-result">=== new demo checks ===
+agent-prompt:      54
+agent-result-body: 54
+Skill cards:       10
+Agent cards:       54
+subagent pages:    59
+of which subagents: 660k in&amp;#43;out · ~$15.57 (59 sessions)
+=== git status ===
+ M docs/session-report/assets/styles.css
+ M docs/session-report/index.html
+ M docs/session-report/subagents/agent-a4a0f2c1a18950550.html
+ M docs/session-report/subagents/agent-a7a0fa1f230b1881e.html
+ M docs/session-report/subagents/agent-ace1d6a2e9d4eca91.html
+ M docs/session-report/subagents/agent-af0beb7f8d1b0d24b.html
+ M internal/model/model.go
+ M internal/render/assets/styles.css
+ M internal/render/render.go
+ M internal/render/render_test.go</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1013" data-search="demo regenerated cleanly (stable snapshot — same 59 pages/usage, only the cards that gained the new rendering changed). now let me commit in two logical commits — the feature/tests, then the demo regen:">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.12</span></div>
+      <div class="turn-body"><p>Demo regenerated cleanly (stable snapshot — same 59 pages/usage, only the cards that gained the new rendering changed). Now let me commit in two logical commits — the feature/tests, then the demo regen:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1014" data-search="bash \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">\</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;\\\ngit add internal/ \u0026\u0026 \\\ngit commit -q -m \&#34;feat: name skill/agent tool cards and render agent bodies as markdown\n\nSkill tool cards now carry the skill name in the header, and Agent/Task\ncards carry the subagent description. In an expanded agent card the prompt\nand the result render as markdown (readable prose) instead of a one-line\nJSON dump and a monospace block; non-agent tool results stay monospace.\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\&#34; \u0026\u0026 \\\ngit add docs/session-report \u0026\u0026 \\\ngit commit -q -m \&#34;docs: regenerate demo report with new agent/skill card rendering\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\&#34; \u0026\u0026 \\\ngit log --oneline -3&#34;
+}</pre><pre class="tool-result">991adac docs: regenerate demo report with new agent/skill card rendering
+852d3b1 feat: name skill/agent tool cards and render agent bodies as markdown
+500a5ae docs: backticks around --include-subagents=false in flag table</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1015" data-search="now push and open the pr:">
+      <div class="turn-role">Claude<span class="usage-badge">119 tok · ~$0.09</span></div>
+      <div class="turn-body"><p>Now push and open the PR:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1016" data-search="bash git push -u origin feat/agent-skill-card-rendering 2&gt;&amp;1 | tail -5">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git push -u origin feat/agent-skill-card-rendering 2&gt;&amp;1 | tail -5</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git push -u origin feat/agent-skill-card-rendering 2\u003e\u00261 | tail -5&#34;
+}</pre><pre class="tool-result">remote:      https://github.com/saigyo/cc-what-have-i-done/pull/new/feat/agent-skill-card-rendering        
+remote: 
+To https://github.com/saigyo/cc-what-have-i-done.git
+ * [new branch]      feat/agent-skill-card-rendering -&gt; feat/agent-skill-card-rendering
+Branch &#39;feat/agent-skill-card-rendering&#39; folgt nun &#39;origin/feat/agent-skill-card-rendering&#39;.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1017" data-search="you&#39;ve hit your session limit · resets 5:20pm (europe/berlin)">
+      <div class="turn-role">Claude<span class="usage-badge">0 tok</span></div>
+      <div class="turn-body"><p>You've hit your session limit · resets 5:20pm (Europe/Berlin)</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1018" data-search="the scheduled task fired, but the work is already done and committed — i&#39;m mid-flow on the pr. let me verify state and continue creating the pr rather than redoing anything.">
+      <div class="turn-role">Claude<span class="usage-badge">455 tok · ~$1.15</span></div>
+      <div class="turn-body"><p>The scheduled task fired, but the work is already done and committed — I'm mid-flow on the PR. Let me verify state and continue creating the PR rather than redoing anything.</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1019" data-search="bash git status --short &amp;&amp; echo &#34;=== branch ===&#34; &amp;&amp; git branch --show-current &amp;&amp; echo &#34;=== last commits ===&#34; &amp;&amp; git log --oneline -3 &amp;&amp; echo &#34;=== quick verify ===&#34; &amp;&amp; gofmt -l internal/ &amp;&amp; go test ./internal/render/ ./internal/transcript/ 2&gt;&amp;1 | tail -4 &amp;&amp; echo &#34;=== existing pr? ===&#34; &amp;&amp; gh pr list --head feat/agent-skill-card-rendering 2&gt;/dev/null">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short &amp;&amp; echo &#34;=== branch ===&#34; &amp;&amp; git branch --show-current &amp;&amp; echo &#34;=== last commits ===&#34; &amp;&amp; git log --oneline -3 &amp;&amp; echo &#34;=== quick verify ===&#34; &amp;&amp; gofmt -l internal/ &amp;&amp; go test ./internal/render/ ./internal/transcript/ 2&gt;&amp;1 | tail -4 &amp;&amp; echo &#34;=== existing PR? ===&#34; &amp;&amp; gh pr list --head feat/agent-skill-card-rendering 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;git status --short \u0026\u0026 echo \&#34;=== branch ===\&#34; \u0026\u0026 git branch --show-current \u0026\u0026 echo \&#34;=== last commits ===\&#34; \u0026\u0026 git log --oneline -3 \u0026\u0026 echo \&#34;=== quick verify ===\&#34; \u0026\u0026 gofmt -l internal/ \u0026\u0026 go test ./internal/render/ ./internal/transcript/ 2\u003e\u00261 | tail -4 \u0026\u0026 echo \&#34;=== existing PR? ===\&#34; \u0026\u0026 gh pr list --head feat/agent-skill-card-rendering 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">=== branch ===
+feat/agent-skill-card-rendering
+=== last commits ===
+991adac docs: regenerate demo report with new agent/skill card rendering
+852d3b1 feat: name skill/agent tool cards and render agent bodies as markdown
+500a5ae docs: backticks around --include-subagents=false in flag table
+=== quick verify ===
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)
+ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
+=== existing PR? ===</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1020" data-search="state is clean and green, branch pushed, no pr yet. creating it now:">
+      <div class="turn-role">Claude<span class="usage-badge">747 tok · ~$1.17</span></div>
+      <div class="turn-body"><p>State is clean and green, branch pushed, no PR yet. Creating it now:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1021" data-search="bash gh pr create --base main --head feat/agent-skill-card-rendering \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gh pr create --base main --head feat/agent-skill-card-rendering \</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;gh pr create --base main --head feat/agent-skill-card-rendering \\\n  --title \&#34;Name skill/agent tool cards and render agent bodies as markdown\&#34; \\\n  --body \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nFour report-readability improvements to how tool cards render.\n\n## Changes\n\n1. **Skill cards carry the skill name** in the header (e.g. `Skill  superpowers:writing-plans`) — `toolSummary` returns the `skill` input.\n2. **Agent cards carry the subagent description** in the header (e.g. `Agent  Implement Task 1: scaffold`) — `toolSummary` now also handles the modern `Agent` tool, not just `Task`.\n3. **Expanded agent card renders the prompt as markdown** in an `.agent-prompt` block instead of a one-line JSON dump (new `ToolCall.AgentPrompt` field, populated in `buildToolCall`).\n4. **Expanded agent card renders the result as markdown** in an `.agent-result-body` block; non-agent tool results stay in the monospace `\u003cpre\u003e`.\n\n## Notes\n\n- Agent results contain raw tags like the `\u003cusage\u003e…\u003c/usage\u003e` trailer; goldmark runs `Unsafe=false`, so these are stripped exactly as every other markdown body in the report already is — no new escaping surface.\n- Demo under `docs/session-report/` regenerated: 54 agent cards with markdown prompt+result, 10 named skill cards.\n\n## Tests\n\nNew coverage in `internal/transcript/parse_test.go` (agent/skill summaries + prompt capture) and `internal/render/render_test.go` (agent card renders markdown prompt/result; non-agent results stay monospace). Full suite green; `gofmt`/`go vet` clean.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\&#34; 2\u003e\u00261 | tail -3&#34;
+}</pre><pre class="tool-result">https://github.com/saigyo/cc-what-have-i-done/pull/8</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1022" data-search="pr #8 is up: https://github.com/saigyo/cc-what-have-i-done/pull/8
+
+the scheduled task fired once and auto-deleted. now the usual flow: copilot reviews automatically. let me poll for its review in the background (up to ~3 rounds of findings).">
+      <div class="turn-role">Claude<span class="usage-badge">861 tok · ~$0.09</span></div>
+      <div class="turn-body"><p>PR #8 is up: <a href="https://github.com/saigyo/cc-what-have-i-done/pull/8">https://github.com/saigyo/cc-what-have-i-done/pull/8</a></p>
+<p>The scheduled task fired once and auto-deleted. Now the usual flow: Copilot reviews automatically. Let me poll for its review in the background (up to ~3 rounds of findings).</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1023" data-search="bash for i in $(seq 1 20); do">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">for i in $(seq 1 20); do</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;for i in $(seq 1 20); do\n  n=$(gh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq &#39;[.[] | select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;)] | length&#39; 2\u003e/dev/null)\n  if [ \&#34;${n:-0}\&#34; -ge 1 ]; then echo \&#34;copilot review present after ~$((i*20))s (count=$n)\&#34;; exit 0; fi\n  sleep 20\ndone\necho \&#34;no copilot review after ~400s\&#34;&#34;,
+  &#34;run_in_background&#34;: true
+}</pre><pre class="tool-result">Command running in background with ID: b17aplxzp. Output is being written to: /private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/b17aplxzp.output. You will be notified when it completes. To check interim output, use Read on that file path.</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1024" data-search="i&#39;ve opened pr #8 and am polling for copilot&#39;s review in the background. i&#39;ll process its findings once it posts (up to three rounds, per the usual flow), and report back.
+
+summary of where things stand:
+- **committed** on `feat/agent-skill-card-rendering`: the feature/tests commit (`852d3b1`) and the demo regeneration (`991adac`).
+- **pushed** and **pr #8 opened**: https://github.com/saigyo/cc-what-have-i-done/pull/8
+- **verified**: gofmt/vet clean, full suite green; demo shows 54 markdown agent cards &#43; 10 named skill cards.
+- **waiting** on the automatic copilot review.">
+      <div class="turn-role">Claude<span class="usage-badge">236 tok · ~$0.08</span></div>
+      <div class="turn-body"><p>I've opened PR #8 and am polling for Copilot's review in the background. I'll process its findings once it posts (up to three rounds, per the usual flow), and report back.</p>
+<p>Summary of where things stand:</p>
+<ul>
+<li><strong>Committed</strong> on <code>feat/agent-skill-card-rendering</code>: the feature/tests commit (<code>852d3b1</code>) and the demo regeneration (<code>991adac</code>).</li>
+<li><strong>Pushed</strong> and <strong>PR #8 opened</strong>: <a href="https://github.com/saigyo/cc-what-have-i-done/pull/8">https://github.com/saigyo/cc-what-have-i-done/pull/8</a></li>
+<li><strong>Verified</strong>: gofmt/vet clean, full suite green; demo shows 54 markdown agent cards + 10 named skill cards.</li>
+<li><strong>Waiting</strong> on the automatic Copilot review.</li>
+</ul>
+</div>
+    </article>
+    
+    <article class="turn turn-agent-result" id="turn-1025" data-search="background command &#34;for i in $(seq 1 20); do
+  n=$(gh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq &#39;[.[] | select(.user.login==&#34;copilot-pull-request-reviewer[bot]&#34;)] | length&#39; 2&amp;gt;/dev/null)
+  if [ &#34;${n:-0}&#34; -ge 1 ]; then echo &#34;copilot review present after ~$((i*20))s (count=$n)&#34;; exit 0; fi
+  sleep 20
+done
+echo &#34;no copilot review after ~400s&#34;&#34; completed (exit code 0)">
+      <div class="turn-role">Agent · for i in $(seq 1 20); do
+  n=$(gh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq &#39;[.[] | select(.user.login==<span class="agent-status">completed</span></div>
+      <div class="turn-body"><p>Background command &quot;for i in $(seq 1 20); do
+n=$(gh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq '[.[] | select(.user.login==&quot;copilot-pull-request-reviewer[bot]&quot;)] | length' 2&gt;/dev/null)
+if [ &quot;${n:-0}&quot; -ge 1 ]; then echo &quot;copilot review present after ~$((i*20))s (count=$n)&quot;; exit 0; fi
+sleep 20
+done
+echo &quot;no copilot review after ~400s&quot;&quot; completed (exit code 0)</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1026" data-search="bash cat /private/tmp/claude-501/-users-markus-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/b17aplxzp.output">
+      <div class="turn-role">Claude<span class="usage-badge">129 tok · ~$0.08</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat /private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/b17aplxzp.output</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat /private/tmp/claude-501/-Users-markus-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/tasks/b17aplxzp.output&#34;
+}</pre><pre class="tool-result">copilot review present after ~200s (count=1)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1027" data-search="copilot has posted a review. let me read it — the summary body plus any line comments:">
+      <div class="turn-role">Claude<span class="usage-badge">259 tok · ~$0.08</span></div>
+      <div class="turn-body"><p>Copilot has posted a review. Let me read it — the summary body plus any line comments:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1028" data-search="bash echo &#34;=== review summaries ===&#34; &amp;&amp; \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== review summaries ===&#34; &amp;&amp; \</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;echo \&#34;=== review summaries ===\&#34; \u0026\u0026 \\\ngh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq &#39;.[] | select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;) | {state, body: .body}&#39; \u0026\u0026 \\\necho \&#34;=== inline comments ===\&#34; \u0026\u0026 \\\ngh api repos/saigyo/cc-what-have-i-done/pulls/8/comments --jq &#39;.[] | select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;) | {id, path, line, body}&#39;&#34;
+}</pre><pre class="tool-result">=== review summaries ===
+{&#34;body&#34;:&#34;## Pull request overview\n\nImproves session report readability by enriching tool card headers for Skill/Agent calls and rendering agent prompts/results as markdown in expanded tool cards, with accompanying styling and tests.\n\n**Changes:**\n- Extend transcript parsing to capture agent prompts and produce better summaries for `Agent`/`Skill` tool calls.\n- Update tool rendering to show agent prompt/result as markdown (while keeping non-agent tool results monospace) and add CSS for the new blocks.\n- Add focused tests for transcript parsing and rendering behavior; regenerate demo report HTML/CSS under `docs/session-report/`.\n\n### Reviewed changes\n\nCopilot reviewed 11 out of 12 changed files in this pull request and generated 5 comments.\n\n\u003cdetails\u003e\n\u003csummary\u003eShow a summary per file\u003c/summary\u003e\n\n| File | Description |\r\n| ---- | ----------- |\r\n| internal/transcript/parse.go | Capture agent prompt and improve tool summaries for `Agent`/`Skill`. |\r\n| internal/transcript/parse_test.go | Add tests for agent summary/prompt capture and skill summary. |\r\n| internal/model/model.go | Add `AgentPrompt` to `ToolCall` and `IsAgent()` helper. |\r\n| internal/render/render.go | Render agent prompt/result as markdown; keep other tools monospace. |\r\n| internal/render/render_test.go | Add coverage for markdown rendering vs monospace results. |\r\n| internal/render/assets/styles.css | Style agent prompt/result blocks. |\r\n| docs/session-report/subagents/agent-af0beb7f8d1b0d24b.html | Regenerated demo output reflecting new agent card rendering. |\r\n| docs/session-report/subagents/agent-ace1d6a2e9d4eca91.html | Regenerated demo output reflecting new agent card rendering. |\r\n| docs/session-report/subagents/agent-a7a0fa1f230b1881e.html | Regenerated demo output reflecting new agent card rendering. |\r\n| docs/session-report/subagents/agent-a4a0f2c1a18950550.html | Regenerated demo output reflecting new agent card rendering. |\r\n| docs/session-report/assets/styles.css | Regenerated demo stylesheet with agent prompt/result styles. |\n\u003c/details\u003e\n\n\n\n\n\n\n\n---\n\n💡 \u003ca href=\&#34;/saigyo/cc-what-have-i-done/new/main?filename=.github/instructions/*.instructions.md\&#34; class=\&#34;Link--inTextBlock\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener noreferrer\&#34;\u003eAdd Copilot custom instructions\u003c/a\u003e for smarter, more guided reviews. \u003ca href=\&#34;https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot\&#34; class=\&#34;Link--inTextBlock\&#34; target=\&#34;_blank\&#34; rel=\&#34;noopener noreferrer\&#34;\u003eLearn how to get started\u003c/a\u003e.&#34;,&#34;state&#34;:&#34;COMMENTED&#34;}
+=== inline comments ===</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1029" data-search="the review summary says 5 comments were generated, but the comments endpoint returned empty. let me fetch them via the review-comments endpoint and check all authors:">
+      <div class="turn-role">Claude<span class="usage-badge">534 tok · ~$0.10</span></div>
+      <div class="turn-body"><p>The review summary says 5 comments were generated, but the comments endpoint returned empty. Let me fetch them via the review-comments endpoint and check all authors:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1030" data-search="bash echo &#34;=== all pulls comments (any author) ===&#34; &amp;&amp; \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== all pulls comments (any author) ===&#34; &amp;&amp; \</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;echo \&#34;=== all pulls comments (any author) ===\&#34; \u0026\u0026 \\\ngh api \&#34;repos/saigyo/cc-what-have-i-done/pulls/8/comments?per_page=100\&#34; --jq &#39;.[] | {id, user: .user.login, path, line, body}&#39; 2\u003e/dev/null \u0026\u0026 \\\necho \&#34;=== review id ===\&#34; \u0026\u0026 \\\nRID=$(gh api repos/saigyo/cc-what-have-i-done/pulls/8/reviews --jq &#39;.[] | select(.user.login==\&#34;copilot-pull-request-reviewer[bot]\&#34;) | .id&#39;) \u0026\u0026 echo \&#34;$RID\&#34; \u0026\u0026 \\\necho \&#34;=== comments on that review ===\&#34; \u0026\u0026 \\\ngh api \&#34;repos/saigyo/cc-what-have-i-done/pulls/8/reviews/$RID/comments\&#34; --jq &#39;.[] | {id, path, line, body}&#39; 2\u003e/dev/null&#34;
+}</pre><pre class="tool-result">=== all pulls comments (any author) ===
+{&#34;body&#34;:&#34;Agent tool results currently ignore tc.Result.IsError, so error results lose the existing visual error affordance (tool-result-error) and may be harder to spot compared to other tool failures.&#34;,&#34;id&#34;:3566573460,&#34;line&#34;:364,&#34;path&#34;:&#34;internal/render/render.go&#34;,&#34;user&#34;:&#34;Copilot&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds an absolute local filesystem path (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider redacting/sanitizing local paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573474,&#34;line&#34;:1376,&#34;path&#34;:&#34;docs/session-report/subagents/agent-af0beb7f8d1b0d24b.html&#34;,&#34;user&#34;:&#34;Copilot&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds absolute local paths (\&#34;~/...\&#34; and /private/tmp/...) in the agent prompt/result. If these docs are published, this can leak environment/user details; consider sanitizing/redacting paths when generating the demo report.&#34;,&#34;id&#34;:3566573482,&#34;line&#34;:916,&#34;path&#34;:&#34;docs/session-report/subagents/agent-ace1d6a2e9d4eca91.html&#34;,&#34;user&#34;:&#34;Copilot&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds an absolute local filesystem path (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider sanitizing local paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573486,&#34;line&#34;:1270,&#34;path&#34;:&#34;docs/session-report/subagents/agent-a7a0fa1f230b1881e.html&#34;,&#34;user&#34;:&#34;Copilot&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds absolute local filesystem paths (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider sanitizing/redacting paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573494,&#34;line&#34;:1111,&#34;path&#34;:&#34;docs/session-report/subagents/agent-a4a0f2c1a18950550.html&#34;,&#34;user&#34;:&#34;Copilot&#34;}
+=== review id ===
+4680287415
+=== comments on that review ===
+{&#34;body&#34;:&#34;Agent tool results currently ignore tc.Result.IsError, so error results lose the existing visual error affordance (tool-result-error) and may be harder to spot compared to other tool failures.&#34;,&#34;id&#34;:3566573460,&#34;line&#34;:null,&#34;path&#34;:&#34;internal/render/render.go&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds an absolute local filesystem path (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider redacting/sanitizing local paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573474,&#34;line&#34;:null,&#34;path&#34;:&#34;docs/session-report/subagents/agent-af0beb7f8d1b0d24b.html&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds absolute local paths (\&#34;~/...\&#34; and /private/tmp/...) in the agent prompt/result. If these docs are published, this can leak environment/user details; consider sanitizing/redacting paths when generating the demo report.&#34;,&#34;id&#34;:3566573482,&#34;line&#34;:null,&#34;path&#34;:&#34;docs/session-report/subagents/agent-ace1d6a2e9d4eca91.html&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds an absolute local filesystem path (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider sanitizing local paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573486,&#34;line&#34;:null,&#34;path&#34;:&#34;docs/session-report/subagents/agent-a7a0fa1f230b1881e.html&#34;}
+{&#34;body&#34;:&#34;This regenerated report HTML embeds absolute local filesystem paths (\&#34;~/...\&#34;), which can leak a developer username and makes the checked-in docs machine-specific. Consider sanitizing/redacting paths in the demo transcript before committing generated docs.&#34;,&#34;id&#34;:3566573494,&#34;line&#34;:null,&#34;path&#34;:&#34;docs/session-report/subagents/agent-a4a0f2c1a18950550.html&#34;}</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1031" data-search="two distinct findings: (1) agent error results lose the `tool-result-error` affordance, and (2) the demo html embeds absolute `~/...` paths. finding 2 is the important one — it suggests the new `agentprompt` field may be bypassing redaction. let me check the redaction code:">
+      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.12</span></div>
+      <div class="turn-body"><p>Two distinct findings: (1) agent error results lose the <code>tool-result-error</code> affordance, and (2) the demo HTML embeds absolute <code>~/...</code> paths. Finding 2 is the important one — it suggests the new <code>AgentPrompt</code> field may be bypassing redaction. Let me check the redaction code:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1032" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
+}</pre><pre class="tool-result">1	// Package redact scrubs likely secrets and the user&#39;s home path from transcript
+2	// text before it is rendered. It is best-effort defense-in-depth, not a
+3	// guarantee of complete secret removal.
+4	package redact
+5	
+6	import (
+7		&#34;regexp&#34;
+8		&#34;strings&#34;
+9	
+10		&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;
+11	)
+12	
+13	type rule struct {
+14		kind string
+15		re   *regexp.Regexp
+16	}
+17	
+18	// Ordered: more specific patterns first.
+19	var rules = []rule{
+20		{&#34;aws-key&#34;, regexp.MustCompile(`\bAKIA[0-9A-Z]{16}\b`)},
+21		{&#34;token&#34;, regexp.MustCompile(`\b(?:sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}|xox[baprs]-[A-Za-z0-9-]{10,})\b`)},
+22		{&#34;jwt&#34;, regexp.MustCompile(`\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b`)},
+23		{&#34;assignment&#34;, regexp.MustCompile(`(?i)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD))\s*[=:]\s*[&#39;&#34;]?([^\s&#39;&#34;]{6,})`)},
+24	}
+25	
+26	// Redactor applies redaction rules and a home-directory rewrite.
+27	type Redactor struct {
+28		homeDir string
+29	}
+30	
+31	func New(homeDir string) *Redactor { return &amp;Redactor{homeDir: homeDir} }
+32	
+33	// String redacts a single string.
+34	func (r *Redactor) String(s string) string {
+35		for _, ru := range rules {
+36			if ru.kind == &#34;assignment&#34; {
+37				s = ru.re.ReplaceAllString(s, &#34;$1=[REDACTED:assignment]&#34;)
+38				continue
+39			}
+40			s = ru.re.ReplaceAllString(s, &#34;[REDACTED:&#34;+ru.kind+&#34;]&#34;)
+41		}
+42		if r.homeDir != &#34;&#34; {
+43			s = strings.ReplaceAll(s, r.homeDir, &#34;~&#34;)
+44		}
+45		return s
+46	}
+47	
+48	// Session redacts every user-visible text field of a Session in place.
+49	func Session(s *model.Session, homeDir string) {
+50		r := New(homeDir)
+51		// Session-level fields are rendered in the report header, so they must be
+52		// scrubbed too (ProjectPath in particular carries the home path/username).
+53		s.ProjectPath = r.String(s.ProjectPath)
+54		s.Title = r.String(s.Title)
+55		s.GitBranch = r.String(s.GitBranch)
+56		for i := range s.Turns {
+57			redactTurn(r, &amp;s.Turns[i])
+58		}
+59		for i := range s.Agents {
+60			s.Agents[i].Description = r.String(s.Agents[i].Description)
+61			Session(&amp;s.Agents[i].Session, homeDir)
+62		}
+63	}
+64	
+65	func redactTurn(r *Redactor, t *model.Turn) {
+66		t.AgentSummary = r.String(t.AgentSummary)
+67		for i := range t.Blocks {
+68			b := &amp;t.Blocks[i]
+69			b.Text = r.String(b.Text)
+70			if b.Tool != nil {
+71				redactTool(r, b.Tool)
+72			}
+73		}
+74	}
+75	
+76	func redactTool(r *Redactor, tc *model.ToolCall) {
+77		tc.Summary = r.String(tc.Summary)
+78		tc.InputJSON = r.String(tc.InputJSON)
+79		if tc.Result != nil {
+80			tc.Result.Content = r.String(tc.Result.Content)
+81		}
+82		if tc.Diff != nil {
+83			tc.Diff.OldText = r.String(tc.Diff.OldText)
+84			tc.Diff.NewText = r.String(tc.Diff.NewText)
+85			tc.Diff.Path = r.String(tc.Diff.Path)
+86		}
+87		for i := range tc.Subagents {
+88			tc.Subagents[i].Description = r.String(tc.Subagents[i].Description)
+89			for j := range tc.Subagents[i].Turns {
+90				redactTurn(r, &amp;tc.Subagents[i].Turns[j])
+91			}
+92		}
+93	}
+94	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1033" data-search="confirmed: **finding 2 is a real regression** — `redacttool` scrubs `inputjson` and `result.content` but not my new `agentprompt` field, so the newly-rendered prompt leaks `~/...` (the old demo showed the prompt via the redacted `inputjson`, so it was scrubbed before). **finding 1 is also valid** — agent error results drop the `tool-result-error` affordance. both are worth fixing.
+
+fix 1 — add `agentprompt` to redaction:">
+      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.14</span></div>
+      <div class="turn-body"><p>Confirmed: <strong>Finding 2 is a real regression</strong> — <code>redactTool</code> scrubs <code>InputJSON</code> and <code>Result.Content</code> but not my new <code>AgentPrompt</code> field, so the newly-rendered prompt leaks <code>~/...</code> (the old demo showed the prompt via the redacted <code>InputJSON</code>, so it was scrubbed before). <strong>Finding 1 is also valid</strong> — agent error results drop the <code>tool-result-error</code> affordance. Both are worth fixing.</p>
+<p>Fix 1 — add <code>AgentPrompt</code> to redaction:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1034" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func redactTool(r *Redactor, tc *model.ToolCall) {</div><div class="diff-del">- 	tc.Summary = r.String(tc.Summary)</div><div class="diff-del">- 	tc.InputJSON = r.String(tc.InputJSON)</div><div class="diff-add">+ func redactTool(r *Redactor, tc *model.ToolCall) {</div><div class="diff-add">+ 	tc.Summary = r.String(tc.Summary)</div><div class="diff-add">+ 	tc.InputJSON = r.String(tc.InputJSON)</div><div class="diff-add">+ 	tc.AgentPrompt = r.String(tc.AgentPrompt)</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1035" data-search="fix 2 — preserve the error affordance on agent results:">
+      <div class="turn-role">Claude<span class="usage-badge">419 tok · ~$0.10</span></div>
+      <div class="turn-body"><p>Fix 2 — preserve the error affordance on agent results:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1036" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		if tc.IsAgent() {</div><div class="diff-del">- 			// A subagent&#39;s result is markdown too; render it rather than showing</div><div class="diff-del">- 			// a monospace block.</div><div class="diff-del">- 			b.WriteString(`&lt;div class=&#34;agent-result-body&#34;&gt;` + string(Markdown(tc.Result.Content)) + `&lt;/div&gt;`)</div><div class="diff-del">- 		} else {</div><div class="diff-add">+ 		if tc.IsAgent() {</div><div class="diff-add">+ 			// A subagent&#39;s result is markdown too; render it rather than showing</div><div class="diff-add">+ 			// a monospace block — but keep the error affordance for failed runs.</div><div class="diff-add">+ 			cls := &#34;agent-result-body&#34;</div><div class="diff-add">+ 			if tc.Result.IsError {</div><div class="diff-add">+ 				cls += &#34; tool-result-error&#34;</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			b.WriteString(`&lt;div class=&#34;` + cls + `&#34;&gt;` + string(Markdown(tc.Result.Content)) + `&lt;/div&gt;`)</div><div class="diff-add">+ 		} else {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1037" data-search="now tests for both fixes. let me check the redact test file style:">
+      <div class="turn-role">Claude<span class="usage-badge">113 tok · ~$0.08</span></div>
+      <div class="turn-body"><p>Now tests for both fixes. Let me check the redact test file style:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1038" data-search="bash grep -n &#34;func test\|homedir\|redact.session\|session(&#34; internal/redact/redact_test.go | head -20">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func Test\|homeDir\|redact.Session\|Session(&#34; internal/redact/redact_test.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;grep -n \&#34;func Test\\|homeDir\\|redact.Session\\|Session(\&#34; internal/redact/redact_test.go | head -20&#34;
+}</pre><pre class="tool-result">10:func TestRedactPatterns(t *testing.T) {
+29:func TestRedactHomeDir(t *testing.T) {
+36:func TestRedactSessionWalksBlocks(t *testing.T) {
+48:	Session(s, &#34;~&#34;)
+58:func TestRedactSessionLevelFields(t *testing.T) {
+69:	Session(s, &#34;~&#34;)</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1039" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact_test.go">
+      <div class="turn-role">Claude<span class="usage-badge">131 tok · ~$0.08</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go&#34;,
+  &#34;limit&#34;: 45,
+  &#34;offset&#34;: 36
+}</pre><pre class="tool-result">36	func TestRedactSessionWalksBlocks(t *testing.T) {
+37		s := &amp;model.Session{Turns: []model.Turn{{
+38			Kind: model.TurnAssistant,
+39			Blocks: []model.Block{
+40				{Type: model.BlockText, Text: &#34;my key [REDACTED:aws-key]&#34;},
+41				{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+42					Name:    &#34;Bash&#34;,
+43					Summary: &#34;echo [REDACTED:aws-key]&#34;,
+44					Result:  &amp;model.ToolResult{Content: &#34;[REDACTED:aws-key]&#34;},
+45				}},
+46			},
+47		}}}
+48		Session(s, &#34;~&#34;)
+49		if strings.Contains(s.Turns[0].Blocks[0].Text, &#34;AKIA&#34;) {
+50			t.Error(&#34;block text not redacted&#34;)
+51		}
+52		tool := s.Turns[0].Blocks[1].Tool
+53		if strings.Contains(tool.Summary, &#34;AKIA&#34;) || strings.Contains(tool.Result.Content, &#34;AKIA&#34;) {
+54			t.Error(&#34;tool fields not redacted&#34;)
+55		}
+56	}
+57	
+58	func TestRedactSessionLevelFields(t *testing.T) {
+59		s := &amp;model.Session{
+60			ProjectPath: &#34;~/IdeaProjects/app&#34;,
+61			Turns: []model.Turn{{
+62				Kind: model.TurnAssistant,
+63				Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &amp;model.ToolCall{
+64					Name:      &#34;Task&#34;,
+65					Subagents: []model.Subagent{{Description: &#34;run [REDACTED:aws-key]&#34;}},
+66				}}},
+67			}},
+68		}
+69		Session(s, &#34;~&#34;)
+70		if strings.Contains(s.ProjectPath, &#34;~&#34;) {
+71			t.Errorf(&#34;ProjectPath home not rewritten: %q&#34;, s.ProjectPath)
+72		}
+73		if strings.Contains(s.Turns[0].Blocks[0].Tool.Subagents[0].Description, &#34;AKIA&#34;) {
+74			t.Error(&#34;subagent description not redacted&#34;)
+75		}
+76	}
+77	</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1040" data-search="bash cat &gt;&gt; internal/redact/redact_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude<span class="usage-badge">406 tok · ~$0.09</span></div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt;&gt; internal/redact/redact_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e\u003e internal/redact/redact_test.go \u003c\u003c&#39;EOF&#39;\n\nfunc TestRedactAgentPrompt(t *testing.T) {\n\ts := \u0026model.Session{Turns: []model.Turn{{\n\t\tKind: model.TurnAssistant,\n\t\tBlocks: []model.Block{{Type: model.BlockToolUse, Tool: \u0026model.ToolCall{\n\t\t\tName:        \&#34;Agent\&#34;,\n\t\t\tAgentPrompt: \&#34;read the brief at ~/IdeaProjects/app/brief.md and use [REDACTED:aws-key]\&#34;,\n\t\t}}},\n\t}}}\n\tSession(s, \&#34;~\&#34;)\n\tgot := s.Turns[0].Blocks[0].Tool.AgentPrompt\n\tif strings.Contains(got, \&#34;~\&#34;) {\n\t\tt.Errorf(\&#34;agent prompt home path not rewritten: %q\&#34;, got)\n\t}\n\tif strings.Contains(got, \&#34;AKIA\&#34;) {\n\t\tt.Errorf(\&#34;agent prompt secret not redacted: %q\&#34;, got)\n\t}\n}\nEOF\necho done&#34;
+}</pre><pre class="tool-result">done</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1041" data-search="now a render test for the error affordance:">
+      <div class="turn-role">Claude<span class="usage-badge">403 tok · ~$0.09</span></div>
+      <div class="turn-body"><p>Now a render test for the error affordance:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1042" data-search="bash cat &gt;&gt; internal/render/render_test.go &lt;&lt;&#39;eof&#39;">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt;&gt; internal/render/render_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;cat \u003e\u003e internal/render/render_test.go \u003c\u003c&#39;EOF&#39;\n\nfunc TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {\n\ttc := \u0026model.ToolCall{\n\t\tName:   \&#34;Agent\&#34;,\n\t\tResult: \u0026model.ToolResult{Content: \&#34;**Status:** BLOCKED\&#34;, IsError: true},\n\t}\n\tturn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}\n\tout := string(renderTurnBody(turn, newAgentLinks(nil, \&#34;\&#34;)))\n\tif !strings.Contains(out, `class=\&#34;agent-result-body tool-result-error\&#34;`) {\n\t\tt.Errorf(\&#34;agent error result should keep the tool-result-error affordance: %q\&#34;, out)\n\t}\n}\nEOF\ngofmt -w internal/redact/redact_test.go internal/render/render_test.go \u0026\u0026 \\\ngo test ./internal/redact/ ./internal/render/ 2\u003e\u00261 | tail -5&#34;
+}</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.286s
+ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.533s</pre></div></details></div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1043" data-search="both fixes pass. now regenerate the demo so the leaked paths get scrubbed, and verify:">
+      <div class="turn-role">Claude<span class="usage-badge">488 tok · ~$0.09</span></div>
+      <div class="turn-body"><p>Both fixes pass. Now regenerate the demo so the leaked paths get scrubbed, and verify:</p>
+</div>
+    </article>
+    
+    <article class="turn turn-assistant" id="turn-1044" data-search="bash go build -o /tmp/ccwhid ./cmd/ccwhid &amp;&amp; \">
+      <div class="turn-role">Claude</div>
+      <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build -o /tmp/ccwhid ./cmd/ccwhid &amp;&amp; \</span></summary><div class="tool-body"><pre class="tool-input">{
+  &#34;command&#34;: &#34;go build -o /tmp/ccwhid ./cmd/ccwhid \u0026\u0026 \\\n/tmp/ccwhid --session 41f7e8f4 --include-subagents --usage --out docs/session-report --force 2\u003e\u00261 | tail -1 \u0026\u0026 \\\necho \&#34;=== ~ leaks in demo now: ===\&#34; \u0026\u0026 \\\ngrep -rl &#39;~&#39; docs/session-report/ | wc -l | tr -d &#39; &#39; \u0026\u0026 \\\necho \&#34;(files still containing ~ — expect 0)\&#34;&#34;
+}</pre></div></details></div>
     </article>
     
   </main>
