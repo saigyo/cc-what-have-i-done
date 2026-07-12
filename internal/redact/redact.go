@@ -59,6 +59,7 @@ func Session(s *model.Session, homeDir string) {
 }
 
 func redactTurn(r *Redactor, t *model.Turn) {
+	t.AgentSummary = r.String(t.AgentSummary)
 	for i := range t.Blocks {
 		b := &t.Blocks[i]
 		b.Text = r.String(b.Text)

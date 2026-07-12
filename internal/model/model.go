@@ -7,8 +7,9 @@ import "time"
 type TurnKind string
 
 const (
-	TurnUser      TurnKind = "user"
-	TurnAssistant TurnKind = "assistant"
+	TurnUser        TurnKind = "user"
+	TurnAssistant   TurnKind = "assistant"
+	TurnAgentResult TurnKind = "agent-result" // background-agent completion fed back into the session
 )
 
 type BlockType string
@@ -48,6 +49,10 @@ type Turn struct {
 	Blocks    []Block
 	Model     string // assistant model id (empty for user turns / when absent)
 	Usage     *Usage // token usage for this assistant turn; nil when absent
+	// Agent-result fields, set only when Kind == TurnAgentResult.
+	AgentID      string // task/agent id from the notification
+	AgentStatus  string // e.g. "completed"
+	AgentSummary string // e.g. `Agent "Implement Task 12" finished`
 }
 
 // Usage holds the token counts reported for one assistant message. Cache writes
