@@ -42,7 +42,7 @@
           {{ range .Rows }}<tr><td>{{ .Label }}</td><td>{{ .Value }}</td></tr>{{ end }}
         </table>
         <table class="usage-models">
-          <tr><th>model</th><th>tokens</th><th>est. cost</th></tr>
+          <tr><th>model</th><th>in+out</th><th>est. cost</th></tr>
           {{ range .Models }}<tr><td>{{ .Model }}</td><td>{{ .Tokens }}</td><td>{{ .Cost }}</td></tr>{{ end }}
         </table>
         {{ end }}
