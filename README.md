@@ -81,7 +81,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--out <dir>` | Output directory |
 | `--title <str>` | Override the report title |
 | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; `--include-subagents=false` to omit) |
-| `--no-redact` | Disable secret redaction |
+| `--no-redact` | Disable all redaction (secrets, paths, and names) |
 | `--redact-name <str>` | Display name to scrub from output (default: your OS/git display name) |
 | `--no-redact-name` | Disable display-name redaction (account/path redaction still applies) |
 | `--force` | Overwrite a non-empty output directory |
