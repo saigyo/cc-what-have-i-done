@@ -41,6 +41,7 @@
   // Links inside <summary> (agent transcript links) must navigate, not toggle
   // the surrounding <details>.
   document.addEventListener('click', (e) => {
+    if (!(e.target instanceof Element)) return;
     const link = e.target.closest('a.agent-link');
     if (link) e.stopPropagation();
   }, true);
