@@ -96,7 +96,7 @@ func generate(opts *options, si discovery.SessionInfo) (string, error) {
 		home, _ := os.UserHomeDir()
 		redact.Session(&sess, home)
 	}
-	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
+	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {
 		return "", err
 	}
 	return outDir, nil

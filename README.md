@@ -84,6 +84,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--no-redact` | Disable secret redaction |
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
+| `--usage` | Include a token-usage & estimated-cost section (default off) |
 
 ## Redaction
 
@@ -98,6 +99,15 @@ Your prompts, Claude's replies (rendered markdown + syntax-highlighted code),
 tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking
 blocks, and — optionally — nested subagent activity. System reminders and
 attachments are omitted for readability.
+
+## Token usage & cost
+
+Pass `--usage` (or tick "Include usage & cost" in the TUI) to add a collapsible
+**Usage** card and per-turn cost badges. Token counts come straight from the
+transcript's `usage` data and are exact; cost is an **estimate** from a built-in
+Anthropic list-price table (dated in the report footnote) — unknown models show
+tokens with cost `n/a`, and server-tool fees are not included. Prices are
+embedded, so this works fully offline.
 
 ## License
 
