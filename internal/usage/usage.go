@@ -71,8 +71,12 @@ func Compute(s model.Session) Report {
 		r.Total.add(*t.Usage)
 		// Normalize the key so dated and undated ids for the same base model
 		// (e.g. claude-haiku-4-5 and claude-haiku-4-5-20251001) group into one
-		// row, matching how Lookup resolves prices.
+		// row, matching how Lookup resolves prices. A missing model id is
+		// labeled so it never renders as a blank row.
 		key := stripDateSuffix(t.Model)
+		if key == "" {
+			key = "<unknown>"
+		}
 		tc, ok := byModel[key]
 		if !ok {
 			tc = &TokenCounts{}

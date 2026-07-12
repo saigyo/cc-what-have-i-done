@@ -85,6 +85,16 @@ func TestComputeGroupsDatedAndUndatedModelIDs(t *testing.T) {
 	}
 }
 
+func TestComputeLabelsMissingModelID(t *testing.T) {
+	s := model.Session{Turns: []model.Turn{
+		{Kind: model.TurnAssistant, Model: "", Usage: u(100, 10, 0, 0, 0)},
+	}}
+	r := Compute(s)
+	if len(r.ByModel) != 1 || r.ByModel[0].Model != "<unknown>" {
+		t.Fatalf("missing model id should be labeled <unknown>, got %+v", r.ByModel)
+	}
+}
+
 func TestComputeNoUsage(t *testing.T) {
 	s := model.Session{Turns: []model.Turn{{Kind: model.TurnUser}, {Kind: model.TurnAssistant}}}
 	r := Compute(s)
