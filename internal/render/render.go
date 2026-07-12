@@ -183,7 +183,7 @@ func buildUsageView(r usage.Report) *usageView {
 	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf +
 		". Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded."
 	if hasUnpriced {
-		foot += " Totals exclude unpriced models (shown as n/a)."
+		foot += " Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted."
 	}
 	v.Footnote = foot
 	return v
