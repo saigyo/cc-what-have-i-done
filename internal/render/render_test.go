@@ -213,7 +213,7 @@ func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
 		AgentSummary: `Agent "Implement Task 12: Profiles view" finished`,
 		Blocks:       []model.Block{{Type: model.BlockText, Text: "All done."}},
 	}}}
-	d := buildViewModel(s, "t", Options{})
+	d := buildViewModel(s, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
 	tv := d.Turns[0]
 	if tv.RoleLabel != "Agent · Implement Task 12: Profiles view" {
 		t.Errorf("RoleLabel = %q", tv.RoleLabel)

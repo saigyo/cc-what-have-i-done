@@ -373,7 +373,7 @@ func (m model) viewOptions() string {
 		label string
 		on    bool
 	}{
-		{"Include subagents", m.sel.IncludeSubagents},
+		{"Include subagent work", m.sel.IncludeSubagents},
 		{"Redact secrets", m.sel.Redact},
 		{"Open in browser when done", m.sel.Open},
 		{"Include usage & cost", m.sel.Usage},

@@ -80,3 +80,5 @@ body.hide-tools .tool-body { display: none; }
 .turn-agent-result .turn-role { color: var(--accent); }
 .agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
 .usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; }
+.back-link { display: inline-block; font-size: 0.85rem; margin-bottom: 0.4rem; }
