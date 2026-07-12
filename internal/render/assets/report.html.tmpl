@@ -44,13 +44,14 @@
           <tr class="usage-total"><td>{{ .Total.Model }}</td><td>{{ .Total.Input }}</td><td>{{ .Total.Output }}</td><td>{{ .Total.CacheRead }}</td><td>{{ .Total.CacheWrite }}</td><td>{{ .Total.Cost }}</td></tr>
         </table>
         {{ end }}
+        {{ if .SubLine }}<p class="usage-sub">{{ .SubLine }}</p>{{ end }}
         <p class="usage-note">{{ .Footnote }}</p>
       </div>
     </details>
     {{ end }}
     {{ range .Turns }}
     <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}" data-search="{{ .SearchText }}">
-      <div class="turn-role">{{ .RoleLabel }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
+      <div class="turn-role">{{ .RoleLabel }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
       <div class="turn-body">{{ .Body }}</div>
     </article>
     {{ end }}

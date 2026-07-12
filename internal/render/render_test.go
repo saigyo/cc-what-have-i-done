@@ -9,6 +9,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
+	"github.com/saigyo/cc-what-have-i-done/internal/usage"
 )
 
 func TestMarkdownRendersHeadingAndCode(t *testing.T) {
@@ -202,5 +203,70 @@ func TestSiteWritesFiles(t *testing.T) {
 		if !strings.Contains(s, want) {
 			t.Errorf("index.html missing %q", want)
 		}
+	}
+}
+
+func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
+	s := model.Session{Turns: []model.Turn{{
+		Kind:         model.TurnAgentResult,
+		AgentStatus:  "completed",
+		AgentSummary: `Agent "Implement Task 12: Profiles view" finished`,
+		Blocks:       []model.Block{{Type: model.BlockText, Text: "All done."}},
+	}}}
+	d := buildViewModel(s, "t", Options{})
+	tv := d.Turns[0]
+	if tv.RoleLabel != "Agent · Implement Task 12: Profiles view" {
+		t.Errorf("RoleLabel = %q", tv.RoleLabel)
+	}
+	if tv.Status != "completed" {
+		t.Errorf("Status = %q", tv.Status)
+	}
+	if tv.Kind != "agent-result" {
+		t.Errorf("Kind = %q", tv.Kind)
+	}
+	if tv.RoleLabel == "You" {
+		t.Error("agent result must never be attributed to the user")
+	}
+}
+
+func TestAgentRoleLabelFallsBackWithoutQuotes(t *testing.T) {
+	if got := agentRoleLabel("something finished"); got != "Agent" {
+		t.Errorf("agentRoleLabel = %q, want Agent", got)
+	}
+	if got := agentRoleLabel(""); got != "Agent" {
+		t.Errorf("agentRoleLabel(empty) = %q, want Agent", got)
+	}
+}
+
+func TestUsageViewSubagentLineAndFootnote(t *testing.T) {
+	c := 5.0
+	r := usage.Report{
+		HasAnyUsage:   true,
+		Total:         usage.TokenCounts{Input: 2_000_000},
+		Subagents:     usage.TokenCounts{Input: 1_000_000},
+		SubagentsCost: &c,
+		AgentSessions: 3,
+		PricesAsOf:    "2026-07",
+	}
+	v := buildUsageView(r)
+	if v.SubLine != "of which subagents: 1.0M in+out · ~$5.00 (3 sessions)" {
+		t.Errorf("SubLine = %q", v.SubLine)
+	}
+	if !strings.Contains(v.Footnote, "Includes 3 linked subagent session(s)") {
+		t.Errorf("footnote = %q", v.Footnote)
+	}
+	if strings.Contains(v.Footnote, "sub-agent sessions stored as separate files") {
+		t.Errorf("old exclusion wording must go when agents are included: %q", v.Footnote)
+	}
+}
+
+func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {
+	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: "2026-07"}
+	v := buildUsageView(r)
+	if v.SubLine != "" {
+		t.Errorf("SubLine = %q, want empty", v.SubLine)
+	}
+	if !strings.Contains(v.Footnote, "sub-agent sessions stored as separate files, and server-tool fees, are excluded") {
+		t.Errorf("existing footnote must stay when no agents: %q", v.Footnote)
 	}
 }

@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"embed"
+	"fmt"
 	"html"
 	"html/template"
 	"os"
@@ -83,6 +84,7 @@ type turnView struct {
 	Index      int
 	Kind       string
 	RoleLabel  string
+	Status     string // agent-result status chip, e.g. "completed"
 	SearchText string
 	Body       template.HTML
 	Badge      string // per-turn usage badge, e.g. "12k tok · ~$0.18"
@@ -93,6 +95,7 @@ type usageView struct {
 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words
 	Models   []usageModel  // per-model rows, full token breakdown
 	Total    usageModel    // grand-total row
+	SubLine  string        // "of which subagents: …", empty when no linked agents
 	Footnote string
 }
 
@@ -131,7 +134,8 @@ func buildViewModel(s model.Session, title string, opts Options) viewData {
 		tv := turnView{
 			Index:      i,
 			Kind:       string(t.Kind),
-			RoleLabel:  roleLabel(t.Kind),
+			RoleLabel:  roleLabel(t),
+			Status:     t.AgentStatus,
 			SearchText: strings.ToLower(plain),
 			Body:       renderTurnBody(t),
 		}
@@ -180,8 +184,20 @@ func buildUsageView(r usage.Report) *usageView {
 	}
 	v.Total = modelRow("Total", r.Total, r.TotalCostUSD)
 
-	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf +
-		". Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded."
+	if r.AgentSessions > 0 {
+		sub := "of which subagents: " + formatTokens(r.Subagents.InOut()) + " in+out"
+		if r.SubagentsCost != nil {
+			sub += " · ~" + formatCost(*r.SubagentsCost)
+		}
+		v.SubLine = fmt.Sprintf("%s (%d sessions)", sub, r.AgentSessions)
+	}
+
+	foot := "Estimated — Anthropic list prices as of " + r.PricesAsOf + "."
+	if r.AgentSessions > 0 {
+		foot += fmt.Sprintf(" Includes %d linked subagent session(s); server-tool fees are excluded.", r.AgentSessions)
+	} else {
+		foot += " Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded."
+	}
 	if hasUnpriced {
 		foot += " Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted."
 	}
@@ -206,11 +222,26 @@ func modelRow(name string, t usage.TokenCounts, costUSD *float64) usageModel {
 	return row
 }
 
-func roleLabel(k model.TurnKind) string {
-	if k == model.TurnUser {
+func roleLabel(t model.Turn) string {
+	switch t.Kind {
+	case model.TurnUser:
 		return "You"
+	case model.TurnAgentResult:
+		return agentRoleLabel(t.AgentSummary)
+	default:
+		return "Claude"
 	}
-	return "Claude"
+}
+
+// agentRoleLabel derives `Agent · <name>` from a notification summary like
+// `Agent "Implement Task 12" finished`; plain "Agent" when no quoted name.
+func agentRoleLabel(summary string) string {
+	if i := strings.Index(summary, `"`); i >= 0 {
+		if j := strings.Index(summary[i+1:], `"`); j > 0 {
+			return "Agent · " + summary[i+1:i+1+j]
+		}
+	}
+	return "Agent"
 }
 
 // renderTurnBody renders all blocks of a turn to HTML.
@@ -254,7 +285,7 @@ func renderTool(tc *model.ToolCall) string {
 	for _, sub := range tc.Subagents {
 		b.WriteString(`<details class="subagent"><summary>subagent: ` + html.EscapeString(sub.Description) + `</summary>`)
 		for _, st := range sub.Turns {
-			b.WriteString(`<article class="turn turn-` + string(st.Kind) + `"><div class="turn-role">` + roleLabel(st.Kind) + `</div><div class="turn-body">`)
+			b.WriteString(`<article class="turn turn-` + string(st.Kind) + `"><div class="turn-role">` + roleLabel(st) + `</div><div class="turn-body">`)
 			b.WriteString(string(renderTurnBody(st)))
 			b.WriteString(`</div></article>`)
 		}
