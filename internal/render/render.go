@@ -414,6 +414,10 @@ func renderQuestions(qs []model.Question, result string) string {
 	var b strings.Builder
 	b.WriteString(`<div class="ask">`)
 	for _, q := range qs {
+		// Resolve the answer for THIS question up front so option selection is
+		// scoped per-question — otherwise a label shared with another question in
+		// the same call could be cross-marked.
+		answer := answerFor(result, q.Prompt)
 		b.WriteString(`<div class="ask-q">`)
 		if q.Header != "" {
 			b.WriteString(`<span class="ask-header">` + html.EscapeString(q.Header) + `</span>`)
@@ -424,7 +428,7 @@ func renderQuestions(qs []model.Question, result string) string {
 		b.WriteString(`<ul class="ask-options">`)
 		for _, o := range q.Options {
 			cls := "ask-option"
-			if optionChosen(result, o.Label) {
+			if optionChosen(o.Label, answer, result) {
 				cls += " ask-option-selected"
 			}
 			b.WriteString(`<li class="` + cls + `">`)
@@ -468,10 +472,24 @@ func renderAnswers(qs []model.Question, result string) string {
 		rows.String() + `</ul></div>`
 }
 
-// optionChosen reports whether an option label appears as a chosen answer in an
-// AskUserQuestion result string, which encodes answers as `="<label>"`.
-func optionChosen(result, label string) bool {
-	return label != "" && strings.Contains(result, `="`+label+`"`)
+// optionChosen reports whether an option was chosen for its question. It prefers
+// the answer parsed for that specific question — so a label shared between two
+// questions in the same call is not cross-marked — and only falls back to
+// scanning the whole result string when that question's answer could not be
+// parsed. The answer may be a ", "-joined list for multi-select questions.
+func optionChosen(label, answer, result string) bool {
+	if label == "" {
+		return false
+	}
+	if answer != "" {
+		for _, part := range strings.Split(answer, ", ") {
+			if strings.TrimSpace(part) == label {
+				return true
+			}
+		}
+		return false
+	}
+	return strings.Contains(result, `="`+label+`"`)
 }
 
 // answerFor extracts the answer for a given question prompt from an

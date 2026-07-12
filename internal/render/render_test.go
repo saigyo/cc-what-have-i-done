@@ -381,6 +381,28 @@ func TestAskUserQuestionCardRendersOptionsAndAnswers(t *testing.T) {
 	}
 }
 
+func TestAskUserQuestionSelectionIsScopedPerQuestion(t *testing.T) {
+	// Two questions share the option labels "Yes"/"No". The result picks "Yes"
+	// for the first and "No" for the second; each question must mark only its
+	// own answer, not the label shared with the other question.
+	tc := &model.ToolCall{
+		Name: "AskUserQuestion",
+		Questions: []model.Question{
+			{Header: "Cache", Prompt: "Enable cache?", Options: []model.QuestionOption{{Label: "Yes"}, {Label: "No"}}},
+			{Header: "Verbose", Prompt: "Verbose logs?", Options: []model.QuestionOption{{Label: "Yes"}, {Label: "No"}}},
+		},
+		Result: &model.ToolResult{Content: `Your questions have been answered: "Enable cache?"="Yes", "Verbose logs?"="No". Continue.`},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+
+	// Exactly two options selected across the whole card (one per question), not
+	// four (which the old whole-result scan would have produced).
+	if n := strings.Count(out, "ask-option-selected"); n != 2 {
+		t.Errorf("expected exactly 2 selected options (one per question), got %d: %q", n, out)
+	}
+}
+
 func TestAskUserQuestionFallsBackToRawResultWhenUnparsed(t *testing.T) {
 	// A result whose prompt does not match the question falls back to raw text.
 	tc := &model.ToolCall{
