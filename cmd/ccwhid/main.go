@@ -23,6 +23,8 @@ type options struct {
 	title            string
 	includeSubagents bool
 	noRedact         bool
+	redactName       string
+	noRedactName     bool
 	force            bool
 	open             bool
 	usage            bool
@@ -50,6 +52,8 @@ func newRootCmd() *cobra.Command {
 	f.StringVar(&opts.title, "title", "", "override the report title")
 	f.BoolVar(&opts.includeSubagents, "include-subagents", true, "include subagent work: inline Task sidechains and linked agent-session pages")
 	f.BoolVar(&opts.noRedact, "no-redact", false, "disable secret redaction")
+	f.StringVar(&opts.redactName, "redact-name", "", "display name to scrub from output (default: your OS/git display name)")
+	f.BoolVar(&opts.noRedactName, "no-redact-name", false, "disable display-name redaction (account/path redaction still applies)")
 	f.BoolVar(&opts.force, "force", false, "overwrite a non-empty output directory")
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
 	f.BoolVar(&opts.usage, "usage", false, "include a token-usage & estimated-cost section")

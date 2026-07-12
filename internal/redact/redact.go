@@ -5,6 +5,7 @@ package redact
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
@@ -35,19 +36,70 @@ var userPathRe = regexp.MustCompile(`(?i)([/\\-]+)(Users|home)([/\\-]+)([^/\\-]+
 // userPlaceholder replaces a scrubbed account name.
 const userPlaceholder = "[user]"
 
+// Config holds the known identity a Redactor scrubs. Both fields are optional;
+// an empty field disables the corresponding rule.
+type Config struct {
+	HomeDir  string // the user's home directory, rewritten to ~ and mined for the account name
+	UserName string // the user's display name, e.g. "Markus Ackermann"; its path/module forms are scrubbed
+}
+
 // Redactor applies redaction rules, a home-directory rewrite, and account-name
-// heuristics.
+// and display-name heuristics.
 type Redactor struct {
 	homeDir string
 	userRe  *regexp.Regexp // standalone mentions of our own account name; nil when unknown/unsafe
+	nameRe  *regexp.Regexp // path/module/verbatim forms of the display name; nil when unknown/unsafe
 }
 
-func New(homeDir string) *Redactor {
-	r := &Redactor{homeDir: homeDir}
-	if name := accountName(homeDir); name != "" {
+func New(cfg Config) *Redactor {
+	r := &Redactor{homeDir: cfg.HomeDir}
+	if name := accountName(cfg.HomeDir); name != "" {
 		r.userRe = regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(name) + `\b`)
 	}
+	if forms := nameForms(cfg.UserName); len(forms) > 0 {
+		// Match longer, more-specific forms first so "markusackermann" wins over
+		// any shorter overlap.
+		sort.Slice(forms, func(i, j int) bool { return len(forms[i]) > len(forms[j]) })
+		alts := make([]string, len(forms))
+		for i, f := range forms {
+			alts[i] = regexp.QuoteMeta(f)
+		}
+		r.nameRe = regexp.MustCompile(`(?i)\b(?:` + strings.Join(alts, "|") + `)\b`)
+	}
 	return r
+}
+
+// nameForms derives the literal strings to scrub from a display name: the
+// verbatim name plus its concatenated and separator-joined lowercase forms
+// (module paths, usernames). It returns nil for single-token names — those are
+// already covered by the account-name rule, and scrubbing a lone word (which
+// could be a common noun or company name) risks mangling unrelated text.
+func nameForms(full string) []string {
+	parts := strings.Fields(full)
+	if len(parts) < 2 {
+		return nil
+	}
+	lower := make([]string, len(parts))
+	for i, p := range parts {
+		lower[i] = strings.ToLower(p)
+	}
+	candidates := []string{
+		strings.Join(parts, " "), // "Markus Ackermann"
+		strings.Join(lower, ""),  // markusackermann
+		strings.Join(lower, "-"), // markus-ackermann
+		strings.Join(lower, "."), // markus.ackermann
+		strings.Join(lower, "_"), // markus_ackermann
+	}
+	var forms []string
+	seen := map[string]bool{}
+	for _, c := range candidates {
+		if len(c) < 4 || seen[c] {
+			continue
+		}
+		seen[c] = true
+		forms = append(forms, c)
+	}
+	return forms
 }
 
 // accountName extracts the login name from a home-directory path. It returns ""
@@ -82,6 +134,12 @@ func (r *Redactor) String(s string) string {
 	if r.homeDir != "" {
 		s = strings.ReplaceAll(s, r.homeDir, "~")
 	}
+	// Scrub the display name's path/module/verbatim forms (e.g. the account name
+	// in a Go module path, "github.com/markusackermann/…"), which the account-name
+	// rule below deliberately misses because of its word boundary.
+	if r.nameRe != nil {
+		s = r.nameRe.ReplaceAllString(s, userPlaceholder)
+	}
 	// Scrub account names in any remaining home-style path: dash-encoded project
 	// dirs, other users' home paths, Windows paths.
 	s = userPathRe.ReplaceAllString(s, "$1$2$3"+userPlaceholder)
@@ -94,8 +152,8 @@ func (r *Redactor) String(s string) string {
 }
 
 // Session redacts every user-visible text field of a Session in place.
-func Session(s *model.Session, homeDir string) {
-	r := New(homeDir)
+func Session(s *model.Session, cfg Config) {
+	r := New(cfg)
 	// Session-level fields are rendered in the report header, so they must be
 	// scrubbed too (ProjectPath in particular carries the home path/username).
 	s.ProjectPath = r.String(s.ProjectPath)
@@ -106,7 +164,7 @@ func Session(s *model.Session, homeDir string) {
 	}
 	for i := range s.Agents {
 		s.Agents[i].Description = r.String(s.Agents[i].Description)
-		Session(&s.Agents[i].Session, homeDir)
+		Session(&s.Agents[i].Session, cfg)
 	}
 }
 
@@ -125,6 +183,19 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 	tc.Summary = r.String(tc.Summary)
 	tc.InputJSON = r.String(tc.InputJSON)
 	tc.AgentPrompt = r.String(tc.AgentPrompt)
+	// AskUserQuestion cards render from the structured Questions, not InputJSON,
+	// so every field they surface must be scrubbed too.
+	for i := range tc.Questions {
+		q := &tc.Questions[i]
+		q.Header = r.String(q.Header)
+		q.Prompt = r.String(q.Prompt)
+		for j := range q.Options {
+			o := &q.Options[j]
+			o.Label = r.String(o.Label)
+			o.Description = r.String(o.Description)
+			o.Preview = r.String(o.Preview)
+		}
+	}
 	if tc.Result != nil {
 		tc.Result.Content = r.String(tc.Result.Content)
 	}

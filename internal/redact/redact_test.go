@@ -8,7 +8,7 @@ import (
 )
 
 func TestRedactPatterns(t *testing.T) {
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	cases := []struct {
 		in       string
 		wantKind string
@@ -27,7 +27,7 @@ func TestRedactPatterns(t *testing.T) {
 }
 
 func TestRedactHomeDir(t *testing.T) {
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	if got := r.String("/Users/markus/secret/file"); got != "~/secret/file" {
 		t.Errorf("home rewrite = %q", got)
 	}
@@ -45,7 +45,7 @@ func TestRedactSessionWalksBlocks(t *testing.T) {
 			}},
 		},
 	}}}
-	Session(s, "/Users/markus")
+	Session(s, Config{HomeDir: "/Users/markus"})
 	if strings.Contains(s.Turns[0].Blocks[0].Text, "AKIA") {
 		t.Error("block text not redacted")
 	}
@@ -66,7 +66,7 @@ func TestRedactSessionLevelFields(t *testing.T) {
 			}}},
 		}},
 	}
-	Session(s, "/Users/markus")
+	Session(s, Config{HomeDir: "/Users/markus"})
 	if strings.Contains(s.ProjectPath, "/Users/markus") {
 		t.Errorf("ProjectPath home not rewritten: %q", s.ProjectPath)
 	}
@@ -83,7 +83,7 @@ func TestRedactAgentPrompt(t *testing.T) {
 			AgentPrompt: "read the brief at /Users/markus/IdeaProjects/app/brief.md and use AKIAIOSFODNN7EXAMPLE",
 		}}},
 	}}}
-	Session(s, "/Users/markus")
+	Session(s, Config{HomeDir: "/Users/markus"})
 	got := s.Turns[0].Blocks[0].Tool.AgentPrompt
 	if strings.Contains(got, "/Users/markus") {
 		t.Errorf("agent prompt home path not rewritten: %q", got)
@@ -96,7 +96,7 @@ func TestRedactAgentPrompt(t *testing.T) {
 func TestRedactDashEncodedHomePath(t *testing.T) {
 	// Claude Code encodes project dirs by replacing "/" with "-", so the $HOME
 	// rewrite never sees them.
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	got := r.String("~/.claude/projects/-Users-markus-IdeaProjects-cc-what-have-i-done/x.jsonl")
 	if strings.Contains(got, "markus") {
 		t.Errorf("dash-encoded username not scrubbed: %q", got)
@@ -109,7 +109,7 @@ func TestRedactDashEncodedHomePath(t *testing.T) {
 func TestRedactOtherUsersPath(t *testing.T) {
 	// A foreign home path (different account) is scrubbed even though it isn't
 	// our $HOME.
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	for _, in := range []string{"/Users/alice/secret", `C:\Users\bob\file`, "/home/carol/x"} {
 		got := r.String(in)
 		for _, leak := range []string{"alice", "bob", "carol"} {
@@ -122,7 +122,7 @@ func TestRedactOtherUsersPath(t *testing.T) {
 
 func TestRedactOwnerColumn(t *testing.T) {
 	// `ls -l` owner column carries the username with no path context.
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	got := r.String("drwx------@ 8 markus staff 256 baufinanzierung")
 	if strings.Contains(got, "markus") {
 		t.Errorf("bare username in owner column not scrubbed: %q", got)
@@ -134,7 +134,7 @@ func TestRedactOwnerColumn(t *testing.T) {
 
 func TestRedactKeepsHomeTilde(t *testing.T) {
 	// The friendly ~ rewrite for our own home must survive.
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	if got := r.String("/Users/markus/IdeaProjects/app"); got != "~/IdeaProjects/app" {
 		t.Errorf("home tilde rewrite broken: %q", got)
 	}
@@ -152,8 +152,87 @@ func TestAccountNameSkipsSystemAndShortNames(t *testing.T) {
 }
 
 func TestRedactDoubledBackslashWindowsPath(t *testing.T) {
-	r := New("/Users/markus")
+	r := New(Config{HomeDir: "/Users/markus"})
 	if got := r.String(`C:\\Users\\bob\\file`); strings.Contains(got, "bob") {
 		t.Errorf("doubled-backslash Windows path not scrubbed: %q", got)
+	}
+}
+
+func TestRedactFullNameModulePathForms(t *testing.T) {
+	r := New(Config{HomeDir: "/Users/markus", UserName: "Markus Ackermann"})
+	cases := []struct{ in, notWant string }{
+		{"import github.com/markusackermann/ccwhid/internal/model", "markusackermann"},
+		{"see github.com/markus-ackermann/x", "markus-ackermann"},
+		{"user markus.ackermann pushed", "markus.ackermann"},
+		{"Signed-off-by: Markus Ackermann <x@y>", "Markus Ackermann"},
+	}
+	for _, c := range cases {
+		got := r.String(c.in)
+		if strings.Contains(got, c.notWant) {
+			t.Errorf("String(%q) = %q, still contains %q", c.in, got, c.notWant)
+		}
+		if !strings.Contains(got, userPlaceholder) {
+			t.Errorf("String(%q) = %q, expected %q", c.in, got, userPlaceholder)
+		}
+	}
+	// The canonical module-path leak collapses to the placeholder, keeping the rest.
+	if got := r.String("github.com/markusackermann/ccwhid"); got != "github.com/[user]/ccwhid" {
+		t.Errorf("module path scrub = %q, want github.com/[user]/ccwhid", got)
+	}
+}
+
+func TestRedactFullNameLeavesLegitimateRefsIntact(t *testing.T) {
+	r := New(Config{HomeDir: "/Users/markus", UserName: "Markus Ackermann"})
+	// The real module path must be untouched — only the known name is scrubbed.
+	if got := r.String("github.com/saigyo/cc-what-have-i-done"); got != "github.com/saigyo/cc-what-have-i-done" {
+		t.Errorf("legitimate ref altered: %q", got)
+	}
+}
+
+func TestRedactSingleTokenNameNotScrubbed(t *testing.T) {
+	// A one-word display name is too risky to scrub broadly (could be a common
+	// word) and is left to the account-name rule; nameForms returns nothing.
+	if forms := nameForms("Apple"); forms != nil {
+		t.Errorf("single-token name should yield no forms, got %v", forms)
+	}
+	r := New(Config{HomeDir: "/Users/markus", UserName: "Apple"})
+	if got := r.String("the Apple falls"); got != "the Apple falls" {
+		t.Errorf("single-token name over-redacted: %q", got)
+	}
+}
+
+func TestRedactNoUserNameKeepsNameForms(t *testing.T) {
+	// Without a configured name, compound-name forms are not scrubbed.
+	r := New(Config{HomeDir: "/Users/markus"})
+	if got := r.String("github.com/markusackermann/ccwhid"); !strings.Contains(got, "markusackermann") {
+		t.Errorf("no UserName should leave markusackermann intact: %q", got)
+	}
+}
+
+func TestRedactScrubsAskUserQuestionFields(t *testing.T) {
+	// AskUserQuestion cards render from the structured Questions, which must be
+	// scrubbed just like every other user-visible field.
+	s := &model.Session{Turns: []model.Turn{{
+		Kind: model.TurnAssistant,
+		Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+			Name: "AskUserQuestion",
+			Questions: []model.Question{{
+				Header: "Path for markus",
+				Prompt: "Use /Users/markus/secret?",
+				Options: []model.QuestionOption{{
+					Label:       "Yes, markusackermann",
+					Description: "keep ~/notes",
+					Preview:     "cat /Users/markus/.env",
+				}},
+			}},
+		}}},
+	}}}
+	Session(s, Config{HomeDir: "/Users/markus", UserName: "Markus Ackermann"})
+	q := s.Turns[0].Blocks[0].Tool.Questions[0]
+	blob := q.Header + "\n" + q.Prompt + "\n" + q.Options[0].Label + "\n" + q.Options[0].Description + "\n" + q.Options[0].Preview
+	for _, leak := range []string{"markusackermann", "/Users/markus"} {
+		if strings.Contains(blob, leak) {
+			t.Errorf("AskUserQuestion field still leaks %q: %q", leak, blob)
+		}
 	}
 }

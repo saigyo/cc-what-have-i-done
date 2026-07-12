@@ -82,6 +82,8 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--title <str>` | Override the report title |
 | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; `--include-subagents=false` to omit) |
 | `--no-redact` | Disable secret redaction |
+| `--redact-name <str>` | Display name to scrub from output (default: your OS/git display name) |
+| `--no-redact-name` | Disable display-name redaction (account/path redaction still applies) |
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
 | `--usage` | Include a token-usage & estimated-cost section (default off) |
@@ -94,9 +96,18 @@ It also scrubs account names from home-directory paths in any form — plain
 (`/Users/alice`, `/home/alice`), Windows (`C:\Users\alice`), and Claude Code's
 dash-encoded project dirs (`-Users-alice-IdeaProjects-…`) — plus standalone
 mentions of your own login name (e.g. the owner column of `ls -l` output),
-replacing them with `[user]`. This is best-effort defense-in-depth — **review
-generated reports before committing them** (a real name embedded in a URL or
-module path, for instance, is out of scope). Disable with `--no-redact`.
+replacing them with `[user]`.
+
+It also scrubs your **display name** (resolved from your OS account, or
+`git config user.name`, or `--redact-name`) in the forms that leak into module
+paths, usernames, and commit trailers — the verbatim name plus its concatenated
+and separator-joined variants (`Jane Doe`, `janedoe`, `jane-doe`, `jane.doe`),
+so `github.com/janedoe/project` becomes `github.com/[user]/project`. Only
+multi-word names are matched, and only the known name — generic GitHub usernames
+are left intact. Turn this off with `--no-redact-name`.
+
+This is best-effort defense-in-depth — **review generated reports before
+committing them.** Disable all redaction with `--no-redact`.
 
 ## What's included
 
