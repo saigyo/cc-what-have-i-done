@@ -80,6 +80,8 @@ type ToolCall struct {
 	Summary     string     // one-line summary for the collapsed card header
 	InputJSON   string     // pretty-printed input for generic display
 	AgentPrompt string     // for Task/Agent calls: the subagent prompt, rendered as markdown
+	Description string     // for TaskCreate calls: the task description, rendered as markdown
+	TaskNumber  string     // for TaskCreate calls: the created task's number from the result, e.g. "12"
 	Questions   []Question // set for AskUserQuestion calls
 	Result      *ToolResult
 	Diff        *Diff      // set for Edit/Write
@@ -95,6 +97,16 @@ func (t *ToolCall) IsAgent() bool {
 // IsAskUserQuestion reports whether this tool call is an AskUserQuestion prompt.
 func (t *ToolCall) IsAskUserQuestion() bool {
 	return t.Name == "AskUserQuestion"
+}
+
+// IsTaskCreate reports whether this tool call creates a tracked task.
+func (t *ToolCall) IsTaskCreate() bool {
+	return t.Name == "TaskCreate"
+}
+
+// IsTaskUpdate reports whether this tool call updates a tracked task.
+func (t *ToolCall) IsTaskUpdate() bool {
+	return t.Name == "TaskUpdate"
 }
 
 // Question is one question posed by an AskUserQuestion call, with its options.

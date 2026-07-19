@@ -295,6 +295,9 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 		case "tool_result":
 			if tc := toolIndex[b.ToolUseID]; tc != nil {
 				tc.Result = &model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+				if tc.IsTaskCreate() && !tc.Result.IsError {
+					tc.TaskNumber = taskNumber(tc.Result.Content)
+				}
 			}
 		}
 	}
@@ -350,6 +353,9 @@ func buildToolCall(b apiBlock) *model.ToolCall {
 	}
 	if tc.IsAskUserQuestion() {
 		tc.Questions = parseQuestions(input)
+	}
+	if tc.IsTaskCreate() {
+		tc.Description = str(input, "description")
 	}
 	return tc
 }
@@ -425,6 +431,10 @@ func toolSummary(name string, in map[string]any) string {
 		return str(in, "pattern")
 	case "Task", "Agent":
 		return str(in, "description")
+	case "TaskCreate":
+		return str(in, "subject")
+	case "TaskUpdate":
+		return taskUpdateSummary(in)
 	case "Skill":
 		return str(in, "skill")
 	case "AskUserQuestion":
@@ -462,6 +472,20 @@ func askQuestionSummary(in map[string]any) string {
 	return strings.Join(headers, " · ")
 }
 
+// taskUpdateSummary derives the collapsed-card header for a TaskUpdate call:
+// "#<taskId> · <status>", degrading to whichever part is present.
+func taskUpdateSummary(in map[string]any) string {
+	id, status := str(in, "taskId"), str(in, "status")
+	switch {
+	case id != "" && status != "":
+		return "#" + id + " · " + status
+	case id != "":
+		return "#" + id
+	default:
+		return status
+	}
+}
+
 func buildDiff(name string, in map[string]any) *model.Diff {
 	d := &model.Diff{Path: str(in, "file_path")}
 	if name == "Write" {
@@ -478,6 +502,20 @@ func taskDescription(tc *model.ToolCall) string {
 		return tc.Summary
 	}
 	return "subagent"
+}
+
+// taskNumber extracts N from a TaskCreate result like "Task #12 created
+// successfully: …". Returns "" when the content does not start that way.
+func taskNumber(content string) string {
+	rest, ok := strings.CutPrefix(content, "Task #")
+	if !ok {
+		return ""
+	}
+	i := 0
+	for i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {
+		i++
+	}
+	return rest[:i]
 }
 
 func firstLine(s string) string {

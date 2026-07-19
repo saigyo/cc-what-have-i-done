@@ -446,3 +446,138 @@ func TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {
 		t.Errorf("agent error result should keep the tool-result-error affordance: %q", out)
 	}
 }
+
+func TestTaskCreateCardTitleDescriptionAndResultSuppression(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:        "TaskCreate",
+		Summary:     "Ship the feature",
+		TaskNumber:  "12",
+		Description: "First **this**, then that.",
+		InputJSON:   `{"subject":"Ship the feature"}`,
+		Result:      &model.ToolResult{Content: "Task #12 created successfully: Ship the feature"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+
+	if !strings.Contains(out, "#12 · Ship the feature") {
+		t.Errorf("header should show the task number and subject: %q", out)
+	}
+	if !strings.Contains(out, `class="task-desc"`) {
+		t.Errorf("expected task-desc block: %q", out)
+	}
+	if !strings.Contains(out, "<strong>this</strong>") {
+		t.Errorf("description should be rendered as markdown: %q", out)
+	}
+	if strings.Contains(out, `class="tool-input"`) {
+		t.Errorf("TaskCreate card must not dump raw JSON input: %q", out)
+	}
+	if strings.Contains(out, "tool-result") {
+		t.Errorf("redundant TaskCreate result must be suppressed: %q", out)
+	}
+}
+
+func TestTaskCreateWithoutResultShowsSubjectOnly(t *testing.T) {
+	tc := &model.ToolCall{Name: "TaskCreate", Summary: "Ship the feature", Description: "Steps."}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if strings.Contains(out, "#") && strings.Contains(out, "· Ship the feature") {
+		t.Errorf("no result: header must not carry a number prefix: %q", out)
+	}
+	if !strings.Contains(out, "Ship the feature") {
+		t.Errorf("header should show the subject: %q", out)
+	}
+}
+
+func TestTaskCreateErrorResultStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:    "TaskCreate",
+		Summary: "Ship the feature",
+		Result:  &model.ToolResult{Content: "boom", IsError: true},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
+		t.Errorf("error result must keep the error affordance: %q", out)
+	}
+}
+
+func TestTaskUpdateCardTitleAndResultSuppression(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:      "TaskUpdate",
+		Summary:   "#3 · completed",
+		InputJSON: `{"taskId":"3","status":"completed"}`,
+		Result:    &model.ToolResult{Content: "Updated task #3 status"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, "#3 · completed") {
+		t.Errorf("header should show id and status: %q", out)
+	}
+	if !strings.Contains(out, `class="tool-input"`) {
+		t.Errorf("TaskUpdate body keeps the small input JSON: %q", out)
+	}
+	if strings.Contains(out, "tool-result") {
+		t.Errorf("redundant TaskUpdate result must be suppressed: %q", out)
+	}
+}
+
+func TestTaskUpdateErrorResultStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:    "TaskUpdate",
+		Summary: "#3 · completed",
+		Result:  &model.ToolResult{Content: "no such task", IsError: true},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
+		t.Errorf("error result must keep the error affordance: %q", out)
+	}
+}
+
+func TestHeaderSummaryPrefixesOnlyTaskCreate(t *testing.T) {
+	tc := &model.ToolCall{Name: "Bash", Summary: "ls", TaskNumber: "9"}
+	if got := headerSummary(tc); got != "ls" {
+		t.Errorf("headerSummary = %q; only TaskCreate cards get a number prefix", got)
+	}
+}
+
+func TestTaskCreateUnexpectedResultTextStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:       "TaskCreate",
+		Summary:    "Ship the feature",
+		TaskNumber: "12",
+		Result:     &model.ToolResult{Content: "Task #12 created with warnings: dependency cycle"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a result that is not the plain success line must stay visible: %q", out)
+	}
+}
+
+func TestTaskCreateMultilineResultStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:       "TaskCreate",
+		Summary:    "Ship the feature",
+		TaskNumber: "12",
+		Result:     &model.ToolResult{Content: "Task #12 created successfully: Ship the feature\nNote: blocked by task #11"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a multi-line result carries extra detail and must stay visible: %q", out)
+	}
+}
+
+func TestTaskUpdateUnexpectedResultTextStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:    "TaskUpdate",
+		Summary: "#3 · completed",
+		Result:  &model.ToolResult{Content: "Task #3 is blocked by task #2"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a result that is not the plain status line must stay visible: %q", out)
+	}
+}

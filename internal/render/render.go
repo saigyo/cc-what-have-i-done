@@ -339,8 +339,8 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 	var b strings.Builder
 	b.WriteString(`<details class="tool"><summary class="tool-head">`)
 	b.WriteString(`<span class="tool-name">` + html.EscapeString(tc.Name) + `</span>`)
-	if tc.Summary != "" {
-		b.WriteString(`<span class="tool-summary">` + html.EscapeString(StripANSI(tc.Summary)) + `</span>`)
+	if s := headerSummary(tc); s != "" {
+		b.WriteString(`<span class="tool-summary">` + html.EscapeString(StripANSI(s)) + `</span>`)
 	}
 	if href := links.forToolUse(tc.ID); href != "" {
 		b.WriteString(`<a class="agent-link" href="` + html.EscapeString(href) + `">transcript ↗</a>`)
@@ -357,10 +357,14 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 		// Render the questions and options as a readable list, highlighting the
 		// answer chosen, instead of dumping the raw JSON input.
 		b.WriteString(renderQuestions(tc.Questions, resultContent(tc)))
+	case tc.IsTaskCreate() && tc.Description != "":
+		// The task description is markdown; render it readably instead of
+		// dumping the raw JSON input.
+		b.WriteString(`<div class="task-desc">` + string(Markdown(tc.Description)) + `</div>`)
 	case tc.InputJSON != "":
 		b.WriteString(`<pre class="tool-input">` + html.EscapeString(tc.InputJSON) + `</pre>`)
 	}
-	if tc.Result != nil && tc.Result.Content != "" {
+	if tc.Result != nil && tc.Result.Content != "" && !resultRedundant(tc) {
 		switch {
 		case tc.IsAgent():
 			// A subagent's result is markdown too; render it rather than showing
@@ -401,6 +405,44 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 	}
 	b.WriteString(`</div></details>`)
 	return b.String()
+}
+
+// headerSummary is the text shown next to the tool name in the collapsed card
+// header: the parse-time Summary, prefixed with the created task's number for
+// TaskCreate calls whose result has been seen ("#12 · <subject>"). Summary
+// itself stays the plain subject so search text is unaffected.
+func headerSummary(tc *model.ToolCall) string {
+	switch {
+	case !tc.IsTaskCreate() || tc.TaskNumber == "":
+		return tc.Summary
+	case tc.Summary == "":
+		return "#" + tc.TaskNumber
+	default:
+		return "#" + tc.TaskNumber + " · " + tc.Summary
+	}
+}
+
+// resultRedundant reports whether a successful result only repeats what the
+// card title already shows: the single-line "Task #N created successfully: …"
+// once the number is in a TaskCreate title, the single-line "Updated task #N
+// status" once id · status is in a TaskUpdate title. Anything else — errors,
+// multi-line results, unexpected wording — stays visible.
+func resultRedundant(tc *model.ToolCall) bool {
+	if tc.Result == nil || tc.Result.IsError {
+		return false
+	}
+	c := tc.Result.Content
+	if strings.ContainsRune(c, '\n') {
+		return false
+	}
+	switch {
+	case tc.IsTaskCreate() && tc.TaskNumber != "":
+		return strings.HasPrefix(c, "Task #"+tc.TaskNumber+" created successfully")
+	case tc.IsTaskUpdate() && tc.Summary != "":
+		return strings.HasPrefix(c, "Updated task #")
+	default:
+		return false
+	}
 }
 
 // resultContent returns a tool call's result text, or "" when it has no result.

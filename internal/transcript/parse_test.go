@@ -256,3 +256,90 @@ func TestBuildToolCallSkillSummaryIsSkillName(t *testing.T) {
 		t.Errorf("Skill call should not set AgentPrompt, got %q", tc.AgentPrompt)
 	}
 }
+
+func TestBuildToolCallTaskCreateSummaryAndDescription(t *testing.T) {
+	b := apiBlock{
+		Type:  "tool_use",
+		ID:    "t4",
+		Name:  "TaskCreate",
+		Input: json.RawMessage(`{"subject":"Task 1: Parse records","description":"Do it with **care**."}`),
+	}
+	tc := buildToolCall(b)
+	if tc.Summary != "Task 1: Parse records" {
+		t.Errorf("Summary = %q, want the subject", tc.Summary)
+	}
+	if tc.Description != "Do it with **care**." {
+		t.Errorf("Description = %q", tc.Description)
+	}
+	if !tc.IsTaskCreate() {
+		t.Error("TaskCreate tool should report IsTaskCreate")
+	}
+}
+
+func TestBuildToolCallTaskUpdateSummary(t *testing.T) {
+	cases := []struct {
+		name, input, want string
+	}{
+		{"both", `{"taskId":"7","status":"completed"}`, "#7 · completed"},
+		{"id only", `{"taskId":"7"}`, "#7"},
+		{"status only", `{"status":"in_progress"}`, "in_progress"},
+		{"neither", `{}`, ""},
+	}
+	for _, c := range cases {
+		tc := buildToolCall(apiBlock{Type: "tool_use", ID: "t5", Name: "TaskUpdate", Input: json.RawMessage(c.input)})
+		if tc.Summary != c.want {
+			t.Errorf("%s: Summary = %q, want %q", c.name, tc.Summary, c.want)
+		}
+		if !tc.IsTaskUpdate() {
+			t.Errorf("%s: should report IsTaskUpdate", c.name)
+		}
+		if tc.Description != "" {
+			t.Errorf("%s: TaskUpdate must not set Description, got %q", c.name, tc.Description)
+		}
+	}
+}
+
+func TestTaskNumber(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"Task #12 created successfully: Ship it", "12"},
+		{"Task #7 created successfully", "7"},
+		{"Created task 12", ""},
+		{"Task #x created", ""},
+		{"", ""},
+	}
+	for _, c := range cases {
+		if got := taskNumber(c.in); got != c.want {
+			t.Errorf("taskNumber(%q) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
+
+func TestParseTaskCreateExtractsTaskNumber(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tc1","name":"TaskCreate","input":{"subject":"Ship it","description":"Steps."}}]},"timestamp":"2026-07-19T10:00:00Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tc1","content":"Task #12 created successfully: Ship it"}]},"timestamp":"2026-07-19T10:00:01Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	tool := s.Turns[0].Blocks[0].Tool
+	if tool.TaskNumber != "12" {
+		t.Errorf("TaskNumber = %q, want \"12\"", tool.TaskNumber)
+	}
+}
+
+func TestParseTaskCreateErrorResultLeavesNumberEmpty(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tc2","name":"TaskCreate","input":{"subject":"Ship it"}}]},"timestamp":"2026-07-19T10:00:00Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tc2","content":"Task #12 created successfully: Ship it","is_error":true}]},"timestamp":"2026-07-19T10:00:01Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	tool := s.Turns[0].Blocks[0].Tool
+	if tool.TaskNumber != "" {
+		t.Errorf("TaskNumber = %q, want empty for an error result", tool.TaskNumber)
+	}
+}
