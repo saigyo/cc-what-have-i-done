@@ -351,6 +351,9 @@ func buildToolCall(b apiBlock) *model.ToolCall {
 	if tc.IsAskUserQuestion() {
 		tc.Questions = parseQuestions(input)
 	}
+	if tc.IsTaskCreate() {
+		tc.Description = str(input, "description")
+	}
 	return tc
 }
 
@@ -425,6 +428,10 @@ func toolSummary(name string, in map[string]any) string {
 		return str(in, "pattern")
 	case "Task", "Agent":
 		return str(in, "description")
+	case "TaskCreate":
+		return str(in, "subject")
+	case "TaskUpdate":
+		return taskUpdateSummary(in)
 	case "Skill":
 		return str(in, "skill")
 	case "AskUserQuestion":
@@ -460,6 +467,20 @@ func askQuestionSummary(in map[string]any) string {
 		}
 	}
 	return strings.Join(headers, " · ")
+}
+
+// taskUpdateSummary derives the collapsed-card header for a TaskUpdate call:
+// "#<taskId> · <status>", degrading to whichever part is present.
+func taskUpdateSummary(in map[string]any) string {
+	id, status := str(in, "taskId"), str(in, "status")
+	switch {
+	case id != "" && status != "":
+		return "#" + id + " · " + status
+	case id != "":
+		return "#" + id
+	default:
+		return status
+	}
 }
 
 func buildDiff(name string, in map[string]any) *model.Diff {

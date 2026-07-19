@@ -256,3 +256,45 @@ func TestBuildToolCallSkillSummaryIsSkillName(t *testing.T) {
 		t.Errorf("Skill call should not set AgentPrompt, got %q", tc.AgentPrompt)
 	}
 }
+
+func TestBuildToolCallTaskCreateSummaryAndDescription(t *testing.T) {
+	b := apiBlock{
+		Type:  "tool_use",
+		ID:    "t4",
+		Name:  "TaskCreate",
+		Input: json.RawMessage(`{"subject":"Task 1: Parse records","description":"Do it with **care**."}`),
+	}
+	tc := buildToolCall(b)
+	if tc.Summary != "Task 1: Parse records" {
+		t.Errorf("Summary = %q, want the subject", tc.Summary)
+	}
+	if tc.Description != "Do it with **care**." {
+		t.Errorf("Description = %q", tc.Description)
+	}
+	if !tc.IsTaskCreate() {
+		t.Error("TaskCreate tool should report IsTaskCreate")
+	}
+}
+
+func TestBuildToolCallTaskUpdateSummary(t *testing.T) {
+	cases := []struct {
+		name, input, want string
+	}{
+		{"both", `{"taskId":"7","status":"completed"}`, "#7 · completed"},
+		{"id only", `{"taskId":"7"}`, "#7"},
+		{"status only", `{"status":"in_progress"}`, "in_progress"},
+		{"neither", `{}`, ""},
+	}
+	for _, c := range cases {
+		tc := buildToolCall(apiBlock{Type: "tool_use", ID: "t5", Name: "TaskUpdate", Input: json.RawMessage(c.input)})
+		if tc.Summary != c.want {
+			t.Errorf("%s: Summary = %q, want %q", c.name, tc.Summary, c.want)
+		}
+		if !tc.IsTaskUpdate() {
+			t.Errorf("%s: should report IsTaskUpdate", c.name)
+		}
+		if tc.Description != "" {
+			t.Errorf("%s: TaskUpdate must not set Description, got %q", c.name, tc.Description)
+		}
+	}
+}
