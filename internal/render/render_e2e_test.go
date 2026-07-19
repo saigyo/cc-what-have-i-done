@@ -73,7 +73,7 @@ func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
 		Agents: []model.AgentSession{agent},
 	}
 	dir := t.TempDir()
-	if err := render.Site(s, dir, render.Options{}); err != nil {
+	if err := render.Site(s, dir, render.Options{Version: "1.2.3"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -81,7 +81,9 @@ func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("agent page missing: %v", err)
 	}
-	for _, want := range []string{"agent work", `href="../index.html"`, `href="../assets/styles.css"`, "Implement Task 12"} {
+	// The shared template puts the version link on subagent pages too.
+	for _, want := range []string{"agent work", `href="../index.html"`, `href="../assets/styles.css"`, "Implement Task 12",
+		`href="https://github.com/saigyo/cc-what-have-i-done/releases/tag/v1.2.3"`} {
 		if !strings.Contains(string(page), want) {
 			t.Errorf("agent page missing %q", want)
 		}

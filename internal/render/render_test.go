@@ -587,7 +587,10 @@ func TestSiteShowsReleaseVersionLink(t *testing.T) {
 	if err := Site(sampleSession(), dir, Options{Version: "1.2.3"}); err != nil {
 		t.Fatal(err)
 	}
-	html, _ := os.ReadFile(filepath.Join(dir, "index.html"))
+	html, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	s := string(html)
 	if !strings.Contains(s, `href="https://github.com/saigyo/cc-what-have-i-done/releases/tag/v1.2.3"`) {
 		t.Errorf("index.html missing release link")
@@ -602,7 +605,10 @@ func TestSiteShowsDevBuildLink(t *testing.T) {
 	if err := Site(sampleSession(), dir, Options{Version: "dev"}); err != nil {
 		t.Fatal(err)
 	}
-	html, _ := os.ReadFile(filepath.Join(dir, "index.html"))
+	html, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	s := string(html)
 	if !strings.Contains(s, `href="https://github.com/saigyo/cc-what-have-i-done/"`) {
 		t.Errorf("index.html missing repo link")
