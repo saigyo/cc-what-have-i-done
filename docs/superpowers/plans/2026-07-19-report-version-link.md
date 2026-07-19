@@ -215,8 +215,13 @@ In `internal/render/assets/report.html.tmpl`, replace
 with
 
 ```html
-    <div class="brand">ccwhid<a class="brand-version" href="{{ .VersionHref }}">{{ .VersionLabel }}</a></div>
+    <div class="brand">ccwhid <a class="brand-version" href="{{ .VersionHref }}">{{ .VersionLabel }}</a></div>
 ```
+
+(The space between `ccwhid` and the anchor is load-bearing: it keeps the
+brand and version as separate DOM text nodes so extracted text reads
+"ccwhid dev build", not "ccwhiddev build". Whitespace-only text nodes are
+not flex items, so the stacked layout is unaffected.)
 
 In `internal/render/assets/styles.css`, replace line 29
 
