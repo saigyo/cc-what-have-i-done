@@ -23,3 +23,26 @@ func TestFormatCost(t *testing.T) {
 		t.Errorf("formatCost(0.001) = %q, want <$0.01", got)
 	}
 }
+
+func TestVersionLink(t *testing.T) {
+	const repo = "https://github.com/saigyo/cc-what-have-i-done/"
+	const tag = "https://github.com/saigyo/cc-what-have-i-done/releases/tag/"
+	cases := []struct{ in, label, href string }{
+		{"1.2.3", "v1.2.3", tag + "v1.2.3"},
+		{"v1.2.3", "v1.2.3", tag + "v1.2.3"},
+		{"0.10.7", "v0.10.7", tag + "v0.10.7"},
+		{"dev", "dev build", repo},
+		{"", "dev build", repo},
+		{"1.2.3-rc1", "dev build", repo},
+		{"1.2", "dev build", repo},
+		{"v1.2.3.4", "dev build", repo},
+		{"vx.y.z", "dev build", repo},
+		{"1..3", "dev build", repo},
+	}
+	for _, c := range cases {
+		label, href := versionLink(c.in)
+		if label != c.label || href != c.href {
+			t.Errorf("versionLink(%q) = (%q, %q), want (%q, %q)", c.in, label, href, c.label, c.href)
+		}
+	}
+}

@@ -581,3 +581,42 @@ func TestTaskUpdateUnexpectedResultTextStillShown(t *testing.T) {
 		t.Errorf("a result that is not the plain status line must stay visible: %q", out)
 	}
 }
+
+func TestSiteShowsReleaseVersionLink(t *testing.T) {
+	dir := t.TempDir()
+	if err := Site(sampleSession(), dir, Options{Version: "1.2.3"}); err != nil {
+		t.Fatal(err)
+	}
+	html, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(html)
+	if !strings.Contains(s, `href="https://github.com/saigyo/cc-what-have-i-done/releases/tag/v1.2.3"`) {
+		t.Errorf("index.html missing release link")
+	}
+	if !strings.Contains(s, `class="brand-version"`) || !strings.Contains(s, ">v1.2.3</a>") {
+		t.Errorf("index.html missing version label")
+	}
+	if !strings.Contains(s, `>ccwhid <a`) {
+		t.Errorf("brand text and version link must stay separate text nodes")
+	}
+}
+
+func TestSiteShowsDevBuildLink(t *testing.T) {
+	dir := t.TempDir()
+	if err := Site(sampleSession(), dir, Options{Version: "dev"}); err != nil {
+		t.Fatal(err)
+	}
+	html, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(html)
+	if !strings.Contains(s, `href="https://github.com/saigyo/cc-what-have-i-done/"`) {
+		t.Errorf("index.html missing repo link")
+	}
+	if !strings.Contains(s, ">dev build</a>") {
+		t.Errorf("index.html missing dev build label")
+	}
+}
