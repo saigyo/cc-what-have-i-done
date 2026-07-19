@@ -295,6 +295,9 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 		case "tool_result":
 			if tc := toolIndex[b.ToolUseID]; tc != nil {
 				tc.Result = &model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+				if tc.IsTaskCreate() && !tc.Result.IsError {
+					tc.TaskNumber = taskNumber(tc.Result.Content)
+				}
 			}
 		}
 	}
@@ -499,6 +502,20 @@ func taskDescription(tc *model.ToolCall) string {
 		return tc.Summary
 	}
 	return "subagent"
+}
+
+// taskNumber extracts N from a TaskCreate result like "Task #12 created
+// successfully: …". Returns "" when the content does not start that way.
+func taskNumber(content string) string {
+	rest, ok := strings.CutPrefix(content, "Task #")
+	if !ok {
+		return ""
+	}
+	i := 0
+	for i < len(rest) && rest[i] >= '0' && rest[i] <= '9' {
+		i++
+	}
+	return rest[:i]
 }
 
 func firstLine(s string) string {

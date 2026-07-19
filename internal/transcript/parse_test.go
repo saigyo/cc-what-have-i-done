@@ -298,3 +298,48 @@ func TestBuildToolCallTaskUpdateSummary(t *testing.T) {
 		}
 	}
 }
+
+func TestTaskNumber(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"Task #12 created successfully: Ship it", "12"},
+		{"Task #7 created successfully", "7"},
+		{"Created task 12", ""},
+		{"Task #x created", ""},
+		{"", ""},
+	}
+	for _, c := range cases {
+		if got := taskNumber(c.in); got != c.want {
+			t.Errorf("taskNumber(%q) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
+
+func TestParseTaskCreateExtractsTaskNumber(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tc1","name":"TaskCreate","input":{"subject":"Ship it","description":"Steps."}}]},"timestamp":"2026-07-19T10:00:00Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tc1","content":"Task #12 created successfully: Ship it"}]},"timestamp":"2026-07-19T10:00:01Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	tool := s.Turns[0].Blocks[0].Tool
+	if tool.TaskNumber != "12" {
+		t.Errorf("TaskNumber = %q, want \"12\"", tool.TaskNumber)
+	}
+}
+
+func TestParseTaskCreateErrorResultLeavesNumberEmpty(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tc2","name":"TaskCreate","input":{"subject":"Ship it"}}]},"timestamp":"2026-07-19T10:00:00Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tc2","content":"Task #12 created successfully: Ship it","is_error":true}]},"timestamp":"2026-07-19T10:00:01Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	tool := s.Turns[0].Blocks[0].Tool
+	if tool.TaskNumber != "" {
+		t.Errorf("TaskNumber = %q, want empty for an error result", tool.TaskNumber)
+	}
+}

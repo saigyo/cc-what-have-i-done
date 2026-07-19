@@ -81,6 +81,7 @@ type ToolCall struct {
 	InputJSON   string     // pretty-printed input for generic display
 	AgentPrompt string     // for Task/Agent calls: the subagent prompt, rendered as markdown
 	Description string     // for TaskCreate calls: the task description, rendered as markdown
+	TaskNumber  string     // for TaskCreate calls: the created task's number from the result, e.g. "12"
 	Questions   []Question // set for AskUserQuestion calls
 	Result      *ToolResult
 	Diff        *Diff      // set for Edit/Write
