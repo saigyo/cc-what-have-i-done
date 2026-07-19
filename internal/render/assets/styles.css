@@ -26,7 +26,9 @@
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--border); }
 .topbar-inner { display: flex; gap: .75rem; align-items: center; max-width: 1100px; margin: 0 auto; padding: .6rem 1rem; }
-.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; display: flex; flex-direction: column; line-height: 1.2; }
+.brand-version { font-size: .65rem; font-weight: 400; letter-spacing: 0; color: var(--muted); text-decoration: none; }
+.brand-version:hover { text-decoration: underline; }
 #filter { flex: 1; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
 .btn { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; font-size: .85rem; }
 .btn:hover { border-color: var(--accent); }

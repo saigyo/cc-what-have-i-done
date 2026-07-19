@@ -19,8 +19,9 @@ var assets embed.FS
 
 // Options configures a render.
 type Options struct {
-	Title string
-	Usage bool // render the token-usage & cost section
+	Title   string
+	Usage   bool   // render the token-usage & cost section
+	Version string // ccwhid build version; shown under the brand ("" → dev build)
 }
 
 // pageInfo describes where the page being rendered lives relative to outDir.
@@ -129,16 +130,18 @@ func Site(s model.Session, outDir string, opts Options) error {
 // view models -------------------------------------------------------------
 
 type viewData struct {
-	Title     string
-	Session   model.Session
-	StartedAt string
-	TurnCount int
-	Prompts   []promptRef
-	Turns     []turnView
-	Usage     *usageView
-	Base      string
-	BackHref  string
-	Subtitle  string
+	Title        string
+	Session      model.Session
+	StartedAt    string
+	TurnCount    int
+	Prompts      []promptRef
+	Turns        []turnView
+	Usage        *usageView
+	Base         string
+	BackHref     string
+	Subtitle     string
+	VersionLabel string
+	VersionHref  string
 }
 
 type promptRef struct {
@@ -186,6 +189,7 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		BackHref:  page.BackHref,
 		Subtitle:  page.Subtitle,
 	}
+	d.VersionLabel, d.VersionHref = versionLink(opts.Version)
 	if !s.StartedAt.IsZero() {
 		d.StartedAt = s.StartedAt.Format("2006-01-02 15:04")
 	}
