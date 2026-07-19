@@ -413,7 +413,7 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 // itself stays the plain subject so search text is unaffected.
 func headerSummary(tc *model.ToolCall) string {
 	switch {
-	case tc.TaskNumber == "":
+	case !tc.IsTaskCreate() || tc.TaskNumber == "":
 		return tc.Summary
 	case tc.Summary == "":
 		return "#" + tc.TaskNumber
@@ -422,15 +422,27 @@ func headerSummary(tc *model.ToolCall) string {
 	}
 }
 
-// resultRedundant reports whether a successful result would only repeat what
-// the card title already shows: "Task #N created successfully: …" once the
-// number is in a TaskCreate title, "Updated task #N status" once id · status
-// is in a TaskUpdate title. Errors are never redundant.
+// resultRedundant reports whether a successful result only repeats what the
+// card title already shows: the single-line "Task #N created successfully: …"
+// once the number is in a TaskCreate title, the single-line "Updated task #N
+// status" once id · status is in a TaskUpdate title. Anything else — errors,
+// multi-line results, unexpected wording — stays visible.
 func resultRedundant(tc *model.ToolCall) bool {
 	if tc.Result == nil || tc.Result.IsError {
 		return false
 	}
-	return (tc.IsTaskCreate() && tc.TaskNumber != "") || (tc.IsTaskUpdate() && tc.Summary != "")
+	c := tc.Result.Content
+	if strings.ContainsRune(c, '\n') {
+		return false
+	}
+	switch {
+	case tc.IsTaskCreate() && tc.TaskNumber != "":
+		return strings.HasPrefix(c, "Task #"+tc.TaskNumber+" created successfully")
+	case tc.IsTaskUpdate() && tc.Summary != "":
+		return strings.HasPrefix(c, "Updated task #")
+	default:
+		return false
+	}
 }
 
 // resultContent returns a tool call's result text, or "" when it has no result.

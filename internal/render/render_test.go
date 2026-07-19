@@ -533,3 +533,51 @@ func TestTaskUpdateErrorResultStillShown(t *testing.T) {
 		t.Errorf("error result must keep the error affordance: %q", out)
 	}
 }
+
+func TestHeaderSummaryPrefixesOnlyTaskCreate(t *testing.T) {
+	tc := &model.ToolCall{Name: "Bash", Summary: "ls", TaskNumber: "9"}
+	if got := headerSummary(tc); got != "ls" {
+		t.Errorf("headerSummary = %q; only TaskCreate cards get a number prefix", got)
+	}
+}
+
+func TestTaskCreateUnexpectedResultTextStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:       "TaskCreate",
+		Summary:    "Ship the feature",
+		TaskNumber: "12",
+		Result:     &model.ToolResult{Content: "Task #12 created with warnings: dependency cycle"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a result that is not the plain success line must stay visible: %q", out)
+	}
+}
+
+func TestTaskCreateMultilineResultStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:       "TaskCreate",
+		Summary:    "Ship the feature",
+		TaskNumber: "12",
+		Result:     &model.ToolResult{Content: "Task #12 created successfully: Ship the feature\nNote: blocked by task #11"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a multi-line result carries extra detail and must stay visible: %q", out)
+	}
+}
+
+func TestTaskUpdateUnexpectedResultTextStillShown(t *testing.T) {
+	tc := &model.ToolCall{
+		Name:    "TaskUpdate",
+		Summary: "#3 · completed",
+		Result:  &model.ToolResult{Content: "Task #3 is blocked by task #2"},
+	}
+	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
+	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	if !strings.Contains(out, `class="tool-result"`) {
+		t.Errorf("a result that is not the plain status line must stay visible: %q", out)
+	}
+}
