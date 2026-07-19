@@ -60,6 +60,8 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .agent-prompt::before, .agent-result-body::before { content: "prompt"; display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .2rem; }
 .agent-result-body { font-size: .9rem; }
 .agent-result-body::before { content: "result"; }
+.task-desc { border-left: 3px solid var(--accent-soft); padding: 0 .8rem; margin: .2rem 0 .8rem; font-size: .9rem; }
+.task-desc::before { content: "description"; display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .2rem; }
 .ask { margin: .2rem 0 .4rem; }
 .ask-q { margin-bottom: 1rem; }
 .ask-q:last-child { margin-bottom: 0; }
