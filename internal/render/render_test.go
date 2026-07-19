@@ -598,6 +598,9 @@ func TestSiteShowsReleaseVersionLink(t *testing.T) {
 	if !strings.Contains(s, `class="brand-version"`) || !strings.Contains(s, ">v1.2.3</a>") {
 		t.Errorf("index.html missing version label")
 	}
+	if !strings.Contains(s, `>ccwhid <a`) {
+		t.Errorf("brand text and version link must stay separate text nodes")
+	}
 }
 
 func TestSiteShowsDevBuildLink(t *testing.T) {
