@@ -10,6 +10,7 @@ func TestRootCmdHasExpectedFlags(t *testing.T) {
 	for _, name := range []string{
 		"session", "project", "latest", "out", "title",
 		"include-subagents", "no-redact", "force", "open",
+		"no-images",
 	} {
 		if cmd.Flags().Lookup(name) == nil {
 			t.Errorf("expected flag --%s to be registered", name)

@@ -1,6 +1,8 @@
 package render_test
 
 import (
+	"bytes"
+	"encoding/base64"
 	"os"
 	"path/filepath"
 	"strings"
@@ -106,5 +108,53 @@ func TestSiteNoAgentsWritesNoSubagentsDir(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, "subagents")); !os.IsNotExist(err) {
 		t.Errorf("subagents dir must not exist for agent-less sessions (err=%v)", err)
+	}
+}
+
+func TestEndToEndImages(t *testing.T) {
+	const tinyPNGb64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+	dir := t.TempDir()
+	src := filepath.Join(dir, "s.jsonl")
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":[{"type":"text","text":"see screenshot"},{"type":"image","source":{"type":"base64","media_type":"image/png","data":"` + tinyPNGb64 + `"}}]},"timestamp":"2026-07-20T10:00:00Z"}`,
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"t1","name":"Read","input":{"file_path":"/tmp/shot.png"}}]},"timestamp":"2026-07-20T10:00:01Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":[{"type":"image","source":{"type":"base64","media_type":"image/png","data":"` + tinyPNGb64 + `"}}]}]},"timestamp":"2026-07-20T10:00:02Z"}`,
+	}, "\n")
+	if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	sess, err := transcript.ParseFile(src, transcript.Options{IncludeSubagents: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	redact.Session(&sess, redact.Config{})
+	out := filepath.Join(dir, "report")
+	if err := render.Site(sess, out, render.Options{}); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := os.ReadDir(filepath.Join(out, "assets", "images"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 {
+		t.Fatalf("images dir has %d files, want 1 (same bytes in both places)", len(entries))
+	}
+	data, err := os.ReadFile(filepath.Join(out, "assets", "images", entries[0].Name()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := base64.StdEncoding.DecodeString(tinyPNGb64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(data, want) {
+		t.Error("written image bytes differ from the fixture")
+	}
+	page, err := os.ReadFile(filepath.Join(out, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Count(string(page), `src="assets/images/`+entries[0].Name()+`"`); got != 2 {
+		t.Errorf("index references the image %d times, want 2", got)
 	}
 }

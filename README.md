@@ -84,6 +84,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--no-redact` | Disable all redaction (secrets, paths, and names) |
 | `--redact-name <str>` | Display name to scrub from output (default: your OS/git display name) |
 | `--no-redact-name` | Disable display-name redaction (account/path redaction still applies) |
+| `--no-images` | Omit transcript images (they bypass redaction); show placeholders instead |
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
 | `--usage` | Include a token-usage & estimated-cost section (default off) |
@@ -109,6 +110,11 @@ are left intact. Turn this off with `--no-redact-name`.
 
 This is best-effort defense-in-depth — **review generated reports before
 committing them.** Disable all redaction with `--no-redact`.
+
+**Images bypass redaction.** Screenshots pasted into prompts and images
+returned by tools are copied into the report pixel-for-pixel — the redactor
+cannot see into them. Review reports containing images before sharing, or
+render with `--no-images`.
 
 ## What's included
 
