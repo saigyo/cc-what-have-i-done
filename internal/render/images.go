@@ -7,6 +7,7 @@ import (
 	"html"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
@@ -62,15 +63,8 @@ func forEachImage(s model.Session, fn func(model.Image)) {
 				if blk.Type == model.BlockImage && blk.Image != nil {
 					fn(*blk.Image)
 				}
-				if blk.Type == model.BlockToolUse && blk.Tool != nil {
-					if blk.Tool.Result != nil {
-						for _, img := range blk.Tool.Result.Images {
-							fn(img)
-						}
-					}
-					for _, sub := range blk.Tool.Subagents {
-						walkTurns(sub.Turns)
-					}
+				if blk.Type == model.BlockToolUse {
+					forEachToolCallImage(blk.Tool, fn)
 				}
 			}
 		}
@@ -79,6 +73,40 @@ func forEachImage(s model.Session, fn func(model.Image)) {
 	for _, a := range s.Agents {
 		walkTurns(a.Session.Turns)
 	}
+}
+
+// forEachToolCallImage calls fn for every image a tool call carries: its
+// result's images and, recursively, everything inside its nested sidechain
+// turns (which can themselves contain tool calls with images).
+func forEachToolCallImage(tc *model.ToolCall, fn func(model.Image)) {
+	if tc == nil {
+		return
+	}
+	if tc.Result != nil {
+		for _, img := range tc.Result.Images {
+			fn(img)
+		}
+	}
+	for _, sub := range tc.Subagents {
+		for _, t := range sub.Turns {
+			for _, blk := range t.Blocks {
+				if blk.Type == model.BlockImage && blk.Image != nil {
+					fn(*blk.Image)
+				}
+				if blk.Type == model.BlockToolUse {
+					forEachToolCallImage(blk.Tool, fn)
+				}
+			}
+		}
+	}
+}
+
+// toolImageCount is the number of images a collapsed tool card hides: result
+// images plus everything inside nested sidechain turns.
+func toolImageCount(tc *model.ToolCall) int {
+	n := 0
+	forEachToolCallImage(tc, func(model.Image) { n++ })
+	return n
 }
 
 // writeImages writes every distinct session image to outDir/assets/images/.
@@ -122,4 +150,20 @@ func renderImage(img model.Image, ctx bodyCtx) string {
 	}
 	return `<img class="turn-image" src="` + html.EscapeString(ctx.base+"assets/images/"+name) +
 		`" alt="` + html.EscapeString(label) + `" loading="lazy">`
+}
+
+// imageBadge is the collapsed-header indicator for a tool card that hides
+// images: the camera icon, plus the count when more than one. "" when the
+// card holds none. Shown regardless of NoImages — omission placeholders
+// inside the card are worth flagging too.
+func imageBadge(tc *model.ToolCall) string {
+	n := toolImageCount(tc)
+	if n == 0 {
+		return ""
+	}
+	badge := `<span class="image-badge"><span class="image-badge-icon">📷</span>`
+	if n > 1 {
+		badge += " " + strconv.Itoa(n)
+	}
+	return badge + `</span>`
 }

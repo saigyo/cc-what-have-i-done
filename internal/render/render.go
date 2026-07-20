@@ -364,6 +364,7 @@ func renderTool(tc *model.ToolCall, ctx bodyCtx) string {
 	if s := headerSummary(tc); s != "" {
 		b.WriteString(`<span class="tool-summary">` + html.EscapeString(StripANSI(s)) + `</span>`)
 	}
+	b.WriteString(imageBadge(tc))
 	if href := ctx.links.forToolUse(tc.ID); href != "" {
 		b.WriteString(`<a class="agent-link" href="` + html.EscapeString(href) + `">transcript ↗</a>`)
 	}

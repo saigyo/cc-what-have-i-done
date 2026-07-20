@@ -156,3 +156,133 @@ func TestSiteSubagentPageImageUsesBasePath(t *testing.T) {
 		t.Errorf("agent-session image not written: %v", err)
 	}
 }
+
+func TestToolImageCount(t *testing.T) {
+	img := testImage(t)
+	if got := toolImageCount(nil); got != 0 {
+		t.Errorf("nil tool call = %d, want 0", got)
+	}
+	if got := toolImageCount(&model.ToolCall{Name: "Bash"}); got != 0 {
+		t.Errorf("no result = %d, want 0", got)
+	}
+	if got := toolImageCount(&model.ToolCall{Result: &model.ToolResult{Content: "x"}}); got != 0 {
+		t.Errorf("imageless result = %d, want 0", got)
+	}
+	two := &model.ToolCall{Result: &model.ToolResult{Images: []model.Image{img, img}}}
+	if got := toolImageCount(two); got != 2 {
+		t.Errorf("result images = %d, want 2", got)
+	}
+	// One result image + a sidechain holding a pasted image block AND a nested
+	// tool call with its own result image: 3 in total.
+	side := &model.ToolCall{
+		Result: &model.ToolResult{Images: []model.Image{img}},
+		Subagents: []model.Subagent{{Turns: []model.Turn{{
+			Kind: model.TurnUser,
+			Blocks: []model.Block{
+				{Type: model.BlockImage, Image: &img},
+				{Type: model.BlockToolUse, Tool: &model.ToolCall{
+					Result: &model.ToolResult{Images: []model.Image{img}},
+				}},
+			},
+		}}}},
+	}
+	if got := toolImageCount(side); got != 3 {
+		t.Errorf("sidechain sum = %d, want 3", got)
+	}
+}
+
+func TestImageBadge(t *testing.T) {
+	img := testImage(t)
+	if got := imageBadge(&model.ToolCall{}); got != "" {
+		t.Errorf("no images: %q, want empty", got)
+	}
+	one := &model.ToolCall{Result: &model.ToolResult{Images: []model.Image{img}}}
+	want := `<span class="image-badge"><span class="image-badge-icon">📷</span></span>`
+	if got := imageBadge(one); got != want {
+		t.Errorf("one image:\n got %q\nwant %q", got, want)
+	}
+	three := &model.ToolCall{Result: &model.ToolResult{Images: []model.Image{img, img, img}}}
+	want = `<span class="image-badge"><span class="image-badge-icon">📷</span> 3</span>`
+	if got := imageBadge(three); got != want {
+		t.Errorf("three images:\n got %q\nwant %q", got, want)
+	}
+}
+
+func TestSiteToolCardShowsImageBadge(t *testing.T) {
+	img := testImage(t)
+	s := model.Session{Title: "b", Turns: []model.Turn{
+		{Kind: model.TurnAssistant, Blocks: []model.Block{
+			{Type: model.BlockToolUse, Tool: &model.ToolCall{
+				ID: "t1", Name: "Read", Summary: "a.png",
+				Result: &model.ToolResult{Images: []model.Image{img, img}},
+			}},
+			{Type: model.BlockToolUse, Tool: &model.ToolCall{
+				ID: "t2", Name: "Bash", Summary: "ls",
+				Result: &model.ToolResult{Content: "ok"},
+			}},
+		}},
+	}}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	page, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sp := string(page)
+	// Two identical images dedupe to one asset file but still count as 2.
+	if !strings.Contains(sp, `<span class="image-badge"><span class="image-badge-icon">📷</span> 2</span>`) {
+		t.Error("badge with count 2 missing")
+	}
+	// `class="image-badge">` (with closing quote+bracket) cannot match the
+	// icon span's class attribute, so this counts whole badges only.
+	if got := strings.Count(sp, `class="image-badge">`); got != 1 {
+		t.Errorf("found %d badges, want 1 (the Bash card must not badge)", got)
+	}
+}
+
+func TestSiteImageBadgeShownWithNoImages(t *testing.T) {
+	img := testImage(t)
+	s := model.Session{Title: "b", Turns: []model.Turn{
+		{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+			ID: "t1", Name: "Read", Summary: "a.png",
+			Result: &model.ToolResult{Images: []model.Image{img}},
+		}}}},
+	}}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{NoImages: true}); err != nil {
+		t.Fatal(err)
+	}
+	page, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(page), `class="image-badge">`) {
+		t.Error("badge must still show when images are omitted")
+	}
+}
+
+func TestSiteImageBadgePrecedesAgentLink(t *testing.T) {
+	img := testImage(t)
+	s := model.Session{
+		Title: "root",
+		Turns: []model.Turn{{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: &model.ToolCall{
+			ID: "toolu_1", Name: "Agent", Summary: "run checks",
+			Result: &model.ToolResult{Content: "done", Images: []model.Image{img}},
+		}}}}},
+		Agents: []model.AgentSession{{ID: "a1", ToolUseID: "toolu_1"}},
+	}
+	dir := t.TempDir()
+	if err := Site(s, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	page, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `📷</span></span><a class="agent-link"`
+	if !strings.Contains(string(page), want) {
+		t.Errorf("badge must directly precede the transcript link; %q not found", want)
+	}
+}
