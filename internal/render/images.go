@@ -7,6 +7,7 @@ import (
 	"html"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
@@ -149,4 +150,20 @@ func renderImage(img model.Image, ctx bodyCtx) string {
 	}
 	return `<img class="turn-image" src="` + html.EscapeString(ctx.base+"assets/images/"+name) +
 		`" alt="` + html.EscapeString(label) + `" loading="lazy">`
+}
+
+// imageBadge is the collapsed-header indicator for a tool card that hides
+// images: the camera icon, plus the count when more than one. "" when the
+// card holds none. Shown regardless of NoImages — omission placeholders
+// inside the card are worth flagging too.
+func imageBadge(tc *model.ToolCall) string {
+	n := toolImageCount(tc)
+	if n == 0 {
+		return ""
+	}
+	badge := `<span class="image-badge"><span class="image-badge-icon">📷</span>`
+	if n > 1 {
+		badge += " " + strconv.Itoa(n)
+	}
+	return badge + `</span>`
 }
