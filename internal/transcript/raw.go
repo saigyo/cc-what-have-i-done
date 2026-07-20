@@ -95,8 +95,8 @@ func toolResultParts(raw json.RawMessage) (string, []model.Image) {
 	return strings.Join(parts, "\n"), images
 }
 
-// imageMediaTypes maps the media types Claude accepts to the file extensions
-// the renderer uses; parsing admits only these.
+// imageMediaTypes is the set of media types Claude accepts; parsing admits
+// only these. The renderer maps them to file extensions.
 var imageMediaTypes = map[string]bool{
 	"image/png": true, "image/jpeg": true, "image/gif": true, "image/webp": true,
 }
@@ -113,13 +113,6 @@ func decodeImage(src *apiImageSource) (model.Image, bool) {
 		return model.Image{}, false
 	}
 	return model.Image{MediaType: src.MediaType, Data: data}, true
-}
-
-// toolResultText extracts plain text from a tool_result content payload.
-// (Kept for backward compatibility; new code should use toolResultParts.)
-func toolResultText(raw json.RawMessage) string {
-	text, _ := toolResultParts(raw)
-	return text
 }
 
 // apiUsage mirrors the message.usage object of an assistant record.

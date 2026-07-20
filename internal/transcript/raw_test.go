@@ -32,19 +32,6 @@ func TestDecodeMessageContentArray(t *testing.T) {
 	}
 }
 
-func TestToolResultTextArray(t *testing.T) {
-	got := toolResultText([]byte(`[{"type":"text","text":"line1"},{"type":"text","text":"line2"}]`))
-	if got != "line1\nline2" {
-		t.Errorf("toolResultText = %q", got)
-	}
-}
-
-func TestToolResultTextString(t *testing.T) {
-	if got := toolResultText([]byte(`"just text"`)); got != "just text" {
-		t.Errorf("toolResultText = %q", got)
-	}
-}
-
 // tinyPNGb64 is a valid 1×1 PNG, base64-encoded.
 const tinyPNGb64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
 
