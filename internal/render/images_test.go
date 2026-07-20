@@ -156,3 +156,37 @@ func TestSiteSubagentPageImageUsesBasePath(t *testing.T) {
 		t.Errorf("agent-session image not written: %v", err)
 	}
 }
+
+func TestToolImageCount(t *testing.T) {
+	img := testImage(t)
+	if got := toolImageCount(nil); got != 0 {
+		t.Errorf("nil tool call = %d, want 0", got)
+	}
+	if got := toolImageCount(&model.ToolCall{Name: "Bash"}); got != 0 {
+		t.Errorf("no result = %d, want 0", got)
+	}
+	if got := toolImageCount(&model.ToolCall{Result: &model.ToolResult{Content: "x"}}); got != 0 {
+		t.Errorf("imageless result = %d, want 0", got)
+	}
+	two := &model.ToolCall{Result: &model.ToolResult{Images: []model.Image{img, img}}}
+	if got := toolImageCount(two); got != 2 {
+		t.Errorf("result images = %d, want 2", got)
+	}
+	// One result image + a sidechain holding a pasted image block AND a nested
+	// tool call with its own result image: 3 in total.
+	side := &model.ToolCall{
+		Result: &model.ToolResult{Images: []model.Image{img}},
+		Subagents: []model.Subagent{{Turns: []model.Turn{{
+			Kind: model.TurnUser,
+			Blocks: []model.Block{
+				{Type: model.BlockImage, Image: &img},
+				{Type: model.BlockToolUse, Tool: &model.ToolCall{
+					Result: &model.ToolResult{Images: []model.Image{img}},
+				}},
+			},
+		}}}},
+	}
+	if got := toolImageCount(side); got != 3 {
+		t.Errorf("sidechain sum = %d, want 3", got)
+	}
+}

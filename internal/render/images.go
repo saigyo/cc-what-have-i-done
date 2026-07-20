@@ -62,15 +62,8 @@ func forEachImage(s model.Session, fn func(model.Image)) {
 				if blk.Type == model.BlockImage && blk.Image != nil {
 					fn(*blk.Image)
 				}
-				if blk.Type == model.BlockToolUse && blk.Tool != nil {
-					if blk.Tool.Result != nil {
-						for _, img := range blk.Tool.Result.Images {
-							fn(img)
-						}
-					}
-					for _, sub := range blk.Tool.Subagents {
-						walkTurns(sub.Turns)
-					}
+				if blk.Type == model.BlockToolUse {
+					forEachToolCallImage(blk.Tool, fn)
 				}
 			}
 		}
@@ -79,6 +72,40 @@ func forEachImage(s model.Session, fn func(model.Image)) {
 	for _, a := range s.Agents {
 		walkTurns(a.Session.Turns)
 	}
+}
+
+// forEachToolCallImage calls fn for every image a tool call carries: its
+// result's images and, recursively, everything inside its nested sidechain
+// turns (which can themselves contain tool calls with images).
+func forEachToolCallImage(tc *model.ToolCall, fn func(model.Image)) {
+	if tc == nil {
+		return
+	}
+	if tc.Result != nil {
+		for _, img := range tc.Result.Images {
+			fn(img)
+		}
+	}
+	for _, sub := range tc.Subagents {
+		for _, t := range sub.Turns {
+			for _, blk := range t.Blocks {
+				if blk.Type == model.BlockImage && blk.Image != nil {
+					fn(*blk.Image)
+				}
+				if blk.Type == model.BlockToolUse {
+					forEachToolCallImage(blk.Tool, fn)
+				}
+			}
+		}
+	}
+}
+
+// toolImageCount is the number of images a collapsed tool card hides: result
+// images plus everything inside nested sidechain turns.
+func toolImageCount(tc *model.ToolCall) int {
+	n := 0
+	forEachToolCallImage(tc, func(model.Image) { n++ })
+	return n
 }
 
 // writeImages writes every distinct session image to outDir/assets/images/.
