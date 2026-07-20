@@ -19,9 +19,10 @@ var assets embed.FS
 
 // Options configures a render.
 type Options struct {
-	Title   string
-	Usage   bool   // render the token-usage & cost section
-	Version string // ccwhid build version; shown under the brand ("" → dev build)
+	Title    string
+	Usage    bool   // render the token-usage & cost section
+	Version  string // ccwhid build version; shown under the brand ("" → dev build)
+	NoImages bool   // omit transcript images; show placeholders instead
 }
 
 // pageInfo describes where the page being rendered lives relative to outDir.
@@ -64,6 +65,13 @@ func (l *agentLinks) forAgent(id string) string {
 	return ""
 }
 
+// bodyCtx carries the page-level context needed while rendering turn bodies.
+type bodyCtx struct {
+	links    *agentLinks
+	base     string // asset prefix: "" on index.html, "../" on agent pages
+	noImages bool
+}
+
 // Site renders the session into outDir as index.html + assets/, plus one page
 // per linked agent session under subagents/.
 func Site(s model.Session, outDir string, opts Options) error {
@@ -89,6 +97,12 @@ func Site(s model.Session, outDir string, opts Options) error {
 			return err
 		}
 		if err := os.WriteFile(filepath.Join(outDir, "assets", name), b, 0o644); err != nil {
+			return err
+		}
+	}
+
+	if !opts.NoImages {
+		if err := writeImages(s, outDir); err != nil {
 			return err
 		}
 	}
@@ -211,7 +225,7 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 			RoleLabel:  roleLabel(t),
 			Status:     t.AgentStatus,
 			SearchText: strings.ToLower(plain),
-			Body:       renderTurnBody(t, links),
+			Body:       renderTurnBody(t, bodyCtx{links: links, base: page.Base, noImages: opts.NoImages}),
 		}
 		if t.Kind == model.TurnAgentResult {
 			tv.AgentHref = links.forAgent(t.AgentID)
@@ -322,7 +336,7 @@ func agentRoleLabel(summary string) string {
 }
 
 // renderTurnBody renders all blocks of a turn to HTML.
-func renderTurnBody(t model.Turn, links *agentLinks) template.HTML {
+func renderTurnBody(t model.Turn, ctx bodyCtx) template.HTML {
 	var b strings.Builder
 	for _, blk := range t.Blocks {
 		switch blk.Type {
@@ -332,21 +346,25 @@ func renderTurnBody(t model.Turn, links *agentLinks) template.HTML {
 			b.WriteString(`<details class="thinking"><summary>thinking</summary>`)
 			b.WriteString(string(Markdown(blk.Text)))
 			b.WriteString(`</details>`)
+		case model.BlockImage:
+			if blk.Image != nil {
+				b.WriteString(renderImage(*blk.Image, ctx))
+			}
 		case model.BlockToolUse:
-			b.WriteString(renderTool(blk.Tool, links))
+			b.WriteString(renderTool(blk.Tool, ctx))
 		}
 	}
 	return template.HTML(b.String())
 }
 
-func renderTool(tc *model.ToolCall, links *agentLinks) string {
+func renderTool(tc *model.ToolCall, ctx bodyCtx) string {
 	var b strings.Builder
 	b.WriteString(`<details class="tool"><summary class="tool-head">`)
 	b.WriteString(`<span class="tool-name">` + html.EscapeString(tc.Name) + `</span>`)
 	if s := headerSummary(tc); s != "" {
 		b.WriteString(`<span class="tool-summary">` + html.EscapeString(StripANSI(s)) + `</span>`)
 	}
-	if href := links.forToolUse(tc.ID); href != "" {
+	if href := ctx.links.forToolUse(tc.ID); href != "" {
 		b.WriteString(`<a class="agent-link" href="` + html.EscapeString(href) + `">transcript ↗</a>`)
 	}
 	b.WriteString(`</summary><div class="tool-body">`)
@@ -398,11 +416,16 @@ func renderTool(tc *model.ToolCall, links *agentLinks) string {
 			b.WriteString(`<pre class="` + cls + `">` + html.EscapeString(StripANSI(tc.Result.Content)) + `</pre>`)
 		}
 	}
+	if tc.Result != nil {
+		for _, img := range tc.Result.Images {
+			b.WriteString(renderImage(img, ctx))
+		}
+	}
 	for _, sub := range tc.Subagents {
 		b.WriteString(`<details class="subagent"><summary>subagent: ` + html.EscapeString(sub.Description) + `</summary>`)
 		for _, st := range sub.Turns {
 			b.WriteString(`<article class="turn turn-` + string(st.Kind) + `"><div class="turn-role">` + html.EscapeString(roleLabel(st)) + `</div><div class="turn-body">`)
-			b.WriteString(string(renderTurnBody(st, links)))
+			b.WriteString(string(renderTurnBody(st, ctx)))
 			b.WriteString(`</div></article>`)
 		}
 		b.WriteString(`</details>`)
@@ -567,6 +590,8 @@ func turnPlainText(t model.Turn) string {
 		switch blk.Type {
 		case model.BlockText, model.BlockThinking:
 			parts = append(parts, blk.Text)
+		case model.BlockImage:
+			parts = append(parts, "[image]")
 		case model.BlockToolUse:
 			parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
 		}
