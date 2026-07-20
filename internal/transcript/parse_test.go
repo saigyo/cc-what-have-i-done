@@ -2,6 +2,8 @@ package transcript
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -341,5 +343,44 @@ func TestParseTaskCreateErrorResultLeavesNumberEmpty(t *testing.T) {
 	tool := s.Turns[0].Blocks[0].Tool
 	if tool.TaskNumber != "" {
 		t.Errorf("TaskNumber = %q, want empty for an error result", tool.TaskNumber)
+	}
+}
+
+func TestParseFileImages(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "s.jsonl")
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":[{"type":"text","text":"look"},{"type":"image","source":{"type":"base64","media_type":"image/png","data":"` + tinyPNGb64 + `"}}]},"timestamp":"2026-07-20T10:00:00Z"}`,
+		`{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"t1","name":"Read","input":{"file_path":"/tmp/x.jpg"}}]},"timestamp":"2026-07-20T10:00:01Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":[{"type":"image","source":{"type":"base64","media_type":"image/jpeg","data":"` + tinyPNGb64 + `"}}]}]},"timestamp":"2026-07-20T10:00:02Z"}`,
+		`{"type":"user","message":{"role":"user","content":[{"type":"image","source":{"type":"base64","media_type":"image/png","data":"%%%corrupt%%%"}},{"type":"text","text":"after"}]},"timestamp":"2026-07-20T10:00:03Z"}`,
+	}, "\n")
+	if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	sess, err := ParseFile(src, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(sess.Turns) != 3 {
+		t.Fatalf("got %d turns, want 3", len(sess.Turns))
+	}
+	// Turn 0: text block then image block, in order.
+	b := sess.Turns[0].Blocks
+	if len(b) != 2 || b[0].Type != model.BlockText || b[1].Type != model.BlockImage {
+		t.Fatalf("turn 0 blocks = %+v", b)
+	}
+	if b[1].Image == nil || b[1].Image.MediaType != "image/png" || len(b[1].Image.Data) == 0 {
+		t.Errorf("turn 0 image = %+v", b[1].Image)
+	}
+	// The tool_result image lands on the Read call's result.
+	tc := sess.Turns[1].Blocks[0].Tool
+	if tc.Result == nil || len(tc.Result.Images) != 1 || tc.Result.Images[0].MediaType != "image/jpeg" {
+		t.Fatalf("tool result = %+v", tc.Result)
+	}
+	// Corrupt image block is skipped; the text block survives.
+	last := sess.Turns[2].Blocks
+	if len(last) != 1 || last[0].Type != model.BlockText || last[0].Text != "after" {
+		t.Errorf("corrupt-image turn blocks = %+v", last)
 	}
 }
