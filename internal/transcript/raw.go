@@ -1,9 +1,12 @@
 package transcript
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"strings"
 	"time"
+
+	"github.com/saigyo/cc-what-have-i-done/internal/model"
 )
 
 // rawRecord is one decoded line of a session .jsonl file.
@@ -32,6 +35,14 @@ type apiBlock struct {
 	ToolUseID string          `json:"tool_use_id"`
 	Content   json.RawMessage `json:"content"`
 	IsError   bool            `json:"is_error"`
+	Source    *apiImageSource `json:"source"`
+}
+
+// apiImageSource mirrors the source object of an image content block.
+type apiImageSource struct {
+	Type      string `json:"type"`       // "base64"
+	MediaType string `json:"media_type"` // "image/png", …
+	Data      string `json:"data"`
 }
 
 // decodeMessageContent extracts the role and content blocks from a raw message
@@ -57,29 +68,51 @@ func decodeMessageContent(raw json.RawMessage) (string, []apiBlock) {
 	return msg.Role, blocks
 }
 
-// toolResultText flattens a tool_result content payload to plain text.
-func toolResultText(raw json.RawMessage) string {
+// toolResultParts flattens a tool_result content payload into plain text and
+// any decodable images.
+func toolResultParts(raw json.RawMessage) (string, []model.Image) {
 	if len(raw) == 0 {
-		return ""
+		return "", nil
 	}
 	var s string
 	if json.Unmarshal(raw, &s) == nil {
-		return s
+		return s, nil
 	}
-	var blocks []struct {
-		Type string `json:"type"`
-		Text string `json:"text"`
+	var blocks []apiBlock
+	if json.Unmarshal(raw, &blocks) != nil {
+		return "", nil
 	}
-	if json.Unmarshal(raw, &blocks) == nil {
-		var parts []string
-		for _, b := range blocks {
-			if b.Text != "" {
-				parts = append(parts, b.Text)
-			}
+	var parts []string
+	var images []model.Image
+	for _, b := range blocks {
+		if b.Text != "" {
+			parts = append(parts, b.Text)
 		}
-		return strings.Join(parts, "\n")
+		if img, ok := decodeImage(b.Source); ok {
+			images = append(images, img)
+		}
 	}
-	return ""
+	return strings.Join(parts, "\n"), images
+}
+
+// imageMediaTypes is the set of media types Claude accepts; parsing admits
+// only these. The renderer maps them to file extensions.
+var imageMediaTypes = map[string]bool{
+	"image/png": true, "image/jpeg": true, "image/gif": true, "image/webp": true,
+}
+
+// decodeImage decodes an image content block's source. ok is false — and the
+// block is skipped — for missing or non-base64 sources, unsupported media
+// types, and data that does not decode to at least one byte.
+func decodeImage(src *apiImageSource) (model.Image, bool) {
+	if src == nil || src.Type != "base64" || !imageMediaTypes[src.MediaType] {
+		return model.Image{}, false
+	}
+	data, err := base64.StdEncoding.DecodeString(src.Data)
+	if err != nil || len(data) == 0 {
+		return model.Image{}, false
+	}
+	return model.Image{MediaType: src.MediaType, Data: data}, true
 }
 
 // apiUsage mirrors the message.usage object of an assistant record.

@@ -28,6 +28,7 @@ type options struct {
 	force            bool
 	open             bool
 	usage            bool
+	noImages         bool
 }
 
 // validate rejects contradictory flag combinations.
@@ -65,6 +66,7 @@ func newRootCmd() *cobra.Command {
 	f.BoolVar(&opts.force, "force", false, "overwrite a non-empty output directory")
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
 	f.BoolVar(&opts.usage, "usage", false, "include a token-usage & estimated-cost section")
+	f.BoolVar(&opts.noImages, "no-images", false, "omit transcript images (they bypass redaction); show placeholders instead")
 	return cmd
 }
 

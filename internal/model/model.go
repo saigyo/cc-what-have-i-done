@@ -18,6 +18,7 @@ const (
 	BlockText     BlockType = "text"
 	BlockThinking BlockType = "thinking"
 	BlockToolUse  BlockType = "tool_use"
+	BlockImage    BlockType = "image"
 )
 
 // Session is one fully-parsed Claude Code transcript.
@@ -66,11 +67,20 @@ type Usage struct {
 	CacheWrite1h int
 }
 
-// Block is one content unit: assistant/user text, a thinking block, or a tool call.
+// Block is one content unit: assistant/user text, a thinking block, a tool
+// call, or an image pasted into the conversation.
 type Block struct {
-	Type BlockType
-	Text string    // for BlockText and BlockThinking
-	Tool *ToolCall // for BlockToolUse
+	Type  BlockType
+	Text  string    // for BlockText and BlockThinking
+	Tool  *ToolCall // for BlockToolUse
+	Image *Image    // for BlockImage
+}
+
+// Image is one decoded image from the transcript — pasted by the user or
+// returned inside a tool result. Data holds raw bytes, not base64.
+type Image struct {
+	MediaType string // e.g. "image/png"
+	Data      []byte
 }
 
 // ToolCall is a single tool invocation and its result.
@@ -127,6 +137,7 @@ type QuestionOption struct {
 type ToolResult struct {
 	Content string
 	IsError bool
+	Images  []Image // images embedded in the result's content array
 }
 
 type Diff struct {

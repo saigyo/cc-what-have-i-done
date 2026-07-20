@@ -280,7 +280,7 @@ func TestSidechainAgentResultSummaryIsEscaped(t *testing.T) {
 			Blocks:       []model.Block{{Type: model.BlockText, Text: "x"}},
 		}},
 	}}}
-	out := renderTool(tc, newAgentLinks(nil, ""))
+	out := renderTool(tc, bodyCtx{links: newAgentLinks(nil, "")})
 	if strings.Contains(out, "<img") {
 		t.Fatal("agent summary must be HTML-escaped in sidechain rendering")
 	}
@@ -298,7 +298,7 @@ func TestAgentToolCardRendersPromptAndResultAsMarkdown(t *testing.T) {
 		Result:      &model.ToolResult{Content: "**Status:** DONE"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 
 	if !strings.Contains(out, `class="agent-prompt"`) {
 		t.Errorf("expected agent-prompt block, got %q", out)
@@ -331,7 +331,7 @@ func TestNonAgentToolResultStaysMonospace(t *testing.T) {
 		Result:    &model.ToolResult{Content: "file1\nfile2"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result"`) {
 		t.Errorf("non-agent result should keep the monospace tool-result block: %q", out)
 	}
@@ -356,7 +356,7 @@ func TestAskUserQuestionCardRendersOptionsAndAnswers(t *testing.T) {
 		Result:    &model.ToolResult{Content: `Your questions have been answered: "Go or explore an alternative?"="Go (Recommended)". You can now continue.`},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 
 	if !strings.Contains(out, `class="ask-header"`) || !strings.Contains(out, ">Language<") {
 		t.Errorf("expected header chip with the question header: %q", out)
@@ -394,7 +394,7 @@ func TestAskUserQuestionSelectionIsScopedPerQuestion(t *testing.T) {
 		Result: &model.ToolResult{Content: `Your questions have been answered: "Enable cache?"="Yes", "Verbose logs?"="No". Continue.`},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 
 	// Exactly two options selected across the whole card (one per question), not
 	// four (which the old whole-result scan would have produced).
@@ -415,7 +415,7 @@ func TestAskUserQuestionFallsBackToRawResultWhenUnparsed(t *testing.T) {
 		Result: &model.ToolResult{Content: "some unexpected result text"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result"`) || !strings.Contains(out, "some unexpected result text") {
 		t.Errorf("unparseable result should fall back to the raw monospace block: %q", out)
 	}
@@ -429,7 +429,7 @@ func TestAskUserQuestionErrorFallbackKeepsErrorAffordance(t *testing.T) {
 		Result:    &model.ToolResult{Content: "interrupted by user", IsError: true},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
 		t.Errorf("errored AskUserQuestion fallback should keep the tool-result-error affordance: %q", out)
 	}
@@ -441,7 +441,7 @@ func TestAgentErrorResultKeepsErrorAffordance(t *testing.T) {
 		Result: &model.ToolResult{Content: "**Status:** BLOCKED", IsError: true},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="agent-result-body tool-result-error"`) {
 		t.Errorf("agent error result should keep the tool-result-error affordance: %q", out)
 	}
@@ -457,7 +457,7 @@ func TestTaskCreateCardTitleDescriptionAndResultSuppression(t *testing.T) {
 		Result:      &model.ToolResult{Content: "Task #12 created successfully: Ship the feature"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 
 	if !strings.Contains(out, "#12 · Ship the feature") {
 		t.Errorf("header should show the task number and subject: %q", out)
@@ -479,7 +479,7 @@ func TestTaskCreateCardTitleDescriptionAndResultSuppression(t *testing.T) {
 func TestTaskCreateWithoutResultShowsSubjectOnly(t *testing.T) {
 	tc := &model.ToolCall{Name: "TaskCreate", Summary: "Ship the feature", Description: "Steps."}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if strings.Contains(out, "#") && strings.Contains(out, "· Ship the feature") {
 		t.Errorf("no result: header must not carry a number prefix: %q", out)
 	}
@@ -495,7 +495,7 @@ func TestTaskCreateErrorResultStillShown(t *testing.T) {
 		Result:  &model.ToolResult{Content: "boom", IsError: true},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
 		t.Errorf("error result must keep the error affordance: %q", out)
 	}
@@ -509,7 +509,7 @@ func TestTaskUpdateCardTitleAndResultSuppression(t *testing.T) {
 		Result:    &model.ToolResult{Content: "Updated task #3 status"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, "#3 · completed") {
 		t.Errorf("header should show id and status: %q", out)
 	}
@@ -528,7 +528,7 @@ func TestTaskUpdateErrorResultStillShown(t *testing.T) {
 		Result:  &model.ToolResult{Content: "no such task", IsError: true},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result tool-result-error"`) {
 		t.Errorf("error result must keep the error affordance: %q", out)
 	}
@@ -549,7 +549,7 @@ func TestTaskCreateUnexpectedResultTextStillShown(t *testing.T) {
 		Result:     &model.ToolResult{Content: "Task #12 created with warnings: dependency cycle"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result"`) {
 		t.Errorf("a result that is not the plain success line must stay visible: %q", out)
 	}
@@ -563,7 +563,7 @@ func TestTaskCreateMultilineResultStillShown(t *testing.T) {
 		Result:     &model.ToolResult{Content: "Task #12 created successfully: Ship the feature\nNote: blocked by task #11"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result"`) {
 		t.Errorf("a multi-line result carries extra detail and must stay visible: %q", out)
 	}
@@ -576,7 +576,7 @@ func TestTaskUpdateUnexpectedResultTextStillShown(t *testing.T) {
 		Result:  &model.ToolResult{Content: "Task #3 is blocked by task #2"},
 	}
 	turn := model.Turn{Kind: model.TurnAssistant, Blocks: []model.Block{{Type: model.BlockToolUse, Tool: tc}}}
-	out := string(renderTurnBody(turn, newAgentLinks(nil, "")))
+	out := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
 	if !strings.Contains(out, `class="tool-result"`) {
 		t.Errorf("a result that is not the plain status line must stay visible: %q", out)
 	}

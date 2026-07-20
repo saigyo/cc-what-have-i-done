@@ -286,6 +286,10 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 			if b.Thinking != "" {
 				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockThinking, Text: b.Thinking})
 			}
+		case "image":
+			if img, ok := decodeImage(b.Source); ok {
+				turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockImage, Image: &img})
+			}
 		case "tool_use":
 			tc := buildToolCall(b)
 			// Register the tool call so a later tool_result (in this turn's
@@ -294,7 +298,8 @@ func buildTurn(rec rawRecord, blocks []apiBlock, toolIndex map[string]*model.Too
 			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})
 		case "tool_result":
 			if tc := toolIndex[b.ToolUseID]; tc != nil {
-				tc.Result = &model.ToolResult{Content: toolResultText(b.Content), IsError: b.IsError}
+				text, images := toolResultParts(b.Content)
+				tc.Result = &model.ToolResult{Content: text, IsError: b.IsError, Images: images}
 				if tc.IsTaskCreate() && !tc.Result.IsError {
 					tc.TaskNumber = taskNumber(tc.Result.Content)
 				}

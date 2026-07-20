@@ -45,4 +45,11 @@
     const link = e.target.closest('a.agent-link');
     if (link) e.stopPropagation();
   }, true);
+
+  // Transcript images render as capped thumbnails; a click toggles full size.
+  document.addEventListener('click', function (e) {
+    if (!(e.target instanceof Element)) return;
+    var img = e.target.closest('img.turn-image');
+    if (img) img.classList.toggle('expanded');
+  });
 })();
