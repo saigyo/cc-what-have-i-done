@@ -383,6 +383,34 @@ func TestCommandCardWithoutOutputOmitsPre(t *testing.T) {
 	}
 }
 
+func TestSiteRendersCommandCardAndCleanPrompt(t *testing.T) {
+	sess := model.Session{Turns: []model.Turn{{
+		Kind: model.TurnUser,
+		Blocks: []model.Block{{
+			Type:    model.BlockCommand,
+			Command: &model.Command{Invocation: "/model", Output: "Set model to Fable 5"},
+		}},
+	}}}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	if !strings.Contains(out, `<code class="command-invocation">/model</code>`) {
+		t.Error("command card missing from report")
+	}
+	if !strings.Contains(out, `<span class="prompt-preview">/model Set model to Fable 5</span>`) {
+		t.Error("sidebar prompt entry not the clean invocation + output text")
+	}
+	if strings.Contains(out, "command-name&gt;") || strings.Contains(out, "&lt;command-name") {
+		t.Error("raw command markup leaked into the report")
+	}
+}
+
 func TestCommandTurnPlainTextIsClean(t *testing.T) {
 	turn := model.Turn{Kind: model.TurnUser, Blocks: []model.Block{{
 		Type:    model.BlockCommand,
