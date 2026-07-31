@@ -1,97 +1,176 @@
-# Third-Party Licenses — README Table + `--license` Flag — Design
+# Third-Party Licenses — Notices File, README Table, `--license` Flag — Design
 
-**Status:** approved (2026-07-31)
+**Status:** approved (2026-07-31), revised same day after license research
 
-**Goal:** Document the licenses of ccwhid's direct dependencies in the
-README, and let the shipped binary print the same information (with full
-license texts) via a `--license` CLI flag.
+**Goal:** Ship complete third-party license notices with every ccwhid
+binary: a generated `THIRD_PARTY_LICENSES.txt` covering **every module
+linked into the release binaries** (transitive included, plus the Go
+standard library), embedded in the binary and printed by a `--license`
+flag; a curated direct-dependency table in the README; CI guards that
+keep all of it current and license-clean.
 
 ## Motivation
 
-ccwhid statically links six third-party libraries into its release
-binaries. Their licenses (MIT, Apache-2.0) require the copyright and
-permission notices to accompany distributed copies. A README table makes
-the attribution visible in the repo; the `--license` flag makes it
-self-contained in the binary — no repo access needed.
+Go links statically. A distributed ccwhid binary contains copies of every
+linked module, and MIT/BSD/ISC/Apache-2.0 all require their copyright and
+permission notices to accompany binary distribution — regardless of
+whether the module is a direct or transitive dependency. Direct/transitive
+is a build-graph property, not a copyright concept. Covering only the six
+direct deps would miss most of the required notices (~25 modules link in).
 
-## Scope
+## Scope findings (verified)
 
-**Direct dependencies only** — the six modules in go.mod's first `require`
-block:
-
-| Module | License | Copyright |
-|---|---|---|
-| github.com/alecthomas/chroma/v2 | MIT | Alec Thomas |
-| github.com/charmbracelet/bubbletea | MIT | Charmbracelet, Inc |
-| github.com/charmbracelet/lipgloss | MIT | Charmbracelet, Inc |
-| github.com/spf13/cobra | Apache-2.0 | The Cobra Authors |
-| github.com/yuin/goldmark | MIT | Yusuke Inuzuka |
-| github.com/yuin/goldmark-highlighting/v2 | MIT | Yusuke Inuzuka |
-
-Indirect dependencies are out of scope by decision: the README and the
-flag both say "direct dependencies" explicitly.
+- The linked module set is **platform-dependent**: on darwin the binary
+  links 22 modules; `github.com/erikgeiser/coninput` and
+  `github.com/inconshreveable/mousetrap` are Windows-only. The notices
+  file must therefore cover the **union across the release GOOS matrix**
+  (linux, darwin, windows).
+- `go list -deps ./cmd/ccwhid` (build deps of the main package, no test
+  deps) is the per-GOOS source of truth; go.mod alone over-approximates
+  (test-only modules) and one machine's build under-approximates.
+- `CGO_ENABLED=0` in GoReleaser — no C libraries to attribute.
+- The Go standard library and runtime (BSD-3-Clause, © The Go Authors)
+  are also statically linked and are included as their own section.
 
 ## Decisions
 
-- **Output form:** `--license` prints a compact aligned table first
-  (Component / Version / License / Copyright), then the six full license
-  texts. Full texts make binary distribution formally compliant; ~25 KB
-  embedded is negligible.
-- **Drift guard:** license file copies live in the repo and are embedded
-  via `go:embed`; a test parses go.mod and fails when the direct-require
-  set and the component list diverge. Dependency changes break CI until
-  data and README are updated.
-- **Versions:** resolved at runtime from `runtime/debug.ReadBuildInfo()`,
-  matched by module path — always what was actually compiled in, zero
-  maintenance. `(unknown)` when build info lacks the module (e.g. some
-  non-module test builds).
-- **README versions:** none — go.mod owns version truth; the README table
-  lists component, use, and license only (ayaki style).
+- **Coverage:** union of linked modules across GOOS=linux/darwin/windows,
+  plus a Go-stdlib section. Direct/transitive distinction only matters
+  for the README's curated table.
+- **Tooling:** own stdlib-only generator (`tools/gen-licenses`) writes
+  the notices file; `uw-labs/lichen` (pinned, v0.1.7) verifies built
+  binaries in CI against a license allowlist. No new library
+  dependencies; classification is delegated to lichen.
+- **Delivery:** the file is committed at the repo root, embedded via
+  `go:embed`, printed verbatim by `--license`, and additionally packed
+  into every release archive next to the binary.
+- **Freshness:** a test regenerates the file and byte-compares it with
+  the committed copy — `go test ./...` (already in CI) fails when a
+  dependency change makes it stale.
 
 ## Design
 
-### New package `internal/licenses`
+### Generator: `tools/gen-licenses/main.go`
 
-- `internal/licenses/data/` — verbatim copies of each dependency's license
-  file, named by module path with `/` → `_` and no version suffix:
-  - `github.com_alecthomas_chroma_v2.txt` (from COPYING)
-  - `github.com_charmbracelet_bubbletea.txt`
-  - `github.com_charmbracelet_lipgloss.txt`
-  - `github.com_spf13_cobra.txt` (from LICENSE.txt)
-  - `github.com_yuin_goldmark.txt`
-  - `github.com_yuin_goldmark-highlighting_v2.txt`
-- `licenses.go`:
-  - `//go:embed data` filesystem.
-  - `type component struct { Module, Repo, Copyright, License, Use, file string }`
-  - `var components = [...]component{ ... }` — one entry per direct
-    dependency, ordered alphabetically by module path. `file` is the
-    data/ filename.
-  - `func Report(w io.Writer) error` — writes:
-    1. Header line: `ccwhid incorporates the following third-party
-       components (direct dependencies):`
-    2. Aligned text table: Component, Version, License, Copyright.
-       Column widths computed from content (text/tabwriter is fine and
-       stdlib).
-    3. For each component: a `── <module path> ──` separator line
-       followed by the embedded license text.
-  - `func moduleVersions() map[string]string` — from
-    `debug.ReadBuildInfo()`; missing info or missing module → `(unknown)`.
+Stdlib-only `package main`, run from the repo root as
+`go run ./tools/gen-licenses` (writes `THIRD_PARTY_LICENSES.txt`;
+`-o <path>` overrides the output path, used by the freshness test).
+
+1. For each GOOS in `linux, darwin, windows`, run
+   `go list -deps -f '{{if .Module}}{{.Module.Path}}\t{{.Module.Version}}\t{{.Module.Dir}}{{end}}' ./cmd/ccwhid`
+   with GOOS set in the environment, skipping the main module's own
+   lines. Union the results into path → {version, dir} (versions cannot
+   conflict within one go.mod).
+2. For each module directory, collect notice files at the module root
+   whose names match, case-insensitively: `LICENSE*`, `LICENCE*`,
+   `COPYING*`, `NOTICE*`. **Zero matches is a fatal error** — the
+   generator exits non-zero naming the module, forcing a human decision
+   rather than silently shipping without a notice.
+3. Read the Go stdlib license from `$(go env GOROOT)/LICENSE`.
+4. Write deterministically (sorted by module path, no timestamps):
+
+   ```
+   Third-party licenses for ccwhid (github.com/saigyo/cc-what-have-i-done)
+
+   This file covers every Go module linked into ccwhid release binaries
+   (union across linux, darwin, and windows builds) plus the Go standard
+   library. Generated by tools/gen-licenses; verified in CI.
+
+   ================================================================================
+   Go standard library and runtime (BSD-3-Clause)
+   ================================================================================
+
+   <GOROOT/LICENSE text>
+
+   ================================================================================
+   github.com/alecthomas/chroma/v2 v2.27.0 (COPYING)
+   ================================================================================
+
+   <text>
+
+   ... (one section per module; a module with multiple notice files, e.g.
+   LICENSE + NOTICE, gets the files concatenated in one section, each
+   preceded by its filename on a `-- <name> --` line)
+   ```
+
+### Root embed: `third_party_licenses.go` + `THIRD_PARTY_LICENSES.txt`
+
+`go:embed` cannot reach upward across directories, and the conventional,
+discoverable home for the notices file is the repo root — so the embed
+lives in a new root package:
+
+```go
+// Package ccwhid exposes repo-root assets that ship inside the binary.
+package ccwhid
+
+import _ "embed"
+
+// ThirdPartyLicenses is the complete third-party notices file, generated
+// by tools/gen-licenses and verified fresh in CI.
+//
+//go:embed THIRD_PARTY_LICENSES.txt
+var ThirdPartyLicenses string
+```
 
 ### CLI (`cmd/ccwhid/main.go`)
 
-- `options` gains `license bool`; flag registration:
-  `f.BoolVar(&opts.license, "license", false, "print third-party license
-  information and exit")`.
+- `options` gains `license bool`; registration:
+  `f.BoolVar(&opts.license, "license", false, "print third-party license information and exit")`.
 - At the top of `run`, before validation and session resolution:
-  `if opts.license { return licenses.Report(cmd.OutOrStdout()) }`.
+
+  ```go
+  if opts.license {
+      fmt.Fprint(cmd.OutOrStdout(), ccwhid.ThirdPartyLicenses)
+      return nil
+  }
+  ```
+
+  Other flags are ignored when `--license` is set (short-circuit, same as
+  cobra's `--version`). Not an error.
+
+### CI (`.github/workflows/ci.yml`)
+
+- The freshness test (below) runs inside the existing
+  `go test -race ./...` step — no new step needed for staleness.
+- New step **License check (lichen)** after Build:
+
+  ```yaml
+  - name: License check (lichen)
+    run: |
+      GOOS=linux   go build -o /tmp/lichen-bin/ccwhid-linux   ./cmd/ccwhid
+      GOOS=windows go build -o /tmp/lichen-bin/ccwhid-windows ./cmd/ccwhid
+      go run github.com/uw-labs/lichen@v0.1.7 --config=lichen.yaml \
+        /tmp/lichen-bin/ccwhid-linux /tmp/lichen-bin/ccwhid-windows
+  ```
+
+  (`go version -m` metadata survives cross-compilation, so the
+  windows binary covers the Windows-only modules.)
+- New `lichen.yaml` at repo root:
+
+  ```yaml
+  allow:
+    - "MIT"
+    - "Apache-2.0"
+    - "BSD-3-Clause"
+    - "BSD-2-Clause"
+    - "ISC"
+  ```
+
+  Anything outside the allowlist (GPL, LGPL, MPL, unknown) fails CI.
+
+### GoReleaser (`.goreleaser.yaml`)
+
+Add `THIRD_PARTY_LICENSES.txt` to `archives[0].files` (alongside
+README.md and LICENSE).
 
 ### README
 
-New `## Third-party licenses` section (after the Redaction section),
-ayaki-style:
+Keep the curated ayaki-style table for the six **direct** dependencies —
+the components ccwhid actively chose — in a new `## Third-party licenses`
+section after Redaction:
 
-> ccwhid builds on third-party components under their own licenses
-> (direct dependencies; all statically linked into the binary):
+> ccwhid builds on these components (direct dependencies; everything is
+> statically linked into the binary):
 
 | Component | Use | License |
 |---|---|---|
@@ -102,47 +181,39 @@ ayaki-style:
 | [goldmark-highlighting](https://github.com/yuin/goldmark-highlighting) © Yusuke Inuzuka | Syntax-highlight extension for goldmark | [MIT](https://github.com/yuin/goldmark-highlighting/blob/master/v2/LICENSE) |
 | [chroma](https://github.com/alecthomas/chroma) © Alec Thomas | Syntax-highlighting engine | [MIT](https://github.com/alecthomas/chroma/blob/master/COPYING) |
 
-Closing line: `ccwhid --license` prints this information, including the
-full license texts, from the binary itself.
-
-Row order is by role (CLI, TUI, rendering); the code's `components` slice
-is alphabetical by module path. One consistent principle per surface.
-
-## Drift guard (test in `internal/licenses`)
-
-- Parse `../../go.mod` (via `runtime.Caller`-relative or plain relative
-  path from the package directory): collect module paths inside the first
-  `require (` … `)` block, skipping lines containing `// indirect`.
-  Plain line scanning — no new dependency for go.mod parsing.
-- Assert the set equals the module paths in `components` (both
-  directions: missing and extra are failures, with the offending paths in
-  the message).
-- Assert every embedded license file is non-empty and contains either
-  "Copyright" or "License".
+Closing paragraph: the complete notices — including all transitive
+dependencies and the Go standard library — live in
+[`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt), ship inside every
+release archive, and are embedded in the binary itself:
+`ccwhid --license` prints them.
 
 ## Error handling
 
-- `Report` propagates writer errors; embedded reads cannot fail at
-  runtime (embed is compile-time verified — a missing file in `data/`
-  fails the build).
-- `--license` combined with other flags: other flags are ignored
-  (short-circuit before validation), matching `--version` behavior. Not
-  an error.
+- Generator: any `go list` failure, unreadable module dir, or module
+  without a notice file is fatal with a message naming the module.
+- `--license` output is a verbatim embedded string — no runtime failure
+  modes beyond writer errors, which propagate.
+- lichen failures (disallowed or unclassifiable license) fail CI.
 
 ## Testing
 
-- `internal/licenses`: Report output contains all six module paths, the
-  table header, and each license text's first line; drift test as above;
-  version fallback test (`moduleVersions` on a test binary → entries
-  resolve or `(unknown)`, no panic).
-- `cmd/ccwhid`: flag-list test gains `license`; a test that executing the
-  root command with `--license` writes the header line to stdout and does
-  not attempt session discovery (exit nil without a session).
+- `tools/gen-licenses`: unit tests for the pure helpers (notice-filename
+  matcher: positive/negative names, case-insensitivity; section
+  formatting including the multi-file case). Freshness test
+  `TestGeneratedFileUpToDate`: run the generator with `-o` to a temp
+  file, byte-compare with the committed `THIRD_PARTY_LICENSES.txt`,
+  fail with a "run go run ./tools/gen-licenses" hint. (Uses the local
+  module cache; CI populates it via the build/test steps.)
+- `cmd/ccwhid`: flag-list test gains `license`; a test that `--license`
+  writes the notices header to stdout, returns nil, and performs no
+  session discovery.
+- Root package: covered by the CLI test (non-empty embed); no own test.
 
 ## Out of scope
 
-- Indirect dependencies (both surfaces say "direct").
-- Go standard library / toolchain attribution.
-- SPDX machine-readable output, JSON, SBOM formats.
-- Automating the license-file copies (six files, guarded by CI; manual
-  update on the rare direct-dep change is fine).
+- SPDX/SBOM machine-readable formats.
+- CGO / C library attribution (CGO is disabled).
+- Attributing Go toolchain/build tools that don't link into the binary.
+- README drift automation for the curated table — the freshness test
+  already fails on any linked-module change, prompting a human pass over
+  both surfaces.
