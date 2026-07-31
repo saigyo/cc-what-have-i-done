@@ -150,6 +150,8 @@ func listModules(root, goos string) ([]module, error) {
 }
 
 // gorootLicense reads the Go standard library's license text.
+// It tries both official Go distributions (LICENSE in GOROOT) and
+// Homebrew layout (LICENSE one level above GOROOT).
 func gorootLicense(root string) (string, error) {
 	cmd := exec.Command("go", "env", "GOROOT")
 	cmd.Dir = root
@@ -157,11 +159,24 @@ func gorootLicense(root string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("go env GOROOT: %w", err)
 	}
-	data, err := os.ReadFile(filepath.Join(strings.TrimSpace(string(out)), "LICENSE"))
-	if err != nil {
-		return "", fmt.Errorf("reading Go stdlib license: %w", err)
+	goroot := strings.TrimSpace(string(out))
+
+	// Try official Go distribution layout first
+	path1 := filepath.Join(goroot, "LICENSE")
+	data, err := os.ReadFile(path1)
+	if err == nil {
+		return string(data), nil
 	}
-	return string(data), nil
+
+	// Try Homebrew layout (LICENSE one level above GOROOT)
+	path2 := filepath.Join(goroot, "..", "LICENSE")
+	data, err = os.ReadFile(path2)
+	if err == nil {
+		return string(data), nil
+	}
+
+	// Both paths failed; report both attempts
+	return "", fmt.Errorf("reading Go stdlib license: tried %s and %s: both not found", path1, path2)
 }
 
 // noticeFiles returns the notice files at a module root, sorted by name
