@@ -138,6 +138,20 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		if turn == nil {
 			continue // e.g. a user record that only carried a tool_result
 		}
+		// Slash commands arrive as two user records (input, then output);
+		// rewrite the input to a command block and absorb the output into it.
+		if turn.Kind == model.TurnUser {
+			text := userText(turn)
+			if inv, ok := parseCommand(text); ok {
+				turn.Blocks = []model.Block{{Type: model.BlockCommand, Command: &model.Command{Invocation: inv}}}
+			} else if out, ok := parseCommandOutput(text); ok {
+				if n := len(s.Turns); n > 0 && isOpenCommand(&s.Turns[n-1]) {
+					s.Turns[n-1].Blocks[0].Command.Output = out
+					continue
+				}
+				turn.Blocks = []model.Block{{Type: model.BlockText, Text: out}}
+			}
+		}
 		s.Turns = append(s.Turns, *turn)
 
 		// Seed a subagent slot for each Task tool call and make it the current
@@ -214,11 +228,11 @@ func parseTaskNotification(s string) (taskNotification, bool) {
 		return taskNotification{}, false
 	}
 	n := taskNotification{
-		TaskID:    tagContent(t, "task-id"),
-		ToolUseID: tagContent(t, "tool-use-id"),
-		Status:    tagContent(t, "status"),
-		Summary:   tagContent(t, "summary"),
-		Result:    tagContent(t, "result"),
+		TaskID:    extractTaskTag(t, "task-id"),
+		ToolUseID: extractTaskTag(t, "tool-use-id"),
+		Status:    extractTaskTag(t, "status"),
+		Summary:   extractTaskTag(t, "summary"),
+		Result:    extractTaskTag(t, "result"),
 	}
 	if n.TaskID == "" || n.Summary == "" {
 		return taskNotification{}, false
@@ -226,11 +240,11 @@ func parseTaskNotification(s string) (taskNotification, bool) {
 	return n, true
 }
 
-// tagContent returns the text between the first <name> and its closing
+// extractTaskTag returns the text between the first <name> and its closing
 // </name>, trimmed. Simple fields match the first closing tag; <result> keeps
 // matching the last one so bodies that quote XML-looking text (even a literal
 // </result>) stay intact.
-func tagContent(s, name string) string {
+func extractTaskTag(s, name string) string {
 	open, close := "<"+name+">", "</"+name+">"
 	i := strings.Index(s, open)
 	if i < 0 {

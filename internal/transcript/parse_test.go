@@ -384,3 +384,87 @@ func TestParseFileImages(t *testing.T) {
 		t.Errorf("corrupt-image turn blocks = %+v", last)
 	}
 }
+
+func TestParseSlashCommandMergesOutput(t *testing.T) {
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":"<command-name>/model</command-name>\n<command-message>model</command-message>\n<command-args></command-args>"},"timestamp":"2026-07-19T18:26:09Z"}`,
+		"{\"message\":{\"content\":\"\\u003clocal-command-stdout\\u003eSet model to \\u001b[1mFable 5\\u001b[22m\\u003c/local-command-stdout\\u003e\",\"role\":\"user\"},\"timestamp\":\"2026-07-19T18:26:09Z\",\"type\":\"user\"}",
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 1 {
+		t.Fatalf("got %d turns, want 1 (output merged into command turn)", len(s.Turns))
+	}
+	turn := s.Turns[0]
+	if turn.Kind != model.TurnUser || len(turn.Blocks) != 1 {
+		t.Fatalf("turn = kind %q with %d blocks, want user with 1", turn.Kind, len(turn.Blocks))
+	}
+	blk := turn.Blocks[0]
+	if blk.Type != model.BlockCommand || blk.Command == nil {
+		t.Fatalf("block type = %q (Command %v), want command block", blk.Type, blk.Command)
+	}
+	if blk.Command.Invocation != "/model" {
+		t.Errorf("Invocation = %q, want %q", blk.Command.Invocation, "/model")
+	}
+	if blk.Command.Output != "Set model to \x1b[1mFable 5\x1b[22m" {
+		t.Errorf("Output = %q, want ANSI preserved in model", blk.Command.Output)
+	}
+}
+
+func TestParseSlashCommandWithoutOutput(t *testing.T) {
+	line := `{"type":"user","message":{"role":"user","content":"<command-name>/clear</command-name><command-args></command-args>"},"timestamp":"2026-07-19T18:26:09Z"}`
+	s, err := Parse(strings.NewReader(line), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 1 || s.Turns[0].Blocks[0].Type != model.BlockCommand {
+		t.Fatalf("want a single command turn, got %+v", s.Turns)
+	}
+	if out := s.Turns[0].Blocks[0].Command.Output; out != "" {
+		t.Errorf("Output = %q, want empty (no output record)", out)
+	}
+}
+
+func TestParseOrphanCommandOutputStaysCleanTurn(t *testing.T) {
+	// A normal prompt precedes the stdout record: nothing to attach to.
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":"a normal prompt"},"timestamp":"2026-07-19T18:26:09Z"}`,
+		`{"type":"user","message":{"role":"user","content":"<local-command-stdout>orphaned</local-command-stdout>"},"timestamp":"2026-07-19T18:26:10Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 2 {
+		t.Fatalf("got %d turns, want 2 (orphan kept)", len(s.Turns))
+	}
+	blk := s.Turns[1].Blocks[0]
+	if blk.Type != model.BlockText || blk.Text != "orphaned" {
+		t.Errorf("orphan block = %q %q, want plain text %q with tags stripped", blk.Type, blk.Text, "orphaned")
+	}
+}
+
+func TestParseCommandOutputNotAttachedAcrossPrompt(t *testing.T) {
+	// command, then a normal prompt, then stdout: the stdout must NOT jump
+	// back over the prompt to the command turn.
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":"<command-name>/model</command-name><command-args></command-args>"},"timestamp":"2026-07-19T18:26:09Z"}`,
+		`{"type":"user","message":{"role":"user","content":"unrelated prompt"},"timestamp":"2026-07-19T18:26:10Z"}`,
+		`{"type":"user","message":{"role":"user","content":"<local-command-stdout>late</local-command-stdout>"},"timestamp":"2026-07-19T18:26:11Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 3 {
+		t.Fatalf("got %d turns, want 3", len(s.Turns))
+	}
+	if out := s.Turns[0].Blocks[0].Command.Output; out != "" {
+		t.Errorf("command turn Output = %q, want empty (stdout must not skip over a prompt)", out)
+	}
+	if blk := s.Turns[2].Blocks[0]; blk.Type != model.BlockText || blk.Text != "late" {
+		t.Errorf("stdout turn = %q %q, want clean text turn", blk.Type, blk.Text)
+	}
+}
