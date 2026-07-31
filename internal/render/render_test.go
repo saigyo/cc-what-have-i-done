@@ -213,7 +213,7 @@ func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
 		AgentSummary: `Agent "Implement Task 12: Profiles view" finished`,
 		Blocks:       []model.Block{{Type: model.BlockText, Text: "All done."}},
 	}}}
-	d := buildViewModel(s, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(s, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	tv := d.Turns[0]
 	if tv.RoleLabel != "Agent · Implement Task 12: Profiles view" {
 		t.Errorf("RoleLabel = %q", tv.RoleLabel)
@@ -630,7 +630,7 @@ func TestBuildViewModelTimeLabelsAndDayHeaders(t *testing.T) {
 		{Kind: model.TurnAssistant, Timestamp: day1.Add(time.Hour)},
 		{Kind: model.TurnUser, Timestamp: day2},
 	}}
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	turns := d.Turns
 	if len(turns) != 4 {
 		t.Fatalf("got %d turns, want 4", len(turns))
@@ -691,12 +691,19 @@ func TestSiteRendersTimeLabelsAndDaySeparator(t *testing.T) {
 	}
 }
 
-func TestBuildViewModelStartedAtIsLocal(t *testing.T) {
-	ts := time.Date(2026, 7, 29, 14, 3, 0, 0, time.Local)
-	sess := model.Session{StartedAt: ts.UTC()} // stored as UTC, like real transcripts
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
-	if want := ts.Format("2006-01-02 15:04"); d.StartedAt != want {
-		t.Errorf("StartedAt = %q, want local-time %q", d.StartedAt, want)
+func TestBuildViewModelSessionSpanAndGeneratedAt(t *testing.T) {
+	start := time.Date(2026, 7, 3, 17, 3, 0, 0, time.Local)
+	end := start.Add(3*time.Hour + 12*time.Minute)
+	sess := model.Session{StartedAt: start.UTC(), EndedAt: end.UTC()} // stored as UTC, like real transcripts
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "2026-07-31 20:52")
+	if want := start.Format("2006-01-02 15:04") + " (3h 12m)"; d.SessionSpan != want {
+		t.Errorf("SessionSpan = %q, want local-time %q", d.SessionSpan, want)
+	}
+	if want := "last message " + end.Format("2006-01-02 15:04"); d.SessionSpanTitle != want {
+		t.Errorf("SessionSpanTitle = %q, want %q", d.SessionSpanTitle, want)
+	}
+	if d.GeneratedAt != "2026-07-31 20:52" {
+		t.Errorf("GeneratedAt = %q, want the value Site passed through", d.GeneratedAt)
 	}
 }
 
@@ -712,7 +719,7 @@ func TestBuildViewModelPromptTimesAndDayDividers(t *testing.T) {
 		{Kind: model.TurnUser}, // no timestamp
 		{Kind: model.TurnUser, Timestamp: day2.Add(time.Hour)},
 	}}
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	if len(d.Prompts) != 3 {
 		t.Fatalf("got %d prompts, want 3", len(d.Prompts))
 	}
@@ -770,5 +777,38 @@ func TestSiteRendersPromptTimesAndDividers(t *testing.T) {
 	}
 	if !strings.Contains(out, `<span class="prompt-time" title="July 29, 2026 at 14:03:59">14:03</span>`) {
 		t.Error("prompt-time span with hover title missing from sidebar")
+	}
+}
+
+func TestSiteRendersSessionSpanAndRenderTime(t *testing.T) {
+	orig := timeNow
+	gen := time.Date(2026, 7, 31, 20, 52, 0, 0, time.Local)
+	timeNow = func() time.Time { return gen.UTC() }
+	t.Cleanup(func() { timeNow = orig })
+
+	start := time.Date(2026, 7, 29, 14, 0, 0, 0, time.Local)
+	end := start.Add(90 * time.Minute)
+	sess := model.Session{
+		StartedAt: start,
+		EndedAt:   end,
+		Turns: []model.Turn{{Kind: model.TurnUser, Timestamp: start,
+			Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}}},
+	}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	wantSpan := `<span title="last message ` + end.Format("2006-01-02 15:04") + `">` +
+		start.Format("2006-01-02 15:04") + ` (1h 30m)</span>`
+	if !strings.Contains(out, wantSpan) {
+		t.Errorf("session span missing from report; want %s", wantSpan)
+	}
+	if !strings.Contains(out, "rendered "+gen.Format("2006-01-02 15:04")) {
+		t.Error("rendered timestamp missing from report")
 	}
 }

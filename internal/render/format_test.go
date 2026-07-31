@@ -70,3 +70,46 @@ func TestTimeParts(t *testing.T) {
 		t.Errorf("UTC input: got %q, %q; want %q, %q", l2, ti2, l, ti)
 	}
 }
+
+func TestFormatDuration(t *testing.T) {
+	cases := []struct {
+		d    time.Duration
+		want string
+	}{
+		{45 * time.Minute, "45m"},
+		{3*time.Hour + 12*time.Minute, "3h 12m"},
+		{2 * time.Hour, "2h 0m"},
+		{90 * time.Second, "1m"},
+	}
+	for _, c := range cases {
+		if got := formatDuration(c.d); got != c.want {
+			t.Errorf("formatDuration(%v) = %q, want %q", c.d, got, c.want)
+		}
+	}
+}
+
+func TestSessionSpan(t *testing.T) {
+	start := time.Date(2026, 7, 3, 17, 3, 0, 0, time.Local)
+	sameDayEnd := start.Add(3*time.Hour + 12*time.Minute)
+	nextDayEnd := start.AddDate(0, 0, 28).Add(2*time.Hour + 9*time.Minute)
+
+	cases := []struct {
+		name       string
+		start, end time.Time
+		wantSpan   string
+		wantTitle  string
+	}{
+		{"zero start", time.Time{}, sameDayEnd, "", ""},
+		{"zero end", start, time.Time{}, "2026-07-03 17:03", "session start"},
+		{"sub-minute", start, start.Add(30 * time.Second), "2026-07-03 17:03", "session start"},
+		{"same day", start, sameDayEnd, "2026-07-03 17:03 (3h 12m)", "last message 2026-07-03 20:15"},
+		{"cross day", start, nextDayEnd, "2026-07-03 17:03 → 2026-07-31 19:12", "session start → last message"},
+		{"UTC inputs convert to local", start.UTC(), sameDayEnd.UTC(), "2026-07-03 17:03 (3h 12m)", "last message 2026-07-03 20:15"},
+	}
+	for _, c := range cases {
+		span, title := sessionSpan(c.start, c.end)
+		if span != c.wantSpan || title != c.wantTitle {
+			t.Errorf("%s: sessionSpan = %q, %q; want %q, %q", c.name, span, title, c.wantSpan, c.wantTitle)
+		}
+	}
+}
