@@ -620,3 +620,73 @@ func TestSiteShowsDevBuildLink(t *testing.T) {
 		t.Errorf("index.html missing dev build label")
 	}
 }
+
+func TestBuildViewModelTimeLabelsAndDayHeaders(t *testing.T) {
+	day1 := time.Date(2026, 7, 29, 9, 0, 0, 0, time.Local)
+	day2 := day1.AddDate(0, 0, 1)
+	sess := model.Session{Turns: []model.Turn{
+		{Kind: model.TurnUser, Timestamp: day1},
+		{Kind: model.TurnAssistant}, // no timestamp
+		{Kind: model.TurnAssistant, Timestamp: day1.Add(time.Hour)},
+		{Kind: model.TurnUser, Timestamp: day2},
+	}}
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	turns := d.Turns
+	if len(turns) != 4 {
+		t.Fatalf("got %d turns, want 4", len(turns))
+	}
+	// First timestamped turn opens day one — user turns get labels too.
+	if turns[0].DayHeader != day1.Format("Monday, January 2, 2006") {
+		t.Errorf("turn 0 DayHeader = %q", turns[0].DayHeader)
+	}
+	if turns[0].TimeLabel != day1.Format("15:04") {
+		t.Errorf("turn 0 TimeLabel = %q", turns[0].TimeLabel)
+	}
+	// Zero timestamp: no label, no header, does not reset day detection.
+	if turns[1].TimeLabel != "" || turns[1].TimeTitle != "" || turns[1].DayHeader != "" {
+		t.Errorf("turn 1 (no timestamp) got %q, %q, %q; want all empty",
+			turns[1].TimeLabel, turns[1].TimeTitle, turns[1].DayHeader)
+	}
+	// Same day: label but no header.
+	if turns[2].DayHeader != "" {
+		t.Errorf("turn 2 DayHeader = %q, want empty (same day)", turns[2].DayHeader)
+	}
+	if turns[2].TimeLabel == "" {
+		t.Error("turn 2 TimeLabel empty, want set")
+	}
+	// New day: fresh header.
+	if turns[3].DayHeader != day2.Format("Monday, January 2, 2006") {
+		t.Errorf("turn 3 DayHeader = %q", turns[3].DayHeader)
+	}
+}
+
+func TestSiteRendersTimeLabelsAndDaySeparator(t *testing.T) {
+	ts := time.Date(2026, 7, 29, 14, 3, 59, 0, time.Local)
+	sess := model.Session{
+		StartedAt: ts,
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Timestamp: ts,
+				Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}},
+			{Kind: model.TurnAssistant, Timestamp: ts.Add(time.Minute),
+				Blocks: []model.Block{{Type: model.BlockText, Text: "hello"}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	if !strings.Contains(out, `class="day-sep"`) {
+		t.Error("day separator missing from report")
+	}
+	if !strings.Contains(out, `class="turn-time" title="July 29, 2026 at 14:03:59"`) {
+		t.Error("turn-time span with full hover title missing from report")
+	}
+	if !strings.Contains(out, "· 14:03") {
+		t.Error("time label missing from report")
+	}
+}

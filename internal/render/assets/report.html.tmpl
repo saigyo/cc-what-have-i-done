@@ -52,8 +52,9 @@
     </details>
     {{ end }}
     {{ range .Turns }}
+    {{ if .DayHeader }}<div class="day-sep"><span>{{ .DayHeader }}</span></div>{{ end }}
     <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}" data-search="{{ .SearchText }}">
-      <div class="turn-role">{{ .RoleLabel }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .AgentHref }}<a class="agent-link" href="{{ .AgentHref }}">transcript ↗</a>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
+      <div class="turn-role">{{ .RoleLabel }}{{ if .TimeLabel }}<span class="turn-time" title="{{ .TimeTitle }}">· {{ .TimeLabel }}</span>{{ end }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .AgentHref }}<a class="agent-link" href="{{ .AgentHref }}">transcript ↗</a>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
       <div class="turn-body">{{ .Body }}</div>
     </article>
     {{ end }}

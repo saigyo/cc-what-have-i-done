@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/saigyo/cc-what-have-i-done/internal/model"
 	"github.com/saigyo/cc-what-have-i-done/internal/usage"
@@ -172,6 +173,9 @@ type turnView struct {
 	Body       template.HTML
 	Badge      string // per-turn usage badge, e.g. "12k tok · ~$0.18"
 	AgentHref  string // link to the agent's transcript page, when one exists
+	TimeLabel  string // "15:04" local-time card label; "" when no timestamp
+	TimeTitle  string // hover title, e.g. "July 29, 2026 at 14:03:59"
+	DayHeader  string // "Wednesday, July 29, 2026" on each day's first turn
 }
 
 type usageView struct {
@@ -205,7 +209,7 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 	}
 	d.VersionLabel, d.VersionHref = versionLink(opts.Version)
 	if !s.StartedAt.IsZero() {
-		d.StartedAt = s.StartedAt.Format("2006-01-02 15:04")
+		d.StartedAt = s.StartedAt.Local().Format("2006-01-02 15:04")
 	}
 
 	var rep usage.Report
@@ -214,6 +218,9 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		d.Usage = buildUsageView(rep)
 	}
 
+	var lastY, lastD int
+	var lastM time.Month
+	haveDay := false
 	for i, t := range s.Turns {
 		plain := turnPlainText(t)
 		if t.Kind == model.TurnUser {
@@ -226,6 +233,16 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 			Status:     t.AgentStatus,
 			SearchText: strings.ToLower(plain),
 			Body:       renderTurnBody(t, bodyCtx{links: links, base: page.Base, noImages: opts.NoImages}),
+		}
+		tv.TimeLabel, tv.TimeTitle = timeParts(t.Timestamp)
+		if !t.Timestamp.IsZero() {
+			lt := t.Timestamp.Local()
+			y, m, dd := lt.Date()
+			if !haveDay || y != lastY || m != lastM || dd != lastD {
+				tv.DayHeader = lt.Format("Monday, January 2, 2006")
+				lastY, lastM, lastD = y, m, dd
+				haveDay = true
+			}
 		}
 		if t.Kind == model.TurnAgentResult {
 			tv.AgentHref = links.forAgent(t.AgentID)
