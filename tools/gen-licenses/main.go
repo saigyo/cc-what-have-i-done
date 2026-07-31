@@ -23,7 +23,8 @@ import (
 
 // releaseGOOS is the GOOS matrix of release builds (see .goreleaser.yaml).
 // The linked module set is platform-dependent (e.g. Windows-only console
-// helpers), so the notices cover the union.
+// helpers), so the notices cover the union. Module resolution uses CGO_ENABLED=0
+// to match release builds.
 var releaseGOOS = []string{"linux", "darwin", "windows"}
 
 // overrides supplies a notice text for modules that ship none. Any module
@@ -121,7 +122,7 @@ func listModules(root, goos string) ([]module, error) {
 		"-f", "{{if and .Module (not .Module.Main)}}{{.Module.Path}}\t{{.Module.Version}}\t{{.Module.Dir}}{{end}}",
 		"./cmd/ccwhid")
 	cmd.Dir = root
-	cmd.Env = append(os.Environ(), "GOOS="+goos)
+	cmd.Env = append(os.Environ(), "GOOS="+goos, "CGO_ENABLED=0")
 	out, err := cmd.Output()
 	if err != nil {
 		var ee *exec.ExitError
