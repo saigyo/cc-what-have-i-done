@@ -690,3 +690,12 @@ func TestSiteRendersTimeLabelsAndDaySeparator(t *testing.T) {
 		t.Error("time label missing from report")
 	}
 }
+
+func TestBuildViewModelStartedAtIsLocal(t *testing.T) {
+	ts := time.Date(2026, 7, 29, 14, 3, 0, 0, time.Local)
+	sess := model.Session{StartedAt: ts.UTC()} // stored as UTC, like real transcripts
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	if want := ts.Format("2006-01-02 15:04"); d.StartedAt != want {
+		t.Errorf("StartedAt = %q, want local-time %q", d.StartedAt, want)
+	}
+}
