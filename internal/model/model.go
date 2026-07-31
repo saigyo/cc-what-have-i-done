@@ -69,7 +69,8 @@ type Usage struct {
 }
 
 // Block is one content unit: assistant/user text, a thinking block, a tool
-// call, or an image pasted into the conversation.
+// call, an image pasted into the conversation, or a slash-command
+// invocation with its output.
 type Block struct {
 	Type    BlockType
 	Text    string    // for BlockText and BlockThinking
