@@ -88,6 +88,7 @@ Run `ccwhid` with no selector to open the interactive browser:
 | `--force` | Overwrite a non-empty output directory |
 | `--open` | Open the report in a browser when done |
 | `--usage` | Include a token-usage & estimated-cost section (default off) |
+| `--license` | Print third-party license information and exit |
 
 ## Redaction
 
@@ -144,6 +145,25 @@ These figures cover the rendered transcript plus any linked subagent sessions
 (shown separately as "of which subagents"). SDK-spawned sessions without
 parent linkage aren't attributed or included, which is why the total can
 still differ from Claude Code's `/usage` session rollup.
+
+## Third-party licenses
+
+ccwhid builds on these components (direct dependencies; everything is
+statically linked into the binary):
+
+| Component | Use | License |
+|---|---|---|
+| [cobra](https://github.com/spf13/cobra) © The Cobra Authors | CLI framework | [Apache-2.0](https://github.com/spf13/cobra/blob/main/LICENSE.txt) |
+| [bubbletea](https://github.com/charmbracelet/bubbletea) © Charmbracelet, Inc | Interactive session-picker TUI | [MIT](https://github.com/charmbracelet/bubbletea/blob/main/LICENSE) |
+| [lipgloss](https://github.com/charmbracelet/lipgloss) © Charmbracelet, Inc | TUI styling | [MIT](https://github.com/charmbracelet/lipgloss/blob/master/LICENSE) |
+| [goldmark](https://github.com/yuin/goldmark) © Yusuke Inuzuka | Markdown rendering | [MIT](https://github.com/yuin/goldmark/blob/master/LICENSE) |
+| [goldmark-highlighting](https://github.com/yuin/goldmark-highlighting) © Yusuke Inuzuka | Syntax-highlight extension for goldmark | [MIT](https://github.com/yuin/goldmark-highlighting/blob/master/v2/LICENSE) |
+| [chroma](https://github.com/alecthomas/chroma) © Alec Thomas | Syntax-highlighting engine | [MIT](https://github.com/alecthomas/chroma/blob/master/COPYING) |
+
+The complete notices — including all transitive dependencies and the Go
+standard library — live in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt),
+ship inside every release archive, and are embedded in the binary itself:
+`ccwhid --license` prints them.
 
 ## License
 

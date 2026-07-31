@@ -1,0 +1,18 @@
+allow:
+  - "MIT"
+  - "Apache-2.0"
+  - "BSD-3-Clause"
+  - "BSD-2-Clause"
+  - "ISC"
+
+exceptions:
+  licenseNotPermitted:
+    # chroma's COPYING includes the OFL-1.1 text for the Liberation Mono
+    # font embedded by its SVG formatter; ccwhid does not import
+    # formatters/svg, so the font is not part of our binaries.
+    - path: "github.com/alecthomas/chroma/v2"
+      licenses: ["OFL-1.1"]
+  unresolvableLicense:
+    # v0.0.1 ships no LICENSE file; upstream README declares MIT
+    # (see THIRD_PARTY_LICENSES.txt entry).
+    - path: "github.com/mattn/go-localereader"
