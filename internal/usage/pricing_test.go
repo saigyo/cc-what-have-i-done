@@ -12,6 +12,16 @@ func TestLookupKnownModel(t *testing.T) {
 	}
 }
 
+func TestLookupOpus5(t *testing.T) {
+	p, ok := Lookup("claude-opus-5")
+	if !ok {
+		t.Fatal("claude-opus-5 not found")
+	}
+	if p.Input != 5 || p.Output != 25 {
+		t.Errorf("price = %+v, want {5 25}", p)
+	}
+}
+
 func TestLookupStripsDateSuffix(t *testing.T) {
 	if _, ok := Lookup("claude-haiku-4-5-20251001"); !ok {
 		t.Error("dated model id should resolve after stripping the date suffix")
