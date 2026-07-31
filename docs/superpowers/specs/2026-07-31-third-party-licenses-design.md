@@ -31,6 +31,20 @@ direct deps would miss most of the required notices (~25 modules link in).
 - `CGO_ENABLED=0` in GoReleaser — no C libraries to attribute.
 - The Go standard library and runtime (BSD-3-Clause, © The Go Authors)
   are also statically linked and are included as their own section.
+- The full union is 26 modules. Two need special handling (verified
+  against lichen v0.1.7 with real cross-compiled binaries):
+  - **`github.com/mattn/go-localereader` v0.0.1** (linux/windows only,
+    via bubbletea) ships **no license file** — only a README declaring
+    "License: MIT". No newer tagged version exists. The generator carries
+    an explicit override quoting the README declaration; lichen gets an
+    `exceptions.unresolvableLicense` entry.
+  - **`github.com/alecthomas/chroma/v2`**'s COPYING bundles the OFL-1.1
+    text for the Liberation Mono font embedded by its SVG formatter.
+    ccwhid never imports `formatters/svg`, so the font is not in our
+    binaries. lichen gets an `exceptions.licenseNotPermitted` entry for
+    OFL-1.1; the notices file includes chroma's full COPYING verbatim.
+- `golang.org/x` modules carry a separate PATENTS grant file — the
+  generator includes it (notice-file matcher covers `PATENTS`).
 
 ## Decisions
 
@@ -63,9 +77,12 @@ Stdlib-only `package main`, run from the repo root as
    conflict within one go.mod).
 2. For each module directory, collect notice files at the module root
    whose names match, case-insensitively: `LICENSE*`, `LICENCE*`,
-   `COPYING*`, `NOTICE*`. **Zero matches is a fatal error** — the
-   generator exits non-zero naming the module, forcing a human decision
-   rather than silently shipping without a notice.
+   `COPYING*`, `NOTICE*`, `PATENTS*` — excluding `.go` source files
+   (a module root may contain `license.go`). **Zero matches is a fatal
+   error** — the generator exits non-zero naming the module — unless the
+   module has an entry in the generator's explicit `overrides` map
+   (currently only `github.com/mattn/go-localereader`, whose section
+   quotes its README's MIT declaration).
 3. Read the Go stdlib license from `$(go env GOROOT)/LICENSE`.
 4. Write deterministically (sorted by module path, no timestamps):
 
@@ -145,7 +162,8 @@ var ThirdPartyLicenses string
 
   (`go version -m` metadata survives cross-compilation, so the
   windows binary covers the Windows-only modules.)
-- New `lichen.yaml` at repo root:
+- New `lichen.yaml` at repo root (this exact config verified passing
+  against cross-compiled linux+windows binaries):
 
   ```yaml
   allow:
@@ -154,9 +172,21 @@ var ThirdPartyLicenses string
     - "BSD-3-Clause"
     - "BSD-2-Clause"
     - "ISC"
+
+  exceptions:
+    licenseNotPermitted:
+      # chroma's COPYING includes the OFL-1.1 text for the Liberation Mono
+      # font embedded by its SVG formatter; ccwhid does not import
+      # formatters/svg, so the font is not part of our binaries.
+      - path: "github.com/alecthomas/chroma/v2"
+        licenses: ["OFL-1.1"]
+    unresolvableLicense:
+      # v0.0.1 ships no LICENSE file; upstream README declares MIT
+      # (see THIRD_PARTY_LICENSES.txt entry).
+      - path: "github.com/mattn/go-localereader"
   ```
 
-  Anything outside the allowlist (GPL, LGPL, MPL, unknown) fails CI.
+  Anything else outside the allowlist (GPL, LGPL, MPL, unknown) fails CI.
 
 ### GoReleaser (`.goreleaser.yaml`)
 
@@ -167,7 +197,8 @@ README.md and LICENSE).
 
 Keep the curated ayaki-style table for the six **direct** dependencies —
 the components ccwhid actively chose — in a new `## Third-party licenses`
-section after Redaction:
+section directly above `## License` (plus a `--license` row in the Flags
+table):
 
 > ccwhid builds on these components (direct dependencies; everything is
 > statically linked into the binary):
