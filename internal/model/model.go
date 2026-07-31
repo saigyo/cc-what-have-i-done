@@ -19,6 +19,7 @@ const (
 	BlockThinking BlockType = "thinking"
 	BlockToolUse  BlockType = "tool_use"
 	BlockImage    BlockType = "image"
+	BlockCommand  BlockType = "command"
 )
 
 // Session is one fully-parsed Claude Code transcript.
@@ -68,12 +69,14 @@ type Usage struct {
 }
 
 // Block is one content unit: assistant/user text, a thinking block, a tool
-// call, or an image pasted into the conversation.
+// call, an image pasted into the conversation, or a slash-command
+// invocation with its output.
 type Block struct {
-	Type  BlockType
-	Text  string    // for BlockText and BlockThinking
-	Tool  *ToolCall // for BlockToolUse
-	Image *Image    // for BlockImage
+	Type    BlockType
+	Text    string    // for BlockText and BlockThinking
+	Tool    *ToolCall // for BlockToolUse
+	Image   *Image    // for BlockImage
+	Command *Command  // for BlockCommand
 }
 
 // Image is one decoded image from the transcript — pasted by the user or
@@ -81,6 +84,12 @@ type Block struct {
 type Image struct {
 	MediaType string // e.g. "image/png"
 	Data      []byte
+}
+
+// Command is a slash-command invocation and its captured output.
+type Command struct {
+	Invocation string // "/model", "/code-review ultra 21"
+	Output     string // local-command stdout/stderr text; may contain ANSI
 }
 
 // ToolCall is a single tool invocation and its result.
