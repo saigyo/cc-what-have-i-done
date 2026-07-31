@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      {{ range .Prompts }}<li><a href="#turn-{{ .Index }}">{{ .Preview }}</a></li>{{ end }}
+      {{ range .Prompts }}{{ if .DayHeader }}<li class="prompt-day" title="{{ .DayTitle }}">{{ .DayHeader }}</li>{{ end }}<li><a href="#turn-{{ .Index }}"><span class="prompt-preview">{{ .Preview }}</span>{{ if .TimeLabel }}<span class="prompt-time" title="{{ .TimeTitle }}">{{ .TimeLabel }}</span>{{ end }}</a></li>{{ end }}
     </ol>
   </nav>
   <main class="content">
