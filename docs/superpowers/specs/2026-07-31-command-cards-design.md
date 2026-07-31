@@ -28,7 +28,11 @@ the cards, but the plain-text prompt previews expose the raw markup.
   `<command-message>` echo is dropped.
 - **Merge:** parse-time. The output record does not become its own turn;
   its text attaches to the preceding command turn. One turn → one card →
-  one prompt entry.
+  one prompt entry. Absorption requires the output record to immediately
+  follow the command record among main-chain turns (tracked via explicit
+  open-command parse state, not inferred from an empty `Output`); an
+  output record seen after the command already received output — even
+  empty output — is treated as orphaned.
 - **Representation:** a new block type, not string rewriting — the
   renderer needs to distinguish invocation (code-styled line) from output
   (monospace block).
@@ -72,12 +76,19 @@ Main-chain loop changes, after `buildTurn` returns a user turn:
 - Command input turn (`parseCommand` ok): the turn's blocks are replaced
   by a single `BlockCommand` block. Kind stays `TurnUser`; timestamp and
   everything else unchanged.
-- Output turn (`parseCommandOutput` ok): not appended. If the last
-  appended main-chain turn is a user turn whose single block is a
-  `BlockCommand` with empty `Output`, the extracted text becomes that
-  block's `Output`. Otherwise (orphan — nothing suitable precedes), the
-  turn IS appended as a plain user turn with its text blocks replaced by
-  the extracted output text, so raw tags never leak.
+- Output turn (`parseCommandOutput` ok): absorption is governed by explicit
+  parse state, an `openCommand` flag that is true only while the
+  immediately preceding appended main-chain turn is a command turn still
+  awaiting its output record. If `openCommand` is true, the extracted text
+  becomes that command turn's `Output` (even when the text is empty) and
+  the flag is cleared; the output turn itself is not appended. Otherwise
+  (orphan — the command already received its output, or nothing suitable
+  precedes), the turn IS appended as a plain user turn with its text
+  blocks replaced by the extracted output text, so raw tags never leak.
+  Because openness is tracked explicitly rather than inferred from
+  `Output == ""`, a second output record following one that was already
+  absorbed (even an empty one) is correctly orphaned instead of
+  overwriting the first.
 - Non-user turns and turns without the markup: unchanged. Sidechain
   (subagent) records are untouched — slash commands do not occur there.
 
@@ -122,7 +133,9 @@ Main-chain loop changes, after `buildTurn` returns a user turn:
   `TurnUser` with a single `BlockCommand` (invocation `/model`, output
   set); command with no output → `Output` empty; orphaned stdout →
   plain user turn, clean text, no tags; a normal user prompt between
-  command and stdout keeps the stdout orphaned (no mis-attachment).
+  command and stdout keeps the stdout orphaned (no mis-attachment); a
+  second (stray) output record following one already absorbed — even an
+  empty one — is orphaned rather than mis-attached to the closed command.
 - Render tests: command card markup (`command-invocation` code,
   `command-output` pre), ANSI stripped from output, HTML escaped;
   `turnPlainText`/prompt preview shows `/model …` with no `<` characters.

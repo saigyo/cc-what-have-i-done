@@ -72,10 +72,3 @@ func userText(t *model.Turn) string {
 	}
 	return b.String()
 }
-
-// isOpenCommand reports whether t is a slash-command turn still awaiting
-// its output record.
-func isOpenCommand(t *model.Turn) bool {
-	return t.Kind == model.TurnUser && len(t.Blocks) == 1 &&
-		t.Blocks[0].Type == model.BlockCommand && t.Blocks[0].Command.Output == ""
-}

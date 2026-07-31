@@ -468,3 +468,26 @@ func TestParseCommandOutputNotAttachedAcrossPrompt(t *testing.T) {
 		t.Errorf("stdout turn = %q %q, want clean text turn", blk.Type, blk.Text)
 	}
 }
+
+func TestParseSecondOutputRecordNotAttached(t *testing.T) {
+	// The first (empty) stdout record consumes the command; a second stray
+	// output record must not attach to the already-consumed command turn.
+	lines := strings.Join([]string{
+		`{"type":"user","message":{"role":"user","content":"<command-name>/clear</command-name><command-args></command-args>"},"timestamp":"2026-07-19T18:26:09Z"}`,
+		`{"type":"user","message":{"role":"user","content":"<local-command-stdout></local-command-stdout>"},"timestamp":"2026-07-19T18:26:10Z"}`,
+		`{"type":"user","message":{"role":"user","content":"<local-command-stdout>stray</local-command-stdout>"},"timestamp":"2026-07-19T18:26:11Z"}`,
+	}, "\n")
+	s, err := Parse(strings.NewReader(lines), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(s.Turns) != 2 {
+		t.Fatalf("got %d turns, want 2 (command + orphaned stray)", len(s.Turns))
+	}
+	if out := s.Turns[0].Blocks[0].Command.Output; out != "" {
+		t.Errorf("command Output = %q, want empty (stray must not attach)", out)
+	}
+	if blk := s.Turns[1].Blocks[0]; blk.Type != model.BlockText || blk.Text != "stray" {
+		t.Errorf("stray turn = %q %q, want plain text turn", blk.Type, blk.Text)
+	}
+}

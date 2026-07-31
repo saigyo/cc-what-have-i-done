@@ -68,6 +68,12 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 	// whose Subagents any subsequent sidechain turns are appended to.
 	var lastTask *model.ToolCall
 	sidechainOwner := lastTask
+	// openCommand is true only while the immediately preceding appended
+	// main-chain turn is a command turn still awaiting its output record. It is
+	// explicit parse state rather than an inference from Command.Output, so an
+	// empty-but-present output record still closes the command, and a second
+	// (stray) output record is not mistaken for the first.
+	openCommand := false
 
 	sc := bufio.NewScanner(r)
 	sc.Buffer(make([]byte, 0, 1024*1024), 64*1024*1024)
@@ -140,19 +146,26 @@ func Parse(r io.Reader, opts Options) (model.Session, error) {
 		}
 		// Slash commands arrive as two user records (input, then output);
 		// rewrite the input to a command block and absorb the output into it.
+		// Absorption requires the output record to immediately follow the
+		// command record among main-chain turns (openCommand); an output
+		// record seen once the command has already received output — even
+		// empty output — is treated as orphaned plain text instead.
 		if turn.Kind == model.TurnUser {
 			text := userText(turn)
 			if inv, ok := parseCommand(text); ok {
 				turn.Blocks = []model.Block{{Type: model.BlockCommand, Command: &model.Command{Invocation: inv}}}
 			} else if out, ok := parseCommandOutput(text); ok {
-				if n := len(s.Turns); n > 0 && isOpenCommand(&s.Turns[n-1]) {
+				if n := len(s.Turns); openCommand && n > 0 && s.Turns[n-1].Blocks[0].Command != nil {
 					s.Turns[n-1].Blocks[0].Command.Output = out
+					openCommand = false
 					continue
 				}
 				turn.Blocks = []model.Block{{Type: model.BlockText, Text: out}}
 			}
 		}
 		s.Turns = append(s.Turns, *turn)
+		openCommand = turn.Kind == model.TurnUser && len(turn.Blocks) == 1 &&
+			turn.Blocks[0].Type == model.BlockCommand
 
 		// Seed a subagent slot for each Task tool call and make it the current
 		// sidechain owner. Tool-use ids are already registered in buildTurn.
