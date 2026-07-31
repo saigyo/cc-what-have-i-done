@@ -149,9 +149,8 @@ func listModules(root, goos string) ([]module, error) {
 	return mods, nil
 }
 
-// gorootLicense reads the Go standard library's license text.
-// It tries both official Go distributions (LICENSE in GOROOT) and
-// Homebrew layout (LICENSE one level above GOROOT).
+// gorootLicense reads the Go standard library's license text by resolving
+// GOROOT via `go env GOROOT` and delegating to licenseFromGoroot.
 func gorootLicense(root string) (string, error) {
 	cmd := exec.Command("go", "env", "GOROOT")
 	cmd.Dir = root
@@ -159,24 +158,36 @@ func gorootLicense(root string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("go env GOROOT: %w", err)
 	}
-	goroot := strings.TrimSpace(string(out))
+	return licenseFromGoroot(strings.TrimSpace(string(out)))
+}
 
-	// Try official Go distribution layout first
-	path1 := filepath.Join(goroot, "LICENSE")
-	data, err := os.ReadFile(path1)
+// licenseFromGoroot reads the Go standard library license from a given GOROOT,
+// trying both official Go distributions (GOROOT/LICENSE) and Homebrew layout
+// (GOROOT/../LICENSE). It only falls back on missing-file errors; other errors
+// are propagated as-is to avoid masking e.g. permission errors.
+func licenseFromGoroot(goroot string) (string, error) {
+	officialPath := filepath.Join(goroot, "LICENSE")
+	data, err := os.ReadFile(officialPath)
 	if err == nil {
 		return string(data), nil
 	}
+	// Only fall back if the file does not exist; propagate other errors
+	if !errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("reading Go stdlib license from %s: %w", officialPath, err)
+	}
 
 	// Try Homebrew layout (LICENSE one level above GOROOT)
-	path2 := filepath.Join(goroot, "..", "LICENSE")
-	data, err = os.ReadFile(path2)
+	brewPath := filepath.Join(goroot, "..", "LICENSE")
+	data, err = os.ReadFile(brewPath)
 	if err == nil {
 		return string(data), nil
 	}
 
 	// Both paths failed; report both attempts
-	return "", fmt.Errorf("reading Go stdlib license: tried %s and %s: both not found", path1, path2)
+	if errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("reading Go stdlib license: neither %s nor %s exists", officialPath, brewPath)
+	}
+	return "", fmt.Errorf("reading Go stdlib license from %s: %w", brewPath, err)
 }
 
 // noticeFiles returns the notice files at a module root, sorted by name

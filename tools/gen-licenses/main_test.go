@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -59,6 +60,55 @@ func TestSectionMultiFile(t *testing.T) {
 		if !strings.Contains(got, marker) {
 			t.Errorf("section should contain %q, got:\n%s", marker, got)
 		}
+	}
+}
+
+func TestLicenseFromGorootOfficialLayout(t *testing.T) {
+	dir := t.TempDir()
+	officialPath := dir + "/LICENSE"
+	if err := os.WriteFile(officialPath, []byte("Official License\n"), 0o644); err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+	got, err := licenseFromGoroot(dir)
+	if err != nil {
+		t.Fatalf("licenseFromGoroot: %v", err)
+	}
+	if got != "Official License\n" {
+		t.Errorf("got %q, want %q", got, "Official License\n")
+	}
+}
+
+func TestLicenseFromGorootBrewLayout(t *testing.T) {
+	tmpbase := t.TempDir()
+	// Create tmpbase/goroot as the GOROOT, and tmpbase/LICENSE as the Homebrew layout
+	gorootDir := tmpbase + "/goroot"
+	if err := os.Mkdir(gorootDir, 0o755); err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+	brewPath := tmpbase + "/LICENSE"
+	if err := os.WriteFile(brewPath, []byte("Homebrew License\n"), 0o644); err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+	got, err := licenseFromGoroot(gorootDir)
+	if err != nil {
+		t.Fatalf("licenseFromGoroot: %v", err)
+	}
+	if got != "Homebrew License\n" {
+		t.Errorf("got %q, want %q", got, "Homebrew License\n")
+	}
+}
+
+func TestLicenseFromGorootNeitherExists(t *testing.T) {
+	dir := t.TempDir()
+	_, err := licenseFromGoroot(dir)
+	if err == nil {
+		t.Fatal("licenseFromGoroot: expected error, got nil")
+	}
+	errMsg := err.Error()
+	officialPath := filepath.Join(dir, "LICENSE")
+	brewPath := filepath.Join(dir, "..", "LICENSE")
+	if !strings.Contains(errMsg, officialPath) || !strings.Contains(errMsg, brewPath) {
+		t.Errorf("error message should mention both paths; got: %v", err)
 	}
 }
 
