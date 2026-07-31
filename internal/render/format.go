@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M. The M
@@ -61,4 +62,14 @@ func isReleaseVersion(v string) bool {
 		}
 	}
 	return true
+}
+
+// timeParts formats a turn timestamp for display: the short card label and
+// the full hover title, in local time. A zero time yields "", "".
+func timeParts(ts time.Time) (label, title string) {
+	if ts.IsZero() {
+		return "", ""
+	}
+	lt := ts.Local()
+	return lt.Format("15:04"), lt.Format("January 2, 2006 at 15:04:05")
 }

@@ -1,6 +1,9 @@
 package render
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestFormatTokens(t *testing.T) {
 	cases := map[int]string{
@@ -44,5 +47,26 @@ func TestVersionLink(t *testing.T) {
 		if label != c.label || href != c.href {
 			t.Errorf("versionLink(%q) = (%q, %q), want (%q, %q)", c.in, label, href, c.label, c.href)
 		}
+	}
+}
+
+func TestTimeParts(t *testing.T) {
+	if l, ti := timeParts(time.Time{}); l != "" || ti != "" {
+		t.Fatalf("zero time: got %q, %q; want empty strings", l, ti)
+	}
+	// Construct the instant in the local zone so expectations are concrete
+	// and the test passes in any timezone.
+	ts := time.Date(2026, 7, 29, 14, 3, 59, 0, time.Local)
+	l, ti := timeParts(ts)
+	if l != "14:03" {
+		t.Errorf("label = %q, want %q", l, "14:03")
+	}
+	if ti != "July 29, 2026 at 14:03:59" {
+		t.Errorf("title = %q, want %q", ti, "July 29, 2026 at 14:03:59")
+	}
+	// The same instant expressed in UTC must convert back to local.
+	l2, ti2 := timeParts(ts.UTC())
+	if l2 != l || ti2 != ti {
+		t.Errorf("UTC input: got %q, %q; want %q, %q", l2, ti2, l, ti)
 	}
 }
