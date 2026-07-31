@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 12:10:13">12:10</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:10</span>
+        <span title="last message 2026-07-11 12:11">2026-07-11 12:10 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>12 turns</span>
         <span>general-purpose · agent-a5f129206c44f260a</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; broad review happens later.
 
 ## what was requested
@@ -79,7 +81,7 @@ read-only review; do not modify the tree. implementer already ran tests — do n
 named risk to check: that a bare-string message content becomes exactly one `{type:&#34;text&#34;}` block, and that malformed json in any of the three functions returns zero values rather than panicking.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:10:13">· 12:10</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
@@ -102,8 +104,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:10:16">· 12:10</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 4: Raw JSONL record decoding
@@ -290,8 +293,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 182	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:10:16">· 12:10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 4: Raw JSONL Record Decoding - Implementation Report
@@ -455,8 +459,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 159	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-159ee65..5980a02.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:10:17">· 12:10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-159ee65..5980a02.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-159ee65..5980a02.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 159ee6522adfcbfd4824ad4dd48f419ab084fc47..HEAD
@@ -620,8 +625,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 159	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash git log --oneline -3 &amp;&amp; git status">
-      <div class="turn-role">Claude<span class="usage-badge">6k tok · ~$0.08</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:10:50">· 12:10</span><span class="usage-badge">6k tok · ~$0.08</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -3 &amp;&amp; git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -3 \u0026\u0026 git status&#34;,
   &#34;description&#34;: &#34;Check current git state before focused test&#34;
@@ -632,13 +638,15 @@ Auf Branch feat/ccwhid-impl
 nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:05">· 12:11</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import &#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_BareStringExactlyOneBlock(t *testing.T) {</div><div class="diff-add">+ 	_, blocks := decodeMessageContent([]byte(`{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;}`))</div><div class="diff-add">+ 	if len(blocks) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected exactly 1 block, got %d: %+v&#34;, len(blocks), blocks)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if blocks[0].Type != &#34;text&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected Type=text, got %q&#34;, blocks[0].Type)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_MalformedTopLevelJSON(t *testing.T) {</div><div class="diff-add">+ 	defer func() {</div><div class="diff-add">+ 		if r := recover(); r != nil {</div><div class="diff-add">+ 			t.Fatalf(&#34;panicked: %v&#34;, r)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}()</div><div class="diff-add">+ 	role, blocks := decodeMessageContent([]byte(`{not valid json`))</div><div class="diff-add">+ 	if role != &#34;&#34; || blocks != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected zero values, got role=%q blocks=%+v&#34;, role, blocks)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_ToolResultTextMalformed(t *testing.T) {</div><div class="diff-add">+ 	defer func() {</div><div class="diff-add">+ 		if r := recover(); r != nil {</div><div class="diff-add">+ 			t.Fatalf(&#34;panicked: %v&#34;, r)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}()</div><div class="diff-add">+ 	got := toolResultText([]byte(`{garbage`))</div><div class="diff-add">+ 	if got != &#34;&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected empty string, got %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_ParseTimeMalformed(t *testing.T) {</div><div class="diff-add">+ 	defer func() {</div><div class="diff-add">+ 		if r := recover(); r != nil {</div><div class="diff-add">+ 			t.Fatalf(&#34;panicked: %v&#34;, r)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}()</div><div class="diff-add">+ 	if got := parseTime(&#34;not-a-time&#34;); !got.IsZero() {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected zero time, got %v&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_NullContent(t *testing.T) {</div><div class="diff-add">+ 	role, blocks := decodeMessageContent([]byte(`{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:null}`))</div><div class="diff-add">+ 	t.Logf(&#34;null content -&gt; role=%q blocks=%+v (len=%d)&#34;, role, blocks, len(blocks))</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_NumberContent(t *testing.T) {</div><div class="diff-add">+ 	defer func() {</div><div class="diff-add">+ 		if r := recover(); r != nil {</div><div class="diff-add">+ 			t.Fatalf(&#34;panicked: %v&#34;, r)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}()</div><div class="diff-add">+ 	role, blocks := decodeMessageContent([]byte(`{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:42}`))</div><div class="diff-add">+ 	t.Logf(&#34;number content -&gt; role=%q blocks=%+v (len=%d)&#34;, role, blocks, len(blocks))</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReviewDoubt_TopLevelGarbageBytes(t *testing.T) {</div><div class="diff-add">+ 	defer func() {</div><div class="diff-add">+ 		if r := recover(); r != nil {</div><div class="diff-add">+ 			t.Fatalf(&#34;panicked: %v&#34;, r)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}()</div><div class="diff-add">+ 	decodeMessageContent([]byte(`\x00\xff not json at all {{{`))</div><div class="diff-add">+ 	toolResultText([]byte(`\x00\xff not json at all {{{`))</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash go test ./internal/transcript/ -run testreviewdoubt -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">135 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:09">· 12:11</span><span class="usage-badge">135 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestReviewDoubt -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestReviewDoubt -v 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Run focused doubt tests&#34;
@@ -662,8 +670,9 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.314s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go &amp;&amp; git status">
-      <div class="turn-role">Claude<span class="usage-badge">289 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:15">· 12:11</span><span class="usage-badge">289 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go &amp;&amp; git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zz_review_tmp_test.go \u0026\u0026 git status&#34;,
   &#34;description&#34;: &#34;Remove temporary review test file and confirm clean tree&#34;
@@ -671,8 +680,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.314s</pre></div
 nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash git log -1 5980a02 --format=&#39;%b&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">129 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:17">· 12:11</span><span class="usage-badge">129 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 5980a02 --format=&#39;%B&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -1 5980a02 --format=&#39;%B&#39;&#34;,
   &#34;description&#34;: &#34;Check full commit message body&#34;
@@ -681,14 +691,16 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="commit message matches the required constraint exactly. now let me verify module path and file location constraints.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:20">· 12:11</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Commit message matches the required constraint exactly. Now let me verify module path and file location constraints.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash head -5 ~/ideaprojects/cc-what-have-i-done/go.mod; echo ---; ls -la ~/ideaprojects/cc-what-have-i-done/internal/transcript/">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:21">· 12:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">head -5 ~/IdeaProjects/cc-what-have-i-done/go.mod; echo ---; ls -la ~/IdeaProjects/cc-what-have-i-done/internal/transcript/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;head -5 ~/IdeaProjects/cc-what-have-i-done/go.mod; echo ---; ls -la ~/IdeaProjects/cc-what-have-i-done/internal/transcript/&#34;,
   &#34;description&#34;: &#34;Verify module path and file location&#34;
@@ -704,6 +716,7 @@ drwxr-xr-x@ 5 [user]  staff   160 11 Juli 12:08 ..
 -rw-r--r--@ 1 [user]  staff  1175 11 Juli 12:08 raw_test.go
 -rw-r--r--@ 1 [user]  staff  2514 11 Juli 12:09 raw.go</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-11" data-search="all constraints confirmed. here is the final review.
 
@@ -736,7 +749,7 @@ drwxr-xr-x@ 5 [user]  staff   160 11 Juli 12:08 ..
 **task quality: approved**
 
 the implementation satisfies every field/signature/behavior requirement in the brief, the global constraints (package path, module, commit trailer) are all met, and the named robustness risk was independently verified with a focused test (malformed json, garbage bytes, and non-string/array content all degrade to zero values without panicking). the one minor `null`-content quirk is a defensible edge case, not a spec violation, and doesn&#39;t warrant blocking.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:11:34">· 12:11</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All constraints confirmed. Here is the final review.</p>
 <h2>Spec Compliance: ✅</h2>
 <ul>

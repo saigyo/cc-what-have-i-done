@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 11:18:41">11:18</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 09:18</span>
+        <span title="last message 2026-07-12 11:19">2026-07-12 11:18 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>9 turns</span>
         <span>general-purpose · agent-a72c1702495c21e82</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
 
 ## what was requested
@@ -116,7 +118,7 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 ### assessment
 **task quality:** [approved | needs fixes]
 **reasoning:** [1-2 sentences]">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 11:18:41">· 11:18</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
@@ -163,8 +165,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:18:44">· 11:18</span><span class="usage-badge">7k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 1: Parse `&lt;task-notification&gt;` records into agent-result turns
@@ -439,8 +442,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 270	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:18:44">· 11:18</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 1 Report: Parse `&lt;task-notification&gt;` records into agent-result turns
@@ -590,8 +594,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 145	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:18:45">· 11:18</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b1bc70e.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 608d700..HEAD
@@ -926,8 +931,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 330	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash wc -l internal/transcript/parse.go &amp;&amp; grep -n &#34;buildturn\|options\|includesubagents\|seenusage\|func parse&#34; internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.09</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:19:15">· 11:19</span><span class="usage-badge">5k tok · ~$0.09</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l internal/transcript/parse.go &amp;&amp; grep -n &#34;buildTurn\|Options\|IncludeSubagents\|seenUsage\|func Parse&#34; internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;wc -l internal/transcript/parse.go \u0026\u0026 grep -n \&#34;buildTurn\\|Options\\|IncludeSubagents\\|seenUsage\\|func Parse\&#34; internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">     418 internal/transcript/parse.go
@@ -949,8 +955,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 302:				seenUsage[msgID] = true</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">196 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:19:18">· 11:19</span><span class="usage-badge">196 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;,
   &#34;limit&#34;: 150,
@@ -1107,15 +1114,17 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 204	func parseTaskNotification(s string) (taskNotification, bool) {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash gofmt -l . &amp;&amp; echo &#34;---gofmt clean---&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:19:35">· 11:19</span><span class="usage-badge">1k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;---gofmt clean---&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;---gofmt clean---\&#34;&#34;
 }</pre><pre class="tool-result">---gofmt clean---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
-      <div class="turn-role">Claude<span class="usage-badge">199 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:19:40">· 11:19</span><span class="usage-badge">199 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
 }</pre><pre class="tool-result">1	// Package redact scrubs likely secrets and the user&#39;s home path from transcript
@@ -1210,6 +1219,7 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 90	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="this matches the brief exactly and follows the existing pattern. everything checks out. implementation is small, focused, and well-tested.
 
 ## spec compliance
@@ -1243,7 +1253,7 @@ none.
 ### assessment
 **task quality:** approved
 **reasoning:** the implementation matches the brief&#39;s interface and behavior contracts precisely, including the subtle &#34;unconditional regardless of flags&#34; requirement (verified by reading the full parse loop, not just the diff), the result-vs-summary fallback, and safe degradation on malformed input. tests are well-targeted at the stated global constraints, gofmt is clean, and redaction is wired correctly.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:19:58">· 11:19</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><p>This matches the brief exactly and follows the existing pattern. Everything checks out. Implementation is small, focused, and well-tested.</p>
 <h2>Spec Compliance</h2>
 <ul>

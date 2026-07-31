@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are re-reviewing the consolidated cleanup commit for th…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are re-reviewing the consolidated cleanup commit for th…</span><span class="prompt-time" title="July 11, 2026 at 13:16:18">13:16</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 11:16</span>
+        <span title="last message 2026-07-11 13:18">2026-07-11 13:16 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>25 turns</span>
         <span>general-purpose · agent-ae6e5949b473b0b9e</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are re-reviewing the consolidated cleanup commit for the `ccwhid` go cli, applied after a whole-branch review. confirm the fixes are correct and complete, and nothing regressed.
 
 ## the fixes claimed (commit b2f6fc7)
@@ -82,7 +84,7 @@ verify specifically:
 4. **dead code truly gone, no new unused imports** (e.g. `errors` import removed from run.go; `lexers`/`styles` removed from markdown.go).
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 13:16:18">· 13:16</span></div>
       <div class="turn-body"><p>You are re-reviewing the consolidated cleanup commit for the <code>ccwhid</code> Go CLI, applied after a whole-branch review. Confirm the fixes are correct and complete, and nothing regressed.</p>
 <h2>The fixes claimed (commit b2f6fc7)</h2>
 <ol>
@@ -111,8 +113,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:21">· 13:16</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/final-cleanup-report.md&#34;
 }</pre><pre class="tool-result">1	# Final cleanup report — whole-branch review fixes
@@ -244,16 +247,18 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 127	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="bash wc -l ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:22">· 13:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff&#34;,
   &#34;description&#34;: &#34;Check diff file size&#34;
 }</pre><pre class="tool-result">     548 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:25">· 13:16</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6678bb5..b2f6fc7.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 6678bb55877f95a4a677c7cfef841cde7e218e7d..HEAD
@@ -807,15 +812,17 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 549	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;type session struct&#34; ">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:29">· 13:16</span><span class="usage-badge">5 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;type Session struct&#34; </span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -name \&#34;*.go\&#34; -print | xargs grep -l \&#34;type Session struct\&#34; &#34;
 }</pre><pre class="tool-result">./internal/model/model.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash cat internal/model/*.go | head -200">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:29">· 13:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat internal/model/*.go | head -200</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat internal/model/*.go | head -200&#34;
 }</pre><pre class="tool-result">package model
@@ -929,8 +936,9 @@ type Subagent struct {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
-      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:33">· 13:16</span><span class="usage-badge">10 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
 }</pre><pre class="tool-result">1	// Package redact scrubs likely secrets and the user&#39;s home path from transcript
@@ -1024,8 +1032,9 @@ type Subagent struct {
 89	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -rn &#34;projectpath\|\.title\|gitbranch\|\.version\b\|\.id\b&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/ 2&gt;/dev/null">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:34">· 13:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;ProjectPath\|\.Title\|GitBranch\|\.Version\b\|\.ID\b&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/ 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;ProjectPath\\|\\.Title\\|GitBranch\\|\\.Version\\b\\|\\.ID\\b\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/ 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:25:	title := opts.Title
@@ -1036,8 +1045,9 @@ type Subagent struct {
 ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go:37:		ProjectPath: &#34;/tmp/proj&#34;,</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -rn &#34;session\.&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/assets/*.tmpl 2&gt;/dev/null; echo &#34;---&#34;; grep -rln &#34;displaytitle\|\.title\b&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/ ; echo &#34;---render.go---&#34;; cat ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">302 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:37">· 13:16</span><span class="usage-badge">302 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;Session\.&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/*.tmpl 2&gt;/dev/null; echo &#34;---&#34;; grep -rln &#34;DisplayTitle\|\.Title\b&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/ ; echo &#34;---render.go---&#34;; cat ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;Session\\.\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/*.tmpl 2\u003e/dev/null; echo \&#34;---\&#34;; grep -rln \&#34;DisplayTitle\\|\\.Title\\b\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/ ; echo \&#34;---render.go---\&#34;; cat ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl:30:        &lt;span&gt;{{ .Session.ProjectPath }}&lt;/span&gt;
@@ -1237,8 +1247,9 @@ func preview(s string, n int) string {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash grep -n &#34;\.session\.\|{{ \.&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">381 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:42">· 13:16</span><span class="usage-badge">381 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;\.Session\.\|{{ \.&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;\\.Session\\.\\|{{ \\.\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;
 }</pre><pre class="tool-result">6:&lt;title&gt;{{ .Title }} · ccwhid&lt;/title&gt;
@@ -1253,15 +1264,17 @@ func preview(s string, n int) string {
 39:      &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash go build ./... &amp;&amp; echo build_ok">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:48">· 13:16</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; echo BUILD_OK</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... \u0026\u0026 echo BUILD_OK&#34;
 }</pre><pre class="tool-result">BUILD_OK</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash go doc github.com/yuin/goldmark-highlighting/v2 withformatoptions 2&gt;&amp;1 | head -30; echo &#34;---&#34;; go doc github.com/yuin/goldmark-highlighting/v2 newhighlighting 2&gt;&amp;1 | head -40">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:49">· 13:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go doc github.com/yuin/goldmark-highlighting/v2 WithFormatOptions 2&gt;&amp;1 | head -30; echo &#34;---&#34;; go doc github.com/yuin/goldmark-highlighting/v2 NewHighlighting 2&gt;&amp;1 | head -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go doc github.com/yuin/goldmark-highlighting/v2 WithFormatOptions 2\u003e\u00261 | head -30; echo \&#34;---\&#34;; go doc github.com/yuin/goldmark-highlighting/v2 NewHighlighting 2\u003e\u00261 | head -40&#34;
 }</pre><pre class="tool-result">package highlighting // import &#34;github.com/yuin/goldmark-highlighting/v2&#34;
@@ -1277,14 +1290,16 @@ func NewHighlighting(opts ...Option) goldmark.Extender
     NewHighlighting returns a new extension with given options.</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="build succeeds. now let&#39;s run a focused test to actually eyeball the generated html for inline styles vs classes, and verify no `class=&#34;chroma&#34;` without inline `style=`.">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:55">· 13:16</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Build succeeds. Now let's run a focused test to actually eyeball the generated HTML for inline styles vs classes, and verify no <code>class=&quot;chroma&quot;</code> without inline <code>style=</code>.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash cat &gt; /tmp/chk_test.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:16:57">· 13:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/chk_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/chk_test.go \u003c\u003c&#39;EOF&#39;\npackage render\n\nimport (\n\t\&#34;fmt\&#34;\n\t\&#34;testing\&#34;\n)\n\nfunc TestPrintHighlightedHTML(t *testing.T) {\n\tout := string(Markdown(\&#34;```go\\nfmt.Println(\\\&#34;hi\\\&#34;)\\n```\&#34;))\n\tfmt.Println(out)\n}\nEOF\ncp /tmp/chk_test.go internal/render/zzz_check_test.go\ngo test ./internal/render/ -run TestPrintHighlightedHTML -v\nrm internal/render/zzz_check_test.go&#34;
 }</pre><pre class="tool-result">=== RUN   TestPrintHighlightedHTML
@@ -1295,8 +1310,9 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.374s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash grep -n &#34;errtoolong\|skippedlines&#34; ~/ideaprojects/cc-what-have-i-done/internal/transcript/*.go">
-      <div class="turn-role">Claude<span class="usage-badge">291 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:03">· 13:17</span><span class="usage-badge">291 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;ErrTooLong\|SkippedLines&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;ErrTooLong\\|SkippedLines\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/*.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go:17:	if s.SkippedLines != 1 {
@@ -1307,8 +1323,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.374s</pre></div></d
 ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go:157:			s.SkippedLines++</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash sed -n &#39;1,40p&#39; ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">193 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:06">· 13:17</span><span class="usage-badge">193 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,40p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,40p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go&#34;
 }</pre><pre class="tool-result">package transcript
@@ -1353,8 +1370,9 @@ func TestParseBasicTimeline(t *testing.T) {
 	}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash cat &gt; /tmp/toolong_test.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:16">· 13:17</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/toolong_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/toolong_test.go \u003c\u003c&#39;EOF&#39;\npackage transcript\n\nimport (\n\t\&#34;strings\&#34;\n\t\&#34;testing\&#34;\n)\n\nfunc TestParseOverLongLineDoesNotAbort(t *testing.T) {\n\t// One good line, then one absurdly long line (\u003e bufio scanner max token size).\n\tgood := `{\&#34;type\&#34;:\&#34;user\&#34;,\&#34;message\&#34;:{\&#34;role\&#34;:\&#34;user\&#34;,\&#34;content\&#34;:[{\&#34;type\&#34;:\&#34;text\&#34;,\&#34;text\&#34;:\&#34;hi\&#34;}]},\&#34;timestamp\&#34;:\&#34;2024-01-01T00:00:00Z\&#34;}`\n\thuge := \&#34;{\\\&#34;type\\\&#34;:\\\&#34;user\\\&#34;,\\\&#34;message\\\&#34;:{\\\&#34;role\\\&#34;:\\\&#34;user\\\&#34;,\\\&#34;content\\\&#34;:[{\\\&#34;type\\\&#34;:\\\&#34;text\\\&#34;,\\\&#34;text\\\&#34;:\\\&#34;\&#34; + strings.Repeat(\&#34;x\&#34;, 70*1024*1024) + \&#34;\\\&#34;}]},\\\&#34;timestamp\\\&#34;:\\\&#34;2024-01-01T00:00:00Z\\\&#34;}\&#34;\n\tinput := good + \&#34;\\n\&#34; + huge + \&#34;\\n\&#34;\n\ts, err := Parse(strings.NewReader(input), Options{})\n\tif err != nil {\n\t\tt.Fatalf(\&#34;Parse returned error, want nil (partial result expected): %v\&#34;, err)\n\t}\n\tif s.SkippedLines != 1 {\n\t\tt.Errorf(\&#34;SkippedLines = %d, want 1\&#34;, s.SkippedLines)\n\t}\n\tif len(s.Turns) \u003c 1 {\n\t\tt.Errorf(\&#34;expected partial parse to retain earlier turns, got %d turns\&#34;, len(s.Turns))\n\t}\n}\nEOF\ncp /tmp/toolong_test.go ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_toolong_test.go\ngo test ./internal/transcript/ -run TestParseOverLongLineDoesNotAbort -v\nrm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_toolong_test.go&#34;
 }</pre><pre class="tool-result">=== RUN   TestParseOverLongLineDoesNotAbort
@@ -1363,14 +1381,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.308s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="confirmed behaviorally: over-long line no longer aborts, returns partial result with `skippedlines` incremented, `err == nil`. now verify claim 4 (dead code removal, no unused imports) more broadly.">
-      <div class="turn-role">Claude<span class="usage-badge">8 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:20">· 13:17</span><span class="usage-badge">8 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed behaviorally: over-long line no longer aborts, returns partial result with <code>SkippedLines</code> incremented, <code>err == nil</code>. Now verify claim 4 (dead code removal, no unused imports) more broadly.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:22">· 13:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\necho \&#34;--- errNeedTUI refs ---\&#34;\ngrep -rn \&#34;errNeedTUI\&#34; . --include=\&#34;*.go\&#34;\necho \&#34;--- model.done refs ---\&#34;\ngrep -rn \&#34;\\.done\\b\&#34; internal/tui/*.go\necho \&#34;--- Highlight( refs ---\&#34;\ngrep -rn \&#34;render\\.Highlight\\|[^.]Highlight(\&#34; --include=\&#34;*.go\&#34; .\necho \&#34;--- gofmt check ---\&#34;\ngofmt -l internal cmd\necho \&#34;--- go vet ---\&#34;\ngo vet ./... 2\u003e\u00261\necho \&#34;--- unused import check via build (already passed) ---\&#34;\n&#34;
 }</pre><pre class="tool-result">--- errNeedTUI refs ---
@@ -1381,8 +1401,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.308s</pre></div
 --- unused import check via build (already passed) ---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
-      <div class="turn-role">Claude<span class="usage-badge">375 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:28">· 13:17</span><span class="usage-badge">375 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngrep -rn \&#34;done\&#34; internal/tui/*.go\necho \&#34;---\&#34;\ngo test ./internal/tui/... -v 2\u003e\u00261 | tail -30&#34;
 }</pre><pre class="tool-result">internal/tui/tui_test.go:6:	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;
@@ -1397,14 +1418,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="all clean — no dangling references, tests pass. now let&#39;s check the redact test suite and confirm generate warning wiring end-to-end, plus check for a `--no-redact` interaction or double-redaction concerns, and glance at run_test.go for coverage of the new warning.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:32">· 13:17</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All clean — no dangling references, tests pass. Now let's check the redact test suite and confirm generate warning wiring end-to-end, plus check for a <code>--no-redact</code> interaction or double-redaction concerns, and glance at run_test.go for coverage of the new warning.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:33">· 13:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngrep -n \&#34;SkippedLines\\|warning: skipped\&#34; cmd/ccwhid/*.go\necho \&#34;---run_test---\&#34;\ngrep -n \&#34;SkippedLines\\|warning\&#34; cmd/ccwhid/*_test.go&#34;
 }</pre><pre class="tool-result">cmd/ccwhid/run.go:79:	if sess.SkippedLines &gt; 0 {
@@ -1412,8 +1435,9 @@ cmd/ccwhid/run.go:80:		fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed
 ---run_test---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
-      <div class="turn-role">Claude<span class="usage-badge">767 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:43">· 13:17</span><span class="usage-badge">767 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngit show 6678bb55877f95a4a677c7cfef841cde7e218e7d:internal/render/markdown.go 2\u003e/dev/null | grep -n \&#34;Highlight\&#34; \necho \&#34;--- search whole repo at base commit for Highlight( callers ---\&#34;\ngit grep -n \&#34;Highlight(\&#34; 6678bb55877f95a4a677c7cfef841cde7e218e7d -- &#39;*.go&#39; 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">32:// Highlight renders a code string with chroma using inline styles (no external
@@ -1422,13 +1446,15 @@ cmd/ccwhid/run.go:80:		fmt.Fprintf(os.Stderr, &#34;warning: skipped %d malformed
 6678bb55877f95a4a677c7cfef841cde7e218e7d:internal/render/markdown.go:34:func Highlight(code, lang string) template.HTML {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash cd ~/ideaprojects/cc-what-have-i-done">
-      <div class="turn-role">Claude<span class="usage-badge">271 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:17:48">· 13:17</span><span class="usage-badge">271 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done\ngit status --porcelain\necho \&#34;--- mod verify ---\&#34;\ngo mod verify&#34;
 }</pre><pre class="tool-result">--- mod verify ---
 all modules verified</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-24" data-search="tree is clean (my temp test files were removed) and modules verify correctly. all four verification points check out with independent confirmation, not just re-reading the diff.
 
@@ -1450,7 +1476,7 @@ none found — critical, important, and minor lists are all empty. no unaddresse
 
 ## assessment
 task quality: **approved**. all six claimed fixes are present, correct, and independently verified (not just diff-read) — redaction now covers every rendered session-level and subagent field, highlighting is genuinely inline/offline, the parser degrades gracefully on oversized lines instead of discarding the whole session, and both pieces of dead code are fully gone with no residue (no unused imports, no dangling references, `go vet`/`gofmt`/build all clean).">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:18:05">· 13:18</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><p>Tree is clean (my temp test files were removed) and modules verify correctly. All four verification points check out with independent confirmation, not just re-reading the diff.</p>
 <h2>Spec Compliance</h2>
 <ol>

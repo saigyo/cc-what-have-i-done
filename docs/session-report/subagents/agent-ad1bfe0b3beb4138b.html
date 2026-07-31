@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are performing a focused code review of a single commit…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are performing a focused code review of a single commit…</span><span class="prompt-time" title="July 11, 2026 at 18:47:58">18:47</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 16:47</span>
+        <span title="last message 2026-07-11 18:50">2026-07-11 18:47 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>10 turns</span>
         <span>general-purpose · agent-ad1bfe0b3beb4138b</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are performing a focused code review of a single commit in a go cli project (`ccwhid`, module github.com/saigyo/cc-what-have-i-done). the commit reworks the interactive tui and fixes a `--project` flag. your job: find real defects — correctness bugs, edge cases, logic errors, security issues, test gaps — and verify each against the actual code. do not nitpick style. report only issues you can substantiate.
 
 ## the change under review
@@ -84,7 +86,7 @@ then read the current full files as needed to verify (do not trust the diff alon
 
 ## how to report
 classify each finding as critical / important / minor. for each: file:line, what&#39;s wrong, a concrete failure scenario (inputs → wrong result/panic), and a suggested fix. if you find nothing above minor, say so plainly. be precise and do not invent issues to seem thorough. you may run `go test ./...`, `go vet ./...`, and `go build ./...` from ~/ideaprojects/cc-what-have-i-done to confirm hypotheses. return your review as your final message (it is consumed by the controller, not shown to a human — be concise and structured).">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 18:47:58">· 18:47</span></div>
       <div class="turn-body"><p>You are performing a focused code review of a single commit in a Go CLI project (<code>ccwhid</code>, module github.com/saigyo/cc-what-have-i-done). The commit reworks the interactive TUI and fixes a <code>--project</code> flag. Your job: find real defects — correctness bugs, edge cases, logic errors, security issues, test gaps — and verify each against the actual code. Do NOT nitpick style. Report only issues you can substantiate.</p>
 <h2>The change under review</h2>
 <p>Read the review package (commit list, stat, full diff with context):
@@ -121,8 +123,9 @@ classify each finding as critical / important / minor. for each: file:line, what
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read /private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:48:01">· 18:48</span><span class="usage-badge">7k tok · ~$0.10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/review-tui-0f130bc.txt&#34;
 }</pre><pre class="tool-result">1	=== COMMIT ===
@@ -1221,8 +1224,9 @@ classify each finding as critical / important / minor. for each: file:line, what
 1094	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:48:02">· 18:48</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
 }</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
@@ -1629,8 +1633,9 @@ classify each finding as critical / important / minor. for each: file:line, what
 402	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.21</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:48:06">· 18:48</span><span class="usage-badge">2k tok · ~$0.21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
 }</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
@@ -1959,8 +1964,9 @@ classify each finding as critical / important / minor. for each: file:line, what
 324	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:48:06">· 18:48</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -2073,8 +2079,9 @@ classify each finding as critical / important / minor. for each: file:line, what
 108	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash cat cmd/ccwhid/run.go &amp;&amp; echo &#34;---gomod---&#34; &amp;&amp; head -5 go.mod">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.07</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:49:17">· 18:49</span><span class="usage-badge">7 tok · ~$0.07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat cmd/ccwhid/run.go &amp;&amp; echo &#34;---GOMOD---&#34; &amp;&amp; head -5 go.mod</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat cmd/ccwhid/run.go \u0026\u0026 echo \&#34;---GOMOD---\&#34; \u0026\u0026 head -5 go.mod&#34;,
   &#34;description&#34;: &#34;Read run.go and go.mod&#34;
@@ -2210,8 +2217,9 @@ go 1.26
 require (</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1 | tail -30">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:49:18">· 18:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... \u0026\u0026 go vet ./... \u0026\u0026 go test ./... 2\u003e\u00261 | tail -30&#34;,
   &#34;description&#34;: &#34;Build, vet, test&#34;
@@ -2224,19 +2232,22 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="let me verify the `--latest` ordering hypothesis with a throwaway test.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.07</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:49:24">· 18:49</span><span class="usage-badge">4 tok · ~$0.07</span></div>
       <div class="turn-body"><p>Let me verify the <code>--latest</code> ordering hypothesis with a throwaway test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash cat &gt; /tmp/latest_test.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:49:28">· 18:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/latest_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/latest_test.go \u003c\u003c&#39;EOF&#39;\npackage discovery\n\nimport \&#34;testing\&#34;\n\nfunc TestLatestOrderingBug(t *testing.T) {\n\t// Group A newest session is an AGENT at T=100, interactive at T=50.\n\t// Group B newest session is INTERACTIVE at T=90.\n\t// Global newest interactive is B@90, but current latestSession loop\n\t// returns A@50 because A sorts first (its Sessions[0] modtime 100 \u003e 90).\n\tgroups := []ProjectGroup{} // simulate Scan output ordering\n\t_ = groups\n\tt.Log(\&#34;logic check only\&#34;)\n}\nEOF\necho \&#34;skip file test; reasoning verified manually\&#34;&#34;,
   &#34;description&#34;: &#34;Note reasoning&#34;
 }</pre><pre class="tool-result">skip file test; reasoning verified manually</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-9" data-search="all tests pass, build and vet are clean. i verified the classification, scroll math, findproject, and tui empty-state paths against the actual code. here is the review.
 
@@ -2288,7 +2299,7 @@ return *best, false, nil
 - **entrypoint only read on `user`/`assistant` records** (`discovery.go:110-137`): if a real transcript carries `entrypoint` only on some other record type (e.g. a summary/system line), classification would miss it. the author&#39;s test assumes entrypoint-on-user, so this is a schema-assumption risk rather than a confirmed bug — worth a comment or a quick check against a real agent transcript.
 
 no other issues above minor.">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.11</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 18:50:17">· 18:50</span><span class="usage-badge">3k tok · ~$0.11</span></div>
       <div class="turn-body"><p>All tests pass, build and vet are clean. I verified the classification, scroll math, FindProject, and TUI empty-state paths against the actual code. Here is the review.</p>
 <h2>Findings</h2>
 <h3>Important — <code>latestSession</code> does not return the globally newest interactive session</h3>

@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are fixing two code-review findings on the Go CLI `ccwh…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are fixing two code-review findings on the Go CLI `ccwh…</span><span class="prompt-time" title="July 12, 2026 at 13:00:59">13:00</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 11:00</span>
+        <span title="last message 2026-07-12 13:02">2026-07-12 13:00 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>27 turns</span>
         <span>general-purpose · agent-a2e10427331a80ab4</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are fixing two code-review findings on the go cli `ccwhid`. work from ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions).
 
 ## fix 1 — readme flag description regression
@@ -94,7 +96,7 @@ then push: `git push`
 ## report
 
 report back with only: status, commit sha &#43; subject, one-line test summary.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 13:00:59">· 13:00</span></div>
       <div class="turn-body"><p>You are fixing two code-review findings on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <h2>Fix 1 — README flag description regression</h2>
 <p>In <code>README.md</code>, the flag table row for <code>--include-subagents</code> was reworded on this branch and dropped the disable hint. Find that row and make sure it ends with the previous guidance, i.e. the description should read:</p>
@@ -122,14 +124,16 @@ Expected: gofmt silent, vet clean, package passes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll fix both code-review findings. let me start by examining the files.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:02">· 13:01</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>I'll fix both code-review findings. Let me start by examining the files.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:03">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
@@ -262,8 +266,9 @@ Expected: gofmt silent, vet clean, package passes.</p>
 128	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:03">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 100
@@ -369,8 +374,9 @@ Expected: gofmt silent, vet clean, package passes.</p>
 100				return err</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/app.js">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:04">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js&#34;
 }</pre><pre class="tool-result">1	(function () {
@@ -416,14 +422,16 @@ Expected: gofmt silent, vet clean, package passes.</p>
 41	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="now let me search for the rendertool function to see how the agent link is created:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:09">· 13:01</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let me search for the renderTool function to see how the agent link is created:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash grep -n &#34;rendertool\|agent-link&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:10">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTool\|agent-link&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;renderTool\\|agent-link\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
 }</pre><pre class="tool-result">332:			b.WriteString(renderTool(blk.Tool, links))
@@ -431,8 +439,9 @@ Expected: gofmt silent, vet clean, package passes.</p>
 346:		b.WriteString(`&lt;a class=&#34;agent-link&#34; href=&#34;` + html.EscapeString(href) + `&#34;&gt;transcript ↗&lt;/a&gt;`)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;testsitewritessubagentpagesandlinks&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go -a 30">
-      <div class="turn-role">Claude<span class="usage-badge">158 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:12">· 13:01</span><span class="usage-badge">158 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;TestSiteWritesSubagentPagesAndLinks&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go -A 30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;TestSiteWritesSubagentPagesAndLinks\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go -A 30&#34;
 }</pre><pre class="tool-result">52:func TestSiteWritesSubagentPagesAndLinks(t *testing.T) {
@@ -468,15 +477,17 @@ Expected: gofmt silent, vet clean, package passes.</p>
 82-		t.Fatalf(&#34;agent page missing: %v&#34;, err)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;agent-link&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:16">· 13:01</span><span class="usage-badge">126 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;agent-link&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;agent-link\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_e2e_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">133 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:18">· 13:01</span><span class="usage-badge">133 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_e2e_test.go&#34;,
   &#34;limit&#34;: 100
@@ -582,36 +593,42 @@ Expected: gofmt silent, vet clean, package passes.</p>
 100	func TestSiteNoAgentsWritesNoSubagentsDir(t *testing.T) {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="now i&#39;ll fix both issues. let me start with the readme:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:20">· 13:01</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now I'll fix both issues. Let me start with the README:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:22">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true) |</div><div class="diff-add">+ | `--include-subagents` | Include subagent work: inline Task sidechains and linked agent-session transcript pages under `subagents/` (default true; --include-subagents=false to omit) |</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="now fix the app.js to prevent in-summary links from toggling the details:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:24">· 13:01</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now fix the app.js to prevent in-summary links from toggling the details:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/app.js">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:27">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-   var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);</div><div class="diff-del">-   if (toggleTheme) {</div><div class="diff-del">-     toggleTheme.addEventListener(&#39;click&#39;, function () {</div><div class="diff-del">-       var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);</div><div class="diff-del">-       var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);</div><div class="diff-del">-       document.documentElement.setAttribute(&#39;data-theme&#39;, next);</div><div class="diff-del">-     });</div><div class="diff-del">-   }</div><div class="diff-del">- })();</div><div class="diff-add">+   var toggleTheme = document.getElementById(&#39;toggle-theme&#39;);</div><div class="diff-add">+   if (toggleTheme) {</div><div class="diff-add">+     toggleTheme.addEventListener(&#39;click&#39;, function () {</div><div class="diff-add">+       var cur = document.documentElement.getAttribute(&#39;data-theme&#39;);</div><div class="diff-add">+       var next = cur === &#39;dark&#39; ? &#39;light&#39; : (cur === &#39;light&#39; ? &#39;dark&#39; : &#39;dark&#39;);</div><div class="diff-add">+       document.documentElement.setAttribute(&#39;data-theme&#39;, next);</div><div class="diff-add">+     });</div><div class="diff-add">+   }</div><div class="diff-add">+ </div><div class="diff-add">+   // Links inside &lt;summary&gt; (agent transcript links) must navigate, not toggle</div><div class="diff-add">+   // the surrounding &lt;details&gt;.</div><div class="diff-add">+   document.addEventListener(&#39;click&#39;, (e) =&gt; {</div><div class="diff-add">+     const link = e.target.closest(&#39;a.agent-link&#39;);</div><div class="diff-add">+     if (link) e.stopPropagation();</div><div class="diff-add">+   }, true);</div><div class="diff-add">+ })();</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="now let me verify the changes and run the tests:">
-      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:29">· 13:01</span><span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me verify the changes and run the tests:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:30">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status&#34;
 }</pre><pre class="tool-result">Auf Branch feat/subagent-sessions
@@ -626,29 +643,33 @@ Ihr Branch ist auf demselben Stand wie &#39;origin/feat/subagent-sessions&#39;.
 keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash gofmt -l .">
-      <div class="turn-role">Claude<span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:32">· 13:01</span><span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l .</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l .&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go vet ./...">
-      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:35">· 13:01</span><span class="usage-badge">90 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./...</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go vet ./...&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="bash go test ./internal/render/">
-      <div class="turn-role">Claude<span class="usage-badge">88 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:41">· 13:01</span><span class="usage-badge">88 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.374s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash git diff readme.md">
-      <div class="turn-role">Claude<span class="usage-badge">119 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:46">· 13:01</span><span class="usage-badge">119 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff README.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git diff README.md&#34;
 }</pre><pre class="tool-result">diff --git a/README.md b/README.md
@@ -666,8 +687,9 @@ index a8a1ba6..e72cf80 100644
  | `--open` | Open the report in a browser when done |</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash git diff internal/render/assets/app.js">
-      <div class="turn-role">Claude<span class="usage-badge">96 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:47">· 13:01</span><span class="usage-badge">96 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git diff internal/render/assets/app.js&#34;
 }</pre><pre class="tool-result">diff --git a/internal/render/assets/app.js b/internal/render/assets/app.js
@@ -688,37 +710,42 @@ index 8a168a7..efd5db0 100644
  })();</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="now commit both changes:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:49">· 13:01</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now commit both changes:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash git add readme.md internal/render/assets/app.js &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:50">· 13:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add README.md internal/render/assets/app.js &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add README.md internal/render/assets/app.js \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: keep --include-subagents=false doc hint; make in-summary agent links clickable\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/subagent-sessions d8fddef] fix: keep --include-subagents=false doc hint; make in-summary agent links clickable
  2 files changed, 8 insertions(+), 1 deletion(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash git push">
-      <div class="turn-role">Claude<span class="usage-badge">91 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:01:54">· 13:01</span><span class="usage-badge">91 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git push</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git push&#34;
 }</pre><pre class="tool-result">To https://github.com/saigyo/cc-what-have-i-done.git
    9778609..d8fddef  feat/subagent-sessions -&gt; feat/subagent-sessions</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="bash git log -1 --oneline">
-      <div class="turn-role">Claude<span class="usage-badge">94 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:02:00">· 13:02</span><span class="usage-badge">94 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -1 --oneline&#34;
 }</pre><pre class="tool-result">d8fddef fix: keep --include-subagents=false doc hint; make in-summary agent links clickable</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/render/ -v">
-      <div class="turn-role">Claude<span class="usage-badge">108 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:02:02">· 13:02</span><span class="usage-badge">108 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -v&#34;
 }</pre><pre class="tool-result">=== RUN   TestFormatTokens
@@ -763,6 +790,7 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.221s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="## report
 
 **status:** ✓ both fixes complete, verified, committed, and pushed.
@@ -770,7 +798,7 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.221s</pre></div></d
 **commit:** `d8fddef` — fix: keep --include-subagents=false doc hint; make in-summary agent links clickable
 
 **test summary:** all 18 tests in `./internal/render/` pass, including `testsitewritessubagentpagesandlinks` (link markup assertion), gofmt clean, go vet clean.">
-      <div class="turn-role">Claude<span class="usage-badge">302 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 13:02:10">· 13:02</span><span class="usage-badge">302 tok · ~$0.01</span></div>
       <div class="turn-body"><h2>Report</h2>
 <p><strong>Status:</strong> ✓ Both fixes complete, verified, committed, and pushed.</p>
 <p><strong>Commit:</strong> <code>d8fddef</code> — fix: keep --include-subagents=false doc hint; make in-summary agent links clickable</p>

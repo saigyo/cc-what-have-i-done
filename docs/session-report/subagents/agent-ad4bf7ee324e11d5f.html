@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 08:27:08">08:27</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:27</span>
+        <span title="last message 2026-07-12 08:28">2026-07-12 08:27 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>21 turns</span>
         <span>general-purpose · agent-ad4bf7ee324e11d5f</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. task-scoped gate (this is the final task).
 
 ## what was requested
@@ -89,7 +91,7 @@ implementer ran the full suite green. don&#39;t re-run the whole suite; a focuse
 
 ## output format
 follow the reviewer template: spec compliance (✅/❌/⚠️) first, then strengths, issues (critical/important/minor) with file:line, then assessment with **task quality:** approved | needs fixes.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:27:08">· 08:27</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate (this is the final task).</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
@@ -128,8 +130,9 @@ Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only 
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:11">· 08:27</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 5: CLI flag, TUI toggle, and docs
@@ -309,8 +312,9 @@ Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only 
 175	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:12">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 Report: CLI flag, TUI toggle, and docs
@@ -455,8 +459,9 @@ Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only 
 140	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-4de9666..6fef39b.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:13">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4de9666..6fef39b.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4de9666..6fef39b.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 4de9666..6fef39b
@@ -783,8 +788,9 @@ Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only 
 322	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:23">· 08:27</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
 }</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
@@ -1261,8 +1267,9 @@ Read the diff once. Do not re-run git. Read-only. Inspect outside the diff only 
 472	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;usage&#34; internal/render/*.go | grep -i &#34;type options\|usage bool\|usage &#34; | head -20">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:29">· 08:27</span><span class="usage-badge">5 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Usage&#34; internal/render/*.go | grep -i &#34;type Options\|Usage bool\|Usage &#34; | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;Usage\&#34; internal/render/*.go | grep -i \&#34;type Options\\|Usage bool\\|Usage \&#34; | head -20&#34;
 }</pre><pre class="tool-result">internal/render/render.go:22:	Usage bool // render the token-usage &amp; cost section
@@ -1276,8 +1283,9 @@ internal/render/render.go:162:	headline := &#34;Usage · &#34; + formatTokens(r.
 internal/render/render_test.go:142:		t.Error(&#34;usage card should be absent without Options.Usage&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash grep -n &#34;^type options&#34; -a 10 internal/render/*.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:30">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;^type Options&#34; -A 10 internal/render/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;^type Options\&#34; -A 10 internal/render/*.go&#34;
 }</pre><pre class="tool-result">internal/render/render.go:20:type Options struct {
@@ -1293,21 +1301,24 @@ internal/render/render.go-29-		title = s.DisplayTitle()
 internal/render/render.go-30-	}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="good, `render.options.usage` exists (from task 4). now let&#39;s verify default false, and run the focused tui test plus the affected package builds/tests to double-check.">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:32">· 08:27</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, <code>render.Options.Usage</code> exists (from Task 4). Now let's verify default false, and run the focused TUI test plus the affected package builds/tests to double-check.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; gofmt -l . 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:33">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; gofmt -l . 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 go vet ./... 2\u003e\u00261 \u0026\u0026 gofmt -l . 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash go test ./internal/tui/... -v 2&gt;&amp;1 | tail -60">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:34">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/... -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/... -v 2\u003e\u00261 | tail -60&#34;
 }</pre><pre class="tool-result">=== RUN   TestSessionListHidesAgentsByDefault
@@ -1334,14 +1345,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="all green, gofmt/vet clean. let me also run the broader `cmd/...` tests and check main.go/run.go full context for correctness, plus readme rendering.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:39">· 08:27</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All green, gofmt/vet clean. Let me also run the broader <code>cmd/...</code> tests and check main.go/run.go full context for correctness, plus README rendering.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./cmd/... -v 2&gt;&amp;1 | tail -80">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:40">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./cmd/... -v 2&gt;&amp;1 | tail -80</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./cmd/... -v 2\u003e\u00261 | tail -80&#34;
 }</pre><pre class="tool-result">=== RUN   TestRootCmdHasExpectedFlags
@@ -1362,8 +1375,9 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.292s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:40">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -1484,8 +1498,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.292s</pre></div></detail
 116	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:41">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
@@ -1605,8 +1620,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.292s</pre></div></detail
 115	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash grep -n &#34;usage\|usage&#34; ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main_test.go 2&gt;/dev/null; grep -rn &#34;testrootcmdhasexpectedflags&#34; -a 20 ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/*_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">392 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:50">· 08:27</span><span class="usage-badge">392 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;usage\|Usage&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go 2&gt;/dev/null; grep -rn &#34;TestRootCmdHasExpectedFlags&#34; -A 20 ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/*_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;usage\\|Usage\&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go 2\u003e/dev/null; grep -rn \&#34;TestRootCmdHasExpectedFlags\&#34; -A 20 ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/*_test.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go:8:func TestRootCmdHasExpectedFlags(t *testing.T) {
@@ -1632,8 +1648,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.292s</pre></div></detail
 ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go-28-	if out.Len() == 0 {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash sed -n &#39;1,40p&#39; ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go | head -100">
-      <div class="turn-role">Claude<span class="usage-badge">328 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:55">· 08:27</span><span class="usage-badge">328 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,40p&#39; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go | head -100</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,40p&#39; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go | head -100&#34;
 }</pre><pre class="tool-result">package main
@@ -1677,14 +1694,16 @@ func resolveSession(opts *options, root string) (discovery.SessionInfo, bool, er
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="everything checks out. all requirements verified. let me run the full test suite once quickly to confirm the implementer&#39;s claim, and check git log/branch state for cleanliness.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:57">· 08:27</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Everything checks out. All requirements verified. Let me run the full test suite once quickly to confirm the implementer's claim, and check git log/branch state for cleanliness.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./... 2&gt;&amp;1 | tail -20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:27:57">· 08:27</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -20&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
@@ -1697,18 +1716,21 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="full suite is green, matching the implementer&#39;s report. now finalizing the review.">
-      <div class="turn-role">Claude<span class="usage-badge">80 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:28:01">· 08:28</span><span class="usage-badge">80 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Full suite is green, matching the implementer's report. Now finalizing the review.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="reportfindings ">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:28:01">· 08:28</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;findings&#34;: []
 }</pre><pre class="tool-result">No findings reported.</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-20" data-search="## spec compliance: ✅
 
@@ -1731,7 +1753,7 @@ none found at critical, important, or minor severity that block this task. one t
 the implementer correctly recognized that the repo&#39;s actual `tui.go` layout (with pre-existing `optoutdir`/`optgenerate` rows) diverged from the brief&#39;s simplified sketch, and resolved it exactly as the brief anticipated — inserting `optusage` before `optoutdir` and fixing the two tests whose `down`-counts were affected by the shift. all index↔row mappings (const block, toggles slice, switch cases, view rendering) are consistent and use named constants throughout, eliminating off-by-one risk. cli/tui/render wiring and readme are all accurate and complete.
 
 **task quality:** approved">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:28:15">· 08:28</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><h2>Spec Compliance: ✅</h2>
 <p>All requirements of task-5-brief.md are met exactly as specified.</p>
 <h2>Strengths</h2>

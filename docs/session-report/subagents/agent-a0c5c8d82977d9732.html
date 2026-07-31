@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 11:58:22">11:58</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 09:58</span>
+        <span title="session start">2026-07-11 11:58</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>10 turns</span>
         <span>general-purpose · agent-a0c5c8d82977d9732</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; a broad review happens later.
 
 ## what was requested
@@ -78,7 +80,7 @@ read-only review; do not modify the tree. implementer already ran tests — do n
 pay particular attention to exact field names, types, and const values matching the constraints above, since downstream tasks reference them verbatim.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 11:58:22">· 11:58</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
@@ -100,8 +102,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:26">· 11:58</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 2: Domain model types
@@ -266,8 +269,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 160	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:26">· 11:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 2: Domain Model Types — Implementation Report
@@ -367,8 +371,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 95	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-37ba8bc..7b11575.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:27">· 11:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-37ba8bc..7b11575.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-37ba8bc..7b11575.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 37ba8bcae61a1ad559c48bf2ae255835ec8acc51..HEAD
@@ -506,8 +511,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 133	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash cat go.mod | head -5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git log --oneline -5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git show 7b11575 --stat">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:33">· 11:58</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat go.mod | head -5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git log --oneline -5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git show 7b11575 --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat go.mod | head -5 \u0026\u0026 echo \&#34;---\&#34; \u0026\u0026 git log --oneline -5 \u0026\u0026 echo \&#34;---\&#34; \u0026\u0026 git show 7b11575 --stat&#34;,
   &#34;description&#34;: &#34;Check module path and commit&#34;
@@ -536,8 +542,9 @@ Date:   Sat Jul 11 11:57:29 2026 +0200
  2 files changed, 109 insertions(+)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash gofmt -l internal/model/ &amp;&amp; echo &#34;gofmt clean&#34; ; go vet ./internal/model/... &amp;&amp; echo &#34;vet clean&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:34">· 11:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/model/ &amp;&amp; echo &#34;gofmt clean&#34; ; go vet ./internal/model/... &amp;&amp; echo &#34;vet clean&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l internal/model/ \u0026\u0026 echo \&#34;gofmt clean\&#34; ; go vet ./internal/model/... \u0026\u0026 echo \&#34;vet clean\&#34;&#34;,
   &#34;description&#34;: &#34;Check gofmt and vet compliance for model package&#34;
@@ -545,8 +552,9 @@ Date:   Sat Jul 11 11:57:29 2026 +0200
 vet clean</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash git show 7b11575 -s --format=&#39;%s%n%n%b&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:34">· 11:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git show 7b11575 -s --format=&#39;%s%n%n%b&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git show 7b11575 -s --format=&#39;%s%n%n%b&#39;&#34;,
   &#34;description&#34;: &#34;Show commit message of 7b11575&#34;
@@ -555,17 +563,19 @@ vet clean</pre></div></details></div>
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="all checks pass: module path matches `github.com/saigyo/cc-what-have-i-done`, commit message ends with the required co-author line, gofmt and go vet are clean, and the diff is a byte-for-byte match to the brief&#39;s prescribed implementation (types, field order, const values, both methods).
 
 i ran the two tests directly to confirm the implementer&#39;s claimed results:">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:38">· 11:58</span><span class="usage-badge">3 tok · ~$0.02</span></div>
       <div class="turn-body"><p>All checks pass: module path matches <code>github.com/saigyo/cc-what-have-i-done</code>, commit message ends with the required co-author line, gofmt and go vet are clean, and the diff is a byte-for-byte match to the brief's prescribed implementation (types, field order, const values, both methods).</p>
 <p>I ran the two tests directly to confirm the implementer's claimed results:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash go test ./internal/model/... -v -run &#39;testsessionduration|testdisplaytitlefallback&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:39">· 11:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/model/... -v -run &#39;TestSessionDuration|TestDisplayTitleFallback&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/model/... -v -run &#39;TestSessionDuration|TestDisplayTitleFallback&#39;&#34;,
   &#34;description&#34;: &#34;Run the two model package tests to confirm they pass&#34;
@@ -576,6 +586,7 @@ i ran the two tests directly to confirm the implementer&#39;s claimed results:">
 PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.164s</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-9" data-search="both pass as claimed.
 
@@ -605,7 +616,7 @@ none found — critical, important, and minor are all empty. this is a pure data
 ## assessment
 
 **task quality: approved**">
-      <div class="turn-role">Claude<span class="usage-badge">852 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:58:50">· 11:58</span><span class="usage-badge">852 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Both pass as claimed.</p>
 <h2>Spec Compliance: ✅</h2>
 <p>Every required type, field name, field order/type, const value, and method signature matches the brief and the global constraints verbatim:</p>

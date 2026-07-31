@@ -26,7 +26,9 @@
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--border); }
 .topbar-inner { display: flex; gap: .75rem; align-items: center; max-width: 1100px; margin: 0 auto; padding: .6rem 1rem; }
-.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+.brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; display: flex; flex-direction: column; line-height: 1.2; }
+.brand-version { font-size: .65rem; font-weight: 400; letter-spacing: 0; color: var(--muted); text-decoration: none; }
+.brand-version:hover { text-decoration: underline; }
 #filter { flex: 1; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
 .btn { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer; font-size: .85rem; }
 .btn:hover { border-color: var(--accent); }
@@ -35,9 +37,12 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .sidebar-title { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
 .prompt-list { list-style: none; padding: 0; margin: 0; counter-reset: p; }
 .prompt-list li { counter-increment: p; margin-bottom: .35rem; }
-.prompt-list a { color: var(--text); text-decoration: none; font-size: .85rem; display: block; padding: .25rem .4rem; border-radius: 6px; }
+.prompt-list a { color: var(--text); text-decoration: none; font-size: .85rem; display: flex; align-items: baseline; gap: .3rem; padding: .25rem .4rem; border-radius: 6px; }
 .prompt-list a::before { content: counter(p) ". "; color: var(--muted); }
 .prompt-list a:hover { background: var(--accent-soft); }
+.prompt-list li.prompt-day { counter-increment: none; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: .75rem 0 .35rem; padding: 0 .4rem; cursor: default; }
+.prompt-preview { flex: 1; min-width: 0; }
+.prompt-time { color: var(--muted); font-size: .7rem; white-space: nowrap; }
 .content { flex: 1; min-width: 0; }
 .session-head h1 { margin: 0 0 .3rem; font-size: 1.6rem; }
 .meta { display: flex; flex-wrap: wrap; gap: .75rem; color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
@@ -45,10 +50,16 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .turn-user { background: var(--user-bg); border-color: var(--accent-soft); }
 .turn-role { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
 .turn-user .turn-role { color: var(--accent); }
+.turn-time { margin-left: .35rem; cursor: default; }
+.day-sep { display: flex; align-items: center; gap: .75rem; color: var(--muted); font-size: .85rem; margin: 1.5rem 0 1rem; }
+.day-sep::before, .day-sep::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+.day-sep.filtered { display: none; }
 .turn-body > :first-child { margin-top: 0; }
 .turn-body > :last-child { margin-bottom: 0; }
 .turn-body pre { background: var(--code-bg); padding: .8rem; border-radius: 8px; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
 .turn-body code { font-family: var(--mono); font-size: .9em; }
+.command-invocation { display: inline-block; background: var(--code-bg); padding: .15rem .5rem; border-radius: 6px; font-size: .85rem; }
+.command-output { color: var(--muted); }
 .tool { border: 1px solid var(--border); border-radius: 8px; margin: .6rem 0; background: var(--bg); }
 .tool-head { cursor: pointer; padding: .5rem .7rem; display: flex; gap: .6rem; align-items: baseline; }
 .tool-name { font-weight: 600; color: var(--accent); font-size: .8rem; }
@@ -60,6 +71,8 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .agent-prompt::before, .agent-result-body::before { content: "prompt"; display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .2rem; }
 .agent-result-body { font-size: .9rem; }
 .agent-result-body::before { content: "result"; }
+.task-desc { border-left: 3px solid var(--accent-soft); padding: 0 .8rem; margin: .2rem 0 .8rem; font-size: .9rem; }
+.task-desc::before { content: "description"; display: block; color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .2rem; }
 .ask { margin: .2rem 0 .4rem; }
 .ask-q { margin-bottom: 1rem; }
 .ask-q:last-child { margin-bottom: 0; }
@@ -107,5 +120,17 @@ body.hide-tools .tool-body { display: none; }
 .turn-agent-result .turn-role { color: var(--accent); }
 .agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }
 .usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; }
+.agent-link { margin-left: 0.5rem; font-size: 0.75rem; text-transform: none; letter-spacing: normal; flex-shrink: 0; }
 .back-link { display: inline-block; font-size: 0.85rem; margin-bottom: 0.4rem; }
+/* Transcript images */
+.turn-image { display: block; max-width: 100%; max-height: 300px; margin: .5rem 0; border: 1px solid var(--border); border-radius: 6px; cursor: zoom-in; }
+.turn-image.expanded { max-height: none; cursor: zoom-out; }
+.image-omitted { color: var(--muted); font-size: .85rem; margin: .5rem 0; }
+.image-badge { color: var(--muted); font-size: .75rem; font-weight: 400; white-space: nowrap; flex-shrink: 0; }
+/* Default (Chrome/Blink, Firefox/Gecko): small lift, slightly larger glyph. */
+.image-badge-icon { position: relative; top: -0.04em; font-size: 0.85rem; }
+/* WebKit only (Safari, DuckDuckGo on macOS) — -webkit-hyphens exists in no
+   other engine: bigger lift, stock size. */
+@supports (-webkit-hyphens: none) {
+  .image-badge-icon { top: -0.09em; font-size: 0.75rem; }
+}

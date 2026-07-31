@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 11:38:05">11:38</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 09:38</span>
+        <span title="session start">2026-07-12 11:38</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>11 turns</span>
         <span>general-purpose · agent-a4a39d149092571c9</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
 
 ## what was requested
@@ -117,7 +119,7 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 ### assessment
 **task quality:** [approved | needs fixes]
 **reasoning:** [1-2 sentences]">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 11:38:05">· 11:38</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
@@ -165,8 +167,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-a6bc8fb..b66ed79.diff">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:12">· 11:38</span><span class="usage-badge">7k tok · ~$0.06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 4: Render agent-result cards and the subagent usage line
@@ -952,8 +955,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 349	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="bash grep -rn &#34;rolelabel(&#34; --include=&#34;*.go&#34; internal/render/">
-      <div class="turn-role">Claude<span class="usage-badge">16k tok · ~$0.07</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:27">· 11:38</span><span class="usage-badge">16k tok · ~$0.07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;roleLabel(&#34; --include=&#34;*.go&#34; internal/render/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;roleLabel(\&#34; --include=\&#34;*.go\&#34; internal/render/&#34;
 }</pre><pre class="tool-result">internal/render/render.go:137:			RoleLabel:  roleLabel(t),
@@ -961,8 +965,9 @@ internal/render/render.go:225:func roleLabel(t model.Turn) string {
 internal/render/render.go:288:			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="bash sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">258 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:31">· 11:38</span><span class="usage-badge">258 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,50p&#39; internal/render/assets/report.html.tmpl&#34;
 }</pre><pre class="tool-result">&lt;!DOCTYPE html&gt;
@@ -1017,14 +1022,16 @@ internal/render/render.go:288:			b.WriteString(`&lt;article class=&#34;turn turn
     &lt;/details&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="confirmed: `{{ with .usage }}` gates the whole usage card (subline &#43; footnote) — this is the pre-existing gate tied to `--usage`, not something the task added or needs to change. the turn card loop (`{{ range .turns }}`) is outside that block and unconditional, matching the constraint.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:34">· 11:38</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed: <code>{{ with .Usage }}</code> gates the whole usage card (SubLine + footnote) — this is the pre-existing gate tied to <code>--usage</code>, not something the task added or needs to change. The turn card loop (<code>{{ range .Turns }}</code>) is outside that block and unconditional, matching the constraint.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;inout\b&#34; -r internal/usage/*.go | head -20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:34">· 11:38</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;InOut\b&#34; -r internal/usage/*.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;InOut\\b\&#34; -r internal/usage/*.go | head -20&#34;
 }</pre><pre class="tool-result">internal/usage/usage.go:18:// InOut is the base input+output total, excluding cache tokens. Used for the
@@ -1032,38 +1039,43 @@ internal/usage/usage.go:20:func (t TokenCounts) InOut() int { return t.Input + t
 internal/usage/usage.go:163:		return r.ByModel[i].Tokens.InOut() &gt; r.ByModel[j].Tokens.InOut()</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash grep -n &#34;func formattokens&#34; -a 15 internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">158 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:36">· 11:38</span><span class="usage-badge">158 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func formatTokens&#34; -A 15 internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func formatTokens\&#34; -A 15 internal/render/render.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -rn &#34;func formattokens\|func formatcost&#34; internal/render/*.go">
-      <div class="turn-role">Claude<span class="usage-badge">99 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:38">· 11:38</span><span class="usage-badge">99 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;func formatTokens\|func formatCost&#34; internal/render/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;func formatTokens\\|func formatCost\&#34; internal/render/*.go&#34;
 }</pre><pre class="tool-result">internal/render/format.go:11:func formatTokens(n int) string {
 internal/render/format.go:23:func formatCost(c float64) string {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="good, those are pre-existing helpers outside this diff&#39;s scope, unmodified. that confirms the subline formatting reuses existing utilities correctly.
 
 everything checks out. let me verify the `agentstatus` field and `turnagentresult` referenced in the test actually exist in the model package (task 1 dependency), just to be safe it&#39;s not a phantom reference causing a compile-time-only pass illusion — though the report claims tests actually ran and passed, so this is low risk. i&#39;ll skip since it&#39;s outside the named-risk scope and the report includes credible pass output.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:42">· 11:38</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, those are pre-existing helpers outside this diff's scope, unmodified. That confirms the SubLine formatting reuses existing utilities correctly.</p>
 <p>Everything checks out. Let me verify the <code>AgentStatus</code> field and <code>TurnAgentResult</code> referenced in the test actually exist in the model package (Task 1 dependency), just to be safe it's not a phantom reference causing a compile-time-only pass illusion — though the report claims tests actually ran and passed, so this is low risk. I'll skip since it's outside the named-risk scope and the report includes credible PASS output.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash git log --oneline -3">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:43">· 11:38</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -3</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -3&#34;
 }</pre><pre class="tool-result">b66ed79 feat: agent-attributed result cards and subagent usage line
 a6bc8fb feat: roll linked agent-session usage into the usage report
 10aff40 feat: load linked subagent session transcripts</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-10" data-search="this confirms the base/head commits match the review scope and the branch has prior tasks already landed (model/usage fields from tasks 1 and 3 exist as prerequisites).
 
@@ -1087,7 +1099,7 @@ none found at critical, important, or minor severity — the diff is a faithful,
 ### assessment
 **task quality:** approved
 **reasoning:** the diff implements every element of the brief exactly as specified (formats, gating, fallback logic, footnote wording), the one named risk (rolelabel signature migration) is verified clean via grep, and tests exercise both the happy path and the fallback/absence edge cases.">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:38:56">· 11:38</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><p>This confirms the base/head commits match the review scope and the branch has prior tasks already landed (model/usage fields from Tasks 1 and 3 exist as prerequisites).</p>
 <h3>Spec Compliance</h3>
 <ul>

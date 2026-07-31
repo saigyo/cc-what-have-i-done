@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 11:54:47">11:54</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 09:54</span>
+        <span title="last message 2026-07-11 11:55">2026-07-11 11:54 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>9 turns</span>
         <span>general-purpose · agent-ac685206469a6fed5</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for a new go cli `ccwhid`. task-scoped gate; a broad review happens later.
 
 ## what was requested
@@ -78,7 +80,7 @@ diff file (read once, it is your view of the change): ~/ideaprojects/cc-what-hav
 read-only review. do not modify the working tree. the implementer already ran the tests — do not re-run the suite; run a focused test only if a specific doubt arises.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report — begin with the spec verdict, no preamble.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 11:54:47">· 11:54</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for a new Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
@@ -101,8 +103,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:54:50">· 11:54</span><span class="usage-badge">7k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 1: Project scaffold + cobra root
@@ -245,8 +248,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 138	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:54:51">· 11:54</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 1 Report: Project scaffold + cobra root
@@ -380,8 +384,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 129	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..c2f4251.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:54:53">· 11:54</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..c2f4251.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..c2f4251.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 2ff127ac3e943c5fc1ccd4c4ad5247ce7dbcf3ac..HEAD
@@ -529,8 +534,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 143	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash git log --format=&#39;%h %s%n%b&#39; -1 c2f4251">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:55:07">· 11:55</span><span class="usage-badge">4 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --format=&#39;%H %s%n%b&#39; -1 c2f4251</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --format=&#39;%H %s%n%b&#39; -1 c2f4251&#34;,
   &#34;description&#34;: &#34;Show full commit message for c2f4251&#34;
@@ -538,8 +544,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash rm -rf /private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:55:10">· 11:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm -rf /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm -rf /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check\nmkdir -p /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check\ncp -r ~/IdeaProjects/cc-what-have-i-done/. /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check\ncd /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/repo-check\ngo version\ngo mod tidy\ngit diff -- go.mod go.sum&#34;,
   &#34;description&#34;: &#34;Copy repo to scratch and check go mod tidy diff&#34;
@@ -561,21 +568,24 @@ index eccabcf..6f08559 100644
  )</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">494 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:55:18">· 11:55</span><span class="usage-badge">494 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; go vet ./... &amp;&amp; go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... \u0026\u0026 go vet ./... \u0026\u0026 go test ./... 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Build, vet, and test the actual repo (read-only)&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash gofmt -l . &amp;&amp; echo &#34;---git status---&#34; &amp;&amp; git status --short">
-      <div class="turn-role">Claude<span class="usage-badge">216 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:55:24">· 11:55</span><span class="usage-badge">216 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;---git status---&#34; &amp;&amp; git status --short</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;---git status---\&#34; \u0026\u0026 git status --short&#34;,
   &#34;description&#34;: &#34;Check gofmt compliance and git status&#34;
 }</pre><pre class="tool-result">---git status---</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-8" data-search="## spec compliance: ⚠️ (compliant, one hygiene defect)
 
@@ -609,7 +619,7 @@ index eccabcf..6f08559 100644
 task quality: **approved**
 
 the implementation satisfies every literal global constraint and every flag/interface requirement in the brief, with passing tests, clean build/vet/fmt. the only defect found (cobra mis-marked `// indirect` in go.mod) is cosmetic/metadata-only, doesn&#39;t affect functionality, and is cheap to fix in a follow-up `go mod tidy` — not worth blocking this scaffold task over.">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:55:59">· 11:55</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><h2>Spec Compliance: ⚠️ (compliant, one hygiene defect)</h2>
 <ul>
 <li>✅ Module path exactly <code>github.com/saigyo/cc-what-have-i-done</code> (go.mod:1)</li>

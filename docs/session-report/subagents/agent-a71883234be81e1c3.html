@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 12:53:10">12:53</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:53</span>
+        <span title="last message 2026-07-11 12:55">2026-07-11 12:53 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>22 turns</span>
         <span>general-purpose · agent-a71883234be81e1c3</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; broad review happens later.
 
 ## what was requested
@@ -86,7 +88,7 @@ named risks to check:
 4. **generate pipeline order:** parse → (redact) → render, and out dir returned.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:53:10">· 12:53</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</p>
@@ -118,8 +120,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:13">· 12:53</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 8: Wire the CLI end-to-end
@@ -345,8 +348,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 221	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:14">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-8-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 8 Report: Wire the CLI end-to-end
@@ -437,8 +441,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 86	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-6d415b6..fd591f4.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:16">· 12:53</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6d415b6..fd591f4.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-6d415b6..fd591f4.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 6d415b6273a77964da771d395f7b7ccda4a12680..HEAD
@@ -641,15 +646,17 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 198	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;type options&#34; ">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:20">· 12:53</span><span class="usage-badge">4 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;type options&#34; </span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -name \&#34;*.go\&#34; -print | xargs grep -l \&#34;type options\&#34; &#34;
 }</pre><pre class="tool-result">./cmd/ccwhid/main.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash cat cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:20">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">package main
@@ -709,14 +716,16 @@ func main() {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="good, this matches. now let&#39;s verify the internal packages&#39; signatures used (discovery.sessioninfo, discovery.scan, discovery.findsession, discovery.projectgroup, transcript.parsefile/options, redact.session, render.site/options).">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:23">· 12:53</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, this matches. Now let's verify the internal packages' signatures used (discovery.SessionInfo, discovery.Scan, discovery.FindSession, discovery.ProjectGroup, transcript.ParseFile/Options, redact.Session, render.Site/Options).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash echo &#34;--- discovery ---&#34; &amp;&amp; grep -n &#34;func scan\|func findsession\|type sessioninfo\|type projectgroup&#34; -a 10 internal/discovery/*.go | head -150">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:24">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;--- discovery ---&#34; &amp;&amp; grep -n &#34;func Scan\|func FindSession\|type SessionInfo\|type ProjectGroup&#34; -A 10 internal/discovery/*.go | head -150</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;--- discovery ---\&#34; \u0026\u0026 grep -n \&#34;func Scan\\|func FindSession\\|type SessionInfo\\|type ProjectGroup\&#34; -A 10 internal/discovery/*.go | head -150&#34;
 }</pre><pre class="tool-result">--- discovery ---
@@ -769,8 +778,9 @@ internal/discovery/discovery.go-220-				return s, nil // exact wins immediately
 internal/discovery/discovery.go-221-			}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash echo &#34;--- redact ---&#34; &amp;&amp; grep -n &#34;func session&#34; -a 15 internal/redact/*.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:24">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;--- redact ---&#34; &amp;&amp; grep -n &#34;func Session&#34; -A 15 internal/redact/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;--- redact ---\&#34; \u0026\u0026 grep -n \&#34;func Session\&#34; -A 15 internal/redact/*.go&#34;
 }</pre><pre class="tool-result">--- redact ---
@@ -792,8 +802,9 @@ internal/redact/redact.go-63-	}
 internal/redact/redact.go-64-}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash echo &#34;--- render ---&#34; &amp;&amp; grep -n &#34;func site\|type options&#34; -a 10 internal/render/*.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:25">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;--- render ---&#34; &amp;&amp; grep -n &#34;func Site\|type Options&#34; -A 10 internal/render/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;--- render ---\&#34; \u0026\u0026 grep -n \&#34;func Site\\|type Options\&#34; -A 10 internal/render/*.go&#34;
 }</pre><pre class="tool-result">--- render ---
@@ -815,8 +826,9 @@ internal/render/render.go-33-	}
 internal/render/render.go-34-	tmpl, err := template.New(&#34;report&#34;).Parse(string(tmplSrc))</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash echo &#34;--- transcript ---&#34; &amp;&amp; grep -n &#34;func parsefile\|type options&#34; -a 10 internal/transcript/*.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:25">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;--- transcript ---&#34; &amp;&amp; grep -n &#34;func ParseFile\|type Options&#34; -A 10 internal/transcript/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;--- transcript ---\&#34; \u0026\u0026 grep -n \&#34;func ParseFile\\|type Options\&#34; -A 10 internal/transcript/*.go&#34;
 }</pre><pre class="tool-result">--- transcript ---
@@ -838,8 +850,9 @@ internal/transcript/parse.go-27-	}
 internal/transcript/parse.go-28-	s.ID = sessionIDFromPath(path)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash git log --oneline -5 &amp;&amp; git branch -a &amp;&amp; git show --stat head | head -20">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:51">· 12:53</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -5 &amp;&amp; git branch -a &amp;&amp; git show --stat HEAD | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -5 \u0026\u0026 git branch -a \u0026\u0026 git show --stat HEAD | head -20&#34;
 }</pre><pre class="tool-result">fd591f4 feat: wire session resolution, generation, and browser open
@@ -863,8 +876,9 @@ Date:   Sat Jul 11 12:52:14 2026 +0200
  2 files changed, 174 insertions(+)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash sed -n &#39;1,60p&#39; internal/transcript/parse.go | grep -n &#34;sessionidfrompath&#34; -a 10">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:52">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,60p&#39; internal/transcript/parse.go | grep -n &#34;sessionIDFromPath&#34; -A 10</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,60p&#39; internal/transcript/parse.go | grep -n \&#34;sessionIDFromPath\&#34; -A 10&#34;
 }</pre><pre class="tool-result">28:	s.ID = sessionIDFromPath(path)
@@ -884,8 +898,9 @@ Date:   Sat Jul 11 12:52:14 2026 +0200
 42-</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash grep -n &#34;func new&#34; internal/redact/redact.go -a 20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:53:52">· 12:53</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func New&#34; internal/redact/redact.go -A 20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func New\&#34; internal/redact/redact.go -A 20&#34;
 }</pre><pre class="tool-result">31:func New(homeDir string) *Redactor { return &amp;Redactor{homeDir: homeDir} }
@@ -911,15 +926,17 @@ Date:   Sat Jul 11 12:52:14 2026 +0200
 51-	for i := range s.Turns {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash grep -n &#34;kind:\|re:\|rules = &#34; internal/redact/redact.go | head -40">
-      <div class="turn-role">Claude<span class="usage-badge">577 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:00">· 12:54</span><span class="usage-badge">577 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;kind:\|re:\|rules = &#34; internal/redact/redact.go | head -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;kind:\\|re:\\|rules = \&#34; internal/redact/redact.go | head -40&#34;
 }</pre><pre class="tool-result">19:var rules = []rule{</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
-      <div class="turn-role">Claude<span class="usage-badge">129 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:02">· 12:54</span><span class="usage-badge">129 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;,
   &#34;limit&#34;: 35,
@@ -961,13 +978,15 @@ Date:   Sat Jul 11 12:52:14 2026 +0200
 35		for _, ru := range rules {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="write ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:19">· 12:54</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package main</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Focused review check: verify redaction is ON by default (opts.noRedact</div><div class="diff-add">+ // unset) and that opts.noRedact=true disables it.</div><div class="diff-add">+ func TestReview_GenerateRedactsByDefault(t *testing.T) {</div><div class="diff-add">+ 	dir := t.TempDir()</div><div class="diff-add">+ 	src := filepath.Join(dir, &#34;sess.jsonl&#34;)</div><div class="diff-add">+ 	lines := strings.Join([]string{</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;ai-title&#34;,&#34;aiTitle&#34;:&#34;Secret run&#34;}`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;my key is [REDACTED:aws-key] ok&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,</div><div class="diff-add">+ 	}, &#34;\n&#34;)</div><div class="diff-add">+ 	if err := os.WriteFile(src, []byte(lines), 0o644); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	// Default: noRedact unset (zero value false) -&gt; should redact.</div><div class="diff-add">+ 	out1 := filepath.Join(dir, &#34;report-default&#34;)</div><div class="diff-add">+ 	opts1 := &amp;options{out: out1, includeSubagents: true}</div><div class="diff-add">+ 	si1 := discovery.SessionInfo{ID: &#34;sess1&#34;, FilePath: src}</div><div class="diff-add">+ 	if _, err := generate(opts1, si1); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	html1, err := os.ReadFile(filepath.Join(out1, &#34;index.html&#34;))</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if strings.Contains(string(html1), &#34;[REDACTED:aws-key]&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;REGRESSION: secret key leaked into report with default options (redaction should be ON by default)&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(string(html1), &#34;REDACTED&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;expected [REDACTED:...] marker in default-redacted output&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	// noRedact=true -&gt; should NOT redact.</div><div class="diff-add">+ 	out2 := filepath.Join(dir, &#34;report-noredact&#34;)</div><div class="diff-add">+ 	opts2 := &amp;options{out: out2, includeSubagents: true, noRedact: true}</div><div class="diff-add">+ 	si2 := discovery.SessionInfo{ID: &#34;sess2&#34;, FilePath: src}</div><div class="diff-add">+ 	if _, err := generate(opts2, si2); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	html2, err := os.ReadFile(filepath.Join(out2, &#34;index.html&#34;))</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(string(html2), &#34;[REDACTED:aws-key]&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;expected secret key to be present when --no-redact is set&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Focused review check: ensureOutDir behavior matrix.</div><div class="diff-add">+ func TestReview_EnsureOutDir(t *testing.T) {</div><div class="diff-add">+ 	base := t.TempDir()</div><div class="diff-add">+ </div><div class="diff-add">+ 	// non-existent dir -&gt; created</div><div class="diff-add">+ 	fresh := filepath.Join(base, &#34;fresh&#34;)</div><div class="diff-add">+ 	if err := ensureOutDir(fresh, false); err != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;fresh dir: unexpected error: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if fi, err := os.Stat(fresh); err != nil || !fi.IsDir() {</div><div class="diff-add">+ 		t.Fatalf(&#34;fresh dir not created: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	// empty existing dir -&gt; OK</div><div class="diff-add">+ 	empty := filepath.Join(base, &#34;empty&#34;)</div><div class="diff-add">+ 	if err := os.MkdirAll(empty, 0o755); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if err := ensureOutDir(empty, false); err != nil {</div><div class="diff-add">+ 		t.Errorf(&#34;empty existing dir should be OK, got: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	// non-empty dir without force -&gt; error</div><div class="diff-add">+ 	nonempty := filepath.Join(base, &#34;nonempty&#34;)</div><div class="diff-add">+ 	if err := os.MkdirAll(nonempty, 0o755); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if err := os.WriteFile(filepath.Join(nonempty, &#34;x.txt&#34;), []byte(&#34;x&#34;), 0o644); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if err := ensureOutDir(nonempty, false); err == nil {</div><div class="diff-add">+ 		t.Error(&#34;expected error for non-empty dir without force&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	// non-empty dir with force -&gt; OK</div><div class="diff-add">+ 	if err := ensureOutDir(nonempty, true); err != nil {</div><div class="diff-add">+ 		t.Errorf(&#34;non-empty dir with force should be OK, got: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Focused review check: resolveSession needTUI semantics.</div><div class="diff-add">+ func TestReview_ResolveSessionNeedTUI(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	opts := &amp;options{}</div><div class="diff-add">+ 	_, needTUI, err := resolveSession(opts, root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !needTUI {</div><div class="diff-add">+ 		t.Error(&#34;expected needTUI=true when neither --session nor --latest given&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./cmd/ccwhid/ -run &#39;testreview_&#39; -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">108 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:21">· 12:54</span><span class="usage-badge">108 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./cmd/ccwhid/ -run &#39;TestReview_&#39; -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./cmd/ccwhid/ -run &#39;TestReview_&#39; -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestReview_GenerateRedactsByDefault
@@ -980,25 +999,29 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.350s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="all focused checks pass. now clean up the temporary test file to leave the tree as found.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:25">· 12:54</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All focused checks pass. Now clean up the temporary test file to leave the tree as found.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go &amp;&amp; git status --short">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:25">· 12:54</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go &amp;&amp; git status --short</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/zzz_review_redaction_check_test.go \u0026\u0026 git status --short&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash go vet ./cmd/ccwhid/... 2&gt;&amp;1; gofmt -l cmd/ccwhid/run.go cmd/ccwhid/run_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:54:42">· 12:54</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./cmd/ccwhid/... 2&gt;&amp;1; gofmt -l cmd/ccwhid/run.go cmd/ccwhid/run_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go vet ./cmd/ccwhid/... 2\u003e\u00261; gofmt -l cmd/ccwhid/run.go cmd/ccwhid/run_test.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-21" data-search="clean on both vet and gofmt. final review below.
 
@@ -1034,7 +1057,7 @@ none critical or important.
 ## assessment
 
 **task quality: approved.** implementation matches the brief verbatim and all four named risks (redaction default, `ensureoutdir` matrix, `resolvesession` needtui semantics, generate pipeline order) check out under independent verification. only minor, non-blocking notes above; none require rework before proceeding to task 9.">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:55:00">· 12:55</span><span class="usage-badge">1k tok · ~$0.03</span></div>
       <div class="turn-body"><p>Clean on both vet and gofmt. Final review below.</p>
 <h2>Spec Compliance</h2>
 <ul>

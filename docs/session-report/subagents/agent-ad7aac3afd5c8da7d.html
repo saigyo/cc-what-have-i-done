@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are implementing Task 4: Render the usage card and per-…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are implementing Task 4: Render the usage card and per-…</span><span class="prompt-time" title="July 12, 2026 at 08:13:25">08:13</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:13</span>
+        <span title="last message 2026-07-12 08:19">2026-07-12 08:13 (5m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>63 turns</span>
         <span>general-purpose · agent-ad7aac3afd5c8da7d</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are implementing task 4: render the usage card and per-turn badges — for the ccwhid go project (module github.com/saigyo/cc-what-have-i-done).
 
 ## task description
@@ -88,7 +90,7 @@ write your full report (implemented, tdd red/green evidence with commands&#43;ou
 ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md
 
 then reply with only (under 15 lines): status, commits (short sha &#43; subject), one-line test summary, concerns, and the report file path.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:13:25">· 08:13</span></div>
       <div class="turn-body"><p>You are implementing Task 4: Render the usage card and per-turn badges — for the ccwhid Go project (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code to use verbatim:
@@ -124,8 +126,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:28">· 08:13</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 4: Render the usage card and per-turn badges
@@ -496,8 +499,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 366	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:31">· 08:13</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -694,8 +698,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 192	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:31">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -828,8 +833,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 128	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:32">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;
 }</pre><pre class="tool-result">1	&lt;!DOCTYPE html&gt;
@@ -881,8 +887,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 47	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:32">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css&#34;
 }</pre><pre class="tool-result">1	:root {
@@ -956,14 +963,16 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 69	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="now let me check the usage package and model package for the interfaces this depends on.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:35">· 08:13</span><span class="usage-badge">5 tok · ~$0.03</span></div>
       <div class="turn-body"><p>Now let me check the usage package and model package for the interfaces this depends on.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash find ~/ideaprojects/cc-what-have-i-done/internal/usage -type f -name &#34;*.go&#34; | xargs ls">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:36">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/IdeaProjects/cc-what-have-i-done/internal/usage -type f -name &#34;*.go&#34; | xargs ls</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/IdeaProjects/cc-what-have-i-done/internal/usage -type f -name \&#34;*.go\&#34; | xargs ls&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go
@@ -972,8 +981,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;usage\|model &#34; ~/ideaprojects/cc-what-have-i-done/internal/model/*.go | grep -v _test">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:36">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Usage\|Model &#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v _test</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;Usage\\|Model \&#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v _test&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go:49:	Model     string // assistant model id (empty for user turns / when absent)
@@ -982,14 +992,16 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go:55:type Usage struct {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="good, model.turn.usage/.model exist. let me check usage.go for report/compute signatures.">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:39">· 08:13</span><span class="usage-badge">6 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, model.Turn.Usage/.Model exist. Let me check usage.go for Report/Compute signatures.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:40">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">1	package usage
@@ -1138,19 +1150,22 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 144	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="everything matches the brief exactly. now implementing step 1-2: write format_test.go and confirm it fails.">
-      <div class="turn-role">Claude<span class="usage-badge">149 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:42">· 08:13</span><span class="usage-badge">149 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Everything matches the brief exactly. Now implementing Step 1-2: write format_test.go and confirm it fails.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/render/format_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:44">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/format_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package render</div><div class="diff-add">+ </div><div class="diff-add">+ import &#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ func TestFormatTokens(t *testing.T) {</div><div class="diff-add">+ 	cases := map[int]string{0: &#34;0&#34;, 192: &#34;192&#34;, 12300: &#34;12k&#34;, 973000: &#34;973k&#34;, 1_200_000: &#34;1.2M&#34;}</div><div class="diff-add">+ 	for n, want := range cases {</div><div class="diff-add">+ 		if got := formatTokens(n); got != want {</div><div class="diff-add">+ 			t.Errorf(&#34;formatTokens(%d) = %q, want %q&#34;, n, got, want)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestFormatCost(t *testing.T) {</div><div class="diff-add">+ 	if got := formatCost(12.4); got != &#34;$12.40&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;formatCost(12.4) = %q, want $12.40&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got := formatCost(0.001); got != &#34;&lt;$0.01&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;formatCost(0.001) = %q, want &lt;$0.01&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/render/format_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash go test ./internal/render/ -run testformat -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">100 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:47">· 08:13</span><span class="usage-badge">100 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestFormat -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestFormat -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1162,19 +1177,22 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="red confirmed. now step 3: implement format.go.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:50">· 08:13</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>RED confirmed. Now Step 3: implement format.go.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/render/format.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:52">· 08:13</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/format.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package render</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;fmt&#34;</div><div class="diff-add">+ 	&#34;strconv&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // formatTokens renders a token count compactly: 192, 12k, 973k, 1.2M.</div><div class="diff-add">+ func formatTokens(n int) string {</div><div class="diff-add">+ 	switch {</div><div class="diff-add">+ 	case n &gt;= 1_000_000:</div><div class="diff-add">+ 		return fmt.Sprintf(&#34;%.1fM&#34;, float64(n)/1e6)</div><div class="diff-add">+ 	case n &gt;= 1_000:</div><div class="diff-add">+ 		return fmt.Sprintf(&#34;%.0fk&#34;, float64(n)/1e3)</div><div class="diff-add">+ 	default:</div><div class="diff-add">+ 		return strconv.Itoa(n)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // formatCost renders a USD cost as $X.XX, or &lt;$0.01 for tiny non-zero amounts.</div><div class="diff-add">+ func formatCost(c float64) string {</div><div class="diff-add">+ 	if c &gt; 0 &amp;&amp; c &lt; 0.005 {</div><div class="diff-add">+ 		return &#34;&lt;$0.01&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return fmt.Sprintf(&#34;$%.2f&#34;, c)</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/render/format.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash go test ./internal/render/ -run testformat -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">72 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:54">· 08:13</span><span class="usage-badge">72 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestFormat -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestFormat -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestFormatTokens
@@ -1185,79 +1203,93 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.361s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="green. now step 5: render.go changes.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:13:59">· 08:13</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>GREEN. Now Step 5: render.go changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:01">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">190 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:04">· 08:14</span><span class="usage-badge">190 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // Options configures a render.</div><div class="diff-del">- type Options struct {</div><div class="diff-del">- 	Title string</div><div class="diff-del">- }</div><div class="diff-add">+ // Options configures a render.</div><div class="diff-add">+ type Options struct {</div><div class="diff-add">+ 	Title string</div><div class="diff-add">+ 	Usage bool // render the token-usage &amp; cost section</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">183 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:06">· 08:14</span><span class="usage-badge">183 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	data := buildViewModel(s, title)</div><div class="diff-add">+ 	data := buildViewModel(s, title, opts)</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="now the viewdata/turnview struct changes plus new usage view types and buildviewmodel rewrite.">
-      <div class="turn-role">Claude<span class="usage-badge">151 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:09">· 08:14</span><span class="usage-badge">151 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now the viewData/turnView struct changes plus new usage view types and buildViewModel rewrite.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:22">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- type viewData struct {</div><div class="diff-del">- 	Title     string</div><div class="diff-del">- 	Session   model.Session</div><div class="diff-del">- 	StartedAt string</div><div class="diff-del">- 	TurnCount int</div><div class="diff-del">- 	Prompts   []promptRef</div><div class="diff-del">- 	Turns     []turnView</div><div class="diff-del">- }</div><div class="diff-del">- </div><div class="diff-del">- type promptRef struct {</div><div class="diff-del">- 	Index   int</div><div class="diff-del">- 	Preview string</div><div class="diff-del">- }</div><div class="diff-del">- </div><div class="diff-del">- type turnView struct {</div><div class="diff-del">- 	Index      int</div><div class="diff-del">- 	Kind       string</div><div class="diff-del">- 	RoleLabel  string</div><div class="diff-del">- 	SearchText string</div><div class="diff-del">- 	Body       template.HTML</div><div class="diff-del">- }</div><div class="diff-del">- </div><div class="diff-del">- func buildViewModel(s model.Session, title string) viewData {</div><div class="diff-del">- 	d := viewData{</div><div class="diff-del">- 		Title:     title,</div><div class="diff-del">- 		Session:   s,</div><div class="diff-del">- 		TurnCount: len(s.Turns),</div><div class="diff-del">- 	}</div><div class="diff-del">- 	if !s.StartedAt.IsZero() {</div><div class="diff-del">- 		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	for i, t := range s.Turns {</div><div class="diff-del">- 		plain := turnPlainText(t)</div><div class="diff-del">- 		if t.Kind == model.TurnUser {</div><div class="diff-del">- 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})</div><div class="diff-del">- 		}</div><div class="diff-del">- 		d.Turns = append(d.Turns, turnView{</div><div class="diff-del">- 			Index:      i,</div><div class="diff-del">- 			Kind:       string(t.Kind),</div><div class="diff-del">- 			RoleLabel:  roleLabel(t.Kind),</div><div class="diff-del">- 			SearchText: strings.ToLower(plain),</div><div class="diff-del">- 			Body:       renderTurnBody(t),</div><div class="diff-del">- 		})</div><div class="diff-del">- 	}</div><div class="diff-del">- 	return d</div><div class="diff-del">- }</div><div class="diff-add">+ type viewData struct {</div><div class="diff-add">+ 	Title     string</div><div class="diff-add">+ 	Session   model.Session</div><div class="diff-add">+ 	StartedAt string</div><div class="diff-add">+ 	TurnCount int</div><div class="diff-add">+ 	Prompts   []promptRef</div><div class="diff-add">+ 	Turns     []turnView</div><div class="diff-add">+ 	Usage     *usageView</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type promptRef struct {</div><div class="diff-add">+ 	Index   int</div><div class="diff-add">+ 	Preview string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type turnView struct {</div><div class="diff-add">+ 	Index      int</div><div class="diff-add">+ 	Kind       string</div><div class="diff-add">+ 	RoleLabel  string</div><div class="diff-add">+ 	SearchText string</div><div class="diff-add">+ 	Body       template.HTML</div><div class="diff-add">+ 	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type usageView struct {</div><div class="diff-add">+ 	HasAny   bool</div><div class="diff-add">+ 	Headline string       // collapsed one-line summary</div><div class="diff-add">+ 	Rows     []usageRow   // token breakdown</div><div class="diff-add">+ 	Models   []usageModel // per-model table rows</div><div class="diff-add">+ 	Footnote string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type usageRow struct {</div><div class="diff-add">+ 	Label string</div><div class="diff-add">+ 	Value string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type usageModel struct {</div><div class="diff-add">+ 	Model  string</div><div class="diff-add">+ 	Tokens string</div><div class="diff-add">+ 	Cost   string // &#34;$1.23&#34; or &#34;n/a&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func buildViewModel(s model.Session, title string, opts Options) viewData {</div><div class="diff-add">+ 	d := viewData{</div><div class="diff-add">+ 		Title:     title,</div><div class="diff-add">+ 		Session:   s,</div><div class="diff-add">+ 		TurnCount: len(s.Turns),</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !s.StartedAt.IsZero() {</div><div class="diff-add">+ 		d.StartedAt = s.StartedAt.Format(&#34;2006-01-02 15:04&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	var rep usage.Report</div><div class="diff-add">+ 	if opts.Usage {</div><div class="diff-add">+ 		rep = usage.Compute(s)</div><div class="diff-add">+ 		d.Usage = buildUsageView(rep)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	for i, t := range s.Turns {</div><div class="diff-add">+ 		plain := turnPlainText(t)</div><div class="diff-add">+ 		if t.Kind == model.TurnUser {</div><div class="diff-add">+ 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		tv := turnView{</div><div class="diff-add">+ 			Index:      i,</div><div class="diff-add">+ 			Kind:       string(t.Kind),</div><div class="diff-add">+ 			RoleLabel:  roleLabel(t.Kind),</div><div class="diff-add">+ 			SearchText: strings.ToLower(plain),</div><div class="diff-add">+ 			Body:       renderTurnBody(t),</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if opts.Usage &amp;&amp; t.Usage != nil {</div><div class="diff-add">+ 			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		d.Turns = append(d.Turns, tv)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return d</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // turnBadge formats the per-turn usage badge: &#34;12k tok&#34; plus &#34;· ~$0.18&#34; if priced.</div><div class="diff-add">+ func turnBadge(u model.Usage, costUSD *float64) string {</div><div class="diff-add">+ 	b := formatTokens(u.Input+u.Output) + &#34; tok&#34;</div><div class="diff-add">+ 	if costUSD != nil {</div><div class="diff-add">+ 		b += &#34; · ~&#34; + formatCost(*costUSD)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return b</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // buildUsageView turns a usage.Report into the template-facing view model.</div><div class="diff-add">+ func buildUsageView(r usage.Report) *usageView {</div><div class="diff-add">+ 	v := &amp;usageView{HasAny: r.HasAnyUsage}</div><div class="diff-add">+ 	if !r.HasAnyUsage {</div><div class="diff-add">+ 		v.Headline = &#34;Usage · no token-usage data&#34;</div><div class="diff-add">+ 		return v</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;</div><div class="diff-add">+ 	if r.TotalCostUSD != nil {</div><div class="diff-add">+ 		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v.Headline = headline</div><div class="diff-add">+ </div><div class="diff-add">+ 	v.Rows = []usageRow{</div><div class="diff-add">+ 		{&#34;input&#34;, formatTokens(r.Total.Input)},</div><div class="diff-add">+ 		{&#34;output&#34;, formatTokens(r.Total.Output)},</div><div class="diff-add">+ 		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},</div><div class="diff-add">+ 		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, m := range r.ByModel {</div><div class="diff-add">+ 		row := usageModel{Model: m.Model, Tokens: formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;, Cost: &#34;n/a&#34;}</div><div class="diff-add">+ 		if m.CostUSD != nil {</div><div class="diff-add">+ 			row.Cost = formatCost(*m.CostUSD)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		v.Models = append(v.Models, row)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;</div><div class="diff-add">+ 	if r.HasUnknownModel {</div><div class="diff-add">+ 		foot += &#34; Totals exclude unpriced models (shown as n/a).&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v.Footnote = foot</div><div class="diff-add">+ 	return v</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="now step 6: template markup.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:24">· 08:14</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now Step 6: template markup.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:28">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-     &lt;/section&gt;</div><div class="diff-del">-     {{ range .Turns }}</div><div class="diff-del">-     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;</div><div class="diff-del">-       &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}&lt;/div&gt;</div><div class="diff-del">-       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;</div><div class="diff-del">-     &lt;/article&gt;</div><div class="diff-del">-     {{ end }}</div><div class="diff-add">+     &lt;/section&gt;</div><div class="diff-add">+     {{ with .Usage }}</div><div class="diff-add">+     &lt;details class=&#34;usage-card&#34;&gt;</div><div class="diff-add">+       &lt;summary class=&#34;usage-summary&#34;&gt;{{ .Headline }}&lt;/summary&gt;</div><div class="diff-add">+       &lt;div class=&#34;usage-body&#34;&gt;</div><div class="diff-add">+         {{ if .HasAny }}</div><div class="diff-add">+         &lt;table class=&#34;usage-tokens&#34;&gt;</div><div class="diff-add">+           {{ range .Rows }}&lt;tr&gt;&lt;td&gt;{{ .Label }}&lt;/td&gt;&lt;td&gt;{{ .Value }}&lt;/td&gt;&lt;/tr&gt;{{ end }}</div><div class="diff-add">+         &lt;/table&gt;</div><div class="diff-add">+         &lt;table class=&#34;usage-models&#34;&gt;</div><div class="diff-add">+           &lt;tr&gt;&lt;th&gt;model&lt;/th&gt;&lt;th&gt;tokens&lt;/th&gt;&lt;th&gt;est. cost&lt;/th&gt;&lt;/tr&gt;</div><div class="diff-add">+           {{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}</div><div class="diff-add">+         &lt;/table&gt;</div><div class="diff-add">+         {{ end }}</div><div class="diff-add">+         &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;</div><div class="diff-add">+       &lt;/div&gt;</div><div class="diff-add">+     &lt;/details&gt;</div><div class="diff-add">+     {{ end }}</div><div class="diff-add">+     {{ range .Turns }}</div><div class="diff-add">+     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;</div><div class="diff-add">+       &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;</div><div class="diff-add">+       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;</div><div class="diff-add">+     &lt;/article&gt;</div><div class="diff-add">+     {{ end }}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="now step 7: styles.css append.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:30">· 08:14</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now Step 7: styles.css append.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:33">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- @media (max-width: 760px) { .sidebar { display: none; } }</div><div class="diff-add">+ @media (max-width: 760px) { .sidebar { display: none; } }</div><div class="diff-add">+ .usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border, #e5e2d8); border-radius: 8px; background: var(--card, #fff); }</div><div class="diff-add">+ .usage-summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; }</div><div class="diff-add">+ .usage-body { padding: 0 0.9rem 0.9rem; font-size: 0.9rem; }</div><div class="diff-add">+ .usage-tokens td:last-child, .usage-models td, .usage-models th { text-align: right; padding: 0.1rem 0.6rem; }</div><div class="diff-add">+ .usage-tokens td:first-child, .usage-models td:first-child { text-align: left; }</div><div class="diff-add">+ .usage-models { margin-top: 0.6rem; border-collapse: collapse; }</div><div class="diff-add">+ .usage-note { color: #8a8578; font-size: 0.8rem; margin-top: 0.6rem; }</div><div class="diff-add">+ .usage-badge { margin-left: 0.5rem; color: #8a8578; font-size: 0.78rem; font-weight: 400; }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="now step 8: add integration tests to render_test.go. confirmed no existing `readindex` helper.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:39">· 08:14</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now Step 8: add integration tests to render_test.go. Confirmed no existing <code>readIndex</code> helper.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:45">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestSiteWritesFiles(t *testing.T) {</div><div class="diff-add">+ func TestSiteRendersUsageWhenEnabled(t *testing.T) {</div><div class="diff-add">+ 	s := model.Session{</div><div class="diff-add">+ 		ID: &#34;x&#34;, Title: &#34;T&#34;,</div><div class="diff-add">+ 		Turns: []model.Turn{</div><div class="diff-add">+ 			{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: &#34;hi&#34;}}},</div><div class="diff-add">+ 			{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;,</div><div class="diff-add">+ 				Usage:  &amp;model.Usage{Input: 1000, Output: 200},</div><div class="diff-add">+ 				Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},</div><div class="diff-add">+ 		},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	dir := t.TempDir()</div><div class="diff-add">+ 	if err := Site(s, dir, Options{Usage: true}); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	html := readIndex(t, dir)</div><div class="diff-add">+ 	for _, want := range []string{&#34;usage-card&#34;, &#34;usage-badge&#34;, &#34;in+out&#34;, &#34;prices as of&#34;, &#34;claude-opus-4-8&#34;} {</div><div class="diff-add">+ 		if !strings.Contains(html, want) {</div><div class="diff-add">+ 			t.Errorf(&#34;usage output missing %q&#34;, want)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSiteOmitsUsageByDefault(t *testing.T) {</div><div class="diff-add">+ 	s := model.Session{ID: &#34;x&#34;, Title: &#34;T&#34;, Turns: []model.Turn{</div><div class="diff-add">+ 		{Kind: model.TurnAssistant, Model: &#34;claude-opus-4-8&#34;, Usage: &amp;model.Usage{Input: 1000, Output: 200},</div><div class="diff-add">+ 			Blocks: []model.Block{{Type: model.BlockText, Text: &#34;ok&#34;}}},</div><div class="diff-add">+ 	}}</div><div class="diff-add">+ 	dir := t.TempDir()</div><div class="diff-add">+ 	if err := Site(s, dir, Options{}); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if strings.Contains(readIndex(t, dir), &#34;usage-card&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;usage card should be absent without Options.Usage&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // readIndex reads the generated index.html.</div><div class="diff-add">+ func readIndex(t *testing.T, dir string) string {</div><div class="diff-add">+ 	t.Helper()</div><div class="diff-add">+ 	b, err := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return string(b)</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSiteWritesFiles(t *testing.T) {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="now run the full render test suite (step 9), then the broader verification suite.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:47">· 08:14</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now run the full render test suite (Step 9), then the broader verification suite.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="bash go test ./internal/render/ -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:48">· 08:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1289,16 +1321,18 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render	0.370s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="bash cat &gt; /tmp/t_test.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">789 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:14:57">· 08:14</span><span class="usage-badge">789 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/t_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/t_test.go \u003c\u003c&#39;EOF&#39;\nEOF\ngo run - \u003c\u003c&#39;EOF&#39;\npackage main\n\nimport (\n\t\&#34;fmt\&#34;\n\t\&#34;os\&#34;\n\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/model\&#34;\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/render\&#34;\n)\n\nfunc main() {\n\ts := model.Session{\n\t\tID: \&#34;x\&#34;, Title: \&#34;T\&#34;,\n\t\tTurns: []model.Turn{\n\t\t\t{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: \&#34;hi\&#34;}}},\n\t\t\t{Kind: model.TurnAssistant, Model: \&#34;claude-opus-4-8\&#34;,\n\t\t\t\tUsage:  \u0026model.Usage{Input: 1000, Output: 200},\n\t\t\t\tBlocks: []model.Block{{Type: model.BlockText, Text: \&#34;ok\&#34;}}},\n\t\t},\n\t}\n\tdir, _ := os.MkdirTemp(\&#34;\&#34;, \&#34;x\&#34;)\n\tif err := render.Site(s, dir, render.Options{Usage: true}); err != nil {\n\t\tpanic(err)\n\t}\n\tb, _ := os.ReadFile(dir + \&#34;/index.html\&#34;)\n\tfmt.Println(string(b))\n}\nEOF\n&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
 go: no go files listed</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-32" data-search="bash mkdir -p /private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad">
-      <div class="turn-role">Claude<span class="usage-badge">715 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:15:05">· 08:15</span><span class="usage-badge">715 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">mkdir -p /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;mkdir -p /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad\ncat \u003e /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/dbg.go \u003c\u003c&#39;EOF&#39;\npackage main\n\nimport (\n\t\&#34;fmt\&#34;\n\t\&#34;os\&#34;\n\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/model\&#34;\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/render\&#34;\n)\n\nfunc main() {\n\ts := model.Session{\n\t\tID: \&#34;x\&#34;, Title: \&#34;T\&#34;,\n\t\tTurns: []model.Turn{\n\t\t\t{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: \&#34;hi\&#34;}}},\n\t\t\t{Kind: model.TurnAssistant, Model: \&#34;claude-opus-4-8\&#34;,\n\t\t\t\tUsage:  \u0026model.Usage{Input: 1000, Output: 200},\n\t\t\t\tBlocks: []model.Block{{Type: model.BlockText, Text: \&#34;ok\&#34;}}},\n\t\t},\n\t}\n\tdir, _ := os.MkdirTemp(\&#34;\&#34;, \&#34;x\&#34;)\n\tif err := render.Site(s, dir, render.Options{Usage: true}); err != nil {\n\t\tpanic(err)\n\t}\n\tb, _ := os.ReadFile(dir + \&#34;/index.html\&#34;)\n\tfmt.Println(string(b))\n}\nEOF\ngo run /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/dbg.go&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1306,8 +1340,9 @@ package command-line-arguments
 	/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/dbg.go:7:2: use of internal package github.com/saigyo/cc-what-have-i-done/internal/model not allowed</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-33" data-search="bash cat &gt; internal/render/zzdebug_test.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:15:19">· 08:15</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; internal/render/zzdebug_test.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e internal/render/zzdebug_test.go \u003c\u003c&#39;EOF&#39;\npackage render\n\nimport (\n\t\&#34;fmt\&#34;\n\t\&#34;os\&#34;\n\t\&#34;path/filepath\&#34;\n\t\&#34;testing\&#34;\n\n\t\&#34;github.com/saigyo/cc-what-have-i-done/internal/model\&#34;\n)\n\nfunc TestZZDebug(t *testing.T) {\n\ts := model.Session{\n\t\tID: \&#34;x\&#34;, Title: \&#34;T\&#34;,\n\t\tTurns: []model.Turn{\n\t\t\t{Kind: model.TurnUser, Blocks: []model.Block{{Type: model.BlockText, Text: \&#34;hi\&#34;}}},\n\t\t\t{Kind: model.TurnAssistant, Model: \&#34;claude-opus-4-8\&#34;,\n\t\t\t\tUsage:  \u0026model.Usage{Input: 1000, Output: 200},\n\t\t\t\tBlocks: []model.Block{{Type: model.BlockText, Text: \&#34;ok\&#34;}}},\n\t\t},\n\t}\n\tdir := t.TempDir()\n\tif err := Site(s, dir, Options{Usage: true}); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tb, _ := os.ReadFile(filepath.Join(dir, \&#34;index.html\&#34;))\n\tfmt.Println(string(b))\n}\nEOF\ngo test ./internal/render/ -run TestZZDebug -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestZZDebug
@@ -1387,28 +1422,32 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.355s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-34" data-search="bash cat &gt; /tmp/esc.go &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">666 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:15:31">· 08:15</span><span class="usage-badge">666 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/esc.go &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/esc.go \u003c\u003c&#39;EOF&#39;\npackage main\n\nimport (\n\t\&#34;fmt\&#34;\n\t\&#34;html/template\&#34;\n\t\&#34;os\&#34;\n)\n\nfunc main() {\n\tt := template.Must(template.New(\&#34;x\&#34;).Parse(`{{ . }}`))\n\tt.Execute(os.Stdout, \&#34;a+b\&#34;)\n\tfmt.Println()\n}\nEOF\ngo run /tmp/esc.go&#34;
 }</pre><pre class="tool-result">a&amp;#43;b</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-35" data-search="found a real conflict: go&#39;s `html/template` auto-escapes `&#43;` to `&amp;#43;` in text nodes, so the brief&#39;s literal string fields for `headline`/`tokens` never produce the literal substring `in&#43;out` that the specified test asserts on (visually identical in a browser, but the substring test fails). i&#39;ll adapt minimally, following the codebase&#39;s existing pattern of using `template.html` for pre-built safe strings (as already done for tool names/diffs), applying it only to the two fully self-generated fields that contain the `&#43;` (no untrusted data flows through them).">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:16:33">· 08:16</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Found a real conflict: Go's <code>html/template</code> auto-escapes <code>+</code> to <code>&amp;#43;</code> in text nodes, so the brief's literal string fields for <code>Headline</code>/<code>Tokens</code> never produce the literal substring <code>in+out</code> that the specified test asserts on (visually identical in a browser, but the substring test fails). I'll adapt minimally, following the codebase's existing pattern of using <code>template.HTML</code> for pre-built safe strings (as already done for tool names/diffs), applying it only to the two fully self-generated fields that contain the <code>+</code> (no untrusted data flows through them).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-36" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/render/zzdebug_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:16:34">· 08:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/render/zzdebug_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/render/zzdebug_test.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-37" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">127 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:16:37">· 08:16</span><span class="usage-badge">127 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 115,
@@ -1530,24 +1569,28 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.355s</pre></div></d
 194	}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-38" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">516 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:16:43">· 08:16</span><span class="usage-badge">516 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- type usageView struct {</div><div class="diff-del">- 	HasAny   bool</div><div class="diff-del">- 	Headline string       // collapsed one-line summary</div><div class="diff-del">- 	Rows     []usageRow   // token breakdown</div><div class="diff-del">- 	Models   []usageModel // per-model table rows</div><div class="diff-del">- 	Footnote string</div><div class="diff-del">- }</div><div class="diff-del">- </div><div class="diff-del">- type usageRow struct {</div><div class="diff-del">- 	Label string</div><div class="diff-del">- 	Value string</div><div class="diff-del">- }</div><div class="diff-del">- </div><div class="diff-del">- type usageModel struct {</div><div class="diff-del">- 	Model  string</div><div class="diff-del">- 	Tokens string</div><div class="diff-del">- 	Cost   string // &#34;$1.23&#34; or &#34;n/a&#34;</div><div class="diff-del">- }</div><div class="diff-add">+ type usageView struct {</div><div class="diff-add">+ 	HasAny   bool</div><div class="diff-add">+ 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words</div><div class="diff-add">+ 	Rows     []usageRow    // token breakdown</div><div class="diff-add">+ 	Models   []usageModel  // per-model table rows</div><div class="diff-add">+ 	Footnote string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type usageRow struct {</div><div class="diff-add">+ 	Label string</div><div class="diff-add">+ 	Value string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type usageModel struct {</div><div class="diff-add">+ 	Model  string</div><div class="diff-add">+ 	Tokens template.HTML // safe, built only from our own formatted numbers/words</div><div class="diff-add">+ 	Cost   string        // &#34;$1.23&#34; or &#34;n/a&#34;</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-39" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">949 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:16:51">· 08:16</span><span class="usage-badge">949 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	v := &amp;usageView{HasAny: r.HasAnyUsage}</div><div class="diff-del">- 	if !r.HasAnyUsage {</div><div class="diff-del">- 		v.Headline = &#34;Usage · no token-usage data&#34;</div><div class="diff-del">- 		return v</div><div class="diff-del">- 	}</div><div class="diff-del">- 	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;</div><div class="diff-del">- 	if r.TotalCostUSD != nil {</div><div class="diff-del">- 		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	v.Headline = headline</div><div class="diff-del">- </div><div class="diff-del">- 	v.Rows = []usageRow{</div><div class="diff-del">- 		{&#34;input&#34;, formatTokens(r.Total.Input)},</div><div class="diff-del">- 		{&#34;output&#34;, formatTokens(r.Total.Output)},</div><div class="diff-del">- 		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},</div><div class="diff-del">- 		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},</div><div class="diff-del">- 	}</div><div class="diff-del">- 	for _, m := range r.ByModel {</div><div class="diff-del">- 		row := usageModel{Model: m.Model, Tokens: formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;, Cost: &#34;n/a&#34;}</div><div class="diff-add">+ 	v := &amp;usageView{HasAny: r.HasAnyUsage}</div><div class="diff-add">+ 	if !r.HasAnyUsage {</div><div class="diff-add">+ 		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)</div><div class="diff-add">+ 		return v</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;</div><div class="diff-add">+ 	if r.TotalCostUSD != nil {</div><div class="diff-add">+ 		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v.Headline = template.HTML(headline)</div><div class="diff-add">+ </div><div class="diff-add">+ 	v.Rows = []usageRow{</div><div class="diff-add">+ 		{&#34;input&#34;, formatTokens(r.Total.Input)},</div><div class="diff-add">+ 		{&#34;output&#34;, formatTokens(r.Total.Output)},</div><div class="diff-add">+ 		{&#34;cache read&#34;, formatTokens(r.Total.CacheRead)},</div><div class="diff-add">+ 		{&#34;cache write&#34;, formatTokens(r.Total.CacheWrite5m + r.Total.CacheWrite1h)},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, m := range r.ByModel {</div><div class="diff-add">+ 		row := usageModel{Model: m.Model, Tokens: template.HTML(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;), Cost: &#34;n/a&#34;}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-40" data-search="let me check if `html` package is already imported, then apply `html.escapestring` before wrapping as `template.html` for defense-in-depth (so `&lt;` in cost strings like `&lt;$0.01` is still escaped, only `&#43;` stays literal).">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:05">· 08:17</span><span class="usage-badge">6 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Let me check if <code>html</code> package is already imported, then apply <code>html.EscapeString</code> before wrapping as <code>template.HTML</code> for defense-in-depth (so <code>&lt;</code> in cost strings like <code>&lt;$0.01</code> is still escaped, only <code>+</code> stays literal).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-41" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:06">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 14,
@@ -1568,30 +1611,35 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.355s</pre></div></d
 14	)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-42" data-search="`html` is already imported. now apply `html.escapestring` &#43; a targeted un-escape of `&#43;` — simplest and most robust: escape the string, then restore literal `&#43;` (since `html.escapestring` never touches `&#43;` anyway, no restore needed; just wrap the escaped string).">
-      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:09">· 08:17</span><span class="usage-badge">148 tok · ~$0.02</span></div>
       <div class="turn-body"><p><code>html</code> is already imported. Now apply <code>html.EscapeString</code> + a targeted un-escape of <code>+</code> — simplest and most robust: escape the string, then restore literal <code>+</code> (since <code>html.EscapeString</code> never touches <code>+</code> anyway, no restore needed; just wrap the escaped string).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-43" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:12">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if !r.HasAnyUsage {</div><div class="diff-del">- 		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)</div><div class="diff-del">- 		return v</div><div class="diff-del">- 	}</div><div class="diff-del">- 	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;</div><div class="diff-del">- 	if r.TotalCostUSD != nil {</div><div class="diff-del">- 		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	v.Headline = template.HTML(headline)</div><div class="diff-add">+ 	if !r.HasAnyUsage {</div><div class="diff-add">+ 		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)</div><div class="diff-add">+ 		return v</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	headline := &#34;Usage · &#34; + formatTokens(r.Total.InOut()) + &#34; in+out&#34;</div><div class="diff-add">+ 	if r.TotalCostUSD != nil {</div><div class="diff-add">+ 		headline += &#34; · ~&#34; + formatCost(*r.TotalCostUSD) + &#34; (est.)&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact</div><div class="diff-add">+ 	// while still escaping &#34;&lt;&#34;/&#34;&amp;&#34; etc.; headline is built solely from our own</div><div class="diff-add">+ 	// formatted numbers and literal words, so this is safe to mark as raw HTML.</div><div class="diff-add">+ 	v.Headline = template.HTML(html.EscapeString(headline))</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-44" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">284 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:16">· 08:17</span><span class="usage-badge">284 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		row := usageModel{Model: m.Model, Tokens: template.HTML(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;), Cost: &#34;n/a&#34;}</div><div class="diff-add">+ 		row := usageModel{Model: m.Model, Tokens: template.HTML(html.EscapeString(formatTokens(m.Tokens.InOut()) + &#34; in+out&#34;)), Cost: &#34;n/a&#34;}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-45" data-search="now rerun tests.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:18">· 08:17</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now rerun tests.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-46" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; go test ./internal/render/ -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:18">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; go test ./internal/render/ -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 go test ./internal/render/ -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestFormatTokens
@@ -1620,14 +1668,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.388s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-47" data-search="all render tests pass. now the full-suite verification.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:23">· 08:17</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All render tests pass. Now the full-suite verification.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-48" data-search="bash go build ./... &amp;&amp; go vet ./... &amp;&amp; gofmt -l internal &amp;&amp; echo &#34;gofmt_ok&#34; &amp;&amp; go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:23">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... &amp;&amp; go vet ./... &amp;&amp; gofmt -l internal &amp;&amp; echo &#34;GOFMT_OK&#34; &amp;&amp; go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... \u0026\u0026 go vet ./... \u0026\u0026 gofmt -l internal \u0026\u0026 echo \&#34;GOFMT_OK\&#34; \u0026\u0026 go test ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">GOFMT_OK
@@ -1641,28 +1691,32 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-49" data-search="all green, gofmt clean. let me also verify no external refs crept into css and check the cli wiring (is there a `--usage` flag elsewhere referencing options.usage? not part of this task, but let&#39;s check nothing else broke, e.g. cmd/ccwhid calling `site`).">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:34">· 08:17</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All green, gofmt clean. Let me also verify no external refs crept into CSS and check the CLI wiring (is there a <code>--usage</code> flag elsewhere referencing Options.Usage? Not part of this task, but let's check nothing else broke, e.g. cmd/ccwhid calling <code>Site</code>).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-50" data-search="bash grep -n &#34;url(\|http://\|https://\|@font-face\|@import&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:35">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;url(\|http://\|https://\|@font-face\|@import&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;url(\\|http://\\|https://\\|@font-face\\|@import\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css\necho \&#34;---\&#34;\ngrep -rn \&#34;render.Options\\|render.Site\&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ ~/IdeaProjects/cc-what-have-i-done/internal/tui/ 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">---
 ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go:99:	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-51" data-search="no external refs in css. the cli call site (`cmd/ccwhid/run.go`) doesn&#39;t set `usage` yet — that&#39;s expected, wiring a `--usage` flag is presumably a later task; existing behavior (card absent by default) is preserved. now let&#39;s review the full diff before committing.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:39">· 08:17</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>No external refs in CSS. The CLI call site (<code>cmd/ccwhid/run.go</code>) doesn't set <code>Usage</code> yet — that's expected, wiring a <code>--usage</code> flag is presumably a later task; existing behavior (card absent by default) is preserved. Now let's review the full diff before committing.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-52" data-search="bash git status --short &amp;&amp; echo &#34;---diff stat---&#34; &amp;&amp; git diff --stat">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:40">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short &amp;&amp; echo &#34;---DIFF STAT---&#34; &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --short \u0026\u0026 echo \&#34;---DIFF STAT---\&#34; \u0026\u0026 git diff --stat&#34;
 }</pre><pre class="tool-result"> M internal/render/assets/report.html.tmpl
@@ -1679,14 +1733,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</pre></div></de
  4 files changed, 156 insertions(+), 5 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-53" data-search="now committing exactly as the brief specifies.">
-      <div class="turn-role">Claude<span class="usage-badge">150 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:43">· 08:17</span><span class="usage-badge">150 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now committing exactly as the brief specifies.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-54" data-search="bash git add internal/render/ &amp;&amp; git commit -m &#34;feat(render): usage &amp; cost card and per-turn badges&#34; &amp;&amp; git log --oneline -1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:44">· 08:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/render/ &amp;&amp; git commit -m &#34;feat(render): usage &amp; cost card and per-turn badges&#34; &amp;&amp; git log --oneline -1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/render/ \u0026\u0026 git commit -m \&#34;feat(render): usage \u0026 cost card and per-turn badges\&#34; \u0026\u0026 git log --oneline -1&#34;
 }</pre><pre class="tool-result">[feat/usage-cost 4de9666] feat(render): usage &amp; cost card and per-turn badges
@@ -1696,32 +1752,37 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</pre></div></de
 4de9666 feat(render): usage &amp; cost card and per-turn badges</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-55" data-search="now writing the full report to the requested file.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:17:48">· 08:17</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now writing the full report to the requested file.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-56" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:18:22">· 08:18</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 4 Report: Render the usage card and per-turn badges</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status: DONE</div><div class="diff-add">+ </div><div class="diff-add">+ Commit: `4de9666` — &#34;feat(render): usage &amp; cost card and per-turn badges&#34; (branch `feat/usage-cost`)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented the brief&#39;s Steps 1-10 in order (TDD: format_test → format.go, then</div><div class="diff-add">+ render viewmodel/template/css, then render_test integration tests). One</div><div class="diff-add">+ deviation from the brief&#39;s verbatim code was required and is documented below</div><div class="diff-add">+ (Deviation section) — everything else was implemented exactly as specified.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - Created `internal/render/format.go` — `formatTokens(int) string`,</div><div class="diff-add">+   `formatCost(float64) string`, verbatim per brief.</div><div class="diff-add">+ - Created `internal/render/format_test.go` — verbatim per brief.</div><div class="diff-add">+ - Modified `internal/render/render.go`:</div><div class="diff-add">+   - added `usage` import</div><div class="diff-add">+   - `Options.Usage bool`</div><div class="diff-add">+   - `turnView.Badge`, `viewData.Usage`</div><div class="diff-add">+   - new `usageView` / `usageRow` / `usageModel` types</div><div class="diff-add">+   - `Site` now calls `buildViewModel(s, title, opts)`</div><div class="diff-add">+   - `buildViewModel` rewritten to signature `(s model.Session, title string, opts Options) viewData`, computing `usage.Compute(s)` and per-turn badges only when `opts.Usage`</div><div class="diff-add">+   - added `turnBadge` and `buildUsageView` helpers</div><div class="diff-add">+   - **deviation**: `usageView.Headline` and `usageModel.Tokens` are `template.HTML` (built via `html.EscapeString(...)` then wrapped) instead of plain `string` — see Deviation section</div><div class="diff-add">+ - Modified `internal/render/assets/report.html.tmpl` — usage `&lt;details class=&#34;usage-card&#34;&gt;` block inserted after `session-head`&#39;s `&lt;/section&gt;` and before `{{ range .Turns }}`; turn-role line now emits `&lt;span class=&#34;usage-badge&#34;&gt;` when `.Badge` is set. Verbatim per brief.</div><div class="diff-add">+ - Modified `internal/render/assets/styles.css` — appended the 8 verbatim rules from the brief (`.usage-card`, `.usage-summary`, `.usage-body`, `.usage-tokens`/`.usage-models` cell alignment, `.usage-models`, `.usage-note`, `.usage-badge`). No `url()`, no `@font-face`/`@import`, no external refs — confirmed by grep.</div><div class="diff-add">+ - Modified `internal/render/render_test.go` — added `TestSiteRendersUsageWhenEnabled`, `TestSiteOmitsUsageByDefault`, and `readIndex` helper, verbatim per brief. `os`/`path/filepath`/`strings`/`model` imports already present, so no import changes needed. No pre-existing `readIndex` to collide with.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Deviation from brief (and why)</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s Step 8 test asserts `strings.Contains(html, &#34;in+out&#34;)`. With the</div><div class="diff-add">+ brief&#39;s code verbatim (`Headline`/`Tokens` typed as plain `string`, rendered</div><div class="diff-add">+ via `{{ .Headline }}` / `{{ .Tokens }}` in the `html/template`-parsed</div><div class="diff-add">+ `report.html.tmpl`), Go&#39;s `html/template` auto-escaper HTML-entity-encodes the</div><div class="diff-add">+ literal `+` character as `&amp;#43;` in text nodes. This is standard library</div><div class="diff-add">+ behavior (confirmed with an isolated repro: `template.Must(template.New(&#34;x&#34;).Parse(&#34;{{ . }}&#34;)).Execute(os.Stdout, &#34;a+b&#34;)` prints `a&amp;#43;b`), not a bug in</div><div class="diff-add">+ the surrounding code. Visually a browser renders `&amp;#43;` identically to `+`,</div><div class="diff-add">+ so the report itself would have looked correct — but the literal-substring</div><div class="diff-add">+ test as specified could never pass.</div><div class="diff-add">+ </div><div class="diff-add">+ Fix: mirrored the pattern already established elsewhere in `render.go` for</div><div class="diff-add">+ untrusted content (e.g. `renderTool` does `html.EscapeString(tc.Name)` and</div><div class="diff-add">+ wraps the result as `template.HTML` to bypass the auto-escaper while staying</div><div class="diff-add">+ safe). I changed `usageView.Headline` and `usageModel.Tokens` from `string` to</div><div class="diff-add">+ `template.HTML`, building their values with `html.EscapeString(...)` (which</div><div class="diff-add">+ escapes `&lt; &gt; &amp; &#39; &#34;` but intentionally leaves `+` untouched) before the</div><div class="diff-add">+ `template.HTML(...)` cast. Both fields are built exclusively from our own</div><div class="diff-add">+ `formatTokens`/`formatCost` output and literal English words — no</div><div class="diff-add">+ session-derived data (e.g. model IDs) ever flows through them — so marking</div><div class="diff-add">+ them as pre-escaped-safe HTML introduces no XSS risk. `usageModel.Model`</div><div class="diff-add">+ (which *does* carry a session-derived model id) was left as a plain `string`</div><div class="diff-add">+ so the auto-escaper still applies to it.</div><div class="diff-add">+ </div><div class="diff-add">+ No other hunks required adaptation — `usage.Compute`/`usage.Report`/</div><div class="diff-add">+ `usage.ModelUsage`/`TokenCounts.InOut()` and `model.Turn.Usage`/`.Model`</div><div class="diff-add">+ matched the brief&#39;s assumptions exactly (verified by reading</div><div class="diff-add">+ `internal/usage/usage.go` and `internal/model/model.go` before starting).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** (format_test.go written before format.go existed):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -run TestFormat -v</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/render [...]</div><div class="diff-add">+ internal/render/format_test.go:8:13: undefined: formatTokens</div><div class="diff-add">+ internal/render/format_test.go:15:12: undefined: formatCost</div><div class="diff-add">+ internal/render/format_test.go:18:12: undefined: formatCost</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** (after format.go):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -run TestFormat -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ === RUN   TestFormatCost</div><div class="diff-add">+ --- PASS: TestFormatCost (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.361s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Integration RED** (after render.go/template/css/test changes, before the</div><div class="diff-add">+ `template.HTML` deviation fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ ...</div><div class="diff-add">+ === RUN   TestSiteRendersUsageWhenEnabled</div><div class="diff-add">+     render_test.go:127: usage output missing &#34;in+out&#34;</div><div class="diff-add">+ --- FAIL: TestSiteRendersUsageWhenEnabled (0.00s)</div><div class="diff-add">+ === RUN   TestSiteOmitsUsageByDefault</div><div class="diff-add">+ --- PASS: TestSiteOmitsUsageByDefault (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ Diagnosed via a scratch debug test dumping the rendered HTML: the summary</div><div class="diff-add">+ line read `Usage · 1k in&amp;#43;out · ~$0.01 (est.)` — confirming the</div><div class="diff-add">+ `html/template` `+`-escaping behavior described above.</div><div class="diff-add">+ </div><div class="diff-add">+ **Integration GREEN** (after the deviation fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ === RUN   TestFormatCost</div><div class="diff-add">+ --- PASS: TestFormatCost (0.00s)</div><div class="diff-add">+ === RUN   TestMarkdownRendersHeadingAndCode</div><div class="diff-add">+ --- PASS: TestMarkdownRendersHeadingAndCode (0.00s)</div><div class="diff-add">+ === RUN   TestDiffHTMLMarksLines</div><div class="diff-add">+ --- PASS: TestDiffHTMLMarksLines (0.00s)</div><div class="diff-add">+ === RUN   TestStripANSI</div><div class="diff-add">+ --- PASS: TestStripANSI (0.00s)</div><div class="diff-add">+ === RUN   TestRenderStripsANSIFromReport</div><div class="diff-add">+ --- PASS: TestRenderStripsANSIFromReport (0.00s)</div><div class="diff-add">+ === RUN   TestPreviewRuneSafe</div><div class="diff-add">+ --- PASS: TestPreviewRuneSafe (0.00s)</div><div class="diff-add">+ === RUN   TestSiteRendersUsageWhenEnabled</div><div class="diff-add">+ --- PASS: TestSiteRendersUsageWhenEnabled (0.00s)</div><div class="diff-add">+ === RUN   TestSiteOmitsUsageByDefault</div><div class="diff-add">+ --- PASS: TestSiteOmitsUsageByDefault (0.00s)</div><div class="diff-add">+ === RUN   TestSiteWritesFiles</div><div class="diff-add">+ --- PASS: TestSiteWritesFiles (0.00s)</div><div class="diff-add">+ === RUN   TestEndToEndRedactedReport</div><div class="diff-add">+ --- PASS: TestEndToEndRedactedReport (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.388s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Full suite:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go build ./... &amp;&amp; go vet ./... &amp;&amp; gofmt -l internal &amp;&amp; echo GOFMT_OK &amp;&amp; go test ./...</div><div class="diff-add">+ GOFMT_OK</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	1.449s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.509s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.275s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.696s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.155s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</div><div class="diff-add">+ ```</div><div class="diff-add">+ (`gofmt -l internal` produced no output — all files formatted.)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - **Card absent without `--usage`**: `TestSiteOmitsUsageByDefault` passes;</div><div class="diff-add">+   `buildViewModel` only calls `usage.Compute`/`buildUsageView` when</div><div class="diff-add">+   `opts.Usage` is true, so `viewData.Usage` stays `nil` and the template&#39;s</div><div class="diff-add">+   `{{ with .Usage }}...{{ end }}` block is skipped entirely (no `usage-card`</div><div class="diff-add">+   emitted). Confirmed the existing `cmd/ccwhid/run.go` call site</div><div class="diff-add">+   (`render.Site(sess, outDir, render.Options{Title: opts.title})`) does not</div><div class="diff-add">+   set `Usage`, so all pre-existing CLI behavior is unchanged — wiring a</div><div class="diff-add">+   `--usage` CLI flag is out of scope for this task (presumably a later task).</div><div class="diff-add">+ - **Badge only on turns with usage**: `tv.Badge` is only set</div><div class="diff-add">+   `if opts.Usage &amp;&amp; t.Usage != nil`; turns without `Usage` get a zero-value</div><div class="diff-add">+   `Badge` (empty string), and the template&#39;s `{{ if .Badge }}` guard skips</div><div class="diff-add">+   emitting the `&lt;span class=&#34;usage-badge&#34;&gt;` in that case.</div><div class="diff-add">+ - **No external refs in CSS**: `grep -n &#34;url(\|http://\|https://\|@font-face\|@import&#34; internal/render/assets/styles.css` returned nothing — the appended rules use only `var(--border, #e5e2d8)` / `var(--card, #fff)` fallbacks and literal color values, consistent with the rest of the file&#39;s self-contained styling.</div><div class="diff-add">+ - Verified `internal/usage/usage.go` and `internal/model/model.go` before</div><div class="diff-add">+   starting to confirm `usage.Compute`, `usage.Report`, `usage.ModelUsage`,</div><div class="diff-add">+   `TokenCounts.InOut()`, and `model.Turn.Usage`/`.Model` all matched the</div><div class="diff-add">+   brief&#39;s assumed shapes exactly — no other adaptation was necessary beyond</div><div class="diff-add">+   the `template.HTML` escaping fix above.</div><div class="diff-add">+ - Manually inspected full rendered `index.html` output (via a temporary</div><div class="diff-add">+   scratch test, removed before committing) to confirm the usage card, badge,</div><div class="diff-add">+   and footnote render correctly with real sample data, including the</div><div class="diff-add">+   `&lt;$0.01` cost format still rendering safely (HTML-escaped `&lt;` via</div><div class="diff-add">+   `html.EscapeString`, so no stray literal `&lt;` reaches the browser parser).</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-57" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">146 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:18:25">· 08:18</span><span class="usage-badge">146 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">-rw-r--r--@ 1 [user]  staff  5742 11 Juli 12:09 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-58" data-search="it already existed (likely a template/stub). reading then overwriting.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:18:27">· 08:18</span><span class="usage-badge">3 tok · ~$0.02</span></div>
       <div class="turn-body"><p>It already existed (likely a template/stub). Reading then overwriting.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-59" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:18:27">· 08:18</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 4: Raw JSONL Record Decoding - Implementation Report
@@ -1885,16 +1946,19 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</pre></div></de
 159	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-60" data-search="that&#39;s a stale report from an unrelated earlier &#34;task 4&#34; (raw jsonl decoding, different plan/branch). overwriting it with this task&#39;s report as instructed.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:18:32">· 08:18</span><span class="usage-badge">4 tok · ~$0.02</span></div>
       <div class="turn-body"><p>That's a stale report from an unrelated earlier &quot;Task 4&quot; (raw JSONL decoding, different plan/branch). Overwriting it with this task's report as instructed.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-61" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:19:01">· 08:19</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 4 Report: Render the usage card and per-turn badges</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status: DONE</div><div class="diff-add">+ </div><div class="diff-add">+ Commit: `4de9666` — &#34;feat(render): usage &amp; cost card and per-turn badges&#34; (branch `feat/usage-cost`)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented the brief&#39;s Steps 1-10 in order (TDD: format_test → format.go, then</div><div class="diff-add">+ render viewmodel/template/css, then render_test integration tests). One</div><div class="diff-add">+ deviation from the brief&#39;s verbatim code was required and is documented below</div><div class="diff-add">+ (Deviation section) — everything else was implemented exactly as specified.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - Created `internal/render/format.go` — `formatTokens(int) string`,</div><div class="diff-add">+   `formatCost(float64) string`, verbatim per brief.</div><div class="diff-add">+ - Created `internal/render/format_test.go` — verbatim per brief.</div><div class="diff-add">+ - Modified `internal/render/render.go`:</div><div class="diff-add">+   - added `usage` import</div><div class="diff-add">+   - `Options.Usage bool`</div><div class="diff-add">+   - `turnView.Badge`, `viewData.Usage`</div><div class="diff-add">+   - new `usageView` / `usageRow` / `usageModel` types</div><div class="diff-add">+   - `Site` now calls `buildViewModel(s, title, opts)`</div><div class="diff-add">+   - `buildViewModel` rewritten to signature `(s model.Session, title string, opts Options) viewData`, computing `usage.Compute(s)` and per-turn badges only when `opts.Usage`</div><div class="diff-add">+   - added `turnBadge` and `buildUsageView` helpers</div><div class="diff-add">+   - **deviation**: `usageView.Headline` and `usageModel.Tokens` are `template.HTML` (built via `html.EscapeString(...)` then wrapped) instead of plain `string` — see Deviation section</div><div class="diff-add">+ - Modified `internal/render/assets/report.html.tmpl` — usage `&lt;details class=&#34;usage-card&#34;&gt;` block inserted after `session-head`&#39;s `&lt;/section&gt;` and before `{{ range .Turns }}`; turn-role line now emits `&lt;span class=&#34;usage-badge&#34;&gt;` when `.Badge` is set. Verbatim per brief.</div><div class="diff-add">+ - Modified `internal/render/assets/styles.css` — appended the 8 verbatim rules from the brief (`.usage-card`, `.usage-summary`, `.usage-body`, `.usage-tokens`/`.usage-models` cell alignment, `.usage-models`, `.usage-note`, `.usage-badge`). No `url()`, no `@font-face`/`@import`, no external refs — confirmed by grep.</div><div class="diff-add">+ - Modified `internal/render/render_test.go` — added `TestSiteRendersUsageWhenEnabled`, `TestSiteOmitsUsageByDefault`, and `readIndex` helper, verbatim per brief. `os`/`path/filepath`/`strings`/`model` imports already present, so no import changes needed. No pre-existing `readIndex` to collide with.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Deviation from brief (and why)</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s Step 8 test asserts `strings.Contains(html, &#34;in+out&#34;)`. With the</div><div class="diff-add">+ brief&#39;s code verbatim (`Headline`/`Tokens` typed as plain `string`, rendered</div><div class="diff-add">+ via `{{ .Headline }}` / `{{ .Tokens }}` in the `html/template`-parsed</div><div class="diff-add">+ `report.html.tmpl`), Go&#39;s `html/template` auto-escaper HTML-entity-encodes the</div><div class="diff-add">+ literal `+` character as `&amp;#43;` in text nodes. This is standard library</div><div class="diff-add">+ behavior (confirmed with an isolated repro: `template.Must(template.New(&#34;x&#34;).Parse(&#34;{{ . }}&#34;)).Execute(os.Stdout, &#34;a+b&#34;)` prints `a&amp;#43;b`), not a bug in</div><div class="diff-add">+ the surrounding code. Visually a browser renders `&amp;#43;` identically to `+`,</div><div class="diff-add">+ so the report itself would have looked correct — but the literal-substring</div><div class="diff-add">+ test as specified could never pass.</div><div class="diff-add">+ </div><div class="diff-add">+ Fix: mirrored the pattern already established elsewhere in `render.go` for</div><div class="diff-add">+ untrusted content (e.g. `renderTool` does `html.EscapeString(tc.Name)` and</div><div class="diff-add">+ wraps the result as `template.HTML` to bypass the auto-escaper while staying</div><div class="diff-add">+ safe). I changed `usageView.Headline` and `usageModel.Tokens` from `string` to</div><div class="diff-add">+ `template.HTML`, building their values with `html.EscapeString(...)` (which</div><div class="diff-add">+ escapes `&lt; &gt; &amp; &#39; &#34;` but intentionally leaves `+` untouched) before the</div><div class="diff-add">+ `template.HTML(...)` cast. Both fields are built exclusively from our own</div><div class="diff-add">+ `formatTokens`/`formatCost` output and literal English words — no</div><div class="diff-add">+ session-derived data (e.g. model IDs) ever flows through them — so marking</div><div class="diff-add">+ them as pre-escaped-safe HTML introduces no XSS risk. `usageModel.Model`</div><div class="diff-add">+ (which *does* carry a session-derived model id) was left as a plain `string`</div><div class="diff-add">+ so the auto-escaper still applies to it.</div><div class="diff-add">+ </div><div class="diff-add">+ No other hunks required adaptation — `usage.Compute`/`usage.Report`/</div><div class="diff-add">+ `usage.ModelUsage`/`TokenCounts.InOut()` and `model.Turn.Usage`/`.Model`</div><div class="diff-add">+ matched the brief&#39;s assumptions exactly (verified by reading</div><div class="diff-add">+ `internal/usage/usage.go` and `internal/model/model.go` before starting).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** (format_test.go written before format.go existed):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -run TestFormat -v</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/render [...]</div><div class="diff-add">+ internal/render/format_test.go:8:13: undefined: formatTokens</div><div class="diff-add">+ internal/render/format_test.go:15:12: undefined: formatCost</div><div class="diff-add">+ internal/render/format_test.go:18:12: undefined: formatCost</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** (after format.go):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -run TestFormat -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ === RUN   TestFormatCost</div><div class="diff-add">+ --- PASS: TestFormatCost (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.361s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Integration RED** (after render.go/template/css/test changes, before the</div><div class="diff-add">+ `template.HTML` deviation fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ ...</div><div class="diff-add">+ === RUN   TestSiteRendersUsageWhenEnabled</div><div class="diff-add">+     render_test.go:127: usage output missing &#34;in+out&#34;</div><div class="diff-add">+ --- FAIL: TestSiteRendersUsageWhenEnabled (0.00s)</div><div class="diff-add">+ === RUN   TestSiteOmitsUsageByDefault</div><div class="diff-add">+ --- PASS: TestSiteOmitsUsageByDefault (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ Diagnosed via a scratch debug test dumping the rendered HTML: the summary</div><div class="diff-add">+ line read `Usage · 1k in&amp;#43;out · ~$0.01 (est.)` — confirming the</div><div class="diff-add">+ `html/template` `+`-escaping behavior described above.</div><div class="diff-add">+ </div><div class="diff-add">+ **Integration GREEN** (after the deviation fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ === RUN   TestFormatCost</div><div class="diff-add">+ --- PASS: TestFormatCost (0.00s)</div><div class="diff-add">+ === RUN   TestMarkdownRendersHeadingAndCode</div><div class="diff-add">+ --- PASS: TestMarkdownRendersHeadingAndCode (0.00s)</div><div class="diff-add">+ === RUN   TestDiffHTMLMarksLines</div><div class="diff-add">+ --- PASS: TestDiffHTMLMarksLines (0.00s)</div><div class="diff-add">+ === RUN   TestStripANSI</div><div class="diff-add">+ --- PASS: TestStripANSI (0.00s)</div><div class="diff-add">+ === RUN   TestRenderStripsANSIFromReport</div><div class="diff-add">+ --- PASS: TestRenderStripsANSIFromReport (0.00s)</div><div class="diff-add">+ === RUN   TestPreviewRuneSafe</div><div class="diff-add">+ --- PASS: TestPreviewRuneSafe (0.00s)</div><div class="diff-add">+ === RUN   TestSiteRendersUsageWhenEnabled</div><div class="diff-add">+ --- PASS: TestSiteRendersUsageWhenEnabled (0.00s)</div><div class="diff-add">+ === RUN   TestSiteOmitsUsageByDefault</div><div class="diff-add">+ --- PASS: TestSiteOmitsUsageByDefault (0.00s)</div><div class="diff-add">+ === RUN   TestSiteWritesFiles</div><div class="diff-add">+ --- PASS: TestSiteWritesFiles (0.00s)</div><div class="diff-add">+ === RUN   TestEndToEndRedactedReport</div><div class="diff-add">+ --- PASS: TestEndToEndRedactedReport (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.388s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Full suite:**</div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go build ./... &amp;&amp; go vet ./... &amp;&amp; gofmt -l internal &amp;&amp; echo GOFMT_OK &amp;&amp; go test ./...</div><div class="diff-add">+ GOFMT_OK</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	1.449s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.509s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	0.275s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.696s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	1.155s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.903s</div><div class="diff-add">+ ```</div><div class="diff-add">+ (`gofmt -l internal` produced no output — all files formatted.)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - **Card absent without `--usage`**: `TestSiteOmitsUsageByDefault` passes;</div><div class="diff-add">+   `buildViewModel` only calls `usage.Compute`/`buildUsageView` when</div><div class="diff-add">+   `opts.Usage` is true, so `viewData.Usage` stays `nil` and the template&#39;s</div><div class="diff-add">+   `{{ with .Usage }}...{{ end }}` block is skipped entirely (no `usage-card`</div><div class="diff-add">+   emitted). Confirmed the existing `cmd/ccwhid/run.go` call site</div><div class="diff-add">+   (`render.Site(sess, outDir, render.Options{Title: opts.title})`) does not</div><div class="diff-add">+   set `Usage`, so all pre-existing CLI behavior is unchanged — wiring a</div><div class="diff-add">+   `--usage` CLI flag is out of scope for this task (presumably a later task).</div><div class="diff-add">+ - **Badge only on turns with usage**: `tv.Badge` is only set</div><div class="diff-add">+   `if opts.Usage &amp;&amp; t.Usage != nil`; turns without `Usage` get a zero-value</div><div class="diff-add">+   `Badge` (empty string), and the template&#39;s `{{ if .Badge }}` guard skips</div><div class="diff-add">+   emitting the `&lt;span class=&#34;usage-badge&#34;&gt;` in that case.</div><div class="diff-add">+ - **No external refs in CSS**: `grep -n &#34;url(\|http://\|https://\|@font-face\|@import&#34; internal/render/assets/styles.css` returned nothing — the appended rules use only `var(--border, #e5e2d8)` / `var(--card, #fff)` fallbacks and literal color values, consistent with the rest of the file&#39;s self-contained styling.</div><div class="diff-add">+ - Verified `internal/usage/usage.go` and `internal/model/model.go` before</div><div class="diff-add">+   starting to confirm `usage.Compute`, `usage.Report`, `usage.ModelUsage`,</div><div class="diff-add">+   `TokenCounts.InOut()`, and `model.Turn.Usage`/`.Model` all matched the</div><div class="diff-add">+   brief&#39;s assumed shapes exactly — no other adaptation was necessary beyond</div><div class="diff-add">+   the `template.HTML` escaping fix above.</div><div class="diff-add">+ - Manually inspected full rendered `index.html` output (via a temporary</div><div class="diff-add">+   scratch test, removed before committing) to confirm the usage card, badge,</div><div class="diff-add">+   and footnote render correctly with real sample data, including the</div><div class="diff-add">+   `&lt;$0.01` cost format still rendering safely (HTML-escaped `&lt;` via</div><div class="diff-add">+   `html.EscapeString`, so no stray literal `&lt;` reaches the browser parser).</div><div class="diff-add">+ </div><div class="diff-add">+ ## Note</div><div class="diff-add">+ </div><div class="diff-add">+ This file previously held an unrelated report (&#34;Task 4: Raw JSONL Record</div><div class="diff-add">+ Decoding&#34;) from a different plan/branch (`feat/ccwhid-impl`, commit</div><div class="diff-add">+ `5980a02`). It has been overwritten with this task&#39;s report per the</div><div class="diff-add">+ instructions to write to this exact path.</div><div class="diff-add">+ </div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-62" data-search="status: done
 commit: `4de9666` &#34;feat(render): usage &amp; cost card and per-turn badges&#34;
@@ -1903,7 +1967,7 @@ tests: `go test ./...` all green (render, transcript, usage, model, discovery, r
 concerns: brief&#39;s literal `&#43;` in headline/tokens can&#39;t survive `html/template`&#39;s default auto-escaper (`&#43;`→`&amp;#43;`, visually identical but breaks the substring test). fixed by typing `usageview.headline` and `usagemodel.tokens` as `template.html` built via `html.escapestring(...)` (mirrors the existing `rendertool`/tool-name pattern) — no untrusted data flows through those two fields, so no xss introduced; `usagemodel.model` (which does carry session data) stays a plain auto-escaped `string`. note: the pre-existing `.superpowers/sdd/task-4-report.md` held an unrelated stale report (different plan/branch) and was overwritten per instructions.
 
 report: `~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md`">
-      <div class="turn-role">Claude<span class="usage-badge">412 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:19:07">· 08:19</span><span class="usage-badge">412 tok · ~$0.03</span></div>
       <div class="turn-body"><p>Status: DONE
 Commit: <code>4de9666</code> &quot;feat(render): usage &amp; cost card and per-turn badges&quot;
 Tests: <code>go test ./...</code> all green (render, transcript, usage, model, discovery, redact, tui, cmd/ccwhid); <code>gofmt -l internal</code> clean; <code>go vet ./...</code> clean.</p>

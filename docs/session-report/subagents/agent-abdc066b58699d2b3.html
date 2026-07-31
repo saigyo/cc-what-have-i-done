@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read …</span><span class="prompt-time" title="July 12, 2026 at 08:20:44">08:20</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:20</span>
+        <span title="session start">2026-07-12 08:20</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>19 turns</span>
         <span>Explore · agent-abdc066b58699d2b3</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="in the go repo at ~/ideaprojects/cc-what-have-i-done, read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.
 
 i need to know, for the review of a rendering feature:
@@ -61,7 +63,7 @@ i need to know, for the review of a rendering feature:
 4. does anything in this package ever include arbitrary/unbounded text (e.g. from model output, prompts) as opposed to numbers, model-id strings, or hardcoded date/pricing constants?
 
 report back concisely: field names, their exact source, and whether any could contain html-special characters like `&lt;`, `&gt;`, `&amp;`, or quotes if a transcript were maliciously crafted with a bogus &#34;model&#34; field value.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:20:44">· 08:20</span></div>
       <div class="turn-body"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.</p>
 <p>I need to know, for the review of a rendering feature:</p>
 <ol>
@@ -74,8 +76,9 @@ report back concisely: field names, their exact source, and whether any could co
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/internal/usage/">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:46">· 08:20</span><span class="usage-badge">7k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/internal/usage/&#34;
 }</pre><pre class="tool-result">total 40
@@ -88,8 +91,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 -rw-r--r--@ 1 [user]  staff  3730 12 Juli 08:07 usage.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:49">· 08:20</span><span class="usage-badge">2k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">1	package usage
@@ -238,8 +242,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 144	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:49">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go&#34;
 }</pre><pre class="tool-result">1	// Package usage computes token totals and estimated cost for a rendered
@@ -313,8 +318,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 69	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/prices.json">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:50">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/prices.json&#34;
 }</pre><pre class="tool-result">1	{
@@ -332,8 +338,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 13	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:50">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage_test.go&#34;
 }</pre><pre class="tool-result">1	package usage
@@ -418,8 +425,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 80	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:51">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing_test.go&#34;
 }</pre><pre class="tool-result">1	package usage
@@ -459,22 +467,25 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 35	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -rn &#34;model&#34; ~/ideaprojects/cc-what-have-i-done/internal/model/*.go | grep -v &#34;_test.go&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:53">· 08:20</span><span class="usage-badge">7 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;Model&#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v &#34;_test.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;Model\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -v \&#34;_test.go\&#34;&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go:49:	Model     string // assistant model id (empty for user turns / when absent)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -rln &#34;\.model =&#34; ~/ideaprojects/cc-what-have-i-done --include=*.go | grep -v _test">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:54">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rln &#34;\.Model =&#34; ~/IdeaProjects/cc-what-have-i-done --include=*.go | grep -v _test</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rln \&#34;\\.Model =\&#34; ~/IdeaProjects/cc-what-have-i-done --include=*.go | grep -v _test&#34;
 }</pre><pre class="tool-result">(eval):1: no matches found: --include=*.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash grep -rn &#34;\.model&#34; ~/ideaprojects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go">
-      <div class="turn-role">Claude<span class="usage-badge">100 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:55">· 08:20</span><span class="usage-badge">100 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;\.Model&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;\\.Model\&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.go&#39; | grep -v _test.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go:109:	return m.Model, m.Usage
@@ -491,22 +502,25 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:91:		if p, ok := Lookup(t.Model); ok {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash grep -n &#34;messagemeta\|model\b&#34; ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go | head -50">
-      <div class="turn-role">Claude<span class="usage-badge">146 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:58">· 08:20</span><span class="usage-badge">146 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;messageMeta\|Model\b&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go | head -50</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;messageMeta\\|Model\\b\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go | head -50&#34;
 }</pre><pre class="tool-result">103:		Model string    `json:&#34;model&#34;`
 109:	return m.Model, m.Usage</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="confirmed: `model` field is tagged `json:&#34;model&#34;` and read straight off the raw jsonl message record — no validation, sanitization, or allow-listing before being stored as `turn.model`. let me check the render.go usage to see how pricesasof and other fields flow into the template (for full picture), and confirm there&#39;s no other string field.">
-      <div class="turn-role">Claude<span class="usage-badge">153 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:01">· 08:21</span><span class="usage-badge">153 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed: <code>Model</code> field is tagged <code>json:&quot;model&quot;</code> and read straight off the raw JSONL message record — no validation, sanitization, or allow-listing before being stored as <code>turn.Model</code>. Let me check the render.go usage to see how PricesAsOf and other fields flow into the template (for full picture), and confirm there's no other string field.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:02">· 08:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;,
   &#34;limit&#34;: 30,
@@ -543,8 +557,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 114			return time.Time{}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash grep -n &#34;pricesasof\|usagemodel\|\.models\b\|modelusage\|report{&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:03">· 08:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;PricesAsOf\|usageModel\|\.Models\b\|ModelUsage\|Report{&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;PricesAsOf\\|usageModel\\|\\.Models\\b\\|ModelUsage\\|Report{\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">95:	Models   []usageModel  // per-model table rows
@@ -554,8 +569,9 @@ drwxr-xr-x@ 9 [user]  staff   288 12 Juli 08:02 ..
 184:	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;; excludes server-tool fees.&#34;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash sed -n &#39;90,200p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:05">· 08:21</span><span class="usage-badge">126 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;90,200p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;90,200p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">type usageView struct {
@@ -670,8 +686,9 @@ func roleLabel(k model.TurnKind) string {
 func renderTurnBody(t model.Turn) template.HTML {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash grep -rn &#34;\.model\b&#34; ~/ideaprojects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2&gt;/dev/null; find ~/ideaprojects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln &#34;usagemodel\|models&#34; 2&gt;/dev/null">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:11">· 08:21</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;\.Model\b&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2&gt;/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln &#34;usageModel\|Models&#34; 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;\\.Model\\b\&#34; ~/IdeaProjects/cc-what-have-i-done --include=&#39;*.html&#39; --include=&#39;*.tmpl&#39; --include=&#39;*.gohtml&#39; 2\u003e/dev/null; find ~/IdeaProjects/cc-what-have-i-done -iname &#39;*.html&#39; -o -iname &#39;*.tmpl&#39; -o -iname &#39;*.gohtml&#39; | xargs grep -ln \&#34;usageModel\\|Models\&#34; 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">&lt;persisted-output&gt;
@@ -684,13 +701,14 @@ Preview (first 2KB):
 &lt;/persisted-output&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="the key line is `internal/render/assets/report.html.tmpl:46`:
 ```
 {{ range .models }}&lt;tr&gt;&lt;td&gt;{{ .model }}&lt;/td&gt;&lt;td&gt;{{ .tokens }}&lt;/td&gt;&lt;td&gt;{{ .cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
 ```
 
 let me confirm this template is parsed via `html/template` (auto-escaping) and not `text/template`.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:14">· 08:21</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>The key line is <code>internal/render/assets/report.html.tmpl:46</code>:</p>
 <pre><code>{{ range .Models }}&lt;tr&gt;&lt;td&gt;{{ .Model }}&lt;/td&gt;&lt;td&gt;{{ .Tokens }}&lt;/td&gt;&lt;td&gt;{{ .Cost }}&lt;/td&gt;&lt;/tr&gt;{{ end }}
 </code></pre>
@@ -698,13 +716,15 @@ let me confirm this template is parsed via `html/template` (auto-escaping) and n
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash grep -rn &#34;html/template\|text/template\|template.must\|parsefs\|parsefiles&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:14">· 08:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;html/template\|text/template\|template.Must\|ParseFS\|ParseFiles&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;html/template\\|text/template\\|template.Must\\|ParseFS\\|ParseFiles\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:7:	&#34;html/template&#34;
 ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:166:	// html.EscapeString (unlike html/template&#39;s auto-escaper) leaves &#34;+&#34; intact</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-18" data-search="confirmed: `html/template` is used, so the plain `string` field `usagemodel.model` (and thus `modelusage.model`) is auto-escaped by go&#39;s contextual html escaper when rendered into the `&lt;td&gt;` in `report.html.tmpl`. `pricesasof` is only ever consumed inside `render.go`&#39;s go code (concatenated into `foot` and passed through `html.escapestring` at line ~184-186 before landing in `footnote`), never inserted as raw html.
 
@@ -745,7 +765,7 @@ no. the `usage` package itself never touches prompt text, assistant output text,
 ### risk assessment for the rendering review
 - `pricesasof`: safe — compile-time constant, cannot be attacker-influenced.
 - `modelusage.model`: **can contain any bytes an attacker puts in the transcript&#39;s `message.model` field**, including `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;`, or full html/script payloads. whether this is exploitable depends entirely on the sink: in the current code, `internal/render/render.go` passes `usagemodel.model` (assigned directly from `m.model`, i.e. `modelusage.model`) as a **plain `string`** field into the `html/template`-parsed template `internal/render/assets/report.html.tmpl:46` (`{{ .model }}` inside a `&lt;td&gt;`), and `render.go` imports `html/template` (not `text/template`), so go&#39;s contextual auto-escaper will html-escape `&lt;`, `&gt;`, `&amp;`, `&#34;`, `&#39;` at render time for that particular sink. if a reviewer finds any *other* code path that writes `modelusage.model` (or the string derived from it) into html via `text/template`, raw string concatenation, `template.html(...)` casts, or js/attribute contexts without going through the `html/template` auto-escaper, that would be the actual injection point to flag — the `usage` package itself does nothing to neutralize the value, so all responsibility for safety rests on the template/rendering layer&#39;s auto-escaping.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:36">· 08:21</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><p>Confirmed: <code>html/template</code> is used, so the plain <code>string</code> field <code>usageModel.Model</code> (and thus <code>ModelUsage.Model</code>) is auto-escaped by Go's contextual HTML escaper when rendered into the <code>&lt;td&gt;</code> in <code>report.html.tmpl</code>. <code>PricesAsOf</code> is only ever consumed inside <code>render.go</code>'s Go code (concatenated into <code>foot</code> and passed through <code>html.EscapeString</code> at line ~184-186 before landing in <code>Footnote</code>), never inserted as raw HTML.</p>
 <p>Now I have everything needed. Here's my report.</p>
 <h2>Summary</h2>

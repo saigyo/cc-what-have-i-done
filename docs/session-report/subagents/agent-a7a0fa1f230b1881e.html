@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 08:00:24">08:00</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:00</span>
+        <span title="last message 2026-07-12 08:01">2026-07-12 08:00 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>9 turns</span>
         <span>general-purpose · agent-a7a0fa1f230b1881e</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks.
 
 ## what was requested
@@ -85,7 +87,7 @@ specific things worth verifying by reading the diff:
 
 ## output format
 follow the reviewer template exactly: begin directly with the spec compliance verdict (✅/❌/⚠️), then strengths, then issues (critical/important/minor) each with file:line, then an assessment with **task quality:** approved | needs fixes. every line a verdict, a finding with file:line, or a check you ran — no preamble or closing summary.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:00:24">· 08:00</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</p>
@@ -119,8 +121,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:26">· 08:00</span><span class="usage-badge">7k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 1: Parse per-turn model &amp; usage
@@ -318,8 +321,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 193	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:27">· 08:00</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-1-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 1 Report: Parse per-turn model &amp; usage
@@ -437,8 +441,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 113	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:27">· 08:00</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-0bd5a25..1753ede.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 0bd5a25..HEAD
@@ -692,8 +697,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 249	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:42">· 08:00</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -820,8 +826,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 122	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:42">· 08:00</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -1162,8 +1169,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 336	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:00:42">· 08:00</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
 }</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
@@ -1265,8 +1273,9 @@ Read the diff file once — it is your view of the change (commit list + stat + 
 97	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="agent check for positional turn struct literals">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:11">· 08:01</span><span class="usage-badge">12 tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check for positional Turn struct literals</span><a class="agent-link" href="agent-a9362c6415f36d9ba.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.Turn{} struct literal using positional (unkeyed) field initialization, e.g. <code>model.Turn{TurnKind, time.Now(), nil}</code> rather than keyed fields like <code>model.Turn{Kind: ..., Timestamp: ...}</code>. The Turn struct in internal/model/model.go just had two new fields (Model string, Usage *Usage) appended to it; if any code constructs Turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. Also check whether internal/model.Turn or internal/model.Usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. Report back: any positional Turn literals found (file:line), and a list of all other files that reference model.Turn or model.Usage. Keep the report under 150 words, this is a quick focused check.</p>
 </div><div class="agent-result-body"><p>No positional (unkeyed) <code>model.Turn{}</code> literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new <code>Model</code>/<code>Usage</code> fields.</p>
 <p>Positional Turn literals found: none.</p>
@@ -1286,6 +1295,7 @@ tool_uses: 5
 duration_ms: 21962<!-- raw HTML omitted --></p>
 </div></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-8" data-search="all checks confirmed clean. compiling review conclusions.
 
@@ -1314,7 +1324,7 @@ none found — no critical, important, or minor issues.
 ## assessment
 
 **task quality: approved**">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:54">· 08:01</span><span class="usage-badge">1k tok · ~$0.03</span></div>
       <div class="turn-body"><p>All checks confirmed clean. Compiling review conclusions.</p>
 <h2>Spec Compliance: ✅</h2>
 <p>The implementation fully satisfies task-1-brief.md and the global constraints:</p>

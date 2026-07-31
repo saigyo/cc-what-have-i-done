@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are fixing one code-review finding on the Go CLI `ccwhi…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are fixing one code-review finding on the Go CLI `ccwhi…</span><span class="prompt-time" title="July 12, 2026 at 12:55:07">12:55</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 10:55</span>
+        <span title="last message 2026-07-12 12:56">2026-07-12 12:55 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>24 turns</span>
         <span>general-purpose · agent-a5c71d55e0b26ef8e</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are fixing one code-review finding on the go cli `ccwhid`. work from ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions).
 
 ## the finding (from copilot on pr #7, valid)
@@ -130,7 +132,7 @@ then push: `git push`
 ## report
 
 report back with only: status, commit sha &#43; subject, one-line test summary (red confirmed? green? existing tests?).">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 12:55:07">· 12:55</span></div>
       <div class="turn-body"><p>You are fixing one code-review finding on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <h2>The finding (from Copilot on PR #7, valid)</h2>
 <p><code>internal/transcript/parse.go</code> — <code>tagContent()</code> uses <code>strings.LastIndex</code> for the closing tag for ALL fields. If a <code>&lt;task-notification&gt;</code> payload's <code>&lt;result&gt;</code> markdown contains a literal <code>&lt;/task-id&gt;</code> or <code>&lt;/summary&gt;</code> (e.g. an agent report quoting another notification envelope), LastIndex matches that later occurrence and the extracted TaskID/Summary span far beyond the intended tag — corrupting AgentID and breaking result-card links.</p>
@@ -193,14 +195,16 @@ Expected: gofmt silent, vet clean, package passes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll fix this code-review finding using tdd. let me start by examining the current code and adding the regression test.">
-      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:11">· 12:55</span><span class="usage-badge">13 tok · ~$0.02</span></div>
       <div class="turn-body"><p>I'll fix this code-review finding using TDD. Let me start by examining the current code and adding the regression test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:11">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -631,8 +635,9 @@ Expected: gofmt silent, vet clean, package passes.</p>
 426	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/notification_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:12">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -748,25 +753,29 @@ Expected: gofmt silent, vet clean, package passes.</p>
 111	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="now i&#39;ll add the regression test to `notification_test.go`:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:15">· 12:55</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now I'll add the regression test to <code>notification_test.go</code>:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/notification_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:21">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // jsonMarshalString wraps a string as a JSON string literal.</div><div class="diff-del">- func jsonMarshalString(s string) (string, error) {</div><div class="diff-del">- 	b, err := json.Marshal(s)</div><div class="diff-del">- 	return string(b), err</div><div class="diff-del">- }</div><div class="diff-add">+ func TestParseNotificationResultQuotingOtherTags(t *testing.T) {</div><div class="diff-add">+ 	// A &lt;result&gt; body that quotes another notification&#39;s envelope must not</div><div class="diff-add">+ 	// corrupt the simple fields: task-id/summary match their FIRST closing tag.</div><div class="diff-add">+ 	body := &#34;&lt;task-notification&gt;\n&lt;task-id&gt;real-id&lt;/task-id&gt;\n&lt;status&gt;completed&lt;/status&gt;\n&#34; +</div><div class="diff-add">+ 		&#34;&lt;summary&gt;Agent \&#34;x\&#34; finished&lt;/summary&gt;\n&#34; +</div><div class="diff-add">+ 		&#34;&lt;result&gt;the agent saw `&lt;/task-id&gt;` and `&lt;/summary&gt;` in a quoted envelope&lt;/result&gt;\n&#34; +</div><div class="diff-add">+ 		&#34;&lt;/task-notification&gt;&#34;</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(notifLine(t, body)), Options{})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(s.Turns) != 1 || s.Turns[0].Kind != model.TurnAgentResult {</div><div class="diff-add">+ 		t.Fatalf(&#34;want one agent-result turn, got %+v&#34;, s.Turns)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.Turns[0].AgentID != &#34;real-id&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;AgentID = %q, want real-id (must not span into the result body)&#34;, s.Turns[0].AgentID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if want := `Agent &#34;x&#34; finished`; s.Turns[0].AgentSummary != want {</div><div class="diff-add">+ 		t.Errorf(&#34;AgentSummary = %q, want %q&#34;, s.Turns[0].AgentSummary, want)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // jsonMarshalString wraps a string as a JSON string literal.</div><div class="diff-add">+ func jsonMarshalString(s string) (string, error) {</div><div class="diff-add">+ 	b, err := json.Marshal(s)</div><div class="diff-add">+ 	return string(b), err</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/notification_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="now let me run the new test to verify it fails (as expected before the fix):">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:23">· 12:55</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me run the new test to verify it fails (as expected before the fix):</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash go test ./internal/transcript/ -run quotingothertags -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:23">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run QuotingOtherTags -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run QuotingOtherTags -v&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -779,25 +788,29 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.314s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="perfect! the test fails as expected, confirming the bug. now i&#39;ll apply the fix to `tagcontent()`:">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:28">· 12:55</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Perfect! The test fails as expected, confirming the bug. Now I'll apply the fix to <code>tagContent()</code>:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:32">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // tagContent returns the text between the first &lt;name&gt; and the last &lt;/name&gt;,</div><div class="diff-del">- // trimmed. The last closing tag guards &lt;result&gt; bodies that themselves contain</div><div class="diff-del">- // XML-looking text.</div><div class="diff-del">- func tagContent(s, name string) string {</div><div class="diff-del">- 	open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;</div><div class="diff-del">- 	i := strings.Index(s, open)</div><div class="diff-del">- 	if i &lt; 0 {</div><div class="diff-del">- 		return &#34;&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	rest := s[i+len(open):]</div><div class="diff-del">- 	j := strings.LastIndex(rest, close)</div><div class="diff-del">- 	if j &lt; 0 {</div><div class="diff-del">- 		return &#34;&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	return strings.TrimSpace(rest[:j])</div><div class="diff-del">- }</div><div class="diff-add">+ // tagContent returns the text between the first &lt;name&gt; and its closing</div><div class="diff-add">+ // &lt;/name&gt;, trimmed. Simple fields match the first closing tag; &lt;result&gt; keeps</div><div class="diff-add">+ // matching the last one so bodies that quote XML-looking text (even a literal</div><div class="diff-add">+ // &lt;/result&gt;) stay intact.</div><div class="diff-add">+ func tagContent(s, name string) string {</div><div class="diff-add">+ 	open, close := &#34;&lt;&#34;+name+&#34;&gt;&#34;, &#34;&lt;/&#34;+name+&#34;&gt;&#34;</div><div class="diff-add">+ 	i := strings.Index(s, open)</div><div class="diff-add">+ 	if i &lt; 0 {</div><div class="diff-add">+ 		return &#34;&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	rest := s[i+len(open):]</div><div class="diff-add">+ 	var j int</div><div class="diff-add">+ 	if name == &#34;result&#34; {</div><div class="diff-add">+ 		j = strings.LastIndex(rest, close)</div><div class="diff-add">+ 	} else {</div><div class="diff-add">+ 		j = strings.Index(rest, close)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if j &lt; 0 {</div><div class="diff-add">+ 		return &#34;&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return strings.TrimSpace(rest[:j])</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="now let me run the regression test again to verify it passes:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:34">· 12:55</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me run the regression test again to verify it passes:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./internal/transcript/ -run quotingothertags -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:34">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run QuotingOtherTags -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run QuotingOtherTags -v&#34;
 }</pre><pre class="tool-result">=== RUN   TestParseNotificationResultQuotingOtherTags
@@ -806,14 +819,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.270s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="excellent! now let me verify all tests in the transcript package still pass:">
-      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:39">· 12:55</span><span class="usage-badge">122 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Excellent! Now let me verify all tests in the transcript package still pass:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash go test ./internal/transcript/ -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:39">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -v&#34;
 }</pre><pre class="tool-result">=== RUN   TestLoadAgentSessions
@@ -860,27 +875,31 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.166s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="perfect! all tests pass. now let me run the verification checks:">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:43">· 12:55</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Perfect! All tests pass. Now let me run the verification checks:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash gofmt -l . &amp;&amp; go vet ./...">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:44">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; go vet ./...</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 go vet ./...&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="now let me check git status and create the commit:">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:47">· 12:55</span><span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me check git status and create the commit:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:47">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status&#34;
 }</pre><pre class="tool-result">Auf Branch feat/subagent-sessions
@@ -895,41 +914,47 @@ Ihr Branch ist auf demselben Stand wie &#39;origin/feat/subagent-sessions&#39;.
 keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="now i&#39;ll stage the changes and create the commit:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:50">· 12:55</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now I'll stage the changes and create the commit:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash git add internal/transcript/parse.go internal/transcript/notification_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:50">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/transcript/parse.go internal/transcript/notification_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/transcript/parse.go internal/transcript/notification_test.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">251 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:55">· 12:55</span><span class="usage-badge">251 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: match first closing tag for simple notification fields\n\nFixes a bug in tagContent() where ALL fields used strings.LastIndex for the\nclosing tag. If a \u003cresult\u003e body contained XML-looking content (e.g., a quoted\n\u003c/task-id\u003e or \u003c/summary\u003e), the extraction would match that later occurrence\nand corrupt task-id/summary spanning far beyond the intended tag.\n\nChanged to use strings.Index (first closing tag) for all fields except\n\u003cresult\u003e, which keeps strings.LastIndex to tolerate XML-looking content\ninside the result body. Includes regression test.\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/subagent-sessions 9778609] fix: match first closing tag for simple notification fields
  2 files changed, 32 insertions(+), 4 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash git log -1 --format=&#34;%h %s&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">102 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:55:58">· 12:55</span><span class="usage-badge">102 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --format=&#34;%H %s&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -1 --format=\&#34;%H %s\&#34;&#34;
 }</pre><pre class="tool-result">9778609466b7543189eed40eb608ea7914cfeeb6 fix: match first closing tag for simple notification fields</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash git push">
-      <div class="turn-role">Claude<span class="usage-badge">78 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:56:01">· 12:56</span><span class="usage-badge">78 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git push</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git push&#34;
 }</pre><pre class="tool-result">To https://github.com/saigyo/cc-what-have-i-done.git
    92f3646..9778609  feat/subagent-sessions -&gt; feat/subagent-sessions</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-23" data-search="**status: complete**
 
@@ -938,7 +963,7 @@ keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder
 **test summary:** red → green. regression test confirms the bug (agentid was spanning into result body), then passes post-fix. all 19 transcript tests pass, including 9 existing notification tests.
 
 **verification:** gofmt silent, go vet clean, package passes.">
-      <div class="turn-role">Claude<span class="usage-badge">301 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:56:09">· 12:56</span><span class="usage-badge">301 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Status: Complete</strong></p>
 <p><strong>Commit:</strong> <code>9778609</code> — fix: match first closing tag for simple notification fields</p>
 <p><strong>Test Summary:</strong> RED → GREEN. Regression test confirms the bug (AgentID was spanning into result body), then passes post-fix. All 19 transcript tests pass, including 9 existing notification tests.</p>

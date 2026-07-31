@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are a Senior Code Reviewer performing the final whole-b…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are a Senior Code Reviewer performing the final whole-b…</span><span class="prompt-time" title="July 11, 2026 at 13:06:05">13:06</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 11:06</span>
+        <span title="last message 2026-07-11 13:08">2026-07-11 13:06 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>12 turns</span>
         <span>general-purpose · agent-aee04b4f65e40a812</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are a senior code reviewer performing the final whole-branch review of the `ccwhid` cli before merge. per-task reviews already passed; this is the broad, cross-cutting pass.
 
 ## what was implemented
@@ -94,7 +96,7 @@ focus on cross-cutting concerns that per-task reviews could miss:
 ## output format
 
 follow the template: strengths; issues (critical / important / minor, each with file:line, what&#39;s wrong, why it matters, how to fix); recommendations; assessment (ready to merge? yes | no | with fixes &#43; reasoning). be specific and give a clear verdict.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 13:06:05">· 13:06</span></div>
       <div class="turn-body"><p>You are a Senior Code Reviewer performing the final whole-branch review of the <code>ccwhid</code> CLI before merge. Per-task reviews already passed; this is the broad, cross-cutting pass.</p>
 <h2>What Was Implemented</h2>
 <p><code>ccwhid</code> (cc-what-have-i-done): a single-binary Go CLI that turns a Claude Code session transcript (<code>.jsonl</code>) into a self-contained static HTML report, styled like Claude's docs. Run with no flags it opens a Bubble Tea TUI to browse and select a session; with flags it renders directly. Pipeline: <code>discovery</code> (find/index sessions) → <code>transcript</code> (fold JSONL into a model.Session timeline, incl. subagent sidechains) → <code>redact</code> (scrub secrets, on by default) → <code>render</code> (goldmark/chroma + embedded template/CSS/JS → index.html + assets). Layers: cmd/ccwhid (cobra + wiring), internal/{model,discovery,transcript,redact,render,tui}.</p>
@@ -132,14 +134,16 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="this is a code review task. let me start by reading the diff package and the design/plan docs.">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:06:08">· 13:06</span><span class="usage-badge">7k tok · ~$0.10</span></div>
       <div class="turn-body"><p>This is a code review task. Let me start by reading the diff package and the design/plan docs.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:06:09">· 13:06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 2ff127ac3e943c5fc1ccd4c4ad5247ce7dbcf3ac..HEAD
@@ -1409,8 +1413,9 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 1265	+    --accent: #E08a6b; --accent-soft: #3A2E28; --border: #34322C;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:06:10">· 13:06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-11-ccwhid-design.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid (cc-what-have-i-done) — Design
@@ -1585,8 +1590,9 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 170	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.24</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:06:16">· 13:06</span><span class="usage-badge">2k tok · ~$0.24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-2ff127a..6678bb5.diff&#34;,
   &#34;limit&#34;: 1375,
@@ -2968,14 +2974,16 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 2640	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="let me verify my analysis by building and running the tests, and check the readme reconciliation mentioned in the last commit.">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.20</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:07:47">· 13:07</span><span class="usage-badge">6 tok · ~$0.20</span></div>
       <div class="turn-body"><p>Let me verify my analysis by building and running the tests, and check the README reconciliation mentioned in the last commit.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash go build ./... 2&gt;&amp;1 | head -30 &amp;&amp; echo &#34;---build done---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | head -40 &amp;&amp; echo &#34;---vet done---&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:07:48">· 13:07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 | head -30 &amp;&amp; echo &#34;---BUILD DONE---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | head -40 &amp;&amp; echo &#34;---VET DONE---&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 | head -30 \u0026\u0026 echo \&#34;---BUILD DONE---\&#34; \u0026\u0026 go vet ./... 2\u003e\u00261 | head -40 \u0026\u0026 echo \&#34;---VET DONE---\&#34;&#34;,
   &#34;description&#34;: &#34;Build and vet the module&#34;
@@ -2983,8 +2991,9 @@ Diff package (read once — commit list, stat summary, full diff with context): 
 ---VET DONE---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash go test ./... 2&gt;&amp;1 | tail -40">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:07:49">· 13:07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -40&#34;,
   &#34;description&#34;: &#34;Run all tests&#34;
@@ -2997,14 +3006,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="build, vet, and tests all pass. let me confirm the two key findings precisely.">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.08</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:07:55">· 13:07</span><span class="usage-badge">12 tok · ~$0.08</span></div>
       <div class="turn-body"><p>Build, vet, and tests all pass. Let me confirm the two key findings precisely.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash echo &#34;=== highlight callers ===&#34; &amp;&amp; grep -rn &#34;highlight(&#34; --include=*.go | grep -v &#34;func highlight&#34; &amp;&amp; echo &#34;(none above = unused)&#34;; echo &#34;=== projectpath in redact ===&#34; &amp;&amp; grep -n &#34;projectpath\|title\|gitbranch&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== sub.description in redact ===&#34; &amp;&amp; grep -n &#34;description&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== skippedlines surfaced ===&#34; &amp;&amp; grep -rn &#34;skippedlines&#34; --include=*.go | grep -v &#34;_test.go\|model.go&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:07:58">· 13:07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== Highlight callers ===&#34; &amp;&amp; grep -rn &#34;Highlight(&#34; --include=*.go | grep -v &#34;func Highlight&#34; &amp;&amp; echo &#34;(none above = unused)&#34;; echo &#34;=== ProjectPath in redact ===&#34; &amp;&amp; grep -n &#34;ProjectPath\|Title\|GitBranch&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== sub.Description in redact ===&#34; &amp;&amp; grep -n &#34;Description&#34; internal/redact/redact.go || echo &#34;(none = not redacted)&#34;; echo &#34;=== SkippedLines surfaced ===&#34; &amp;&amp; grep -rn &#34;SkippedLines&#34; --include=*.go | grep -v &#34;_test.go\|model.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;=== Highlight callers ===\&#34; \u0026\u0026 grep -rn \&#34;Highlight(\&#34; --include=*.go | grep -v \&#34;func Highlight\&#34; \u0026\u0026 echo \&#34;(none above = unused)\&#34;; echo \&#34;=== ProjectPath in redact ===\&#34; \u0026\u0026 grep -n \&#34;ProjectPath\\|Title\\|GitBranch\&#34; internal/redact/redact.go || echo \&#34;(none = not redacted)\&#34;; echo \&#34;=== sub.Description in redact ===\&#34; \u0026\u0026 grep -n \&#34;Description\&#34; internal/redact/redact.go || echo \&#34;(none = not redacted)\&#34;; echo \&#34;=== SkippedLines surfaced ===\&#34; \u0026\u0026 grep -rn \&#34;SkippedLines\&#34; --include=*.go | grep -v \&#34;_test.go\\|model.go\&#34;&#34;,
   &#34;description&#34;: &#34;Confirm findings on Highlight, ProjectPath, Description redaction&#34;
@@ -3018,8 +3029,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</pre></div></de
 (eval):1: no matches found: --include=*.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash cd ~/ideaprojects/cc-what-have-i-done; echo &#34;=== highlight callers (excluding def) ===&#34;; grep -rn &#34;highlight&#34; --include=&#34;*.go&#34; . | grep -v &#34;func highlight&#34;; echo &#34;=== skippedlines usage ===&#34;; grep -rn &#34;skippedlines&#34; --include=&#34;*.go&#34; .; echo &#34;=== chroma import usage in render.go ===&#34;; grep -n &#34;chroma\|highlight&#34; internal/render/render.go || echo &#34;render.go does not call highlight/chroma&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">266 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:08:03">· 13:08</span><span class="usage-badge">266 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cd ~/IdeaProjects/cc-what-have-i-done; echo &#34;=== Highlight callers (excluding def) ===&#34;; grep -rn &#34;Highlight&#34; --include=&#34;*.go&#34; . | grep -v &#34;func Highlight&#34;; echo &#34;=== SkippedLines usage ===&#34;; grep -rn &#34;SkippedLines&#34; --include=&#34;*.go&#34; .; echo &#34;=== chroma import usage in render.go ===&#34;; grep -n &#34;chroma\|Highlight&#34; internal/render/render.go || echo &#34;render.go does not call Highlight/chroma&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cd ~/IdeaProjects/cc-what-have-i-done; echo \&#34;=== Highlight callers (excluding def) ===\&#34;; grep -rn \&#34;Highlight\&#34; --include=\&#34;*.go\&#34; . | grep -v \&#34;func Highlight\&#34;; echo \&#34;=== SkippedLines usage ===\&#34;; grep -rn \&#34;SkippedLines\&#34; --include=\&#34;*.go\&#34; .; echo \&#34;=== chroma import usage in render.go ===\&#34;; grep -n \&#34;chroma\\|Highlight\&#34; internal/render/render.go || echo \&#34;render.go does not call Highlight/chroma\&#34;&#34;,
   &#34;description&#34;: &#34;Confirm Highlight and SkippedLines usage&#34;
@@ -3033,6 +3045,7 @@ internal/model/model.go:32:	SkippedLines int // count of malformed lines skipped
 === chroma import usage in render.go ===
 render.go does not call Highlight/chroma</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-11" data-search="confirmed all findings against the tree. build, `go vet`, and all tests pass. here is the whole-branch review.
 
@@ -3079,7 +3092,7 @@ re-assessed items 1–5: none rise to blocking. the `redact` assignment over-mat
 **ready to merge? with fixes.**
 
 the architecture is clean, the pipeline is correct on the paths that matter (tool-result matching, sidechain attachment, html-escaping, self-containment), and the whole suite builds and passes. the one item i&#39;d gate on is **#1** — home-path redaction silently doesn&#39;t cover the project-path header, so the default-on redaction promise is materially incomplete for every report. it&#39;s a two-line fix. findings #2–#6 are non-blocking and can land in the same or a follow-up cleanup commit. with #1 (and ideally #2) addressed, this is good to merge.">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.13</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:08:53">· 13:08</span><span class="usage-badge">3k tok · ~$0.13</span></div>
       <div class="turn-body"><p>Confirmed all findings against the tree. Build, <code>go vet</code>, and all tests pass. Here is the whole-branch review.</p>
 <hr>
 <h1>Whole-Branch Review: <code>ccwhid</code> CLI (2ff127a..6678bb5)</h1>

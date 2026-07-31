@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 12:14:45">12:14</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:14</span>
+        <span title="last message 2026-07-11 12:18">2026-07-11 12:14 (3m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>25 turns</span>
         <span>general-purpose · agent-ad2854fd6cb35911d</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; broad review happens later. this is the core transcript-folding task — review carefully.
 
 ## what was requested
@@ -84,7 +86,7 @@ named risks to check specifically:
 4. **skippedlines accounting:** malformed lines increment skippedlines and don&#39;t abort.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:14:45">· 12:14</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; broad review happens later. This is the core transcript-folding task — review carefully.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
@@ -114,8 +116,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:14:48">· 12:14</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 5: Fold records into a Session timeline
@@ -572,8 +575,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 452	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:14:49">· 12:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 Report: Fold records into a Session timeline
@@ -713,15 +717,17 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 135	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="bash wc -l ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:14:55">· 12:14</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;wc -l ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff&#34;
 }</pre><pre class="tool-result">     426 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:14:56">· 12:14</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..09d5d88.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2..HEAD
@@ -1153,8 +1159,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 427	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:01">· 12:15</span><span class="usage-badge">5 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find internal/model internal/transcript -type f -name &#39;*.go&#39; | xargs ls -la&#34;
 }</pre><pre class="tool-result">-rw-r--r--@ 1 [user]  staff   629 11 Juli 11:57 internal/model/model_test.go
@@ -1165,15 +1172,17 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 -rw-r--r--@ 1 [user]  staff  2514 11 Juli 12:09 internal/transcript/raw.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:01">· 12:15</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model&#34;
 }</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/internal/model&#39;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
-      <div class="turn-role">Claude<span class="usage-badge">67 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:05">· 12:15</span><span class="usage-badge">67 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
 }</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
@@ -1263,8 +1272,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 85	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:05">· 12:15</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -1364,8 +1374,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 95	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash find .superpowers -iname &#39;*.md&#39; | xargs grep -l &#34;sidechain\|task&#34; -i 2&gt;/dev/null">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:27">· 12:15</span><span class="usage-badge">6 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find .superpowers -iname &#39;*.md&#39; | xargs grep -l &#34;sidechain\|Task&#34; -i 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find .superpowers -iname &#39;*.md&#39; | xargs grep -l \&#34;sidechain\\|Task\&#34; -i 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result">.superpowers/sdd/task-3-report.md
@@ -1381,8 +1392,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 .superpowers/sdd/task-4-brief.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash ls .superpowers/sdd/">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:27">· 12:15</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls .superpowers/sdd/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls .superpowers/sdd/&#34;
 }</pre><pre class="tool-result">progress.md
@@ -1403,8 +1415,9 @@ task-5-brief.md
 task-5-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash grep -n &#34;sidechain\|task\b\|nearest preceding&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2&gt;/dev/null | head -80">
-      <div class="turn-role">Claude<span class="usage-badge">205 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:15:30">· 12:15</span><span class="usage-badge">205 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;sidechain\|Task\b\|nearest preceding&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2&gt;/dev/null | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;sidechain\\|Task\\b\\|nearest preceding\&#34; .superpowers/sdd/progress.md .superpowers/sdd/task-4-brief.md .superpowers/sdd/task-2-brief.md 2\u003e/dev/null | head -80&#34;
 }</pre><pre class="tool-result">.superpowers/sdd/task-4-brief.md:1:### Task 4: Raw JSONL record decoding
@@ -1422,19 +1435,22 @@ task-5-report.md</pre></div></details></div>
 .superpowers/sdd/task-2-brief.md:139:// Subagent is a nested sidechain run attached to a parent Task tool call.</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="i want to verify a suspected bug about `toolindex` not being populated for sidechain tool_use blocks — meaning a subagent&#39;s own internal tool calls (e.g., a bash call made by a task-spawned subagent) would never get their `result` filled in. let me write a throwaway test to confirm.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:16:35">· 12:16</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>I want to verify a suspected bug about <code>toolIndex</code> not being populated for sidechain tool_use blocks — meaning a subagent's own internal tool calls (e.g., a Bash call made by a Task-spawned subagent) would never get their <code>Result</code> filled in. Let me write a throwaway test to confirm.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:16:43">· 12:16</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package transcript</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Throwaway probe: does a tool_use/tool_result pair *inside* a sidechain</div><div class="diff-add">+ // (subagent) correctly attach ToolCall.Result, given toolIndex registration</div><div class="diff-add">+ // only happens in the main-chain branch of Parse?</div><div class="diff-add">+ func TestProbeSidechainInternalToolResult(t *testing.T) {</div><div class="diff-add">+ 	data := `{&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s1&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;go find things&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;innertool1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;echo inner&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s3&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;innertool1&#34;,&#34;content&#34;:&#34;inner result&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;found it&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:05Z&#34;}</div><div class="diff-add">+ `</div><div class="diff-add">+ 	s, err := Parse(strings.NewReader(data), Options{IncludeSubagents: true})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if task == nil || task.Name != &#34;Task&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected Task tool, got %+v&#34;, task)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(task.Subagents) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	sub := task.Subagents[0]</div><div class="diff-add">+ 	if len(sub.Turns) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want 1 (just the Bash tool_use turn)&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	if innerTool == nil || innerTool.Name != &#34;Bash&#34; {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected inner Bash tool, got %+v&#34;, innerTool)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	t.Logf(&#34;inner tool result = %+v&#34;, innerTool.Result)</div><div class="diff-add">+ 	if innerTool.Result == nil {</div><div class="diff-add">+ 		t.Errorf(&#34;BUG CONFIRMED: inner tool_use/tool_result inside sidechain did not attach Result (toolIndex not populated for sidechain tool_use blocks)&#34;)</div><div class="diff-add">+ 	} else if innerTool.Result.Content != &#34;inner result&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;inner tool Result.Content = %q, want %q&#34;, innerTool.Result.Content, &#34;inner result&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v">
-      <div class="turn-role">Claude<span class="usage-badge">108 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:16:45">· 12:16</span><span class="usage-badge">108 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1446,8 +1462,9 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.315s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash cat &gt; /tmp/probe2_test.go.snippet &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">418 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:16:53">· 12:16</span><span class="usage-badge">418 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt; /tmp/probe2_test.go.snippet &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e /tmp/probe2_test.go.snippet \u003c\u003c&#39;EOF&#39;\nEOF\ngo test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -50&#34;
 }</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
@@ -1458,13 +1475,15 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.154s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">486 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:00">· 12:17</span><span class="usage-badge">486 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	sub := task.Subagents[0]</div><div class="diff-del">- 	if len(sub.Turns) != 1 {</div><div class="diff-del">- 		t.Fatalf(&#34;subagent turns = %d, want 1 (just the Bash tool_use turn)&#34;, len(sub.Turns))</div><div class="diff-del">- 	}</div><div class="diff-del">- 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	sub := task.Subagents[0]</div><div class="diff-add">+ 	for i, tn := range sub.Turns {</div><div class="diff-add">+ 		t.Logf(&#34;subagent turn %d: kind=%s blocks=%+v&#34;, i, tn.Kind, tn.Blocks)</div><div class="diff-add">+ 		for j, blk := range tn.Blocks {</div><div class="diff-add">+ 			t.Logf(&#34;  block %d: type=%s tool=%+v&#34;, j, blk.Type, blk.Tool)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(sub.Turns) &lt; 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want at least 1&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[0].Blocks[0].Tool</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v 2&gt;&amp;1 | head -80">
-      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:01">· 12:17</span><span class="usage-badge">90 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2&gt;&amp;1 | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -80&#34;
 }</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
@@ -1481,13 +1500,15 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.274s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">802 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:13">· 12:17</span><span class="usage-badge">802 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if len(sub.Turns) &lt; 1 {</div><div class="diff-del">- 		t.Fatalf(&#34;subagent turns = %d, want at least 1&#34;, len(sub.Turns))</div><div class="diff-del">- 	}</div><div class="diff-del">- 	innerTool := sub.Turns[0].Blocks[0].Tool</div><div class="diff-add">+ 	if len(sub.Turns) &lt; 2 {</div><div class="diff-add">+ 		t.Fatalf(&#34;subagent turns = %d, want at least 2&#34;, len(sub.Turns))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	innerTool := sub.Turns[1].Blocks[0].Tool</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./internal/transcript/ -run testprobesidechaininternaltoolresult -v 2&gt;&amp;1 | head -80">
-      <div class="turn-role">Claude<span class="usage-badge">90 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:15">· 12:17</span><span class="usage-badge">90 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2&gt;&amp;1 | head -80</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestProbeSidechainInternalToolResult -v 2\u003e\u00261 | head -80&#34;
 }</pre><pre class="tool-result">=== RUN   TestProbeSidechainInternalToolResult
@@ -1505,28 +1526,32 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.248s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bug confirmed. now cleaning up the throwaway probe test.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:18">· 12:17</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Bug confirmed. Now cleaning up the throwaway probe test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:19">· 12:17</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/transcript/zzz_probe_test.go\ngit -C ~/IdeaProjects/cc-what-have-i-done status --porcelain internal/transcript/&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash git status --porcelain &amp;&amp; echo &#34;---diff---&#34; &amp;&amp; git diff --stat">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:48">· 12:17</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --porcelain &amp;&amp; echo &#34;---diff---&#34; &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --porcelain \u0026\u0026 echo \&#34;---diff---\&#34; \u0026\u0026 git diff --stat&#34;
 }</pre><pre class="tool-result">---diff---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">514 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:17:55">· 12:17</span><span class="usage-badge">514 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -1828,6 +1853,7 @@ FAIL</pre></div></details></div>
 297	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="## task 5 review: fold transcript records into a session timeline
 
 **base:** 5980a02 **head:** 09d5d88 — `internal/transcript/parse.go`, `parse_test.go`, `testdata/basic.jsonl`, `testdata/subagent.jsonl`
@@ -1870,7 +1896,7 @@ the registration loop re-fetches `b := &amp;s.turns[len(s.turns)-1].blocks[i]` i
 **task quality: needs fixes.**
 
 the implementation faithfully follows the brief and passes all specified tests, and three of the four named risks (empty-slice indexing, tool_result-not-creating-a-user-turn, skippedlines accounting) check out cleanly. however, the critical finding is a real, easily-realistic correctness gap: subagent-internal tool calls will silently lose their results in virtually any transcript where a task-spawned subagent uses a tool, which is the normal case. since this is &#34;the core transcript-folding task,&#34; this should be fixed (populate `toolindex` from sidechain `tool_use` blocks too, e.g. by moving the registration loop into a shared helper called from both branches) before this gate passes. the important sidechain-misattribution risk should at minimum be documented as a known limitation if not fixed now.">
-      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:18:39">· 12:18</span><span class="usage-badge">4k tok · ~$0.06</span></div>
       <div class="turn-body"><h2>Task 5 Review: Fold transcript records into a Session timeline</h2>
 <p><strong>Base:</strong> 5980a02 <strong>Head:</strong> 09d5d88 — <code>internal/transcript/parse.go</code>, <code>parse_test.go</code>, <code>testdata/basic.jsonl</code>, <code>testdata/subagent.jsonl</code></p>
 <h3>Spec Compliance</h3>

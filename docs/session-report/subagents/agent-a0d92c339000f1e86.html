@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read …</span><span class="prompt-time" title="July 12, 2026 at 08:11:47">08:11</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:11</span>
+        <span title="session start">2026-07-12 08:11</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>4 turns</span>
         <span>Explore · agent-a0d92c339000f1e86</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="in the go repo at ~/ideaprojects/cc-what-have-i-done, read ~/ideaprojects/cc-what-have-i-done/internal/model/*.go (whichever file(s) define the model package types) and report back, concisely:
 
 1. the exact field names and types of model.turn (specifically: kind, model, usage, blocks).
@@ -63,7 +65,7 @@
 7. whether model.turnuser and model.turnassistant and model.blocktooluse constants exist and what type they are.
 
 this is purely a research/verification task - do not modify any files. report the exact struct definitions you find (with file:line references), so i can confirm that internal/usage/usage.go (which references model.session, model.turn, model.block, model.toolcall, model.subagent, model.usage) compiles correctly against them.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:11:47">· 08:11</span></div>
       <div class="turn-body"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go (whichever file(s) define the model package types) and report back, concisely:</p>
 <ol>
 <li>The exact field names and types of model.Turn (specifically: Kind, Model, Usage, Blocks).</li>
@@ -78,16 +80,18 @@ this is purely a research/verification task - do not modify any files. report th
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="bash ls ~/ideaprojects/cc-what-have-i-done/internal/model/">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:49">· 08:11</span><span class="usage-badge">7k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls ~/IdeaProjects/cc-what-have-i-done/internal/model/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls ~/IdeaProjects/cc-what-have-i-done/internal/model/&#34;
 }</pre><pre class="tool-result">model_test.go
 model.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:51">· 08:11</span><span class="usage-badge">2k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;
 }</pre><pre class="tool-result">1	// Package model defines the domain types shared across ccwhid: a parsed
@@ -189,6 +193,7 @@ model.go</pre></div></details></div>
 97	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="full definitions found in `~/ideaprojects/cc-what-have-i-done/internal/model/model.go` (single file defines all model types; `model_test.go` has no type defs).
 
 **1. `model.turn`** (model.go:45-51)
@@ -289,7 +294,7 @@ type session struct {
 ```
 
 key compile-correctness implications for `internal/usage/usage.go`: any code iterating `session.turns` gets `turn` values (not pointers) unless ranging with `&amp;`; `turn.usage` is a `*usage` so nil-checks are needed before dereferencing; `block.tool` is `*toolcall` so nil-checks are needed too; `toolcall.subagents` and `subagent.turns` are plain value slices (`[]subagent`, `[]turn`), not pointer slices.">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:02">· 08:12</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><p>Full definitions found in <code>~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</code> (single file defines all model types; <code>model_test.go</code> has no type defs).</p>
 <p><strong>1. <code>model.Turn</code></strong> (model.go:45-51)</p>
 <pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">type</span><span style="color:#fff"> </span><span style="color:#1f2328">Turn</span><span style="color:#fff"> </span><span style="color:#cf222e">struct</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">

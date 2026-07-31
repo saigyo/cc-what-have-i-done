@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are implementing Task 5: CLI flag, TUI toggle, and docs…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are implementing Task 5: CLI flag, TUI toggle, and docs…</span><span class="prompt-time" title="July 12, 2026 at 08:24:08">08:24</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:24</span>
+        <span title="last message 2026-07-12 08:26">2026-07-12 08:24 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>47 turns</span>
         <span>general-purpose · agent-af0beb7f8d1b0d24b</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are implementing task 5: cli flag, tui toggle, and docs — the final task of the usage &amp; cost feature for ccwhid (module github.com/saigyo/cc-what-have-i-done).
 
 ## task description
@@ -88,7 +90,7 @@ write your full report (implemented, tdd red/green evidence, files changed, how 
 ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md
 
 then reply with only (under 15 lines): status, commits (short sha &#43; subject), one-line test summary, concerns, and the report file path.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:24:08">· 08:24</span></div>
       <div class="turn-body"><p>You are implementing Task 5: CLI flag, TUI toggle, and docs — the final task of the usage &amp; cost feature for ccwhid (module github.com/saigyo/cc-what-have-i-done).</p>
 <h2>Task Description</h2>
 <p>Read your task brief FIRST — it is your requirements, with the exact code to use verbatim:
@@ -125,8 +127,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:10">· 08:24</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 5: CLI flag, TUI toggle, and docs
@@ -306,8 +309,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 175	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:13">· 08:24</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -425,8 +429,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 113	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:14">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -579,8 +584,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 148	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:14">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
 }</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
@@ -1052,8 +1058,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 467	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:14">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go&#34;
 }</pre><pre class="tool-result">1	package tui
@@ -1260,8 +1267,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 202	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:15">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
@@ -1371,8 +1379,9 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 105	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="agent verify render.options.usage exists">
-      <div class="turn-role">Claude<span class="usage-badge">275 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:19">· 08:24</span><span class="usage-badge">275 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Verify render.Options.Usage exists</span><a class="agent-link" href="agent-ae2511e0a48467798.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, look at internal/render package (likely internal/render/render.go or similar) and confirm the <code>Options</code> struct has fields <code>Title string</code> and <code>Usage bool</code>. Report the exact struct definition and file path. Keep response under 100 words.</p>
 </div><div class="agent-result-body"><p>Confirmed. In <code>~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</code> (lines 20-23):</p>
 <pre style="background-color:#f7f7f7;-webkit-text-size-adjust:none;"><code><span style="display:flex;"><span><span style="color:#cf222e">type</span><span style="color:#fff"> </span><span style="color:#1f2328">Options</span><span style="color:#fff"> </span><span style="color:#cf222e">struct</span><span style="color:#fff"> </span><span style="color:#1f2328">{</span><span style="color:#fff">
@@ -1383,19 +1392,22 @@ then reply with only (under 15 lines): status, commits (short sha &#43; subject)
 </div></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="good, task 4 is done. now let&#39;s write the failing tui test first (tdd), then implement all changes.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:31">· 08:24</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, Task 4 is done. Now let's write the failing TUI test first (TDD), then implement all changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:33">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestClampScroll(t *testing.T) {</div><div class="diff-add">+ func TestOptionsUsageToggle(t *testing.T) {</div><div class="diff-add">+ 	m := newModel(testGroups())</div><div class="diff-add">+ 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // open project, select session -&gt; options</div><div class="diff-add">+ 	// move to the usage toggle row and toggle it on</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-add">+ 	if m.optCursor != optUsage {</div><div class="diff-add">+ 		t.Fatalf(&#34;optCursor = %d, want optUsage (%d)&#34;, m.optCursor, optUsage)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	m = send(m, key(&#34; &#34;))</div><div class="diff-add">+ 	if !m.sel.Usage {</div><div class="diff-add">+ 		t.Fatal(&#34;space on usage row should enable Selection.Usage&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestClampScroll(t *testing.T) {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash go test ./internal/tui/ -run testoptionsusagetoggle -v 2&gt;&amp;1 | tail -30">
-      <div class="turn-role">Claude<span class="usage-badge">221 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:37">· 08:24</span><span class="usage-badge">221 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -run TestOptionsUsageToggle -v 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/ -run TestOptionsUsageToggle -v 2\u003e\u00261 | tail -30&#34;
 }</pre><pre class="tool-result"># github.com/saigyo/cc-what-have-i-done/internal/tui [github.com/saigyo/cc-what-have-i-done/internal/tui.test]
@@ -1406,76 +1418,90 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="red confirmed. now implement all changes.">
-      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:40">· 08:24</span><span class="usage-badge">148 tok · ~$0.01</span></div>
       <div class="turn-body"><p>RED confirmed. Now implement all changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:42">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	Open             bool</div><div class="diff-del">- 	OutDir           string</div><div class="diff-add">+ 	Open             bool</div><div class="diff-add">+ 	Usage            bool</div><div class="diff-add">+ 	OutDir           string</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:43">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	optSubagents = iota</div><div class="diff-del">- 	optRedact</div><div class="diff-del">- 	optOpen</div><div class="diff-del">- 	optOutDir</div><div class="diff-del">- 	optGenerate</div><div class="diff-del">- 	optionCount</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optUsage</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:44">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		case optOpen:</div><div class="diff-del">- 			m.sel.Open = !m.sel.Open</div><div class="diff-del">- 		case optOutDir:</div><div class="diff-add">+ 		case optOpen:</div><div class="diff-add">+ 			m.sel.Open = !m.sel.Open</div><div class="diff-add">+ 		case optUsage:</div><div class="diff-add">+ 			m.sel.Usage = !m.sel.Usage</div><div class="diff-add">+ 		case optOutDir:</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:45">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		{&#34;Open in browser when done&#34;, m.sel.Open},</div><div class="diff-del">- 	}</div><div class="diff-add">+ 		{&#34;Open in browser when done&#34;, m.sel.Open},</div><div class="diff-add">+ 		{&#34;Include usage &amp; cost&#34;, m.sel.Usage},</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="now the cli changes.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:47">· 08:24</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now the CLI changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:48">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	force            bool</div><div class="diff-del">- 	open             bool</div><div class="diff-del">- }</div><div class="diff-add">+ 	force            bool</div><div class="diff-add">+ 	open             bool</div><div class="diff-add">+ 	usage            bool</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:49">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)</div><div class="diff-del">- 	return cmd</div><div class="diff-add">+ 	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)</div><div class="diff-add">+ 	f.BoolVar(&amp;opts.usage, &#34;usage&#34;, false, &#34;include a token-usage &amp; estimated-cost section&#34;)</div><div class="diff-add">+ 	return cmd</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:50">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		opts.open = sel.Open</div><div class="diff-del">- 		if sel.OutDir != &#34;&#34; {</div><div class="diff-add">+ 		opts.open = sel.Open</div><div class="diff-add">+ 		opts.usage = sel.Usage</div><div class="diff-add">+ 		if sel.OutDir != &#34;&#34; {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:51">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {</div><div class="diff-add">+ 	if err := render.Site(sess, outDir, render.Options{Title: opts.title, Usage: opts.usage}); err != nil {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="now update the readme.">
-      <div class="turn-role">Claude<span class="usage-badge">151 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:53">· 08:24</span><span class="usage-badge">151 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now update the README.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:54">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- | `--open` | Open the report in a browser when done |</div><div class="diff-add">+ | `--open` | Open the report in a browser when done |</div><div class="diff-add">+ | `--usage` | Include a token-usage &amp; estimated-cost section (default off) |</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="edit ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:24:57">· 08:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking</div><div class="diff-del">- blocks, and — optionally — nested subagent activity. System reminders and</div><div class="diff-del">- attachments are omitted for readability.</div><div class="diff-del">- </div><div class="diff-del">- ## License</div><div class="diff-add">+ tool calls with collapsible detail, `Edit`/`Write` diffs, collapsed thinking</div><div class="diff-add">+ blocks, and — optionally — nested subagent activity. System reminders and</div><div class="diff-add">+ attachments are omitted for readability.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Token usage &amp; cost</div><div class="diff-add">+ </div><div class="diff-add">+ Pass `--usage` (or tick &#34;Include usage &amp; cost&#34; in the TUI) to add a collapsible</div><div class="diff-add">+ **Usage** card and per-turn cost badges. Token counts come straight from the</div><div class="diff-add">+ transcript&#39;s `usage` data and are exact; cost is an **estimate** from a built-in</div><div class="diff-add">+ Anthropic list-price table (dated in the report footnote) — unknown models show</div><div class="diff-add">+ tokens with cost `n/a`, and server-tool fees are not included. Prices are</div><div class="diff-add">+ embedded, so this works fully offline.</div><div class="diff-add">+ </div><div class="diff-add">+ ## License</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/README.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="bash go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60">
-      <div class="turn-role">Claude<span class="usage-badge">395 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:03">· 08:25</span><span class="usage-badge">395 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/ -v 2\u003e\u00261 | tail -60&#34;
 }</pre><pre class="tool-result">=== RUN   TestSessionListHidesAgentsByDefault
@@ -1505,18 +1531,21 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui	0.314s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:09">· 08:25</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	// Move down to the output-directory row.</div><div class="diff-del">- 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-del">- 	if m.optCursor != optOutDir {</div><div class="diff-add">+ 	// Move down to the output-directory row.</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;))</div><div class="diff-add">+ 	if m.optCursor != optOutDir {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:11">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options</div><div class="diff-del">- 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))</div><div class="diff-add">+ 	m = send(m, key(&#34;enter&#34;), key(&#34;enter&#34;)) // → options</div><div class="diff-add">+ 	m = send(m, key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;down&#34;), key(&#34;enter&#34;))</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="bash go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60">
-      <div class="turn-role">Claude<span class="usage-badge">72 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:12">· 08:25</span><span class="usage-badge">72 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/ -v 2\u003e\u00261 | tail -60&#34;
 }</pre><pre class="tool-result">=== RUN   TestSessionListHidesAgentsByDefault
@@ -1543,14 +1572,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="all tui tests pass. now full verification.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:18">· 08:25</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All TUI tests pass. Now full verification.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="bash gofmt -l . &amp;&amp; echo &#34;---vet---&#34; &amp;&amp; go vet ./... &amp;&amp; echo &#34;---build---&#34; &amp;&amp; go build ./... &amp;&amp; echo &#34;---test---&#34; &amp;&amp; go test ./... 2&gt;&amp;1 | tail -40">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:18">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;---vet---&#34; &amp;&amp; go vet ./... &amp;&amp; echo &#34;---build---&#34; &amp;&amp; go build ./... &amp;&amp; echo &#34;---test---&#34; &amp;&amp; go test ./... 2&gt;&amp;1 | tail -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;---vet---\&#34; \u0026\u0026 go vet ./... \u0026\u0026 echo \&#34;---build---\&#34; \u0026\u0026 go build ./... \u0026\u0026 echo \&#34;---test---\&#34; \u0026\u0026 go test ./... 2\u003e\u00261 | tail -40&#34;
 }</pre><pre class="tool-result">---vet---
@@ -1566,28 +1597,32 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.442s
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="no gofmt output, vet clean, all tests pass. now sanity-check the cli flag.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:24">· 08:25</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>No gofmt output, vet clean, all tests pass. Now sanity-check the CLI flag.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="bash go run ./cmd/ccwhid --help 2&gt;&amp;1 | grep -i usage">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:24">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go run ./cmd/ccwhid --help 2&gt;&amp;1 | grep -i usage</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go run ./cmd/ccwhid --help 2\u003e\u00261 | grep -i usage&#34;
 }</pre><pre class="tool-result">Usage:
       --usage               include a token-usage &amp; estimated-cost section</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-32" data-search="confirmed. now let&#39;s diff-review before committing.">
-      <div class="turn-role">Claude<span class="usage-badge">153 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:28">· 08:25</span><span class="usage-badge">153 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed. Now let's diff-review before committing.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-33" data-search="bash git status --short &amp;&amp; echo &#34;---&#34; &amp;&amp; git diff --stat">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:28">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short &amp;&amp; echo &#34;---&#34; &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --short \u0026\u0026 echo \&#34;---\&#34; \u0026\u0026 git diff --stat&#34;
 }</pre><pre class="tool-result"> M README.md
@@ -1604,14 +1639,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></
  5 files changed, 35 insertions(+), 3 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-34" data-search="all the expected files, matching the brief&#39;s file list exactly. let&#39;s do a final full diff review.">
-      <div class="turn-role">Claude<span class="usage-badge">81 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:30">· 08:25</span><span class="usage-badge">81 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All the expected files, matching the brief's file list exactly. Let's do a final full diff review.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-35" data-search="bash git diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:30">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git diff&#34;
 }</pre><pre class="tool-result">diff --git a/README.md b/README.md
@@ -1765,22 +1802,25 @@ index 26c96d0..9a13dc9 100644
  	if got := clampScroll(12, 0, 10, 30); got != 3 {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-36" data-search="this looks correct and complete. now commit as specified.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:31">· 08:25</span><span class="usage-badge">3 tok · ~$0.02</span></div>
       <div class="turn-body"><p>This looks correct and complete. Now commit as specified.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-37" data-search="bash git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go readme.md &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:33">· 08:25</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go README.md &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add cmd/ccwhid/main.go cmd/ccwhid/run.go internal/tui/tui.go internal/tui/tui_test.go README.md \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: --usage flag and TUI toggle for the usage section\n\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/usage-cost 6fef39b] feat: --usage flag and TUI toggle for the usage section
  5 files changed, 35 insertions(+), 3 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-38" data-search="bash git log --oneline -8 &amp;&amp; echo --- &amp;&amp; git branch --show-current">
-      <div class="turn-role">Claude<span class="usage-badge">133 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:36">· 08:25</span><span class="usage-badge">133 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -8 &amp;&amp; echo --- &amp;&amp; git branch --show-current</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -8 \u0026\u0026 echo --- \u0026\u0026 git branch --show-current&#34;
 }</pre><pre class="tool-result">6fef39b feat: --usage flag and TUI toggle for the usage section
@@ -1795,32 +1835,37 @@ fcd7fbd ci: generate release changelog from merged PRs
 feat/usage-cost</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-39" data-search="good — committed on the `feat/usage-cost` branch consistent with tasks 1–4. now writing the report.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:25:38">· 08:25</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good — committed on the <code>feat/usage-cost</code> branch consistent with Tasks 1–4. Now writing the report.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-40" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:01">· 08:26</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 5 Report: CLI flag, TUI toggle, and docs</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented all 10 steps of the brief on branch `feat/usage-cost`, adapting</div><div class="diff-add">+ step 6&#39;s option-index insertion to the actual current layout of</div><div class="diff-add">+ `internal/tui/tui.go` (which already had `optOutDir`/`optGenerate` rows from</div><div class="diff-add">+ an earlier feature, unlike the brief&#39;s more minimal sketch).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** — added `TestOptionsUsageToggle` to `internal/tui/tui_test.go` first,</div><div class="diff-add">+ then ran:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -run TestOptionsUsageToggle -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Failed to build as expected:</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/tui/tui_test.go:193:20: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:194:63: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:197:12: m.sel.Usage undefined (type Selection has no field or method Usage)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** — after implementing `Selection.Usage`, `optUsage`, the toggle</div><div class="diff-add">+ case, and the `toggles` slice entry, ran the full package:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ All 10 tests pass, including `TestOptionsUsageToggle`.</div><div class="diff-add">+ </div><div class="diff-add">+ Two pre-existing tests needed a cursor-count fix because inserting `optUsage`</div><div class="diff-add">+ before `optOutDir` shifted the output-dir row&#39;s index by one — they were not</div><div class="diff-add">+ about the new toggle, but their `down` counts had to grow by one to keep</div><div class="diff-add">+ landing on `optOutDir`:</div><div class="diff-add">+ - `TestOptionsOutputDirInput`: `down,down,down` → `down,down,down,down`</div><div class="diff-add">+ - `TestEditingModeTakesLiteralKeys`: same fix</div><div class="diff-add">+ </div><div class="diff-add">+ Confirmed initially failing (before the fix) with:</div><div class="diff-add">+ ```</div><div class="diff-add">+ --- FAIL: TestOptionsOutputDirInput (0.00s)</div><div class="diff-add">+     tui_test.go:146: optCursor = 3, want optOutDir (4)</div><div class="diff-add">+ --- FAIL: TestEditingModeTakesLiteralKeys (0.00s)</div><div class="diff-add">+     tui_test.go:181: &#39;q&#39; quit while editing; should be literal input</div><div class="diff-add">+ ```</div><div class="diff-add">+ then green after the two-line edit.</div><div class="diff-add">+ </div><div class="diff-add">+ ## How the TUI index layout was reconciled</div><div class="diff-add">+ </div><div class="diff-add">+ Current repo state (before this task) had:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div><div class="diff-add">+ )</div><div class="diff-add">+ ```</div><div class="diff-add">+ with `toggles := []struct{...}{subagents, redact, open}` (3 entries) rendered</div><div class="diff-add">+ in a loop, followed by separately-rendered output-dir and generate rows.</div><div class="diff-add">+ </div><div class="diff-add">+ Per the task instructions (which anticipated this drift and specified the</div><div class="diff-add">+ exact resolution), I inserted `optUsage` between `optOpen` and `optOutDir`:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ optSubagents, optRedact, optOpen, optUsage, optOutDir, optGenerate, optionCount</div><div class="diff-add">+ ```</div><div class="diff-add">+ and appended `{&#34;Include usage &amp; cost&#34;, m.sel.Usage}` as the 4th entry in the</div><div class="diff-add">+ `toggles` slice (rendered by the same `for i, t := range toggles` loop that</div><div class="diff-add">+ already uses `m.optCursor == i` for highlighting — so toggle index and cursor</div><div class="diff-add">+ constant stay aligned automatically, no separate index arithmetic needed).</div><div class="diff-add">+ The output-dir and generate rows already render after the toggles loop using</div><div class="diff-add">+ their own named constants (`optOutDir`, `optGenerate`), so no further</div><div class="diff-add">+ reordering was required — inserting `optUsage` at position 3 shifted</div><div class="diff-add">+ `optOutDir` from 3→4 and `optGenerate` from 4→5, which is exactly what the</div><div class="diff-add">+ two adjusted tests now expect.</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s `TestOptionsUsageToggle` already assumed 3 `down` presses to</div><div class="diff-add">+ reach `optUsage` (index 3 from cursor 0), which matches the real layout</div><div class="diff-add">+ exactly — no adjustment was needed for that test.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `cmd/ccwhid/main.go` — added `usage bool` to `options`, registered</div><div class="diff-add">+   `--usage` flag (default false) after `--open`, added</div><div class="diff-add">+   `opts.usage = sel.Usage` mapping in `run()`.</div><div class="diff-add">+ - `cmd/ccwhid/run.go` — `render.Site` call now passes `Usage: opts.usage`.</div><div class="diff-add">+ - `internal/tui/tui.go` — added `Usage bool` to `Selection`, inserted</div><div class="diff-add">+   `optUsage` into the option-index block (before `optOutDir`), added the</div><div class="diff-add">+   toggle case in `updateOptions`, added the toggle row to `viewOptions`&#39;s</div><div class="diff-add">+   `toggles` slice.</div><div class="diff-add">+ - `internal/tui/tui_test.go` — added `TestOptionsUsageToggle`; adjusted</div><div class="diff-add">+   `down`-press counts in `TestOptionsOutputDirInput` and</div><div class="diff-add">+   `TestEditingModeTakesLiteralKeys` to account for the shifted `optOutDir`</div><div class="diff-add">+   index.</div><div class="diff-add">+ - `README.md` — added `--usage` row to the flags table; added a</div><div class="diff-add">+   &#34;Token usage &amp; cost&#34; section (verbatim from the brief) after</div><div class="diff-add">+   &#34;What&#39;s included&#34;.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Full verification</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ gofmt -l .          # no output</div><div class="diff-add">+ go vet ./...        # clean</div><div class="diff-add">+ go build ./...      # clean</div><div class="diff-add">+ go test ./...       # all packages ok (cmd/ccwhid, discovery, model, redact,</div><div class="diff-add">+                      #   render, transcript, tui, usage)</div><div class="diff-add">+ go run ./cmd/ccwhid --help | grep -i usage</div><div class="diff-add">+   --usage   include a token-usage &amp; estimated-cost section</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `6fef39b` — `feat: --usage flag and TUI toggle for the usage section`</div><div class="diff-add">+ (branch `feat/usage-cost`, stacked on Tasks 1–4&#39;s commits</div><div class="diff-add">+ `1753ede`..`4de9666`). Staged exactly the 5 files listed in the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - Diff reviewed via `git diff` before committing: every hunk is additive and</div><div class="diff-add">+   minimal, matches the brief&#39;s snippets verbatim except for the</div><div class="diff-add">+   index-position adjustment (justified above and pre-authorized by the task</div><div class="diff-add">+   instructions).</div><div class="diff-add">+ - Confirmed `Selection.Usage` defaults to `false` (zero value), consistent</div><div class="diff-add">+   with `--usage` defaulting to off and no explicit default set in</div><div class="diff-add">+   `newModel`&#39;s `Selection{IncludeSubagents: true, Redact: true}` literal.</div><div class="diff-add">+ - Confirmed the `toggles` slice loop indexing (`m.optCursor == i`) still</div><div class="diff-add">+   aligns 1:1 with the `opt*` iota constants after insertion — no off-by-one</div><div class="diff-add">+   between the render loop and the constants.</div><div class="diff-add">+ - Did not touch the &#34;Browsing sessions&#34; prose line (&#34;toggle subagents,</div><div class="diff-add">+   redaction, and open-in-browser&#34;) to mention the new usage toggle — out of</div><div class="diff-add">+   scope per the brief&#39;s explicit step 8 instructions (only the flags-table</div><div class="diff-add">+   row and the new &#34;Token usage &amp; cost&#34; section were requested); flagging</div><div class="diff-add">+   this as a minor optional follow-up, not a defect.</div><div class="diff-add">+ - No offline-guarantee concerns: this task added no CSS/JS, only Go and Markdown.</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-41" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">124 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:03">· 08:26</span><span class="usage-badge">124 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">-rw-r--r--@ 1 [user]  staff  10562 11 Juli 12:22 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-42" data-search="a pre-existing file exists (from an earlier attempt). let me read then overwrite.">
-      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:05">· 08:26</span><span class="usage-badge">148 tok · ~$0.01</span></div>
       <div class="turn-body"><p>A pre-existing file exists (from an earlier attempt). Let me read then overwrite.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-43" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:06">· 08:26</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;,
   &#34;limit&#34;: 5
@@ -1831,23 +1876,26 @@ feat/usage-cost</pre></div></details></div>
 5	Implemented `internal/transcript/parse.go`, folding the flat JSONL `rawRecord`</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-44" data-search="that&#39;s an unrelated stale report from a different task numbering. overwriting with this task&#39;s actual report.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:07">· 08:26</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>That's an unrelated stale report from a different task numbering. Overwriting with this task's actual report.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-45" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:25">· 08:26</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 5 Report: CLI flag, TUI toggle, and docs</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented all 10 steps of the brief on branch `feat/usage-cost`, adapting</div><div class="diff-add">+ step 6&#39;s option-index insertion to the actual current layout of</div><div class="diff-add">+ `internal/tui/tui.go` (which already had `optOutDir`/`optGenerate` rows from</div><div class="diff-add">+ an earlier feature, unlike the brief&#39;s more minimal sketch).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ **RED** — added `TestOptionsUsageToggle` to `internal/tui/tui_test.go` first,</div><div class="diff-add">+ then ran:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -run TestOptionsUsageToggle -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Failed to build as expected:</div><div class="diff-add">+ ```</div><div class="diff-add">+ internal/tui/tui_test.go:193:20: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:194:63: undefined: optUsage</div><div class="diff-add">+ internal/tui/tui_test.go:197:12: m.sel.Usage undefined (type Selection has no field or method Usage)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **GREEN** — after implementing `Selection.Usage`, `optUsage`, the toggle</div><div class="diff-add">+ case, and the `toggles` slice entry, ran the full package:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/tui/ -v</div><div class="diff-add">+ ```</div><div class="diff-add">+ All 10 tests pass, including `TestOptionsUsageToggle`.</div><div class="diff-add">+ </div><div class="diff-add">+ Two pre-existing tests needed a cursor-count fix because inserting `optUsage`</div><div class="diff-add">+ before `optOutDir` shifted the output-dir row&#39;s index by one — they were not</div><div class="diff-add">+ about the new toggle, but their `down` counts had to grow by one to keep</div><div class="diff-add">+ landing on `optOutDir`:</div><div class="diff-add">+ - `TestOptionsOutputDirInput`: `down,down,down` → `down,down,down,down`</div><div class="diff-add">+ - `TestEditingModeTakesLiteralKeys`: same fix</div><div class="diff-add">+ </div><div class="diff-add">+ Confirmed initially failing (before the fix) with:</div><div class="diff-add">+ ```</div><div class="diff-add">+ --- FAIL: TestOptionsOutputDirInput (0.00s)</div><div class="diff-add">+     tui_test.go:146: optCursor = 3, want optOutDir (4)</div><div class="diff-add">+ --- FAIL: TestEditingModeTakesLiteralKeys (0.00s)</div><div class="diff-add">+     tui_test.go:181: &#39;q&#39; quit while editing; should be literal input</div><div class="diff-add">+ ```</div><div class="diff-add">+ then green after the two-line edit.</div><div class="diff-add">+ </div><div class="diff-add">+ ## How the TUI index layout was reconciled</div><div class="diff-add">+ </div><div class="diff-add">+ Current repo state (before this task) had:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ const (</div><div class="diff-add">+ 	optSubagents = iota</div><div class="diff-add">+ 	optRedact</div><div class="diff-add">+ 	optOpen</div><div class="diff-add">+ 	optOutDir</div><div class="diff-add">+ 	optGenerate</div><div class="diff-add">+ 	optionCount</div><div class="diff-add">+ )</div><div class="diff-add">+ ```</div><div class="diff-add">+ with `toggles := []struct{...}{subagents, redact, open}` (3 entries) rendered</div><div class="diff-add">+ in a loop, followed by separately-rendered output-dir and generate rows.</div><div class="diff-add">+ </div><div class="diff-add">+ Per the task instructions (which anticipated this drift and specified the</div><div class="diff-add">+ exact resolution), I inserted `optUsage` between `optOpen` and `optOutDir`:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ optSubagents, optRedact, optOpen, optUsage, optOutDir, optGenerate, optionCount</div><div class="diff-add">+ ```</div><div class="diff-add">+ and appended `{&#34;Include usage &amp; cost&#34;, m.sel.Usage}` as the 4th entry in the</div><div class="diff-add">+ `toggles` slice (rendered by the same `for i, t := range toggles` loop that</div><div class="diff-add">+ already uses `m.optCursor == i` for highlighting — so toggle index and cursor</div><div class="diff-add">+ constant stay aligned automatically, no separate index arithmetic needed).</div><div class="diff-add">+ The output-dir and generate rows already render after the toggles loop using</div><div class="diff-add">+ their own named constants (`optOutDir`, `optGenerate`), so no further</div><div class="diff-add">+ reordering was required — inserting `optUsage` at position 3 shifted</div><div class="diff-add">+ `optOutDir` from 3→4 and `optGenerate` from 4→5, which is exactly what the</div><div class="diff-add">+ two adjusted tests now expect.</div><div class="diff-add">+ </div><div class="diff-add">+ The brief&#39;s `TestOptionsUsageToggle` already assumed 3 `down` presses to</div><div class="diff-add">+ reach `optUsage` (index 3 from cursor 0), which matches the real layout</div><div class="diff-add">+ exactly — no adjustment was needed for that test.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `cmd/ccwhid/main.go` — added `usage bool` to `options`, registered</div><div class="diff-add">+   `--usage` flag (default false) after `--open`, added</div><div class="diff-add">+   `opts.usage = sel.Usage` mapping in `run()`.</div><div class="diff-add">+ - `cmd/ccwhid/run.go` — `render.Site` call now passes `Usage: opts.usage`.</div><div class="diff-add">+ - `internal/tui/tui.go` — added `Usage bool` to `Selection`, inserted</div><div class="diff-add">+   `optUsage` into the option-index block (before `optOutDir`), added the</div><div class="diff-add">+   toggle case in `updateOptions`, added the toggle row to `viewOptions`&#39;s</div><div class="diff-add">+   `toggles` slice.</div><div class="diff-add">+ - `internal/tui/tui_test.go` — added `TestOptionsUsageToggle`; adjusted</div><div class="diff-add">+   `down`-press counts in `TestOptionsOutputDirInput` and</div><div class="diff-add">+   `TestEditingModeTakesLiteralKeys` to account for the shifted `optOutDir`</div><div class="diff-add">+   index.</div><div class="diff-add">+ - `README.md` — added `--usage` row to the flags table; added a</div><div class="diff-add">+   &#34;Token usage &amp; cost&#34; section (verbatim from the brief) after</div><div class="diff-add">+   &#34;What&#39;s included&#34;.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Full verification</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ gofmt -l .          # no output</div><div class="diff-add">+ go vet ./...        # clean</div><div class="diff-add">+ go build ./...      # clean</div><div class="diff-add">+ go test ./...       # all packages ok (cmd/ccwhid, discovery, model, redact,</div><div class="diff-add">+                      #   render, transcript, tui, usage)</div><div class="diff-add">+ go run ./cmd/ccwhid --help | grep -i usage</div><div class="diff-add">+   --usage   include a token-usage &amp; estimated-cost section</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `6fef39b` — `feat: --usage flag and TUI toggle for the usage section`</div><div class="diff-add">+ (branch `feat/usage-cost`, stacked on Tasks 1–4&#39;s commits</div><div class="diff-add">+ `1753ede`..`4de9666`). Staged exactly the 5 files listed in the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - Diff reviewed via `git diff` before committing: every hunk is additive and</div><div class="diff-add">+   minimal, matches the brief&#39;s snippets verbatim except for the</div><div class="diff-add">+   index-position adjustment (justified above and pre-authorized by the task</div><div class="diff-add">+   instructions).</div><div class="diff-add">+ - Confirmed `Selection.Usage` defaults to `false` (zero value), consistent</div><div class="diff-add">+   with `--usage` defaulting to off and no explicit default set in</div><div class="diff-add">+   `newModel`&#39;s `Selection{IncludeSubagents: true, Redact: true}` literal.</div><div class="diff-add">+ - Confirmed the `toggles` slice loop indexing (`m.optCursor == i`) still</div><div class="diff-add">+   aligns 1:1 with the `opt*` iota constants after insertion — no off-by-one</div><div class="diff-add">+   between the render loop and the constants.</div><div class="diff-add">+ - Did not touch the &#34;Browsing sessions&#34; prose line (&#34;toggle subagents,</div><div class="diff-add">+   redaction, and open-in-browser&#34;) to mention the new usage toggle — out of</div><div class="diff-add">+   scope per the brief&#39;s explicit step 8 instructions (only the flags-table</div><div class="diff-add">+   row and the new &#34;Token usage &amp; cost&#34; section were requested); flagging</div><div class="diff-add">+   this as a minor optional follow-up, not a defect.</div><div class="diff-add">+ - No offline-guarantee concerns: this task added no CSS/JS, only Go and Markdown.</div><div class="diff-add">+ </div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-46" data-search="status: complete
 commit: 6fef39b — feat: --usage flag and tui toggle for the usage section (branch feat/usage-cost)
 tests: red confirmed (undefined optusage/selection.usage) → green, all 10 tui tests pass, full repo `go test ./...` green, gofmt/vet clean, `--help` shows `--usage`.
 concerns: none blocking; optionally the readme&#39;s &#34;browsing sessions&#34; prose could mention the usage toggle but brief only specified the flags-row &#43; new section, so left untouched.
 report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">241 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:26:29">· 08:26</span><span class="usage-badge">241 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Status: COMPLETE
 Commit: 6fef39b — feat: --usage flag and TUI toggle for the usage section (branch feat/usage-cost)
 Tests: RED confirmed (undefined optUsage/Selection.Usage) → GREEN, all 10 tui tests pass, full repo <code>go test ./...</code> green, gofmt/vet clean, <code>--help</code> shows <code>--usage</code>.

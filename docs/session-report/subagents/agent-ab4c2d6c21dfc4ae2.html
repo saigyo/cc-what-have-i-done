@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are implementing Task 4: Render agent-result cards and …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are implementing Task 4: Render agent-result cards and …</span><span class="prompt-time" title="July 12, 2026 at 11:33:04">11:33</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 09:33</span>
+        <span title="last message 2026-07-12 11:37">2026-07-12 11:33 (4m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>67 turns</span>
         <span>general-purpose · agent-ab4c2d6c21dfc4ae2</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are implementing task 4: render agent-result cards and the subagent usage line, for the go cli `ccwhid`.
 
 ## task description
@@ -105,7 +107,7 @@ then report back with only (under 15 lines):
 - one-line test summary
 - your concerns, if any
 - the report file path">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 11:33:04">· 11:33</span></div>
       <div class="turn-body"><p>You are implementing Task 4: Render agent-result cards and the subagent usage line, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md
@@ -152,14 +154,16 @@ It contains the full task text from the plan, including the exact test code and 
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll start by reading the task brief to understand the exact requirements.">
-      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:08">· 11:33</span><span class="usage-badge">13 tok · ~$0.01</span></div>
       <div class="turn-body"><p>I'll start by reading the task brief to understand the exact requirements.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:08">· 11:33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 4: Render agent-result cards and the subagent usage line
@@ -378,14 +382,16 @@ It contains the full task text from the plan, including the exact test code and 
 214	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="now let me examine the current state of the relevant files to understand the structure before making changes.">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:14">· 11:33</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let me examine the current state of the relevant files to understand the structure before making changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:15">· 11:33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -679,8 +685,9 @@ It contains the full task text from the plan, including the exact test code and 
 289	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">121 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:17">· 11:33</span><span class="usage-badge">121 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -892,15 +899,17 @@ It contains the full task text from the plan, including the exact test code and 
 207	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model">
-      <div class="turn-role">Claude<span class="usage-badge">116 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:20">· 11:33</span><span class="usage-badge">116 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model&#34;
 }</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/internal/model&#39;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash find ~/ideaprojects/cc-what-have-i-done/internal/model -name &#34;*.go&#34; | head -10">
-      <div class="turn-role">Claude<span class="usage-badge">139 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:22">· 11:33</span><span class="usage-badge">139 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/IdeaProjects/cc-what-have-i-done/internal/model -name &#34;*.go&#34; | head -10</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/IdeaProjects/cc-what-have-i-done/internal/model -name \&#34;*.go\&#34; | head -10&#34;,
   &#34;description&#34;: &#34;Find Go files in model directory&#34;
@@ -908,8 +917,9 @@ It contains the full task text from the plan, including the exact test code and 
 ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
-      <div class="turn-role">Claude<span class="usage-badge">127 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:25">· 11:33</span><span class="usage-badge">127 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/model/model.go&#34;,
   &#34;limit&#34;: 200
@@ -1029,15 +1039,17 @@ It contains the full task text from the plan, including the exact test code and 
 114	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage">
-      <div class="turn-role">Claude<span class="usage-badge">117 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:28">· 11:33</span><span class="usage-badge">117 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage&#34;
 }</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/internal/usage&#39;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash find ~/ideaprojects/cc-what-have-i-done/internal/usage -name &#34;*.go&#34; | head -10">
-      <div class="turn-role">Claude<span class="usage-badge">133 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:31">· 11:33</span><span class="usage-badge">133 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/IdeaProjects/cc-what-have-i-done/internal/usage -name &#34;*.go&#34; | head -10</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/IdeaProjects/cc-what-have-i-done/internal/usage -name \&#34;*.go\&#34; | head -10&#34;,
   &#34;description&#34;: &#34;Find Go files in usage directory&#34;
@@ -1047,8 +1059,9 @@ It contains the full task text from the plan, including the exact test code and 
 ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude<span class="usage-badge">128 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:34">· 11:33</span><span class="usage-badge">128 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;,
   &#34;limit&#34;: 150
@@ -1204,8 +1217,9 @@ It contains the full task text from the plan, including the exact test code and 
 150				c := cost(tc, p)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">144 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:36">· 11:33</span><span class="usage-badge">144 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;,
   &#34;limit&#34;: 200
@@ -1273,14 +1287,16 @@ It contains the full task text from the plan, including the exact test code and 
 62	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="now let me check the css file to see what&#39;s already there:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:39">· 11:33</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me check the CSS file to see what's already there:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:40">· 11:33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css&#34;,
   &#34;limit&#34;: 100
@@ -1365,39 +1381,45 @@ It contains the full task text from the plan, including the exact test code and 
 79	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="perfect! now i have all the context. let me follow the tdd approach. first, i&#39;ll write the failing tests:
 
 **step 1: write the failing tests**">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:43">· 11:33</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Perfect! Now I have all the context. Let me follow the TDD approach. First, I'll write the failing tests:</p>
 <p><strong>Step 1: Write the failing tests</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:57">· 11:33</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestSiteWritesFiles(t *testing.T) {</div><div class="diff-del">- 	dir := t.TempDir()</div><div class="diff-del">- 	if err := Site(sampleSession(), dir, Options{}); err != nil {</div><div class="diff-del">- 		t.Fatal(err)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {</div><div class="diff-del">- 		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {</div><div class="diff-del">- 			t.Errorf(&#34;missing %s: %v&#34;, name, err)</div><div class="diff-del">- 		}</div><div class="diff-del">- 	}</div><div class="diff-del">- 	html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))</div><div class="diff-del">- 	s := string(html)</div><div class="diff-del">- 	for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {</div><div class="diff-del">- 		if !strings.Contains(s, want) {</div><div class="diff-del">- 			t.Errorf(&#34;index.html missing %q&#34;, want)</div><div class="diff-del">- 		}</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ func TestSiteWritesFiles(t *testing.T) {</div><div class="diff-add">+ 	dir := t.TempDir()</div><div class="diff-add">+ 	if err := Site(sampleSession(), dir, Options{}); err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for _, name := range []string{&#34;index.html&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {</div><div class="diff-add">+ 		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {</div><div class="diff-add">+ 			t.Errorf(&#34;missing %s: %v&#34;, name, err)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	html, _ := os.ReadFile(filepath.Join(dir, &#34;index.html&#34;))</div><div class="diff-add">+ 	s := string(html)</div><div class="diff-add">+ 	for _, want := range []string{&#34;Sample&#34;, &#34;do it&#34;, &#34;on it&#34;, &#34;Bash&#34;, &#34;assets/styles.css&#34;, &#34;assets/app.js&#34;} {</div><div class="diff-add">+ 		if !strings.Contains(s, want) {</div><div class="diff-add">+ 			t.Errorf(&#34;index.html missing %q&#34;, want)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {</div><div class="diff-add">+ 	s := model.Session{Turns: []model.Turn{{</div><div class="diff-add">+ 		Kind:         model.TurnAgentResult,</div><div class="diff-add">+ 		AgentStatus:  &#34;completed&#34;,</div><div class="diff-add">+ 		AgentSummary: `Agent &#34;Implement Task 12: Profiles view&#34; finished`,</div><div class="diff-add">+ 		Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;All done.&#34;}},</div><div class="diff-add">+ 	}}}</div><div class="diff-add">+ 	d := buildViewModel(s, &#34;t&#34;, Options{})</div><div class="diff-add">+ 	tv := d.Turns[0]</div><div class="diff-add">+ 	if tv.RoleLabel != &#34;Agent · Implement Task 12: Profiles view&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;RoleLabel = %q&#34;, tv.RoleLabel)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if tv.Status != &#34;completed&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Status = %q&#34;, tv.Status)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if tv.Kind != &#34;agent-result&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;Kind = %q&#34;, tv.Kind)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if tv.RoleLabel == &#34;You&#34; {</div><div class="diff-add">+ 		t.Error(&#34;agent result must never be attributed to the user&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestAgentRoleLabelFallsBackWithoutQuotes(t *testing.T) {</div><div class="diff-add">+ 	if got := agentRoleLabel(&#34;something finished&#34;); got != &#34;Agent&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;agentRoleLabel = %q, want Agent&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got := agentRoleLabel(&#34;&#34;); got != &#34;Agent&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;agentRoleLabel(empty) = %q, want Agent&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestUsageViewSubagentLineAndFootnote(t *testing.T) {</div><div class="diff-add">+ 	c := 5.0</div><div class="diff-add">+ 	r := usage.Report{</div><div class="diff-add">+ 		HasAnyUsage:   true,</div><div class="diff-add">+ 		Total:         usage.TokenCounts{Input: 2_000_000},</div><div class="diff-add">+ 		Subagents:     usage.TokenCounts{Input: 1_000_000},</div><div class="diff-add">+ 		SubagentsCost: &amp;c,</div><div class="diff-add">+ 		AgentSessions: 3,</div><div class="diff-add">+ 		PricesAsOf:    &#34;2026-07&#34;,</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v := buildUsageView(r)</div><div class="diff-add">+ 	if v.SubLine != &#34;of which subagents: 1.0M in+out · ~$5.00 (3 sessions)&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;SubLine = %q&#34;, v.SubLine)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(v.Footnote, &#34;Includes 3 linked subagent session(s)&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;footnote = %q&#34;, v.Footnote)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;old exclusion wording must go when agents are included: %q&#34;, v.Footnote)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</div><div class="diff-add">+ 	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}</div><div class="diff-add">+ 	v := buildUsageView(r)</div><div class="diff-add">+ 	if v.SubLine != &#34;&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="i need to add the `usage` package import to render_test.go:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:33:59">· 11:33</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>I need to add the <code>usage</code> package import to render_test.go:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:01">· 11:34</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- 	&#34;path/filepath&#34;</div><div class="diff-del">- 	&#34;strings&#34;</div><div class="diff-del">- 	&#34;testing&#34;</div><div class="diff-del">- 	&#34;time&#34;</div><div class="diff-del">- 	&#34;unicode/utf8&#34;</div><div class="diff-del">- </div><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ 	&#34;time&#34;</div><div class="diff-add">+ 	&#34;unicode/utf8&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="**step 2: run tests to verify they fail**">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:03">· 11:34</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 2: Run tests to verify they fail</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash go test ./internal/render/ -run &#39;agentresult|agentrolelabel|subagentline|nosubagentline&#39; -v 2&gt;&amp;1 | head -100">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:04">· 11:34</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v 2&gt;&amp;1 | head -100</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v 2\u003e\u00261 | head -100&#34;,
   &#34;description&#34;: &#34;Run failing tests to verify they fail&#34;
@@ -1414,50 +1436,58 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render [build failed]
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="perfect! the tests fail as expected. now let me implement the changes:
 
 **step 3: implement the rendering code**
 
 first, let&#39;s update the structs and add the new functions in render.go:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:09">· 11:34</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Perfect! The tests fail as expected. Now let me implement the changes:</p>
 <p><strong>Step 3: Implement the rendering code</strong></p>
 <p>First, let's update the structs and add the new functions in render.go:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:11">· 11:34</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;bytes&#34;</div><div class="diff-del">- 	&#34;embed&#34;</div><div class="diff-del">- 	&#34;html&#34;</div><div class="diff-del">- 	&#34;html/template&#34;</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- 	&#34;path/filepath&#34;</div><div class="diff-del">- 	&#34;strings&#34;</div><div class="diff-del">- </div><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;bytes&#34;</div><div class="diff-add">+ 	&#34;embed&#34;</div><div class="diff-add">+ 	&#34;fmt&#34;</div><div class="diff-add">+ 	&#34;html&#34;</div><div class="diff-add">+ 	&#34;html/template&#34;</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/usage&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">307 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:15">· 11:34</span><span class="usage-badge">307 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- type turnView struct {</div><div class="diff-del">- 	Index      int</div><div class="diff-del">- 	Kind       string</div><div class="diff-del">- 	RoleLabel  string</div><div class="diff-del">- 	SearchText string</div><div class="diff-del">- 	Body       template.HTML</div><div class="diff-del">- 	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;</div><div class="diff-del">- }</div><div class="diff-add">+ type turnView struct {</div><div class="diff-add">+ 	Index      int</div><div class="diff-add">+ 	Kind       string</div><div class="diff-add">+ 	RoleLabel  string</div><div class="diff-add">+ 	Status     string // agent-result status chip, e.g. &#34;completed&#34;</div><div class="diff-add">+ 	SearchText string</div><div class="diff-add">+ 	Body       template.HTML</div><div class="diff-add">+ 	Badge      string // per-turn usage badge, e.g. &#34;12k tok · ~$0.18&#34;</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">340 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:20">· 11:34</span><span class="usage-badge">340 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- type usageView struct {</div><div class="diff-del">- 	HasAny   bool</div><div class="diff-del">- 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words</div><div class="diff-del">- 	Models   []usageModel  // per-model rows, full token breakdown</div><div class="diff-del">- 	Total    usageModel    // grand-total row</div><div class="diff-del">- 	Footnote string</div><div class="diff-del">- }</div><div class="diff-add">+ type usageView struct {</div><div class="diff-add">+ 	HasAny   bool</div><div class="diff-add">+ 	Headline template.HTML // collapsed one-line summary; safe, built only from our own formatted numbers/words</div><div class="diff-add">+ 	Models   []usageModel  // per-model rows, full token breakdown</div><div class="diff-add">+ 	Total    usageModel    // grand-total row</div><div class="diff-add">+ 	SubLine  string        // &#34;of which subagents: …&#34;, empty when no linked agents</div><div class="diff-add">+ 	Footnote string</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">580 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:26">· 11:34</span><span class="usage-badge">580 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	for i, t := range s.Turns {</div><div class="diff-del">- 		plain := turnPlainText(t)</div><div class="diff-del">- 		if t.Kind == model.TurnUser {</div><div class="diff-del">- 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})</div><div class="diff-del">- 		}</div><div class="diff-del">- 		tv := turnView{</div><div class="diff-del">- 			Index:      i,</div><div class="diff-del">- 			Kind:       string(t.Kind),</div><div class="diff-del">- 			RoleLabel:  roleLabel(t.Kind),</div><div class="diff-del">- 			SearchText: strings.ToLower(plain),</div><div class="diff-del">- 			Body:       renderTurnBody(t),</div><div class="diff-del">- 		}</div><div class="diff-del">- 		if opts.Usage &amp;&amp; t.Usage != nil {</div><div class="diff-del">- 			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])</div><div class="diff-del">- 		}</div><div class="diff-del">- 		d.Turns = append(d.Turns, tv)</div><div class="diff-del">- 	}</div><div class="diff-add">+ 	for i, t := range s.Turns {</div><div class="diff-add">+ 		plain := turnPlainText(t)</div><div class="diff-add">+ 		if t.Kind == model.TurnUser {</div><div class="diff-add">+ 			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		tv := turnView{</div><div class="diff-add">+ 			Index:      i,</div><div class="diff-add">+ 			Kind:       string(t.Kind),</div><div class="diff-add">+ 			RoleLabel:  roleLabel(t),</div><div class="diff-add">+ 			Status:     t.AgentStatus,</div><div class="diff-add">+ 			SearchText: strings.ToLower(plain),</div><div class="diff-add">+ 			Body:       renderTurnBody(t),</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if opts.Usage &amp;&amp; t.Usage != nil {</div><div class="diff-add">+ 			tv.Badge = turnBadge(*t.Usage, rep.PerTurnCost[i])</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		d.Turns = append(d.Turns, tv)</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">609 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:33">· 11:34</span><span class="usage-badge">609 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	}</div><div class="diff-del">- 	v.Total = modelRow(&#34;Total&#34;, r.Total, r.TotalCostUSD)</div><div class="diff-del">- </div><div class="diff-del">- 	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf +</div><div class="diff-del">- 		&#34;. Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;</div><div class="diff-del">- 	if hasUnpriced {</div><div class="diff-del">- 		foot += &#34; Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted.&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	v.Footnote = foot</div><div class="diff-del">- 	return v</div><div class="diff-del">- }</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v.Total = modelRow(&#34;Total&#34;, r.Total, r.TotalCostUSD)</div><div class="diff-add">+ </div><div class="diff-add">+ 	if r.AgentSessions &gt; 0 {</div><div class="diff-add">+ 		sub := &#34;of which subagents: &#34; + formatTokens(r.Subagents.InOut()) + &#34; in+out&#34;</div><div class="diff-add">+ 		if r.SubagentsCost != nil {</div><div class="diff-add">+ 			sub += &#34; · ~&#34; + formatCost(*r.SubagentsCost)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		v.SubLine = fmt.Sprintf(&#34;%s (%d sessions)&#34;, sub, r.AgentSessions)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ </div><div class="diff-add">+ 	foot := &#34;Estimated — Anthropic list prices as of &#34; + r.PricesAsOf + &#34;.&#34;</div><div class="diff-add">+ 	if r.AgentSessions &gt; 0 {</div><div class="diff-add">+ 		foot += fmt.Sprintf(&#34; Includes %d linked subagent session(s); server-tool fees are excluded.&#34;, r.AgentSessions)</div><div class="diff-add">+ 	} else {</div><div class="diff-add">+ 		foot += &#34; Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if hasUnpriced {</div><div class="diff-add">+ 		foot += &#34; Estimated cost excludes unpriced models (shown as n/a); their tokens are still counted.&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	v.Footnote = foot</div><div class="diff-add">+ 	return v</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">422 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:37">· 11:34</span><span class="usage-badge">422 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func roleLabel(k model.TurnKind) string {</div><div class="diff-del">- 	if k == model.TurnUser {</div><div class="diff-del">- 		return &#34;You&#34;</div><div class="diff-del">- 	}</div><div class="diff-del">- 	return &#34;Claude&#34;</div><div class="diff-del">- }</div><div class="diff-add">+ func roleLabel(t model.Turn) string {</div><div class="diff-add">+ 	switch t.Kind {</div><div class="diff-add">+ 	case model.TurnUser:</div><div class="diff-add">+ 		return &#34;You&#34;</div><div class="diff-add">+ 	case model.TurnAgentResult:</div><div class="diff-add">+ 		return agentRoleLabel(t.AgentSummary)</div><div class="diff-add">+ 	default:</div><div class="diff-add">+ 		return &#34;Claude&#34;</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // agentRoleLabel derives `Agent · &lt;name&gt;` from a notification summary like</div><div class="diff-add">+ // `Agent &#34;Implement Task 12&#34; finished`; plain &#34;Agent&#34; when no quoted name.</div><div class="diff-add">+ func agentRoleLabel(summary string) string {</div><div class="diff-add">+ 	if i := strings.Index(summary, `&#34;`); i &gt;= 0 {</div><div class="diff-add">+ 		if j := strings.Index(summary[i+1:], `&#34;`); j &gt; 0 {</div><div class="diff-add">+ 			return &#34;Agent · &#34; + summary[i+1:i+1+j]</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return &#34;Agent&#34;</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">165 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:40">· 11:34</span><span class="usage-badge">165 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 30,
@@ -1494,8 +1524,9 @@ first, let&#39;s update the structs and add the new functions in render.go:">
 279			cls := &#34;tool-result&#34;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">151 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:42">· 11:34</span><span class="usage-badge">151 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 30,
@@ -1532,35 +1563,41 @@ first, let&#39;s update the structs and add the new functions in render.go:">
 294		b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">514 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:48">· 11:34</span><span class="usage-badge">514 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	for _, sub := range tc.Subagents {</div><div class="diff-del">- 		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-del">- 		for _, st := range sub.Turns {</div><div class="diff-del">- 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st.Kind) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-del">- 			b.WriteString(string(renderTurnBody(st)))</div><div class="diff-del">- 			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-del">- 		}</div><div class="diff-del">- 		b.WriteString(`&lt;/details&gt;`)</div><div class="diff-del">- 	}</div><div class="diff-add">+ 	for _, sub := range tc.Subagents {</div><div class="diff-add">+ 		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-add">+ 		for _, st := range sub.Turns {</div><div class="diff-add">+ 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ 			b.WriteString(string(renderTurnBody(st)))</div><div class="diff-add">+ 			b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		b.WriteString(`&lt;/details&gt;`)</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="now let&#39;s update the html template to render the status chip and subline:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:50">· 11:34</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's update the HTML template to render the status chip and SubLine:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-32" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:52">· 11:34</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-         &lt;/table&gt;</div><div class="diff-del">-         {{ end }}</div><div class="diff-del">-         &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;</div><div class="diff-add">+         &lt;/table&gt;</div><div class="diff-add">+         {{ end }}</div><div class="diff-add">+         {{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}</div><div class="diff-add">+         &lt;p class=&#34;usage-note&#34;&gt;{{ .Footnote }}&lt;/p&gt;</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-33" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:57">· 11:34</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-     {{ range .Turns }}</div><div class="diff-del">-     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;</div><div class="diff-del">-       &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;</div><div class="diff-del">-       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;</div><div class="diff-del">-     &lt;/article&gt;</div><div class="diff-del">-     {{ end }}</div><div class="diff-add">+     {{ range .Turns }}</div><div class="diff-add">+     &lt;article class=&#34;turn turn-{{ .Kind }}&#34; id=&#34;turn-{{ .Index }}&#34; data-search=&#34;{{ .SearchText }}&#34;&gt;</div><div class="diff-add">+       &lt;div class=&#34;turn-role&#34;&gt;{{ .RoleLabel }}{{ if .Status }}&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;{{ end }}{{ if .Badge }}&lt;span class=&#34;usage-badge&#34;&gt;{{ .Badge }}&lt;/span&gt;{{ end }}&lt;/div&gt;</div><div class="diff-add">+       &lt;div class=&#34;turn-body&#34;&gt;{{ .Body }}&lt;/div&gt;</div><div class="diff-add">+     &lt;/article&gt;</div><div class="diff-add">+     {{ end }}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-34" data-search="now let&#39;s add the css for the agent-result card styling:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:34:59">· 11:34</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's add the CSS for the agent-result card styling:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-35" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:00">· 11:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css&#34;,
   &#34;limit&#34;: 10,
@@ -1572,19 +1609,22 @@ first, let&#39;s update the structs and add the new functions in render.go:">
 79	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-36" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude<span class="usage-badge">487 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:06">· 11:35</span><span class="usage-badge">487 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }</div><div class="diff-del">- .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }</div><div class="diff-add">+ .usage-note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }</div><div class="diff-add">+ .usage-badge { margin-left: 0.5rem; color: var(--muted); font-size: 0.78rem; font-weight: 400; }</div><div class="diff-add">+ .turn-agent-result { background: var(--surface); border-left: 3px solid var(--accent); }</div><div class="diff-add">+ .turn-agent-result .turn-role { color: var(--accent); }</div><div class="diff-add">+ .agent-status { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.7rem; text-transform: none; letter-spacing: normal; }</div><div class="diff-add">+ .usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-37" data-search="**step 4: run the tests to verify they pass**">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:08">· 11:35</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p><strong>Step 4: Run the tests to verify they pass</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-38" data-search="bash go test ./internal/render/ -run &#39;agentresult|agentrolelabel|subagentline|nosubagentline&#39; -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:09">· 11:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v&#34;,
   &#34;description&#34;: &#34;Run the new tests to verify they pass&#34;
@@ -1600,14 +1640,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.356s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-39" data-search="perfect! the new tests pass. now let&#39;s run the full render test suite to ensure existing tests still work:">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:14">· 11:35</span><span class="usage-badge">12 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Perfect! The new tests pass. Now let's run the full render test suite to ensure existing tests still work:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-40" data-search="bash go test ./internal/render/ -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:14">· 11:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -v&#34;,
   &#34;description&#34;: &#34;Run full render test suite&#34;
@@ -1647,22 +1689,25 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.208s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-41" data-search="excellent! now let&#39;s verify formatting and run the full test suite:">
-      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:22">· 11:35</span><span class="usage-badge">13 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Excellent! Now let's verify formatting and run the full test suite:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-42" data-search="bash gofmt -l . &amp;&amp; echo &#34;no formatting issues found&#34; || echo &#34;formatting issues exist&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:22">· 11:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;No formatting issues found&#34; || echo &#34;Formatting issues exist&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;No formatting issues found\&#34; || echo \&#34;Formatting issues exist\&#34;&#34;,
   &#34;description&#34;: &#34;Check gofmt compliance&#34;
 }</pre><pre class="tool-result">No formatting issues found</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-43" data-search="bash go test ./... 2&gt;&amp;1 | tail -30">
-      <div class="turn-role">Claude<span class="usage-badge">116 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:26">· 11:35</span><span class="usage-badge">116 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -30&#34;,
   &#34;description&#34;: &#34;Run full test suite&#34;
@@ -1676,14 +1721,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-44" data-search="perfect! all tests pass. now let&#39;s commit the changes:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:30">· 11:35</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Perfect! All tests pass. Now let's commit the changes:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-45" data-search="bash git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:31">· 11:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status&#34;,
   &#34;description&#34;: &#34;Check git status before committing&#34;
@@ -1699,16 +1746,18 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></
 keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-46" data-search="bash git add internal/render/render.go internal/render/render_test.go internal/render/assets/report.html.tmpl internal/render/assets/styles.css">
-      <div class="turn-role">Claude<span class="usage-badge">160 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:34">· 11:35</span><span class="usage-badge">160 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/render/render.go internal/render/render_test.go internal/render/assets/report.html.tmpl internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/render/render.go internal/render/render_test.go internal/render/assets/report.html.tmpl internal/render/assets/styles.css&#34;,
   &#34;description&#34;: &#34;Stage the modified files&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-47" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">335 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:42">· 11:35</span><span class="usage-badge">335 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: agent-attributed result cards and subagent usage line\n\nImplement Task 4: render agent-result turns as agent-attributed cards with\nstatus chips, and add subagent usage line + footnote variants to usage card.\n\n- Extend turnView with Status field for agent-result status chips\n- Extend usageView with SubLine field for subagent usage breakdown\n- Replace roleLabel to take model.Turn instead of model.TurnKind\n- Add agentRoleLabel function to extract task name from summary\n- Update buildViewModel to pass full Turn to roleLabel\n- Update buildUsageView to populate SubLine with subagent token counts\n- Update HTML template to render status chip and SubLine\n- Add CSS rules for agent-result card and agent-status chip styling\n- Add TDD-first test coverage for all new functionality\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;,
   &#34;description&#34;: &#34;Create commit with proper message&#34;
@@ -1716,8 +1765,9 @@ keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder
  4 files changed, 110 insertions(+), 8 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-48" data-search="bash git log --oneline -1 &amp;&amp; git show --stat b66ed79">
-      <div class="turn-role">Claude<span class="usage-badge">126 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:46">· 11:35</span><span class="usage-badge">126 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -1 &amp;&amp; git show --stat b66ed79</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -1 \u0026\u0026 git show --stat b66ed79&#34;,
   &#34;description&#34;: &#34;Verify the commit&#34;
@@ -1750,19 +1800,22 @@ Date:   Sun Jul 12 11:35:43 2026 +0200
  4 files changed, 110 insertions(+), 8 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-49" data-search="now let me create the detailed report file:">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:35:49">· 11:35</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let me create the detailed report file:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-50" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:10">· 11:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 4 Implementation Report: Agent-Result Cards and Subagent Usage Line</div><div class="diff-add">+ </div><div class="diff-add">+ ## Overview</div><div class="diff-add">+ Successfully implemented Task 4 rendering agent-result turns as agent-attributed cards with status chips and adding subagent usage line + footnote variants to the usage card.</div><div class="diff-add">+ </div><div class="diff-add">+ ## What Was Implemented</div><div class="diff-add">+ </div><div class="diff-add">+ ### 1. Data Model Extensions</div><div class="diff-add">+ - **turnView struct**: Added `Status string` field to hold agent-result status chips (e.g., &#34;completed&#34;)</div><div class="diff-add">+ - **usageView struct**: Added `SubLine string` field for &#34;of which subagents: ...&#34; breakdown when linked agent sessions exist</div><div class="diff-add">+ </div><div class="diff-add">+ ### 2. Function Refactoring</div><div class="diff-add">+ - **roleLabel function**: Changed signature from `func roleLabel(k model.TurnKind)` to `func roleLabel(t model.Turn)` to enable agent-specific labeling</div><div class="diff-add">+   - Now handles `model.TurnAgentResult` by calling `agentRoleLabel()`</div><div class="diff-add">+   - Updated both call sites: in `buildViewModel` and in `renderTool` for subagent inline rendering</div><div class="diff-add">+ </div><div class="diff-add">+ ### 3. New Functions</div><div class="diff-add">+ - **agentRoleLabel(summary string)**: Extracts task name from notification summary</div><div class="diff-add">+   - Parses summaries like `Agent &#34;Implement Task 12: Profiles view&#34; finished`</div><div class="diff-add">+   - Returns &#34;Agent · &lt;name&gt;&#34; when quotes found, plain &#34;Agent&#34; as fallback</div><div class="diff-add">+ </div><div class="diff-add">+ ### 4. Usage Reporting</div><div class="diff-add">+ - **buildUsageView** enhanced to populate SubLine and updated footnote logic:</div><div class="diff-add">+   - When `AgentSessions &gt; 0`: Populates SubLine with formatted subagent tokens and cost</div><div class="diff-add">+   - Footnote variant 1 (with agents): &#34;Includes N linked subagent session(s); server-tool fees are excluded.&#34;</div><div class="diff-add">+   - Footnote variant 2 (without agents): &#34;Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ ### 5. Template Updates</div><div class="diff-add">+ - Updated `report.html.tmpl`:</div><div class="diff-add">+   - Turn role line now renders `&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;` when Status is set</div><div class="diff-add">+   - Added conditional SubLine paragraph: `{{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}`</div><div class="diff-add">+ </div><div class="diff-add">+ ### 6. Styling</div><div class="diff-add">+ - Added CSS classes in `styles.css`:</div><div class="diff-add">+   - `.turn-agent-result`: Left accent border, surface background</div><div class="diff-add">+   - `.turn-agent-result .turn-role`: Accent color for agent label</div><div class="diff-add">+   - `.agent-status`: Pill-shaped status chip with border, muted color, smaller font</div><div class="diff-add">+   - `.usage-sub`: Subagent line styling (muted, smaller font, top margin)</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED: Running Tests Before Implementation</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v</div><div class="diff-add">+ # Compilation errors:</div><div class="diff-add">+ # - tv.Status undefined (type turnView has no field or method Status)</div><div class="diff-add">+ # - undefined: agentRoleLabel</div><div class="diff-add">+ # - v.SubLine undefined (type *usageView has no field or method SubLine)</div><div class="diff-add">+ FAIL: build failed</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN: All Tests Pass After Implementation</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v</div><div class="diff-add">+ === RUN   TestAgentResultTurnRendersAsAgentCard</div><div class="diff-add">+ --- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)</div><div class="diff-add">+ === RUN   TestAgentRoleLabelFallsBackWithoutQuotes</div><div class="diff-add">+ --- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewSubagentLineAndFootnote</div><div class="diff-add">+ --- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewNoSubagentLineWithoutAgents</div><div class="diff-add">+ --- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)</div><div class="diff-add">+ PASS: all 4 tests pass</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full Suite Verification</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ [All 15 tests pass, including 11 existing tests]</div><div class="diff-add">+ </div><div class="diff-add">+ $ gofmt -l .</div><div class="diff-add">+ [No output - code is properly formatted]</div><div class="diff-add">+ </div><div class="diff-add">+ $ go test ./...</div><div class="diff-add">+ [All tests in entire project pass]</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files Changed</div><div class="diff-add">+ - `internal/render/render.go` (45 insertions, 8 deletions)</div><div class="diff-add">+   - Added `fmt` import</div><div class="diff-add">+   - Extended `turnView` with `Status` field</div><div class="diff-add">+   - Extended `usageView` with `SubLine` field</div><div class="diff-add">+   - Refactored `roleLabel()` function signature and implementation</div><div class="diff-add">+   - Added `agentRoleLabel()` function</div><div class="diff-add">+   - Updated `buildViewModel()` to pass full Turn to roleLabel and set Status</div><div class="diff-add">+   - Updated `buildUsageView()` to populate SubLine and update footnote logic</div><div class="diff-add">+   - Updated `renderTool()` to pass full Turn to roleLabel for subagent rendering</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/render_test.go` (66 insertions)</div><div class="diff-add">+   - Added `usage` package import</div><div class="diff-add">+   - Added 4 comprehensive test functions with full coverage of new functionality</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/assets/report.html.tmpl` (3 insertions, 1 deletion)</div><div class="diff-add">+   - Updated turn role line to render status chip</div><div class="diff-add">+   - Added SubLine paragraph in usage body</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/assets/styles.css` (4 insertions)</div><div class="diff-add">+   - Added `.turn-agent-result` card styling</div><div class="diff-add">+   - Added `.agent-status` chip styling</div><div class="diff-add">+   - Added `.usage-sub` line styling</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review Findings</div><div class="diff-add">+ </div><div class="diff-add">+ ### Completeness</div><div class="diff-add">+ - [x] All requirements from brief implemented exactly as specified</div><div class="diff-add">+ - [x] Both roleLabel call sites updated (buildViewModel and renderTool)</div><div class="diff-add">+ - [x] Three test functions verify core functionality</div><div class="diff-add">+ - [x] All existing tests continue to pass</div><div class="diff-add">+ - [x] Code is properly formatted (gofmt)</div><div class="diff-add">+ - [x] All tests pass (go test ./...)</div><div class="diff-add">+ </div><div class="diff-add">+ ### Code Quality</div><div class="diff-add">+ - [x] Function signatures match the brief exactly</div><div class="diff-add">+ - [x] agentRoleLabel logic correctly extracts quoted text</div><div class="diff-add">+ - [x] SubLine formatting matches expected format: &#34;of which subagents: X in+out · ~$Y (N sessions)&#34;</div><div class="diff-add">+ - [x] Footnote logic properly handles both agent and non-agent cases</div><div class="diff-add">+ - [x] CSS follows existing pattern and uses CSS variables</div><div class="diff-add">+ - [x] Template changes are minimal and focused</div><div class="diff-add">+ - [x] Imports are properly organized</div><div class="diff-add">+ </div><div class="diff-add">+ ### Test Quality</div><div class="diff-add">+ - [x] Tests verify the exact output format expected</div><div class="diff-add">+ - [x] Tests check both success and fallback cases</div><div class="diff-add">+ - [x] Tests verify footnote wording changes based on agent presence</div><div class="diff-add">+ - [x] Tests verify that agent results are never attributed to &#34;You&#34;</div><div class="diff-add">+ - [x] Good coverage of edge cases (empty summary, no agents, etc.)</div><div class="diff-add">+ </div><div class="diff-add">+ ### Potential Concerns (Resolved)</div><div class="diff-add">+ - **Concern**: Did I update all roleLabel call sites?</div><div class="diff-add">+   - **Resolution**: Verified both in buildViewModel (line 134) and renderTool (line 288) - both updated</div><div class="diff-add">+ - **Concern**: CSS rule precedence for agent-result styling</div><div class="diff-add">+   - **Resolution**: `.turn-agent-result .turn-role` properly overrides `.turn-role` color</div><div class="diff-add">+ - **Concern**: HTML template footnote placement</div><div class="diff-add">+   - **Resolution**: Verified SubLine is placed between usage table and footnote, exactly as specified</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit Information</div><div class="diff-add">+ - **SHA**: b66ed79</div><div class="diff-add">+ - **Subject**: feat: agent-attributed result cards and subagent usage line</div><div class="diff-add">+ - **Co-Authored-By**: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</div><div class="diff-add">+ </div><div class="diff-add">+ ## Test Summary</div><div class="diff-add">+ - 4 new tests added, all passing</div><div class="diff-add">+ - 11 existing render tests: all passing</div><div class="diff-add">+ - Full suite: all packages pass</div><div class="diff-add">+ - Formatting: compliant (gofmt clean)</div><div class="diff-add">+ - Total: 15 tests in render package passing, 0 failures</div><div class="diff-add">+ </div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;File has not been read yet. Read it first before writing to it.&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-51" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/">
-      <div class="turn-role">Claude<span class="usage-badge">138 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:13">· 11:36</span><span class="usage-badge">138 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/&#34;,
   &#34;description&#34;: &#34;Check if report directory exists&#34;
@@ -1816,8 +1869,9 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 -rw-r--r--@  1 [user]  staff   7698 11 Juli 12:58 task-9-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-52" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">121 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:16">· 11:36</span><span class="usage-badge">121 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 4 Report: Render the usage card and per-turn badges
@@ -2001,19 +2055,22 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 179	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-53" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:52">· 11:36</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 4 Implementation Report: Agent-Result Cards and Subagent Usage Line</div><div class="diff-add">+ </div><div class="diff-add">+ ## Status: DONE</div><div class="diff-add">+ </div><div class="diff-add">+ Commit: `b66ed79` — &#34;feat: agent-attributed result cards and subagent usage line&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented Task 4 exactly as specified in the brief using TDD methodology. Extended the render package to:</div><div class="diff-add">+ - Render agent-result turns as agent-attributed cards with status chips</div><div class="diff-add">+ - Add subagent usage line and footnote variants to the usage card</div><div class="diff-add">+ - Refactor roleLabel to handle agent-specific labeling</div><div class="diff-add">+ - Add comprehensive test coverage for all new functionality</div><div class="diff-add">+ </div><div class="diff-add">+ All tests pass; code is properly formatted; full suite verified.</div><div class="diff-add">+ </div><div class="diff-add">+ ## What Was Implemented</div><div class="diff-add">+ </div><div class="diff-add">+ ### 1. Data Model Extensions</div><div class="diff-add">+ - **turnView struct**: Added `Status string` field to hold agent-result status chips (e.g., &#34;completed&#34;)</div><div class="diff-add">+ - **usageView struct**: Added `SubLine string` field for &#34;of which subagents: ...&#34; breakdown when linked agent sessions exist</div><div class="diff-add">+ </div><div class="diff-add">+ ### 2. Function Refactoring</div><div class="diff-add">+ - **roleLabel function**: Changed signature from `func roleLabel(k model.TurnKind)` to `func roleLabel(t model.Turn)` to enable agent-specific labeling</div><div class="diff-add">+   - Handles `model.TurnAgentResult` by calling `agentRoleLabel()`</div><div class="diff-add">+   - Updated both call sites: in `buildViewModel` (line 134) and in `renderTool` (line 288) for subagent inline rendering</div><div class="diff-add">+ </div><div class="diff-add">+ ### 3. New Functions</div><div class="diff-add">+ - **agentRoleLabel(summary string)**: Extracts task name from notification summary</div><div class="diff-add">+   - Parses summaries like `Agent &#34;Implement Task 12: Profiles view&#34; finished`</div><div class="diff-add">+   - Returns &#34;Agent · &lt;name&gt;&#34; when quotes found, plain &#34;Agent&#34; as fallback</div><div class="diff-add">+ </div><div class="diff-add">+ ### 4. Usage Reporting</div><div class="diff-add">+ - **buildUsageView** enhanced to populate SubLine and updated footnote logic:</div><div class="diff-add">+   - When `AgentSessions &gt; 0`: Populates SubLine with formatted subagent tokens and cost</div><div class="diff-add">+   - Footnote variant 1 (with agents): &#34;Includes N linked subagent session(s); server-tool fees are excluded.&#34;</div><div class="diff-add">+   - Footnote variant 2 (without agents): &#34;Covers this transcript only; sub-agent sessions stored as separate files, and server-tool fees, are excluded.&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ ### 5. Template Updates</div><div class="diff-add">+ - Updated `report.html.tmpl`:</div><div class="diff-add">+   - Turn role line now renders `&lt;span class=&#34;agent-status&#34;&gt;{{ .Status }}&lt;/span&gt;` when Status is set</div><div class="diff-add">+   - Added conditional SubLine paragraph: `{{ if .SubLine }}&lt;p class=&#34;usage-sub&#34;&gt;{{ .SubLine }}&lt;/p&gt;{{ end }}`</div><div class="diff-add">+ </div><div class="diff-add">+ ### 6. Styling</div><div class="diff-add">+ - Added CSS classes in `styles.css`:</div><div class="diff-add">+   - `.turn-agent-result`: Left accent border, surface background</div><div class="diff-add">+   - `.turn-agent-result .turn-role`: Accent color for agent label</div><div class="diff-add">+   - `.agent-status`: Pill-shaped status chip with border, muted color, smaller font</div><div class="diff-add">+   - `.usage-sub`: Subagent line styling (muted, smaller font, top margin)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files Changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/render.go` — 45 insertions, 8 deletions</div><div class="diff-add">+   - Added `fmt` import</div><div class="diff-add">+   - Extended `turnView` with `Status` field</div><div class="diff-add">+   - Extended `usageView` with `SubLine` field</div><div class="diff-add">+   - Refactored `roleLabel()` function (new signature)</div><div class="diff-add">+   - Added `agentRoleLabel()` function</div><div class="diff-add">+   - Updated `buildViewModel()` to pass full Turn to roleLabel and set Status</div><div class="diff-add">+   - Updated `buildUsageView()` to populate SubLine and update footnote logic</div><div class="diff-add">+   - Updated `renderTool()` to pass full Turn to roleLabel</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/render_test.go` — 66 insertions</div><div class="diff-add">+   - Added `usage` package import</div><div class="diff-add">+   - Added 4 comprehensive test functions</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/assets/report.html.tmpl` — 3 insertions, 1 deletion</div><div class="diff-add">+   - Updated turn role line to render status chip</div><div class="diff-add">+   - Added SubLine paragraph in usage body</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/render/assets/styles.css` — 4 insertions</div><div class="diff-add">+   - Added agent-result card and status chip styling</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED: Running Tests Before Implementation</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v</div><div class="diff-add">+ </div><div class="diff-add">+ # Compilation errors:</div><div class="diff-add">+ # - tv.Status undefined (type turnView has no field or method Status)</div><div class="diff-add">+ # - undefined: agentRoleLabel  </div><div class="diff-add">+ # - v.SubLine undefined (type *usageView has no field or method SubLine)</div><div class="diff-add">+ </div><div class="diff-add">+ FAIL: build failed</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN: All Tests Pass After Implementation</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v</div><div class="diff-add">+ </div><div class="diff-add">+ === RUN   TestAgentResultTurnRendersAsAgentCard</div><div class="diff-add">+ --- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)</div><div class="diff-add">+ === RUN   TestAgentRoleLabelFallsBackWithoutQuotes</div><div class="diff-add">+ --- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewSubagentLineAndFootnote</div><div class="diff-add">+ --- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewNoSubagentLineWithoutAgents</div><div class="diff-add">+ --- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)</div><div class="diff-add">+ </div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.356s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full Render Package Tests</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ go test ./internal/render/ -v</div><div class="diff-add">+ </div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ === RUN   TestFormatCost</div><div class="diff-add">+ --- PASS: TestFormatCost (0.00s)</div><div class="diff-add">+ === RUN   TestMarkdownRendersHeadingAndCode</div><div class="diff-add">+ --- PASS: TestMarkdownRendersHeadingAndCode (0.00s)</div><div class="diff-add">+ === RUN   TestDiffHTMLMarksLines</div><div class="diff-add">+ --- PASS: TestDiffHTMLMarksLines (0.00s)</div><div class="diff-add">+ === RUN   TestStripANSI</div><div class="diff-add">+ --- PASS: TestStripANSI (0.00s)</div><div class="diff-add">+ === RUN   TestRenderStripsANSIFromReport</div><div class="diff-add">+ --- PASS: TestRenderStripsANSIFromReport (0.00s)</div><div class="diff-add">+ === RUN   TestPreviewRuneSafe</div><div class="diff-add">+ --- PASS: TestPreviewRuneSafe (0.00s)</div><div class="diff-add">+ === RUN   TestSiteRendersUsageWhenEnabled</div><div class="diff-add">+ --- PASS: TestSiteRendersUsageWhenEnabled (0.00s)</div><div class="diff-add">+ === RUN   TestSiteDropsZeroTokenModelRow</div><div class="diff-add">+ --- PASS: TestSiteDropsZeroTokenModelRow (0.00s)</div><div class="diff-add">+ === RUN   TestSiteOmitsUsageByDefault</div><div class="diff-add">+ --- PASS: TestSiteOmitsUsageByDefault (0.00s)</div><div class="diff-add">+ === RUN   TestSiteWritesFiles</div><div class="diff-add">+ --- PASS: TestSiteWritesFiles (0.00s)</div><div class="diff-add">+ === RUN   TestAgentResultTurnRendersAsAgentCard</div><div class="diff-add">+ --- PASS: TestAgentResultTurnRendersAsAgentCard (0.00s)</div><div class="diff-add">+ === RUN   TestAgentRoleLabelFallsBackWithoutQuotes</div><div class="diff-add">+ --- PASS: TestAgentRoleLabelFallsBackWithoutQuotes (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewSubagentLineAndFootnote</div><div class="diff-add">+ --- PASS: TestUsageViewSubagentLineAndFootnote (0.00s)</div><div class="diff-add">+ === RUN   TestUsageViewNoSubagentLineWithoutAgents</div><div class="diff-add">+ --- PASS: TestUsageViewNoSubagentLineWithoutAgents (0.00s)</div><div class="diff-add">+ === RUN   TestEndToEndRedactedReport</div><div class="diff-add">+ --- PASS: TestEndToEndRedactedReport (0.00s)</div><div class="diff-add">+ </div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.208s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Formatting &amp; Full Suite</div><div class="diff-add">+ ```bash</div><div class="diff-add">+ $ gofmt -l .</div><div class="diff-add">+ [No output - all files properly formatted]</div><div class="diff-add">+ </div><div class="diff-add">+ $ go test ./...</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.479s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.211s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review</div><div class="diff-add">+ </div><div class="diff-add">+ ### Completeness</div><div class="diff-add">+ - [x] All requirements from brief implemented exactly as specified</div><div class="diff-add">+ - [x] Both roleLabel call sites updated (buildViewModel and renderTool)</div><div class="diff-add">+ - [x] Four test functions verify core functionality</div><div class="diff-add">+ - [x] All existing tests continue to pass</div><div class="diff-add">+ - [x] Code is properly formatted (gofmt clean)</div><div class="diff-add">+ - [x] Full test suite passes (go test ./...)</div><div class="diff-add">+ </div><div class="diff-add">+ ### Code Quality</div><div class="diff-add">+ - [x] Function signatures match the brief exactly</div><div class="diff-add">+ - [x] agentRoleLabel logic correctly extracts quoted text with proper quote handling</div><div class="diff-add">+ - [x] SubLine formatting matches spec: &#34;of which subagents: X in+out · ~$Y (N sessions)&#34;</div><div class="diff-add">+ - [x] Footnote logic properly handles both agent and non-agent cases</div><div class="diff-add">+ - [x] CSS follows existing pattern and uses CSS variables</div><div class="diff-add">+ - [x] Template changes are minimal and focused</div><div class="diff-add">+ - [x] Imports properly organized (fmt added, usage already present in test file)</div><div class="diff-add">+ </div><div class="diff-add">+ ### Test Quality</div><div class="diff-add">+ - [x] Tests verify exact output formats</div><div class="diff-add">+ - [x] Tests check both success and fallback cases</div><div class="diff-add">+ - [x] Tests verify footnote wording changes based on agent presence</div><div class="diff-add">+ - [x] Tests verify that agent results are never attributed to &#34;You&#34;</div><div class="diff-add">+ - [x] Good coverage of edge cases (empty summary, no agents, zero cost)</div><div class="diff-add">+ </div><div class="diff-add">+ ### Potential Issues Verified</div><div class="diff-add">+ - **roleLabel call sites**: Both `buildViewModel` (line 134) and `renderTool` (line 288) updated ✓</div><div class="diff-add">+ - **CSS rule precedence**: `.turn-agent-result .turn-role` properly overrides base `.turn-role` color ✓</div><div class="diff-add">+ - **Template footnote placement**: SubLine positioned between usage table and footnote as specified ✓</div><div class="diff-add">+ - **Escaping safety**: Agent summary text flows through agentRoleLabel (string extraction only) ✓</div><div class="diff-add">+ - **Conditional rendering**: SubLine only appears when AgentSessions &gt; 0 ✓</div><div class="diff-add">+ </div><div class="diff-add">+ ## Commit Details</div><div class="diff-add">+ </div><div class="diff-add">+ - **SHA**: b66ed79ec0ce1d52ca4ba0b4d4d51c03729a06ef</div><div class="diff-add">+ - **Branch**: feat/subagent-sessions</div><div class="diff-add">+ - **Subject**: feat: agent-attributed result cards and subagent usage line</div><div class="diff-add">+ - **Co-Authored-By**: Claude Haiku 4.5 &lt;noreply@anthropic.com&gt;</div><div class="diff-add">+ </div><div class="diff-add">+ ## Test Summary</div><div class="diff-add">+ </div><div class="diff-add">+ **Task 4 specific tests**: 4 new tests, all passing</div><div class="diff-add">+ - TestAgentResultTurnRendersAsAgentCard ✓</div><div class="diff-add">+ - TestAgentRoleLabelFallsBackWithoutQuotes ✓</div><div class="diff-add">+ - TestUsageViewSubagentLineAndFootnote ✓</div><div class="diff-add">+ - TestUsageViewNoSubagentLineWithoutAgents ✓</div><div class="diff-add">+ </div><div class="diff-add">+ **Full render package**: 15 tests, all passing</div><div class="diff-add">+ - 11 existing tests continue to pass</div><div class="diff-add">+ - 4 new tests all pass</div><div class="diff-add">+ </div><div class="diff-add">+ **Full project suite**: All packages pass</div><div class="diff-add">+ - No failures, no formatting issues</div><div class="diff-add">+ </div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-54" data-search="perfect! now let me do a final self-review by examining the actual code changes:">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:55">· 11:36</span><span class="usage-badge">12 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Perfect! Now let me do a final self-review by examining the actual code changes:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-55" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:55">· 11:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;offset&#34;: [
@@ -2024,8 +2081,9 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 The parameter `offset` type is expected as `number` but provided as `array`&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-56" data-search="bash grep -n &#34;func rolelabel\|func agentrolelabel&#34; internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">150 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:36:57">· 11:36</span><span class="usage-badge">150 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func roleLabel\|func agentRoleLabel&#34; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func roleLabel\\|func agentRoleLabel\&#34; internal/render/render.go&#34;,
   &#34;description&#34;: &#34;Verify roleLabel and agentRoleLabel implementations&#34;
@@ -2033,8 +2091,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 238:func agentRoleLabel(summary string) string {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-57" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">150 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:01">· 11:37</span><span class="usage-badge">150 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 20,
@@ -2061,8 +2120,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 244		return &#34;Agent&#34;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-58" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:03">· 11:37</span><span class="usage-badge">148 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 35,
@@ -2104,8 +2164,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 214			Output:     formatTokens(t.Output),</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-59" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">138 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:05">· 11:37</span><span class="usage-badge">138 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;,
   &#34;offset&#34;: [
@@ -2116,8 +2177,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 The parameter `offset` type is expected as `number` but provided as `array`&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-60" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude<span class="usage-badge">152 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:08">· 11:37</span><span class="usage-badge">152 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;,
   &#34;limit&#34;: 20,
@@ -2144,8 +2206,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 59	&lt;/div&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-61" data-search="bash tail -5 internal/render/assets/styles.css">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:11">· 11:37</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">tail -5 internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;tail -5 internal/render/assets/styles.css&#34;,
   &#34;description&#34;: &#34;Verify CSS additions&#34;
@@ -2156,8 +2219,9 @@ The parameter `offset` type is expected as `number` but provided as `array`&lt;/
 .usage-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-62" data-search="bash grep &#34;^func test&#34; internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:14">· 11:37</span><span class="usage-badge">122 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep &#34;^func Test&#34; internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep \&#34;^func Test\&#34; internal/render/render_test.go&#34;,
   &#34;description&#34;: &#34;List all test functions&#34;
@@ -2176,8 +2240,9 @@ func TestUsageViewSubagentLineAndFootnote(t *testing.T) {
 func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-63" data-search="bash go test ./internal/render/ -run &#39;agentresult|agentrolelabel|subagentline|nosubagentline&#39; -v 2&gt;&amp;1 | tail -20">
-      <div class="turn-role">Claude<span class="usage-badge">164 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:17">· 11:37</span><span class="usage-badge">164 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v 2&gt;&amp;1 | tail -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run &#39;AgentResult|AgentRoleLabel|SubagentLine|NoSubagentLine&#39; -v 2\u003e\u00261 | tail -20&#34;,
   &#34;description&#34;: &#34;Final verification of new tests&#34;
@@ -2193,8 +2258,9 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-64" data-search="bash go test ./... 2&gt;&amp;1 | grep -e &#34;^ok|^fail|passed|failed&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">135 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:20">· 11:37</span><span class="usage-badge">135 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | grep -E &#34;^ok|^FAIL|passed|failed&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | grep -E \&#34;^ok|^FAIL|passed|failed\&#34;&#34;,
   &#34;description&#34;: &#34;Final full suite verification&#34;
@@ -2208,13 +2274,15 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-65" data-search="bash git log --oneline -1">
-      <div class="turn-role">Claude<span class="usage-badge">117 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:25">· 11:37</span><span class="usage-badge">117 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -1&#34;,
   &#34;description&#34;: &#34;Verify commit was created&#34;
 }</pre><pre class="tool-result">b66ed79 feat: agent-attributed result cards and subagent usage line</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-66" data-search="perfect! task 4 is complete. here&#39;s the summary:
 
@@ -2243,7 +2311,7 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></
 - `testusageviewnosubagentlinewithoutagents` ✓
 
 **report file:** `~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md`">
-      <div class="turn-role">Claude<span class="usage-badge">375 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:37:30">· 11:37</span><span class="usage-badge">375 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Perfect! Task 4 is complete. Here's the summary:</p>
 <h2>Task 4 Completion Summary</h2>
 <p><strong>Status:</strong> DONE</p>
