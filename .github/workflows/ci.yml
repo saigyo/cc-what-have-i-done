@@ -43,5 +43,14 @@ jobs:
       - name: Build
         run: go build ./...
 
+      - name: License check (lichen)
+        run: |
+          mkdir -p /tmp/lichen-bin
+          CGO_ENABLED=0 GOOS=linux   go build -o /tmp/lichen-bin/ccwhid-linux   ./cmd/ccwhid
+          CGO_ENABLED=0 GOOS=darwin  go build -o /tmp/lichen-bin/ccwhid-darwin  ./cmd/ccwhid
+          CGO_ENABLED=0 GOOS=windows go build -o /tmp/lichen-bin/ccwhid-windows ./cmd/ccwhid
+          go run github.com/uw-labs/lichen@v0.1.7 --config=lichen.yaml \
+            /tmp/lichen-bin/ccwhid-linux /tmp/lichen-bin/ccwhid-darwin /tmp/lichen-bin/ccwhid-windows
+
       - name: Test (race + coverage)
         run: go test -race -coverprofile=coverage.out ./...

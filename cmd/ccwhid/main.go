@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	ccwhid "github.com/saigyo/cc-what-have-i-done"
 	"github.com/saigyo/cc-what-have-i-done/internal/discovery"
 	"github.com/saigyo/cc-what-have-i-done/internal/tui"
 )
@@ -29,6 +30,7 @@ type options struct {
 	open             bool
 	usage            bool
 	noImages         bool
+	license          bool
 }
 
 // validate rejects contradictory flag combinations.
@@ -67,10 +69,15 @@ func newRootCmd() *cobra.Command {
 	f.BoolVar(&opts.open, "open", false, "open the report in a browser when done")
 	f.BoolVar(&opts.usage, "usage", false, "include a token-usage & estimated-cost section")
 	f.BoolVar(&opts.noImages, "no-images", false, "omit transcript images (they bypass redaction); show placeholders instead")
+	f.BoolVar(&opts.license, "license", false, "print third-party license information and exit")
 	return cmd
 }
 
 func run(cmd *cobra.Command, opts *options) error {
+	if opts.license {
+		fmt.Fprint(cmd.OutOrStdout(), ccwhid.ThirdPartyLicenses)
+		return nil
+	}
 	if err := opts.validate(); err != nil {
 		return err
 	}
