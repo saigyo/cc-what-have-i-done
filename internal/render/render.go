@@ -154,7 +154,7 @@ type viewData struct {
 	Session          model.Session
 	SessionSpan      string // "2026-07-03 17:03 (3h 12m)" or "… → …"; "" without timestamps
 	SessionSpanTitle string // hover title matching the span's form
-	GeneratedAt      string // render timestamp, always set
+	GeneratedAt      string // render timestamp; Site stamps one per report
 	TurnCount        int
 	Prompts          []promptRef
 	Turns            []turnView
