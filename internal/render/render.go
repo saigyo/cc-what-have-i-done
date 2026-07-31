@@ -160,8 +160,12 @@ type viewData struct {
 }
 
 type promptRef struct {
-	Index   int
-	Preview string
+	Index     int
+	Preview   string
+	TimeLabel string // "15:04" local-time label; "" when no timestamp
+	TimeTitle string // hover title, e.g. "July 29, 2026 at 14:03:59"
+	DayHeader string // "July 29, 2026" on each day's first prompt
+	DayTitle  string // "Wednesday, July 29, 2026" divider hover title
 }
 
 type turnView struct {
@@ -198,6 +202,25 @@ type usageModel struct {
 	Cost       string // "$1.23" or "n/a"
 }
 
+// dayTracker reports whether a local time falls on a new calendar day
+// relative to the last one it saw. The zero value has seen no day yet.
+type dayTracker struct {
+	year    int
+	month   time.Month
+	day     int
+	haveDay bool
+}
+
+// newDay records lt's date and reports whether it starts a new day.
+func (dt *dayTracker) newDay(lt time.Time) bool {
+	y, m, d := lt.Date()
+	if dt.haveDay && y == dt.year && m == dt.month && d == dt.day {
+		return false
+	}
+	dt.year, dt.month, dt.day, dt.haveDay = y, m, d, true
+	return true
+}
+
 func buildViewModel(s model.Session, title string, opts Options, page pageInfo, links *agentLinks) viewData {
 	d := viewData{
 		Title:     title,
@@ -218,13 +241,19 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		d.Usage = buildUsageView(rep)
 	}
 
-	var lastY, lastD int
-	var lastM time.Month
-	haveDay := false
+	var turnDays, promptDays dayTracker
 	for i, t := range s.Turns {
 		plain := turnPlainText(t)
 		if t.Kind == model.TurnUser {
-			d.Prompts = append(d.Prompts, promptRef{Index: i, Preview: preview(plain, 60)})
+			p := promptRef{Index: i, Preview: preview(plain, 60)}
+			p.TimeLabel, p.TimeTitle = timeParts(t.Timestamp)
+			if !t.Timestamp.IsZero() {
+				if lt := t.Timestamp.Local(); promptDays.newDay(lt) {
+					p.DayHeader = lt.Format("January 2, 2006")
+					p.DayTitle = lt.Format("Monday, January 2, 2006")
+				}
+			}
+			d.Prompts = append(d.Prompts, p)
 		}
 		tv := turnView{
 			Index:      i,
@@ -236,12 +265,8 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		}
 		tv.TimeLabel, tv.TimeTitle = timeParts(t.Timestamp)
 		if !t.Timestamp.IsZero() {
-			lt := t.Timestamp.Local()
-			y, m, dd := lt.Date()
-			if !haveDay || y != lastY || m != lastM || dd != lastD {
+			if lt := t.Timestamp.Local(); turnDays.newDay(lt) {
 				tv.DayHeader = lt.Format("Monday, January 2, 2006")
-				lastY, lastM, lastD = y, m, dd
-				haveDay = true
 			}
 		}
 		if t.Kind == model.TurnAgentResult {

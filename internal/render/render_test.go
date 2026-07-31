@@ -699,3 +699,76 @@ func TestBuildViewModelStartedAtIsLocal(t *testing.T) {
 		t.Errorf("StartedAt = %q, want local-time %q", d.StartedAt, want)
 	}
 }
+
+func TestBuildViewModelPromptTimesAndDayDividers(t *testing.T) {
+	day1 := time.Date(2026, 7, 29, 9, 0, 0, 0, time.Local)
+	day2 := day1.AddDate(0, 0, 1)
+	sess := model.Session{Turns: []model.Turn{
+		{Kind: model.TurnUser, Timestamp: day1},
+		// An assistant turn reaches day2 first: the turn-card tracker sees
+		// day2 here, but the prompt on day2 below must still get a divider —
+		// the two trackers are independent.
+		{Kind: model.TurnAssistant, Timestamp: day2},
+		{Kind: model.TurnUser}, // no timestamp
+		{Kind: model.TurnUser, Timestamp: day2.Add(time.Hour)},
+	}}
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	if len(d.Prompts) != 3 {
+		t.Fatalf("got %d prompts, want 3", len(d.Prompts))
+	}
+	p := d.Prompts
+	if p[0].DayHeader != day1.Format("January 2, 2006") {
+		t.Errorf("prompt 0 DayHeader = %q", p[0].DayHeader)
+	}
+	if p[0].DayTitle != day1.Format("Monday, January 2, 2006") {
+		t.Errorf("prompt 0 DayTitle = %q", p[0].DayTitle)
+	}
+	if p[0].TimeLabel != day1.Format("15:04") {
+		t.Errorf("prompt 0 TimeLabel = %q", p[0].TimeLabel)
+	}
+	if p[0].TimeTitle != day1.Format("January 2, 2006 at 15:04:05") {
+		t.Errorf("prompt 0 TimeTitle = %q", p[0].TimeTitle)
+	}
+	// Zero timestamp: none of the four fields, and no divider reset.
+	if p[1].TimeLabel != "" || p[1].TimeTitle != "" || p[1].DayHeader != "" || p[1].DayTitle != "" {
+		t.Errorf("prompt 1 (no timestamp) got %q, %q, %q, %q; want all empty",
+			p[1].TimeLabel, p[1].TimeTitle, p[1].DayHeader, p[1].DayTitle)
+	}
+	// New prompt day gets a divider even though a turn card already saw day2.
+	if p[2].DayHeader != day2.Format("January 2, 2006") {
+		t.Errorf("prompt 2 DayHeader = %q, want day2 divider (independent tracker)", p[2].DayHeader)
+	}
+	// Turn cards are unaffected: the assistant turn still owns day2's separator.
+	if d.Turns[1].DayHeader != day2.Format("Monday, January 2, 2006") {
+		t.Errorf("turn 1 DayHeader = %q, want day2 header", d.Turns[1].DayHeader)
+	}
+	if d.Turns[3].DayHeader != "" {
+		t.Errorf("turn 3 DayHeader = %q, want empty (day2 already seen by turns)", d.Turns[3].DayHeader)
+	}
+}
+
+func TestSiteRendersPromptTimesAndDividers(t *testing.T) {
+	ts := time.Date(2026, 7, 29, 14, 3, 59, 0, time.Local)
+	sess := model.Session{
+		StartedAt: ts,
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Timestamp: ts,
+				Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	if !strings.Contains(out, `<li class="prompt-day" title="`+ts.Format("Monday, January 2, 2006")+`">`+ts.Format("January 2, 2006")+`</li>`) {
+		t.Error("prompt-day divider with weekday hover title missing from sidebar")
+	}
+	if !strings.Contains(out, `<span class="prompt-time" title="July 29, 2026 at 14:03:59">14:03</span>`) {
+		t.Error("prompt-time span with hover title missing from sidebar")
+	}
+}
