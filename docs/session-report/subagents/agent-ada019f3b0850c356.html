@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are a Senior Code Reviewer doing the final whole-branch…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are a Senior Code Reviewer doing the final whole-branch…</span><span class="prompt-time" title="July 12, 2026 at 08:29:22">08:29</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:29</span>
+        <span title="last message 2026-07-12 08:32">2026-07-12 08:29 (3m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>27 turns</span>
         <span>general-purpose · agent-ada019f3b0850c356</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are a senior code reviewer doing the final whole-branch review of a completed feature before merge. be rigorous and adversarial: find real defects, not style nits.
 
 ## what was implemented
@@ -95,7 +97,7 @@ review package (commit list &#43; stat &#43; full diff with context), read it on
 ### issues → #### critical / #### important / #### minor — each with file:line, the concrete failure scenario (inputs → wrong output/panic), and a fix.
 ### assessment: is the branch ready to merge? (ready | needs fixes) with one-line reasoning.
 be decisive. if you assert something is safe, say what you checked.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:29:22">· 08:29</span></div>
       <div class="turn-body"><p>You are a Senior Code Reviewer doing the final whole-branch review of a completed feature before merge. Be rigorous and adversarial: find real defects, not style nits.</p>
 <h2>What Was Implemented</h2>
 <p>An opt-in token-usage &amp; estimated-cost section for ccwhid (a Go CLI that renders a Claude Code session transcript into a self-contained HTML report). Built across 5 tasks: (1) parse per-turn model+usage; (2) embedded price table; (3) usage aggregation + cost math (new <code>internal/usage</code>); (4) render a collapsible usage card + per-turn badges; (5) <code>--usage</code> CLI flag + TUI toggle + README. Each task already passed an independent task-level review; this is the cross-cutting pass.</p>
@@ -142,14 +144,16 @@ Review package (commit list + stat + full diff with context), read it once:
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll start by reading the review package, spec, and plan in parallel.">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:26">· 08:29</span><span class="usage-badge">7k tok · ~$0.10</span></div>
       <div class="turn-body"><p>I'll start by reading the review package, spec, and plan in parallel.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-fcd7fbd..6fef39b.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:27">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fcd7fbd..6fef39b.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fcd7fbd..6fef39b.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: fcd7fbd5e2cb7e55f0061c310850709105ca1fab..HEAD
@@ -1488,8 +1492,9 @@ Review package (commit list + stat + full diff with context), read it once:
 1334	+		{&#34;Include usage &amp; cost&#34;, m.sel.Usage},</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-usage-cost-section-design.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:28">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-usage-cost-section-design.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-usage-cost-section-design.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid Usage &amp; Cost Section — Design
@@ -1691,8 +1696,9 @@ Review package (commit list + stat + full diff with context), read it once:
 197	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/docs/superpowers/plans/2026-07-12-usage-cost.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:28">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-12-usage-cost.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/plans/2026-07-12-usage-cost.md&#34;
 }</pre><pre class="tool-result">1	# Usage &amp; Cost Section Implementation Plan
@@ -2902,14 +2908,16 @@ Review package (commit list + stat + full diff with context), read it once:
 1205	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="the plan contains the full intended code. now let me read the actual implemented files to verify they match and check integration points. let me read the key files in parallel.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.35</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:33">· 08:29</span><span class="usage-badge">2k tok · ~$0.35</span></div>
       <div class="turn-body"><p>The plan contains the full intended code. Now let me read the actual implemented files to verify they match and check integration points. Let me read the key files in parallel.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:34">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -3186,8 +3194,9 @@ Review package (commit list + stat + full diff with context), read it once:
 272	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:35">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">1	package usage
@@ -3336,8 +3345,9 @@ Review package (commit list + stat + full diff with context), read it once:
 144	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/format.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:35">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/format.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/format.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -3369,8 +3379,9 @@ Review package (commit list + stat + full diff with context), read it once:
 27	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/report.html.tmpl">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:36">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/report.html.tmpl&#34;
 }</pre><pre class="tool-result">1	&lt;!DOCTYPE html&gt;
@@ -3439,14 +3450,16 @@ Review package (commit list + stat + full diff with context), read it once:
 64	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="now let me check the subagent-exclusion path, tui, and client-side js interactions.">
-      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~$0.10</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:43">· 08:29</span><span class="usage-badge">10 tok · ~$0.10</span></div>
       <div class="turn-body"><p>Now let me check the subagent-exclusion path, TUI, and client-side JS interactions.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:44">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -3787,8 +3800,9 @@ Review package (commit list + stat + full diff with context), read it once:
 336	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:45">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -3941,8 +3955,9 @@ Review package (commit list + stat + full diff with context), read it once:
 148	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/app.js">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:45">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/app.js&#34;
 }</pre><pre class="tool-result">1	(function () {
@@ -3988,8 +4003,9 @@ Review package (commit list + stat + full diff with context), read it once:
 41	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:29:46">· 08:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/assets/styles.css&#34;
 }</pre><pre class="tool-result">1	:root {
@@ -4071,14 +4087,16 @@ Review package (commit list + stat + full diff with context), read it once:
 77	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="let me verify the `--card` css variable and inspect the tui wiring and redaction.">
-      <div class="turn-role">Claude<span class="usage-badge">140 tok · ~$0.11</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:30:47">· 08:30</span><span class="usage-badge">140 tok · ~$0.11</span></div>
       <div class="turn-body"><p>Let me verify the <code>--card</code> CSS variable and inspect the TUI wiring and redaction.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash grep -rn -- &#34;--card\|--surface\|--muted&#34; internal/render/assets/styles.css | head -30">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:30:48">· 08:30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn -- &#34;--card\|--surface\|--muted&#34; internal/render/assets/styles.css | head -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn -- \&#34;--card\\|--surface\\|--muted\&#34; internal/render/assets/styles.css | head -30&#34;,
   &#34;description&#34;: &#34;Check whether --card CSS var is defined&#34;
@@ -4097,8 +4115,9 @@ internal/render/assets/styles.css:59:.thinking { color: var(--muted); font-size:
 internal/render/assets/styles.css:69:.usage-card { margin: 0 0 1.5rem; border: 1px solid var(--border, #e5e2d8); border-radius: 8px; background: var(--card, #fff); }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:30:49">· 08:30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go&#34;
 }</pre><pre class="tool-result">1	// Package tui provides an interactive session browser used when ccwhid is run
@@ -4575,8 +4594,9 @@ internal/render/assets/styles.css:69:.usage-card { margin: 0 0 1.5rem; border: 1
 472	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:30:49">· 08:30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -4703,14 +4723,16 @@ internal/render/assets/styles.css:69:.usage-card { margin: 0 0 1.5rem; border: 1
 122	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="let me verify redaction doesn&#39;t touch model/usage, and run the test suite plus a real end-to-end render to observe actual numbers.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.13</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:31:10">· 08:31</span><span class="usage-badge">11 tok · ~$0.13</span></div>
       <div class="turn-body"><p>Let me verify redaction doesn't touch model/usage, and run the test suite plus a real end-to-end render to observe actual numbers.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash sed -n &#39;1,80p&#39; internal/redact/redact.go 2&gt;/dev/null | grep -n &#34;func session\|turn\|model\|usage\|range\|blocks&#34; ">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:31:12">· 08:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,80p&#39; internal/redact/redact.go 2&gt;/dev/null | grep -n &#34;func Session\|Turn\|Model\|Usage\|range\|Blocks&#34; </span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,80p&#39; internal/redact/redact.go 2\u003e/dev/null | grep -n \&#34;func Session\\|Turn\\|Model\\|Usage\\|range\\|Blocks\&#34; &#34;,
   &#34;description&#34;: &#34;Inspect redact.Session for Model/Usage handling&#34;
@@ -4723,8 +4745,9 @@ internal/render/assets/styles.css:69:.usage-card { margin: 0 0 1.5rem; border: 1
 63:		b := &amp;t.Blocks[i]</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash go test ./... 2&gt;&amp;1 | tail -30 &amp;&amp; echo &#34;---vet---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | tail -10 &amp;&amp; echo &#34;---gofmt---&#34; &amp;&amp; gofmt -l internal/ cmd/ 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:31:13">· 08:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -30 &amp;&amp; echo &#34;---VET---&#34; &amp;&amp; go vet ./... 2&gt;&amp;1 | tail -10 &amp;&amp; echo &#34;---GOFMT---&#34; &amp;&amp; gofmt -l internal/ cmd/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -30 \u0026\u0026 echo \&#34;---VET---\&#34; \u0026\u0026 go vet ./... 2\u003e\u00261 | tail -10 \u0026\u0026 echo \&#34;---GOFMT---\&#34; \u0026\u0026 gofmt -l internal/ cmd/ 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Run full test suite, vet, gofmt&#34;
@@ -4740,14 +4763,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)
 ---GOFMT---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="redactturn only touches blocks, not model/usage — redaction confirmed clean. let me do a real end-to-end render to observe actual output numbers and the card markup.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:31:21">· 08:31</span><span class="usage-badge">4 tok · ~$0.06</span></div>
       <div class="turn-body"><p>redactTurn only touches Blocks, not Model/Usage — redaction confirmed clean. Let me do a real end-to-end render to observe actual output numbers and the card markup.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash sp=/private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad &amp;&amp; mkdir -p $sp &amp;&amp; cat &gt; $sp/t.jsonl &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:31:29">· 08:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">SP=/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad &amp;&amp; mkdir -p $SP &amp;&amp; cat &gt; $SP/t.jsonl &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;SP=/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad \u0026\u0026 mkdir -p $SP \u0026\u0026 cat \u003e $SP/t.jsonl \u003c\u003c&#39;EOF&#39;\n{\&#34;type\&#34;:\&#34;user\&#34;,\&#34;message\&#34;:{\&#34;role\&#34;:\&#34;user\&#34;,\&#34;content\&#34;:\&#34;hi\&#34;},\&#34;timestamp\&#34;:\&#34;2026-07-12T10:00:00Z\&#34;,\&#34;cwd\&#34;:\&#34;/x\&#34;}\n{\&#34;type\&#34;:\&#34;assistant\&#34;,\&#34;message\&#34;:{\&#34;role\&#34;:\&#34;assistant\&#34;,\&#34;model\&#34;:\&#34;claude-opus-4-8\&#34;,\&#34;content\&#34;:[{\&#34;type\&#34;:\&#34;text\&#34;,\&#34;text\&#34;:\&#34;hello\&#34;}],\&#34;usage\&#34;:{\&#34;input_tokens\&#34;:10223,\&#34;output_tokens\&#34;:192,\&#34;cache_read_input_tokens\&#34;:18878,\&#34;cache_creation_input_tokens\&#34;:3008}},\&#34;timestamp\&#34;:\&#34;2026-07-12T10:00:01Z\&#34;}\n{\&#34;type\&#34;:\&#34;assistant\&#34;,\&#34;message\&#34;:{\&#34;role\&#34;:\&#34;assistant\&#34;,\&#34;model\&#34;:\&#34;claude-sonnet-4-5-20250101\&#34;,\&#34;content\&#34;:[{\&#34;type\&#34;:\&#34;text\&#34;,\&#34;text\&#34;:\&#34;more\&#34;}],\&#34;usage\&#34;:{\&#34;input_tokens\&#34;:500000,\&#34;output_tokens\&#34;:8000}},\&#34;timestamp\&#34;:\&#34;2026-07-12T10:00:02Z\&#34;}\nEOF\ngo build -o $SP/ccwhid ./cmd/ccwhid \u0026\u0026 $SP/ccwhid --session t --usage --out $SP/out --force 2\u003e\u00261 | tail -3 || true\necho \&#34;--- usage card HTML ---\&#34;\ngrep -o &#39;usage-card.*usage-note[^\u003c]*\u003c/p\u003e&#39; $SP/out/index.html | head -1 | sed &#39;s/\u003c/\\n\u003c/g&#39; | grep -iE \&#34;usage-summary|\u003ctd|usage-note|est. cost|\u003cth\&#34; &#34;,
   &#34;description&#34;: &#34;End-to-end render and extract usage card&#34;
@@ -4757,14 +4782,16 @@ error: no session matching &#34;t&#34;
 ugrep: warning: /private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/out/index.html: No such file or directory</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="i have enough to complete the review. let me confirm one edge in the redactturn to be fully sure subagent model ids aren&#39;t touched either.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:32:10">· 08:32</span><span class="usage-badge">4 tok · ~$0.06</span></div>
       <div class="turn-body"><p>I have enough to complete the review. Let me confirm one edge in the redactTurn to be fully sure subagent model ids aren't touched either.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="bash sed -n &#39;61,90p&#39; internal/redact/redact.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:32:11">· 08:32</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;61,90p&#39; internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;61,90p&#39; internal/redact/redact.go&#34;,
   &#34;description&#34;: &#34;Read redactTurn body&#34;
@@ -4797,6 +4824,7 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 	}
 }</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-26" data-search="confirmed: redaction touches only block text, tool fields, and subagent descriptions/blocks — never `turn.model` or `turn.usage`. the usage path reads correct post-redaction values.
 
@@ -4839,7 +4867,7 @@ fix: use the existing theme token — `background: var(--surface);` (drop the bo
 - `main_test.go` not asserting `--usage` registration — cosmetic; the flag is registered at `main.go:118` and threaded through `run.go:99`.
 
 ### assessment: **needs fixes** — one important dark-mode defect (`--card` undefined → unreadable usage card in dark mode, `styles.css:69`); the logic, escaping, subagent/total consistency, and redaction paths are all correct and merge-ready once the css is switched to `var(--surface)`.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.12</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:32:42">· 08:32</span><span class="usage-badge">2k tok · ~$0.12</span></div>
       <div class="turn-body"><p>Confirmed: redaction touches only block text, tool fields, and subagent descriptions/blocks — never <code>Turn.Model</code> or <code>Turn.Usage</code>. The usage path reads correct post-redaction values.</p>
 <p>Here is my cross-cutting review.</p>
 <hr>

@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are implementing Task 9: TUI browser &#43; final dispatch, …</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are implementing Task 9: TUI browser &#43; final dispatch, …</span><span class="prompt-time" title="July 11, 2026 at 12:55:54">12:55</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:55</span>
+        <span title="last message 2026-07-11 12:58">2026-07-11 12:55 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>45 turns</span>
         <span>general-purpose · agent-a65777ba75f86732e</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are implementing task 9: tui browser &#43; final dispatch, for the go cli `ccwhid`. this is the last implementation task.
 
 ## task description
@@ -100,7 +102,7 @@ then reply with only (under 15 lines):
 - one-line test summary
 - concerns, if any
 - the report file path">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:55:54">· 12:55</span></div>
       <div class="turn-body"><p>You are implementing Task 9: TUI browser + final dispatch, for the Go CLI <code>ccwhid</code>. This is the last implementation task.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
@@ -142,8 +144,9 @@ then reply with only (under 15 lines):
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:55:58">· 12:55</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 9: TUI browser + final dispatch
@@ -579,8 +582,9 @@ then reply with only (under 15 lines):
 431	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="bash git status &amp;&amp; git branch --show-current &amp;&amp; ls">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:55:59">· 12:55</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status &amp;&amp; git branch --show-current &amp;&amp; ls</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status \u0026\u0026 git branch --show-current \u0026\u0026 ls&#34;
 }</pre><pre class="tool-result">Auf Branch feat/ccwhid-impl
@@ -596,22 +600,25 @@ LICENSE
 README.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:02">· 12:56</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery&#34;
 }</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/internal/discovery&#39;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:02">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid&#34;
 }</pre><pre class="tool-result tool-result-error">EISDIR: illegal operation on a directory, read &#39;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid&#39;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash ls ~/ideaprojects/cc-what-have-i-done/internal/discovery ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid; echo ---; cat ~/ideaprojects/cc-what-have-i-done/go.mod">
-      <div class="turn-role">Claude<span class="usage-badge">155 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:05">· 12:56</span><span class="usage-badge">155 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls ~/IdeaProjects/cc-what-have-i-done/internal/discovery ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid; echo ---; cat ~/IdeaProjects/cc-what-have-i-done/go.mod</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls ~/IdeaProjects/cc-what-have-i-done/internal/discovery ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid; echo ---; cat ~/IdeaProjects/cc-what-have-i-done/go.mod&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid:
@@ -641,8 +648,9 @@ require (
 )</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:07">· 12:56</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
 }</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
@@ -883,8 +891,9 @@ require (
 236	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:07">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -945,8 +954,9 @@ require (
 56	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:08">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -1076,8 +1086,9 @@ require (
 125	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash go get github.com/charmbracelet/bubbletea@latest &amp;&amp; go get github.com/charmbracelet/lipgloss@latest">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:13">· 12:56</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go get github.com/charmbracelet/bubbletea@latest &amp;&amp; go get github.com/charmbracelet/lipgloss@latest</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go get github.com/charmbracelet/bubbletea@latest \u0026\u0026 go get github.com/charmbracelet/lipgloss@latest&#34;
 }</pre><pre class="tool-result">go: downloading github.com/charmbracelet/bubbletea v1.3.10
@@ -1120,25 +1131,29 @@ go: added golang.org/x/sys v0.36.0
 go: added golang.org/x/text v0.3.8</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="deps added. now step 2: write the failing test.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:20">· 12:56</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Deps added. Now step 2: write the failing test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/tui/tui_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:24">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package tui</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ func TestFlattenRowsBuildsHeadersAndSessions(t *testing.T) {</div><div class="diff-add">+ 	groups := []discovery.ProjectGroup{</div><div class="diff-add">+ 		{</div><div class="diff-add">+ 			ProjectPath: &#34;/tmp/projA&#34;,</div><div class="diff-add">+ 			Sessions: []discovery.SessionInfo{</div><div class="diff-add">+ 				{ID: &#34;s1&#34;, Title: &#34;First&#34;},</div><div class="diff-add">+ 				{ID: &#34;s2&#34;, Title: &#34;Second&#34;},</div><div class="diff-add">+ 			},</div><div class="diff-add">+ 		},</div><div class="diff-add">+ 		{</div><div class="diff-add">+ 			ProjectPath: &#34;/tmp/projB&#34;,</div><div class="diff-add">+ 			Sessions:    []discovery.SessionInfo{{ID: &#34;s3&#34;, Title: &#34;Third&#34;}},</div><div class="diff-add">+ 		},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	rows := flattenRows(groups)</div><div class="diff-add">+ 	// 2 headers + 3 sessions</div><div class="diff-add">+ 	if len(rows) != 5 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d rows, want 5&#34;, len(rows))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !rows[0].IsHeader || rows[0].Label != &#34;/tmp/projA&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;row0 = %+v&#34;, rows[0])</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if rows[1].IsHeader || rows[1].Session.ID != &#34;s1&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;row1 = %+v&#34;, rows[1])</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestFirstSelectableRow(t *testing.T) {</div><div class="diff-add">+ 	rows := []Row{{IsHeader: true}, {IsHeader: false, Session: discovery.SessionInfo{ID: &#34;x&#34;}}}</div><div class="diff-add">+ 	if got := firstSelectable(rows); got != 1 {</div><div class="diff-add">+ 		t.Errorf(&#34;firstSelectable = %d, want 1&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="now step 5&#39;s discovery test, added before implementation too (tdd red for both).">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:26">· 12:56</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now step 5's discovery test, added before implementation too (TDD RED for both).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:26">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go&#34;,
   &#34;limit&#34;: 30
@@ -1174,14 +1189,16 @@ go: added golang.org/x/text v0.3.8</pre></div></details></div>
 30	}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="let me append the displaylabel test at end of file.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:28">· 12:56</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Let me append the DisplayLabel test at end of file.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash tail -20 ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go; wc -l ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:28">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">tail -20 ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go; wc -l ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;tail -20 ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go; wc -l ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go&#34;
 }</pre><pre class="tool-result">func TestScanUsesTranscriptCwd(t *testing.T) {
@@ -1207,19 +1224,22 @@ go: added golang.org/x/text v0.3.8</pre></div></details></div>
      121 ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">459 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:33">· 12:56</span><span class="usage-badge">459 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-del">- 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestDisplayLabel(t *testing.T) {</div><div class="diff-add">+ 	if got := (SessionInfo{Title: &#34;T&#34;}).DisplayLabel(); got != &#34;T&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;DisplayLabel = %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got := (SessionInfo{ID: &#34;id&#34;}).DisplayLabel(); got != &#34;id&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;DisplayLabel fallback = %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="now step 3: run tests to verify red.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:36">· 12:56</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now step 3: run tests to verify RED.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="bash go test ./internal/tui/ ./internal/discovery/ 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:36">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ ./internal/discovery/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/ ./internal/discovery/ 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1235,43 +1255,50 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/discovery [build failed]
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="red confirmed for both. now implement displaylabel in discovery.go, and tui.go.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:39">· 12:56</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>RED confirmed for both. Now implement DisplayLabel in discovery.go, and tui.go.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:40">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // FindSession resolves a session id or unambiguous prefix across all projects.</div><div class="diff-add">+ // DisplayLabel returns a human-friendly one-line label for a session.</div><div class="diff-add">+ func (s SessionInfo) DisplayLabel() string {</div><div class="diff-add">+ 	if s.Title != &#34;&#34; {</div><div class="diff-add">+ 		return s.Title</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if s.FirstPrompt != &#34;&#34; {</div><div class="diff-add">+ 		return s.FirstPrompt</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return s.ID</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // FindSession resolves a session id or unambiguous prefix across all projects.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="now write tui.go verbatim from brief, but i need to resolve the `min` rough edge. let&#39;s write it as brief specifies first, then compile-check.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:43">· 12:56</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now write tui.go verbatim from brief, but I need to resolve the <code>min</code> rough edge. Let's write it as brief specifies first, then compile-check.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:56:59">· 12:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ // Package tui provides an interactive session browser used when ccwhid is run</div><div class="diff-add">+ // with no selector flags.</div><div class="diff-add">+ package tui</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;fmt&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	tea &#34;github.com/charmbracelet/bubbletea&#34;</div><div class="diff-add">+ 	&#34;github.com/charmbracelet/lipgloss&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Row is one line in the browser: either a project header or a session.</div><div class="diff-add">+ type Row struct {</div><div class="diff-add">+ 	IsHeader bool</div><div class="diff-add">+ 	Label    string</div><div class="diff-add">+ 	Session  discovery.SessionInfo</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Selection is the result of running the browser.</div><div class="diff-add">+ type Selection struct {</div><div class="diff-add">+ 	Session          discovery.SessionInfo</div><div class="diff-add">+ 	IncludeSubagents bool</div><div class="diff-add">+ 	Redact           bool</div><div class="diff-add">+ 	Open             bool</div><div class="diff-add">+ 	OutDir           string</div><div class="diff-add">+ 	Canceled         bool</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func flattenRows(groups []discovery.ProjectGroup) []Row {</div><div class="diff-add">+ 	var rows []Row</div><div class="diff-add">+ 	for _, g := range groups {</div><div class="diff-add">+ 		rows = append(rows, Row{IsHeader: true, Label: g.ProjectPath})</div><div class="diff-add">+ 		for _, s := range g.Sessions {</div><div class="diff-add">+ 			rows = append(rows, Row{Session: s})</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return rows</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func firstSelectable(rows []Row) int {</div><div class="diff-add">+ 	for i, r := range rows {</div><div class="diff-add">+ 		if !r.IsHeader {</div><div class="diff-add">+ 			return i</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return 0</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ var (</div><div class="diff-add">+ 	headerStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(&#34;#D97757&#34;)).MarginTop(1)</div><div class="diff-add">+ 	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#1A1A18&#34;)).Background(lipgloss.Color(&#34;#F6E7DF&#34;))</div><div class="diff-add">+ 	mutedStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;240&#34;))</div><div class="diff-add">+ 	optionStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(&#34;#D97757&#34;))</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ type screen int</div><div class="diff-add">+ </div><div class="diff-add">+ const (</div><div class="diff-add">+ 	screenList screen = iota</div><div class="diff-add">+ 	screenOptions</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ type model struct {</div><div class="diff-add">+ 	rows      []Row</div><div class="diff-add">+ 	cursor    int</div><div class="diff-add">+ 	screen    screen</div><div class="diff-add">+ 	sel       Selection</div><div class="diff-add">+ 	optCursor int</div><div class="diff-add">+ 	done      bool</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func newModel(groups []discovery.ProjectGroup) model {</div><div class="diff-add">+ 	rows := flattenRows(groups)</div><div class="diff-add">+ 	return model{</div><div class="diff-add">+ 		rows:   rows,</div><div class="diff-add">+ 		cursor: firstSelectable(rows),</div><div class="diff-add">+ 		sel: Selection{</div><div class="diff-add">+ 			IncludeSubagents: true,</div><div class="diff-add">+ 			Redact:           true,</div><div class="diff-add">+ 		},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) Init() tea.Cmd { return nil }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {</div><div class="diff-add">+ 	key, ok := msg.(tea.KeyMsg)</div><div class="diff-add">+ 	if !ok {</div><div class="diff-add">+ 		return m, nil</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	switch m.screen {</div><div class="diff-add">+ 	case screenList:</div><div class="diff-add">+ 		return m.updateList(key)</div><div class="diff-add">+ 	default:</div><div class="diff-add">+ 		return m.updateOptions(key)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) updateList(key tea.KeyMsg) (tea.Model, tea.Cmd) {</div><div class="diff-add">+ 	switch key.String() {</div><div class="diff-add">+ 	case &#34;ctrl+c&#34;, &#34;q&#34;, &#34;esc&#34;:</div><div class="diff-add">+ 		m.sel.Canceled = true</div><div class="diff-add">+ 		m.done = true</div><div class="diff-add">+ 		return m, tea.Quit</div><div class="diff-add">+ 	case &#34;up&#34;, &#34;k&#34;:</div><div class="diff-add">+ 		m.moveCursor(-1)</div><div class="diff-add">+ 	case &#34;down&#34;, &#34;j&#34;:</div><div class="diff-add">+ 		m.moveCursor(1)</div><div class="diff-add">+ 	case &#34;enter&#34;:</div><div class="diff-add">+ 		if !m.rows[m.cursor].IsHeader {</div><div class="diff-add">+ 			m.sel.Session = m.rows[m.cursor].Session</div><div class="diff-add">+ 			m.screen = screenOptions</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return m, nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m *model) moveCursor(delta int) {</div><div class="diff-add">+ 	i := m.cursor</div><div class="diff-add">+ 	for {</div><div class="diff-add">+ 		i += delta</div><div class="diff-add">+ 		if i &lt; 0 || i &gt;= len(m.rows) {</div><div class="diff-add">+ 			return // out of bounds; keep current</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if !m.rows[i].IsHeader {</div><div class="diff-add">+ 			m.cursor = i</div><div class="diff-add">+ 			return</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // optionCount is the number of toggle rows plus the Generate action.</div><div class="diff-add">+ const optionCount = 4 // subagents, redact, open, generate</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) updateOptions(key tea.KeyMsg) (tea.Model, tea.Cmd) {</div><div class="diff-add">+ 	switch key.String() {</div><div class="diff-add">+ 	case &#34;ctrl+c&#34;, &#34;q&#34;:</div><div class="diff-add">+ 		m.sel.Canceled = true</div><div class="diff-add">+ 		m.done = true</div><div class="diff-add">+ 		return m, tea.Quit</div><div class="diff-add">+ 	case &#34;esc&#34;:</div><div class="diff-add">+ 		m.screen = screenList</div><div class="diff-add">+ 	case &#34;up&#34;, &#34;k&#34;:</div><div class="diff-add">+ 		if m.optCursor &gt; 0 {</div><div class="diff-add">+ 			m.optCursor--</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	case &#34;down&#34;, &#34;j&#34;:</div><div class="diff-add">+ 		if m.optCursor &lt; optionCount-1 {</div><div class="diff-add">+ 			m.optCursor++</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	case &#34; &#34;, &#34;enter&#34;:</div><div class="diff-add">+ 		switch m.optCursor {</div><div class="diff-add">+ 		case 0:</div><div class="diff-add">+ 			m.sel.IncludeSubagents = !m.sel.IncludeSubagents</div><div class="diff-add">+ 		case 1:</div><div class="diff-add">+ 			m.sel.Redact = !m.sel.Redact</div><div class="diff-add">+ 		case 2:</div><div class="diff-add">+ 			m.sel.Open = !m.sel.Open</div><div class="diff-add">+ 		case 3:</div><div class="diff-add">+ 			m.done = true</div><div class="diff-add">+ 			return m, tea.Quit</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return m, nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) View() string {</div><div class="diff-add">+ 	if m.screen == screenOptions {</div><div class="diff-add">+ 		return m.viewOptions()</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return m.viewList()</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) viewList() string {</div><div class="diff-add">+ 	var b strings.Builder</div><div class="diff-add">+ 	b.WriteString(&#34;Select a session  ↑/↓ move · enter select · q quit\n&#34;)</div><div class="diff-add">+ 	for i, r := range m.rows {</div><div class="diff-add">+ 		if r.IsHeader {</div><div class="diff-add">+ 			b.WriteString(headerStyle.Render(r.Label) + &#34;\n&#34;)</div><div class="diff-add">+ 			continue</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		line := fmt.Sprintf(&#34;  %s  %s&#34;, r.Session.DisplayLabel(), mutedStyle.Render(r.Session.ID[:min(8, len(r.Session.ID))]))</div><div class="diff-add">+ 		if i == m.cursor {</div><div class="diff-add">+ 			line = selectedStyle.Render(&#34;▸ &#34; + strings.TrimLeft(line, &#34; &#34;))</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		b.WriteString(line + &#34;\n&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return b.String()</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (m model) viewOptions() string {</div><div class="diff-add">+ 	var b strings.Builder</div><div class="diff-add">+ 	b.WriteString(&#34;Options for: &#34; + m.sel.Session.DisplayLabel() + &#34;\n\n&#34;)</div><div class="diff-add">+ 	toggles := []struct {</div><div class="diff-add">+ 		label string</div><div class="diff-add">+ 		on    bool</div><div class="diff-add">+ 	}{</div><div class="diff-add">+ 		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},</div><div class="diff-add">+ 		{&#34;Redact secrets&#34;, m.sel.Redact},</div><div class="diff-add">+ 		{&#34;Open in browser when done&#34;, m.sel.Open},</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	for i, t := range toggles {</div><div class="diff-add">+ 		check := &#34;[ ]&#34;</div><div class="diff-add">+ 		if t.on {</div><div class="diff-add">+ 			check = &#34;[x]&#34;</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		line := fmt.Sprintf(&#34;%s %s&#34;, check, t.label)</div><div class="diff-add">+ 		if m.optCursor == i {</div><div class="diff-add">+ 			line = optionStyle.Render(&#34;▸ &#34; + line)</div><div class="diff-add">+ 		} else {</div><div class="diff-add">+ 			line = &#34;  &#34; + line</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		b.WriteString(line + &#34;\n&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	gen := &#34;Generate report&#34;</div><div class="diff-add">+ 	if m.optCursor == 3 {</div><div class="diff-add">+ 		gen = optionStyle.Render(&#34;▸ &#34; + gen)</div><div class="diff-add">+ 	} else {</div><div class="diff-add">+ 		gen = &#34;  &#34; + gen</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	b.WriteString(&#34;\n&#34; + gen + &#34;\n\n&#34;)</div><div class="diff-add">+ 	b.WriteString(mutedStyle.Render(&#34;space toggle · enter confirm · esc back · q quit&#34;) + &#34;\n&#34;)</div><div class="diff-add">+ 	return b.String()</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Run launches the browser and returns the user&#39;s selection.</div><div class="diff-add">+ func Run(groups []discovery.ProjectGroup) (Selection, error) {</div><div class="diff-add">+ 	if len(groups) == 0 {</div><div class="diff-add">+ 		return Selection{Canceled: true}, fmt.Errorf(&#34;no sessions found under ~/.claude/projects&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	m := newModel(groups)</div><div class="diff-add">+ 	p := tea.NewProgram(m)</div><div class="diff-add">+ 	res, err := p.Run()</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return Selection{}, err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	fm := res.(model)</div><div class="diff-add">+ 	return fm.sel, nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/tui/tui.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash go build ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">117 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:01">· 12:57</span><span class="usage-badge">117 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="build succeeds using go 1.26&#39;s builtin `min` (i omitted the brief&#39;s local `min` func entirely, relying on the builtin). now run tests and vet.">
-      <div class="turn-role">Claude<span class="usage-badge">213 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:06">· 12:57</span><span class="usage-badge">213 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Build succeeds using Go 1.26's builtin <code>min</code> (I omitted the brief's local <code>min</code> func entirely, relying on the builtin). Now run tests and vet.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/tui/ ./internal/discovery/ -v 2&gt;&amp;1 | tail -60">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:06">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/tui/ ./internal/discovery/ -v 2&gt;&amp;1 | tail -60</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/tui/ ./internal/discovery/ -v 2\u003e\u00261 | tail -60&#34;
 }</pre><pre class="tool-result">=== RUN   TestFlattenRowsBuildsHeadersAndSessions
@@ -1296,35 +1323,41 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.326s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="green. now step 7: wire main.go&#39;s rune.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:13">· 12:57</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>GREEN. Now step 7: wire main.go's RunE.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:15">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;fmt&#34;</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- </div><div class="diff-del">- 	&#34;github.com/spf13/cobra&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;fmt&#34;</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/spf13/cobra&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/discovery&#34;</div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/tui&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude<span class="usage-badge">248 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:17">· 12:57</span><span class="usage-badge">248 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		RunE: func(cmd *cobra.Command, args []string) error {</div><div class="diff-del">- 			// Wired in Task 8 (TUI) and Task 9 (render dispatch).</div><div class="diff-del">- 			return fmt.Errorf(&#34;not yet implemented&#34;)</div><div class="diff-del">- 		},</div><div class="diff-add">+ 		RunE: func(cmd *cobra.Command, args []string) error {</div><div class="diff-add">+ 			return run(cmd, opts)</div><div class="diff-add">+ 		},</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="edit ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude<span class="usage-badge">626 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:23">· 12:57</span><span class="usage-badge">626 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func main() {</div><div class="diff-add">+ func run(cmd *cobra.Command, opts *options) error {</div><div class="diff-add">+ 	root, err := discovery.DefaultRoot()</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	si, needTUI, err := resolveSession(opts, root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if needTUI {</div><div class="diff-add">+ 		groups, err := discovery.Scan(root)</div><div class="diff-add">+ 		if err != nil {</div><div class="diff-add">+ 			return err</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		sel, err := tui.Run(groups)</div><div class="diff-add">+ 		if err != nil {</div><div class="diff-add">+ 			return err</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		if sel.Canceled {</div><div class="diff-add">+ 			fmt.Fprintln(cmd.OutOrStdout(), &#34;canceled&#34;)</div><div class="diff-add">+ 			return nil</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		si = sel.Session</div><div class="diff-add">+ 		opts.includeSubagents = sel.IncludeSubagents</div><div class="diff-add">+ 		opts.noRedact = !sel.Redact</div><div class="diff-add">+ 		opts.open = sel.Open</div><div class="diff-add">+ 		if sel.OutDir != &#34;&#34; {</div><div class="diff-add">+ 			opts.out = sel.OutDir</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	outDir, err := generate(opts, si)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		return err</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	fmt.Fprintf(cmd.OutOrStdout(), &#34;report written to %s\n&#34;, outDir)</div><div class="diff-add">+ 	if opts.open {</div><div class="diff-add">+ 		if err := openInBrowser(outDir); err != nil {</div><div class="diff-add">+ 			fmt.Fprintf(cmd.ErrOrStderr(), &#34;warning: could not open browser: %v\n&#34;, err)</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return nil</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func main() {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="now let&#39;s check errneedtui usage — is it referenced anywhere else? let&#39;s check main_test.go and run_test.go for expectations.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:25">· 12:57</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's check errNeedTUI usage — is it referenced anywhere else? Let's check main_test.go and run_test.go for expectations.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="bash grep -rn &#34;errneedtui&#34; ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/; echo ---; cat ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:25">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;errNeedTUI&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/; echo ---; cat ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;errNeedTUI\&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/; echo ---; cat ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main_test.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go:18:// errNeedTUI signals that no session selector was provided and the caller
@@ -1363,8 +1396,9 @@ func TestRootCmdHelpRuns(t *testing.T) {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-32" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; echo build_ok &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; echo vet_ok &amp;&amp; go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">300 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:28">· 12:57</span><span class="usage-badge">300 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; echo BUILD_OK &amp;&amp; go vet ./... 2&gt;&amp;1 &amp;&amp; echo VET_OK &amp;&amp; go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 echo BUILD_OK \u0026\u0026 go vet ./... 2\u003e\u00261 \u0026\u0026 echo VET_OK \u0026\u0026 go test ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">BUILD_OK
@@ -1378,21 +1412,24 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-33" data-search="all clean. now smoke-test with `--latest`.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:34">· 12:57</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All clean. Now smoke-test with <code>--latest</code>.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-34" data-search="bash ls ccwhid-report 2&gt;/dev/null; go run ./cmd/ccwhid --latest 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:35">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls ccwhid-report 2&gt;/dev/null; go run ./cmd/ccwhid --latest 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls ccwhid-report 2\u003e/dev/null; go run ./cmd/ccwhid --latest 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">report written to ccwhid-report/41f7e8f4</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-35" data-search="bash ls -la ccwhid-report/41f7e8f4/ | head -20; test -f ccwhid-report/41f7e8f4/index.html &amp;&amp; echo &#34;index.html exists&#34;; rm -rf ccwhid-report">
-      <div class="turn-role">Claude<span class="usage-badge">119 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:39">· 12:57</span><span class="usage-badge">119 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ccwhid-report/41f7e8f4/ | head -20; test -f ccwhid-report/41f7e8f4/index.html &amp;&amp; echo &#34;index.html exists&#34;; rm -rf ccwhid-report</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ccwhid-report/41f7e8f4/ | head -20; test -f ccwhid-report/41f7e8f4/index.html \u0026\u0026 echo \&#34;index.html exists\&#34;; rm -rf ccwhid-report&#34;
 }</pre><pre class="tool-result">total 944
@@ -1403,21 +1440,24 @@ drwxr-xr-x@ 4 [user]  staff     128 11 Juli 12:57 assets
 index.html exists</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-36" data-search="smoke test passed, cleaned up. let&#39;s also verify `errneedtui` isn&#39;t dead/orphaned in a way that should be wired differently — check if it&#39;s referenced/expected in run_test.go for correctness.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:41">· 12:57</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Smoke test passed, cleaned up. Let's also verify <code>errNeedTUI</code> isn't dead/orphaned in a way that should be wired differently — check if it's referenced/expected in run_test.go for correctness.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-37" data-search="bash grep -n &#34;errneedtui\|resolvesession&#34; ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:42">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;errNeedTUI\|resolveSession&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;errNeedTUI\\|resolveSession\&#34; ~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run_test.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-38" data-search="bash git status --short &amp;&amp; git diff --stat">
-      <div class="turn-role">Claude<span class="usage-badge">178 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:44">· 12:57</span><span class="usage-badge">178 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --short &amp;&amp; git diff --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --short \u0026\u0026 git diff --stat&#34;
 }</pre><pre class="tool-result"> M cmd/ccwhid/main.go
@@ -1434,14 +1474,16 @@ index.html exists</pre></div></details></div>
  5 files changed, 127 insertions(+), 2 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-39" data-search="now commit as instructed (include go.mod/go.sum too since deps were added).">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:46">· 12:57</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now commit as instructed (include go.mod/go.sum too since deps were added).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-40" data-search="bash git add internal/tui/ internal/discovery/ cmd/ccwhid/main.go go.mod go.sum &amp;&amp; git status --short">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:47">· 12:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/tui/ internal/discovery/ cmd/ccwhid/main.go go.mod go.sum &amp;&amp; git status --short</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/tui/ internal/discovery/ cmd/ccwhid/main.go go.mod go.sum \u0026\u0026 git status --short&#34;
 }</pre><pre class="tool-result">M  cmd/ccwhid/main.go
@@ -1453,8 +1495,9 @@ A  internal/tui/tui.go
 A  internal/tui/tui_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-41" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">157 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:51">· 12:57</span><span class="usage-badge">157 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: add TUI session browser and wire final dispatch\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/ccwhid-impl 777b116] feat: add TUI session browser and wire final dispatch
@@ -1463,23 +1506,26 @@ A  internal/tui/tui_test.go</pre></div></details></div>
  create mode 100644 internal/tui/tui_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-42" data-search="now write the report file.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:57:54">· 12:57</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now write the report file.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-43" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:58:23">· 12:58</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 9 report: TUI browser + final dispatch</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Implemented the interactive Bubble Tea session browser (`internal/tui`) and</div><div class="diff-add">+ wired it into `cmd/ccwhid/main.go`&#39;s `RunE`, replacing the placeholder</div><div class="diff-add">+ `&#34;not yet implemented&#34;` error. Added `SessionInfo.DisplayLabel()` to</div><div class="diff-add">+ `internal/discovery`.</div><div class="diff-add">+ </div><div class="diff-add">+ ## What was implemented</div><div class="diff-add">+ </div><div class="diff-add">+ 1. **Dependencies**: `go get github.com/charmbracelet/bubbletea@latest` and</div><div class="diff-add">+    `go get github.com/charmbracelet/lipgloss@latest` (bubbletea v1.3.10,</div><div class="diff-add">+    lipgloss v1.1.0, plus transitive deps). `go.mod`/`go.sum` updated.</div><div class="diff-add">+ </div><div class="diff-add">+ 2. **`internal/discovery/discovery.go`**: added</div><div class="diff-add">+    ```go</div><div class="diff-add">+    func (s SessionInfo) DisplayLabel() string {</div><div class="diff-add">+        if s.Title != &#34;&#34; {</div><div class="diff-add">+            return s.Title</div><div class="diff-add">+        }</div><div class="diff-add">+        if s.FirstPrompt != &#34;&#34; {</div><div class="diff-add">+            return s.FirstPrompt</div><div class="diff-add">+        }</div><div class="diff-add">+        return s.ID</div><div class="diff-add">+    }</div><div class="diff-add">+    ```</div><div class="diff-add">+    placed just above `FindSession`, exactly as specified in the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ 3. **`internal/discovery/discovery_test.go`**: appended `TestDisplayLabel`</div><div class="diff-add">+    verbatim from the brief at the end of the file (after</div><div class="diff-add">+    `TestScanUsesTranscriptCwd`).</div><div class="diff-add">+ </div><div class="diff-add">+ 4. **`internal/tui/tui.go`** (new): `Row`, `Selection`, `flattenRows`,</div><div class="diff-add">+    `firstSelectable`, the Bubble Tea `model` (list screen + options screen),</div><div class="diff-add">+    and `Run(groups) (Selection, error)`, copied verbatim from the brief</div><div class="diff-add">+    **except** the package-local `min` helper was omitted (see below).</div><div class="diff-add">+ </div><div class="diff-add">+ 5. **`internal/tui/tui_test.go`** (new): `TestFlattenRowsBuildsHeadersAndSessions`</div><div class="diff-add">+    and `TestFirstSelectableRow`, verbatim from the brief.</div><div class="diff-add">+ </div><div class="diff-add">+ 6. **`cmd/ccwhid/main.go`**: added imports for `internal/discovery` and</div><div class="diff-add">+    `internal/tui`; replaced the `RunE` body with `return run(cmd, opts)`;</div><div class="diff-add">+    added the `run(cmd *cobra.Command, opts *options) error` function verbatim</div><div class="diff-add">+    from the brief (root discovery → `resolveSession` → TUI launch on</div><div class="diff-add">+    `needTUI` → apply `Selection` to `opts` → `generate` → optional</div><div class="diff-add">+    `openInBrowser`).</div><div class="diff-add">+ </div><div class="diff-add">+ ## The `min` rough edge — resolution</div><div class="diff-add">+ </div><div class="diff-add">+ I wrote `tui.go` **without** the brief&#39;s package-local `min` function from</div><div class="diff-add">+ the start (rather than adding it and then deleting it), since the module</div><div class="diff-add">+ targets `go 1.26` (confirmed via `go.mod`), which has a builtin `min` for</div><div class="diff-add">+ two ints with identical semantics to the brief&#39;s helper. `go build ./...`</div><div class="diff-add">+ succeeded immediately with no redeclaration error and no missing-symbol</div><div class="diff-add">+ error, confirming the builtin covers the one call site</div><div class="diff-add">+ (`min(8, len(r.Session.ID))` in `viewList`). `go vet ./...` is clean.</div><div class="diff-add">+ </div><div class="diff-add">+ No other rough edges or brief/logic conflicts were encountered — the rest of</div><div class="diff-add">+ `tui.go`, the tests, `DisplayLabel`, and the `run()` wiring were transcribed</div><div class="diff-add">+ and wired exactly as specified, and `resolveSession`/`generate`/</div><div class="diff-add">+ `openInBrowser`/`errNeedTUI` from Task 8 matched the brief&#39;s expectations</div><div class="diff-add">+ (`resolveSession` already returns a `needTUI bool` rather than the</div><div class="diff-add">+ `errNeedTUI` sentinel — `errNeedTUI` remains declared in `run.go` but</div><div class="diff-add">+ unused by `run()`, which is fine since it&#39;s a package-level var, not a</div><div class="diff-add">+ compile error, and Task 8&#39;s own tests don&#39;t reference it either).</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED (before implementation)</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/tui/ ./internal/discovery/</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/tui [...]</div><div class="diff-add">+ internal/tui/tui_test.go:23:10: undefined: flattenRows</div><div class="diff-add">+ internal/tui/tui_test.go:37:12: undefined: Row</div><div class="diff-add">+ internal/tui/tui_test.go:38:12: undefined: firstSelectable</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/tui [build failed]</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/discovery [...]</div><div class="diff-add">+ internal/discovery/discovery_test.go:124:38: (SessionInfo{…}).DisplayLabel undefined (type SessionInfo has no field or method DisplayLabel)</div><div class="diff-add">+ internal/discovery/discovery_test.go:127:36: (SessionInfo{…}).DisplayLabel undefined (type SessionInfo has no field or method DisplayLabel)</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/discovery [build failed]</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN (after implementation)</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/tui/ ./internal/discovery/ -v</div><div class="diff-add">+ === RUN   TestFlattenRowsBuildsHeadersAndSessions</div><div class="diff-add">+ --- PASS: TestFlattenRowsBuildsHeadersAndSessions (0.00s)</div><div class="diff-add">+ === RUN   TestFirstSelectableRow</div><div class="diff-add">+ --- PASS: TestFirstSelectableRow (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.552s</div><div class="diff-add">+ === RUN   TestEncodeDecodeRoundTrip</div><div class="diff-add">+ --- PASS: TestEncodeDecodeRoundTrip (0.00s)</div><div class="diff-add">+ === RUN   TestTruncateRuneSafe</div><div class="diff-add">+ --- PASS: TestTruncateRuneSafe (0.00s)</div><div class="diff-add">+ === RUN   TestScanBuildsGroups</div><div class="diff-add">+ --- PASS: TestScanBuildsGroups (0.00s)</div><div class="diff-add">+ === RUN   TestFindSessionByPrefix</div><div class="diff-add">+ --- PASS: TestFindSessionByPrefix (0.00s)</div><div class="diff-add">+ === RUN   TestScanUsesTranscriptCwd</div><div class="diff-add">+ --- PASS: TestScanUsesTranscriptCwd (0.00s)</div><div class="diff-add">+ === RUN   TestDisplayLabel</div><div class="diff-add">+ --- PASS: TestDisplayLabel (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.326s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Full build/test/vet</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go build ./...   -&gt; success, no output</div><div class="diff-add">+ $ go vet ./...      -&gt; success, no output</div><div class="diff-add">+ $ go test ./...</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	0.561s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.164s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/redact	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	0.277s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Smoke test</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go run ./cmd/ccwhid --latest</div><div class="diff-add">+ report written to ccwhid-report/41f7e8f4</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Confirmed `ccwhid-report/41f7e8f4/index.html` exists (479770 bytes) along</div><div class="diff-add">+ with an `assets/` dir. Directory removed afterward (`rm -rf ccwhid-report`)</div><div class="diff-add">+ to leave the working tree clean — the run used the real `~/.claude/projects`</div><div class="diff-add">+ data on this machine (this repo&#39;s own most-recent session), no `--force`</div><div class="diff-add">+ needed since the dir didn&#39;t pre-exist.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/tui/tui.go` (new)</div><div class="diff-add">+ - `internal/tui/tui_test.go` (new)</div><div class="diff-add">+ - `internal/discovery/discovery.go` (added `DisplayLabel`)</div><div class="diff-add">+ - `internal/discovery/discovery_test.go` (added `TestDisplayLabel`)</div><div class="diff-add">+ - `cmd/ccwhid/main.go` (wired `RunE` → `run()`, added `run()` function and</div><div class="diff-add">+   two new imports)</div><div class="diff-add">+ - `go.mod`, `go.sum` (bubbletea + lipgloss + transitive deps)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-review</div><div class="diff-add">+ </div><div class="diff-add">+ - All code matches the brief verbatim except the intentional `min` omission</div><div class="diff-add">+   described above, which is a deliberate, reported deviation to avoid a</div><div class="diff-add">+   potential builtin/local redeclaration conflict on Go 1.26 — behavior is</div><div class="diff-add">+   identical either way for two-int `min`.</div><div class="diff-add">+ - No TUI interaction was manually driven (Bubble Tea&#39;s `tea.NewProgram(m).Run()`</div><div class="diff-add">+   takes over the real terminal); the brief&#39;s own acceptance criteria for this</div><div class="diff-add">+   task are unit tests on `flattenRows`/`firstSelectable` plus a CLI smoke test</div><div class="diff-add">+   via `--latest`, which bypasses the TUI path entirely (`resolveSession`</div><div class="diff-add">+   returns `needTUI=false` when `--latest` is set). This matches the brief&#39;s</div><div class="diff-add">+   Step 8 instructions exactly — it does not ask for an interactive TUI</div><div class="diff-add">+   smoke test, only `go build`/`go test` plus the `--latest` CLI check.</div><div class="diff-add">+ - `errNeedTUI` in `run.go` (from Task 8) is now unused by any caller in this</div><div class="diff-add">+   task&#39;s wiring (the brief&#39;s `run()` uses the `needTUI` bool return from</div><div class="diff-add">+   `resolveSession`, not the sentinel error). It remains declared but unused,</div><div class="diff-add">+   which is legal Go for a package-level var and does not fail `go vet` or</div><div class="diff-add">+   `go build`. I did not modify `run.go` since the brief&#39;s Step 7 only touches</div><div class="diff-add">+   `main.go`.</div><div class="diff-add">+ - Verified `git status`/`git diff --stat` before staging; only intended files</div><div class="diff-add">+   were added (`internal/tui/`, `internal/discovery/`, `cmd/ccwhid/main.go`,</div><div class="diff-add">+   `go.mod`, `go.sum`). Commit `777b116` created on `feat/ccwhid-impl`, no</div><div class="diff-add">+   branch changes made.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ None. Build, vet, and full test suite are clean; the smoke test produced the</div><div class="diff-add">+ expected `index.html`. This was the last implementation task per the prompt.</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-44" data-search="- status: done
 - commits created: `777b116` — feat: add tui session browser and wire final dispatch
 - tests: `go build ./...`, `go vet ./...`, `go test ./...` all clean; new tests `testflattenrowsbuildsheadersandsessions`, `testfirstselectablerow`, `testdisplaylabel` pass (red confirmed before implementation, green after)
 - concerns: none — `min` rough edge resolved by omitting the brief&#39;s local `min` helper and relying on go 1.26&#39;s builtin (behavior-identical); smoke test `go run ./cmd/ccwhid --latest` produced `ccwhid-report/&lt;id&gt;/index.html`, cleaned up afterward
 - report: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">302 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:58:28">· 12:58</span><span class="usage-badge">302 tok · ~$0.02</span></div>
       <div class="turn-body"><ul>
 <li>Status: DONE</li>
 <li>Commits created: <code>777b116</code> — feat: add TUI session browser and wire final dispatch</li>

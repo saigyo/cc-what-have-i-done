@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are implementing Task 2: Domain model types, for the Go…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are implementing Task 2: Domain model types, for the Go…</span><span class="prompt-time" title="July 11, 2026 at 11:56:47">11:56</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 09:56</span>
+        <span title="session start">2026-07-11 11:56</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>21 turns</span>
         <span>general-purpose · agent-ad6ec3321c3c806cc</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are implementing task 2: domain model types, for the go cli `ccwhid`.
 
 ## task description
@@ -89,7 +91,7 @@ then reply with only (under 15 lines):
 - one-line test summary
 - concerns, if any
 - the report file path">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 11:56:47">· 11:56</span></div>
       <div class="turn-body"><p>You are implementing Task 2: Domain model types, for the Go CLI <code>ccwhid</code>.</p>
 <h2>Task Description</h2>
 <p>Read your task brief first — it is your requirements, with the exact code and commands to use verbatim:
@@ -121,14 +123,16 @@ then reply with only (under 15 lines):
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll read the task brief first to understand the exact requirements.">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:56:49">· 11:56</span><span class="usage-badge">11 tok · ~$0.01</span></div>
       <div class="turn-body"><p>I'll read the task brief first to understand the exact requirements.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:56:49">· 11:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 2: Domain model types
@@ -293,45 +297,52 @@ then reply with only (under 15 lines):
 160	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="now i&#39;ll follow the tdd steps. let me start by checking the current state of the project:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:56:53">· 11:56</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now I'll follow the TDD steps. Let me start by checking the current state of the project:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash ls -la internal/ 2&gt;/dev/null || echo &#34;internal directory doesn&#39;t exist yet&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:56:53">· 11:56</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la internal/ 2&gt;/dev/null || echo &#34;internal directory doesn&#39;t exist yet&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la internal/ 2\u003e/dev/null || echo \&#34;internal directory doesn&#39;t exist yet\&#34;&#34;
 }</pre><pre class="tool-result">internal directory doesn&#39;t exist yet</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash mkdir -p ~/ideaprojects/cc-what-have-i-done/internal/model">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:56:57">· 11:56</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/model</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;mkdir -p ~/IdeaProjects/cc-what-have-i-done/internal/model&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="**step 1: write the failing test**">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:00">· 11:57</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 1: Write the failing test</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/model/model_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:02">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package model</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ 	&#34;time&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSessionDuration(t *testing.T) {</div><div class="diff-add">+ 	s := Session{</div><div class="diff-add">+ 		StartedAt: time.Date(2026, 7, 11, 10, 0, 0, 0, time.UTC),</div><div class="diff-add">+ 		EndedAt:   time.Date(2026, 7, 11, 10, 5, 0, 0, time.UTC),</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got := s.Duration(); got != 5*time.Minute {</div><div class="diff-add">+ 		t.Errorf(&#34;Duration() = %v, want 5m&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestDisplayTitleFallback(t *testing.T) {</div><div class="diff-add">+ 	if got := (Session{}).DisplayTitle(); got != &#34;Untitled session&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;DisplayTitle() = %q, want fallback&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got := (Session{Title: &#34;Fix parser&#34;}).DisplayTitle(); got != &#34;Fix parser&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;DisplayTitle() = %q, want title&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/model/model_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="**step 2: run the test to verify it fails**">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:05">· 11:57</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 2: Run the test to verify it fails</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash go test ./internal/model/ 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:05">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/model/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/model/ 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -343,25 +354,29 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/model [build failed]
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="**step 3: write minimal implementation**">
-      <div class="turn-role">Claude<span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:09">· 11:57</span><span class="usage-badge">10 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 3: Write minimal implementation</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/model/model.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:16">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ // Package model defines the domain types shared across ccwhid: a parsed</div><div class="diff-add">+ // Session and the timeline of Turns, Blocks and ToolCalls within it.</div><div class="diff-add">+ package model</div><div class="diff-add">+ </div><div class="diff-add">+ import &#34;time&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ type TurnKind string</div><div class="diff-add">+ </div><div class="diff-add">+ const (</div><div class="diff-add">+ 	TurnUser      TurnKind = &#34;user&#34;</div><div class="diff-add">+ 	TurnAssistant TurnKind = &#34;assistant&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ type BlockType string</div><div class="diff-add">+ </div><div class="diff-add">+ const (</div><div class="diff-add">+ 	BlockText     BlockType = &#34;text&#34;</div><div class="diff-add">+ 	BlockThinking BlockType = &#34;thinking&#34;</div><div class="diff-add">+ 	BlockToolUse  BlockType = &#34;tool_use&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Session is one fully-parsed Claude Code transcript.</div><div class="diff-add">+ type Session struct {</div><div class="diff-add">+ 	ID           string</div><div class="diff-add">+ 	ProjectPath  string // decoded absolute cwd</div><div class="diff-add">+ 	Title        string</div><div class="diff-add">+ 	GitBranch    string</div><div class="diff-add">+ 	Version      string</div><div class="diff-add">+ 	StartedAt    time.Time</div><div class="diff-add">+ 	EndedAt      time.Time</div><div class="diff-add">+ 	Turns        []Turn</div><div class="diff-add">+ 	SkippedLines int // count of malformed lines skipped while parsing</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func (s Session) Duration() time.Duration { return s.EndedAt.Sub(s.StartedAt) }</div><div class="diff-add">+ </div><div class="diff-add">+ func (s Session) DisplayTitle() string {</div><div class="diff-add">+ 	if s.Title != &#34;&#34; {</div><div class="diff-add">+ 		return s.Title</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return &#34;Untitled session&#34;</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Turn is a single user or assistant message, holding ordered content blocks.</div><div class="diff-add">+ type Turn struct {</div><div class="diff-add">+ 	Kind      TurnKind</div><div class="diff-add">+ 	Timestamp time.Time</div><div class="diff-add">+ 	Blocks    []Block</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Block is one content unit: assistant/user text, a thinking block, or a tool call.</div><div class="diff-add">+ type Block struct {</div><div class="diff-add">+ 	Type BlockType</div><div class="diff-add">+ 	Text string    // for BlockText and BlockThinking</div><div class="diff-add">+ 	Tool *ToolCall // for BlockToolUse</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // ToolCall is a single tool invocation and its result.</div><div class="diff-add">+ type ToolCall struct {</div><div class="diff-add">+ 	ID        string</div><div class="diff-add">+ 	Name      string // e.g. &#34;Bash&#34;, &#34;Edit&#34;, &#34;Read&#34;, &#34;Task&#34;</div><div class="diff-add">+ 	Summary   string // one-line summary for the collapsed card header</div><div class="diff-add">+ 	InputJSON string // pretty-printed input for generic display</div><div class="diff-add">+ 	Result    *ToolResult</div><div class="diff-add">+ 	Diff      *Diff      // set for Edit/Write</div><div class="diff-add">+ 	Subagents []Subagent // set for Task calls with sidechain activity</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type ToolResult struct {</div><div class="diff-add">+ 	Content string</div><div class="diff-add">+ 	IsError bool</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ type Diff struct {</div><div class="diff-add">+ 	Path    string</div><div class="diff-add">+ 	OldText string</div><div class="diff-add">+ 	NewText string</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Subagent is a nested sidechain run attached to a parent Task tool call.</div><div class="diff-add">+ type Subagent struct {</div><div class="diff-add">+ 	Description string</div><div class="diff-add">+ 	Turns       []Turn</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="**step 4: run the tests to verify they pass**">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:17">· 11:57</span><span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 4: Run the tests to verify they pass</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash go test ./internal/model/ -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:18">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/model/ -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/model/ -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestSessionDuration
@@ -372,28 +387,32 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.285s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="now let me run the full test suite to ensure nothing else is broken:">
-      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:22">· 11:57</span><span class="usage-badge">13 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me run the full test suite to ensure nothing else is broken:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:22">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="**step 5: commit**">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:26">· 11:57</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p><strong>Step 5: Commit</strong></p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash git add internal/model/ &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:27">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/model/ &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/model/ \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfeat: add domain model types\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/ccwhid-impl 7b11575] feat: add domain model types
@@ -402,16 +421,19 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s</pre></div></de
  create mode 100644 internal/model/model_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="now let me create the comprehensive report:">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:31">· 11:57</span><span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me create the comprehensive report:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="write ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:43">· 11:57</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ # Task 2: Domain Model Types — Implementation Report</div><div class="diff-add">+ </div><div class="diff-add">+ ## Summary</div><div class="diff-add">+ </div><div class="diff-add">+ Successfully implemented the shared domain model types for the `ccwhid` CLI, following TDD discipline with failing tests, green implementation, and full test suite verification.</div><div class="diff-add">+ </div><div class="diff-add">+ ## What Was Implemented</div><div class="diff-add">+ </div><div class="diff-add">+ Created two files in `internal/model/`:</div><div class="diff-add">+ </div><div class="diff-add">+ 1. **`model.go`** — Complete domain type definitions:</div><div class="diff-add">+    - `Session` struct with fields: ID, ProjectPath, Title, GitBranch, Version, StartedAt, EndedAt, Turns, SkippedLines</div><div class="diff-add">+    - `Turn` struct with Kind (TurnKind), Timestamp, and Blocks</div><div class="diff-add">+    - `Block` struct for content units (text, thinking, tool use)</div><div class="diff-add">+    - `ToolCall` struct with ID, Name, Summary, InputJSON, Result, Diff, and Subagents</div><div class="diff-add">+    - `ToolResult` struct with Content and IsError flag</div><div class="diff-add">+    - `Diff` struct for tracking file changes (Path, OldText, NewText)</div><div class="diff-add">+    - `Subagent` struct for nested sidechain runs</div><div class="diff-add">+    - Constants for `TurnKind` (TurnUser, TurnAssistant) and `BlockType` (BlockText, BlockThinking, BlockToolUse)</div><div class="diff-add">+    - Two methods on Session:</div><div class="diff-add">+      - `Duration()` — returns EndedAt.Sub(StartedAt)</div><div class="diff-add">+      - `DisplayTitle()` — returns Title or fallback &#34;Untitled session&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 2. **`model_test.go`** — Test coverage:</div><div class="diff-add">+    - `TestSessionDuration` — verifies 5-minute duration calculation</div><div class="diff-add">+    - `TestDisplayTitleFallback` — tests both title fallback and explicit title scenarios</div><div class="diff-add">+ </div><div class="diff-add">+ ## TDD Evidence</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED: Test Fails (Step 2)</div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/model/</div><div class="diff-add">+ </div><div class="diff-add">+ # output (expected failure):</div><div class="diff-add">+ # github.com/saigyo/cc-what-have-i-done/internal/model [github.com/saigyo/cc-what-have-i-done/internal/model.test]</div><div class="diff-add">+ internal/model/model_test.go:9:7: undefined: Session</div><div class="diff-add">+ internal/model/model_test.go:19:13: undefined: Session</div><div class="diff-add">+ internal/model/model_test.go:22:13: undefined: Session</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/model [build failed]</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN: Tests Pass (Step 4)</div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./internal/model/ -v</div><div class="diff-add">+ </div><div class="diff-add">+ === RUN   TestSessionDuration</div><div class="diff-add">+ --- PASS: TestSessionDuration (0.00s)</div><div class="diff-add">+ === RUN   TestDisplayTitleFallback</div><div class="diff-add">+ --- PASS: TestDisplayTitleFallback (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.285s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full Suite Passes</div><div class="diff-add">+ ```</div><div class="diff-add">+ go test ./...</div><div class="diff-add">+ </div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ## Files Changed</div><div class="diff-add">+ </div><div class="diff-add">+ Created:</div><div class="diff-add">+ - `~/IdeaProjects/cc-what-have-i-done/internal/model/model.go` (85 lines)</div><div class="diff-add">+ - `~/IdeaProjects/cc-what-have-i-done/internal/model/model_test.go` (24 lines)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Git Commit</div><div class="diff-add">+ </div><div class="diff-add">+ Commit: `7b11575` — &#34;feat: add domain model types&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ All code follows the brief exactly. No deviations. No manual edits required.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Self-Review</div><div class="diff-add">+ </div><div class="diff-add">+ ✓ All domain types match brief specification exactly  </div><div class="diff-add">+ ✓ Constants for enums (TurnKind, BlockType) defined correctly  </div><div class="diff-add">+ ✓ Both methods (Duration, DisplayTitle) implemented correctly  </div><div class="diff-add">+ ✓ Test structure matches brief exactly  </div><div class="diff-add">+ ✓ TDD discipline followed: RED → GREEN → COMMIT  </div><div class="diff-add">+ ✓ All tests pass; full suite passes; no regressions  </div><div class="diff-add">+ ✓ Commit message includes co-author attribution as required  </div><div class="diff-add">+ ✓ Package import path correct: `github.com/saigyo/cc-what-have-i-done/internal/model`  </div><div class="diff-add">+ </div><div class="diff-add">+ ## Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ None. Implementation is clean, follows the brief precisely, all tests pass, and the code is ready for downstream tasks.</div><div class="diff-add">+ </div><div class="diff-add">+ ---</div><div class="diff-add">+ </div><div class="diff-add">+ **Status:** DONE  </div><div class="diff-add">+ **Test Summary:** 2/2 tests pass; full suite passes (0 regressions)  </div><div class="diff-add">+ **Commit:** 7b11575 feat: add domain model types</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-20" data-search="## status: done
 
@@ -422,7 +444,7 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	0.142s</pre></div></de
 **concerns:** none
 
 **report:** `~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md`">
-      <div class="turn-role">Claude<span class="usage-badge">226 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 11:57:47">· 11:57</span><span class="usage-badge">226 tok · ~$0.01</span></div>
       <div class="turn-body"><h2>Status: DONE</h2>
 <p><strong>Commit:</strong> <code>7b11575</code> — feat: add domain model types</p>
 <p><strong>Test Summary:</strong> 2/2 model tests pass; full suite passes (no regressions)</p>

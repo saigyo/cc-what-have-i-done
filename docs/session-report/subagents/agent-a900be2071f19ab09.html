@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are a Senior Code Reviewer with expertise in software a…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are a Senior Code Reviewer with expertise in software a…</span><span class="prompt-time" title="July 12, 2026 at 12:31:43">12:31</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 10:31</span>
+        <span title="last message 2026-07-12 12:35">2026-07-12 12:31 (3m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>18 turns</span>
         <span>general-purpose · agent-a900be2071f19ab09</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are a senior code reviewer with expertise in software architecture, design patterns, and best practices. your job is to review a completed feature branch against its spec and identify issues before merge.
 
 ## what was implemented
@@ -117,7 +119,7 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 ### assessment
 **ready to merge?** [yes | no | with fixes]
 **reasoning:** [1-2 sentences]">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 12:31:43">· 12:31</span></div>
       <div class="turn-body"><p>You are a Senior Code Reviewer with expertise in software architecture, design patterns, and best practices. Your job is to review a completed feature branch against its spec and identify issues before merge.</p>
 <h2>What Was Implemented</h2>
 <p>The subagent-sessions milestone for <code>ccwhid</code>, a Go CLI that renders Claude Code JSONL transcripts as static HTML reports. Five tasks, one commit each, on branch <code>feat/subagent-sessions</code>:</p>
@@ -174,14 +176,16 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll start by reading the review package, spec, and the key source files.">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.10</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:45">· 12:31</span><span class="usage-badge">7k tok · ~$0.10</span></div>
       <div class="turn-body"><p>I'll start by reading the review package, spec, and the key source files.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:47">· 12:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 608d700..HEAD
@@ -1436,8 +1440,9 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 1250	 )</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-subagent-sessions-design.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:47">· 12:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-subagent-sessions-design.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/docs/superpowers/specs/2026-07-12-subagent-sessions-design.md&#34;
 }</pre><pre class="tool-result">1	# Subagent Sessions — Design
@@ -1682,14 +1687,16 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 240	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="let me read the rest of the diff and the key source files.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.24</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:49">· 12:31</span><span class="usage-badge">2k tok · ~$0.24</span></div>
       <div class="turn-body"><p>Let me read the rest of the diff and the key source files.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:51">· 12:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-608d700..b703c81.diff&#34;,
   &#34;limit&#34;: 1250,
@@ -2048,8 +2055,9 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 1602	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:52">· 12:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -2480,14 +2488,16 @@ for each: file:line, what&#39;s wrong, why it matters, how to fix.
 426	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="now let me examine the markdown pipeline (for the xss audit) and the render.go full context around the manually-built html.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.12</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:55">· 12:31</span><span class="usage-badge">5 tok · ~$0.12</span></div>
       <div class="turn-body"><p>Now let me examine the Markdown pipeline (for the XSS audit) and the render.go full context around the manually-built HTML.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -rn &#34;func markdown\|goldmark\|html.unsaferendering\|withunsafe\|template.html\|func diffhtml\|func stripansi&#34; internal/render/*.go | grep -v _test">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:56">· 12:31</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;func Markdown\|goldmark\|html.UnsafeRendering\|WithUnsafe\|template.HTML\|func DiffHTML\|func StripANSI&#34; internal/render/*.go | grep -v _test</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;func Markdown\\|goldmark\\|html.UnsafeRendering\\|WithUnsafe\\|template.HTML\\|func DiffHTML\\|func StripANSI\&#34; internal/render/*.go | grep -v _test&#34;
 }</pre><pre class="tool-result">internal/render/ansi.go:20:func StripANSI(s string) string {
@@ -2510,8 +2520,9 @@ internal/render/render.go:321:func renderTurnBody(t model.Turn, links *agentLink
 internal/render/render.go:335:	return template.HTML(b.String())</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/markdown.go">
-      <div class="turn-role">Claude<span class="usage-badge">85 tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:31:59">· 12:31</span><span class="usage-badge">85 tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -2581,14 +2592,16 @@ internal/render/render.go:335:	return template.HTML(b.String())</pre></div></det
 65	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="let me check the `--force` output-dir clearing logic and run the test suite.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:32:24">· 12:32</span><span class="usage-badge">5 tok · ~$0.04</span></div>
       <div class="turn-body"><p>Let me check the <code>--force</code> output-dir clearing logic and run the test suite.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:32:24">· 12:32</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -2750,8 +2763,9 @@ internal/render/render.go:335:	return template.HTML(b.String())</pre></div></det
 157	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash go test ./... 2&gt;&amp;1 | tail -30">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:32:24">· 12:32</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261 | tail -30&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
@@ -2764,14 +2778,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/tui	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="let me check the `walk` function in usage.go and the redact recursion for cost double-counting concerns.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:32:44">· 12:32</span><span class="usage-badge">4 tok · ~$0.06</span></div>
       <div class="turn-body"><p>Let me check the <code>walk</code> function in usage.go and the redact recursion for cost double-counting concerns.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash sed -n &#39;1,35p;120,200p&#39; internal/usage/usage.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:32:44">· 12:32</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,35p;120,200p&#39; internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,35p;120,200p&#39; internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">package usage
@@ -2879,14 +2895,16 @@ func walk(t model.Turn, fn func(model.Turn)) {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="let me confirm the exact line of the one unescaped sink i found in rendertool.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:34:21">· 12:34</span><span class="usage-badge">5 tok · ~$0.05</span></div>
       <div class="turn-body"><p>Let me confirm the exact line of the one unescaped sink I found in renderTool.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash grep -n &#34;rolelabel(st)\|rolelabel(t)\|html.escapestring\|renderturnbody(st&#34; internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:34:22">· 12:34</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;roleLabel(st)\|roleLabel(t)\|html.EscapeString\|renderTurnBody(st&#34; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;roleLabel(st)\\|roleLabel(t)\\|html.EscapeString\\|renderTurnBody(st\&#34; internal/render/render.go&#34;
 }</pre><pre class="tool-result">207:			RoleLabel:  roleLabel(t),
@@ -2901,6 +2919,7 @@ func walk(t model.Turn, fn func(model.Turn)) {
 364:			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)
 365:			b.WriteString(string(renderTurnBody(st, links)))</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-17" data-search="i have everything i need. here&#39;s my review.
 
@@ -2958,7 +2977,7 @@ before this milestone this line called `rolelabel(st.kind)`, which returned only
 
 **ready to merge?** with fixes.
 **reasoning:** the feature is spec-complete, well-tested, and architecturally clean; the only blocker is the single unescaped `rolelabel(st)` sink at render.go:364 — a one-line fix that closes the escaping regression the security scan correctly flagged. everything else is backlog.">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.15</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:01">· 12:35</span><span class="usage-badge">3k tok · ~$0.15</span></div>
       <div class="turn-body"><p>I have everything I need. Here's my review.</p>
 <hr>
 <h2>Code Review: <code>feat/subagent-sessions</code> (608d700..b703c81)</h2>

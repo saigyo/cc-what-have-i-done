@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 08:20:10">08:20</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:20</span>
+        <span title="last message 2026-07-12 08:23">2026-07-12 08:20 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>13 turns</span>
         <span>general-purpose · agent-a4a0f2c1a18950550</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. task-scoped gate.
 
 ## what was requested
@@ -92,7 +94,7 @@ implementer ran the full suite green. don&#39;t re-run the whole suite; a focuse
 
 ## output format
 follow the reviewer template exactly: spec compliance verdict (✅/❌/⚠️) first, then strengths, then issues (critical/important/minor) with file:line, then assessment with **task quality:** approved | needs fixes. be decisive about the deviation: is it safe (approved) or a real injection risk (needs fixes)?">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:20:10">· 08:20</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</p>
@@ -133,8 +135,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:13">· 08:20</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 4: Render the usage card and per-turn badges
@@ -505,8 +508,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 366	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:13">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-4-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 4 Report: Render the usage card and per-turn badges
@@ -690,8 +694,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 179	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:13">· 08:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-4140bfb..4de9666.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 4140bfb..4de9666
@@ -1106,8 +1111,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 410	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="agent check usage.report field origins">
-      <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.09</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:20:42">· 08:20</span><span class="usage-badge">5k tok · ~$0.09</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check usage.Report field origins</span><a class="agent-link" href="agent-abdc066b58699d2b3.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go (and any other files in internal/usage/) in full.</p>
 <p>I need to know, for the review of a rendering feature:</p>
 <ol>
@@ -1158,8 +1164,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 </div></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="agent check tokencounts.inout method">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:21:55">· 08:21</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Check TokenCounts.InOut method</span><a class="agent-link" href="agent-a8bb274c803350c57.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo ~/IdeaProjects/cc-what-have-i-done, find the definition of the <code>InOut()</code> method on <code>TokenCounts</code> (likely in internal/usage/usage.go or internal/model package). Show its exact implementation. I need to confirm it sums ONLY Input and Output token counts (not cache read/write). Report back the exact method body and its file:line location.</p>
 </div><div class="agent-result-body"><p>Found it.</p>
 <p><strong>Location:</strong> <code>~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go:20</code></p>
@@ -1171,8 +1178,9 @@ Read the diff file once. Do not re-run git. Read-only. Inspect outside the diff 
 </div></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash grep -rn &#34;buildviewmodel\|render.site\|render.options&#34; --include=&#34;*.go&#34; . | grep -v _test.go">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:12">· 08:22</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;buildViewModel\|render.Site\|render.Options&#34; --include=&#34;*.go&#34; . | grep -v _test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;buildViewModel\\|render.Site\\|render.Options\&#34; --include=\&#34;*.go\&#34; . | grep -v _test.go&#34;
 }</pre><pre class="tool-result">cmd/ccwhid/run.go:99:	if err := render.Site(sess, outDir, render.Options{Title: opts.title}); err != nil {
@@ -1180,15 +1188,17 @@ internal/render/render.go:41:	data := buildViewModel(s, title, opts)
 internal/render/render.go:110:func buildViewModel(s model.Session, title string, opts Options) viewData {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;http\|url(\|@font-face\|@import&#34; internal/render/assets/styles.css">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:13">· 08:22</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;http\|url(\|@font-face\|@import&#34; internal/render/assets/styles.css</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;http\\|url(\\|@font-face\\|@import\&#34; internal/render/assets/styles.css&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;html.escapestring\|template.html(&#34; internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">519 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:20">· 08:22</span><span class="usage-badge">519 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;html.EscapeString\|template.HTML(&#34; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;html.EscapeString\\|template.HTML(\&#34; internal/render/render.go&#34;
 }</pre><pre class="tool-result">159:		v.Headline = template.HTML(&#34;Usage · no token-usage data&#34;)
@@ -1203,17 +1213,19 @@ internal/render/render.go:110:func buildViewModel(s model.Session, title string,
 238:		b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="confirmed: this is a pre-existing, established pattern in the file (`rendertool` at line 220&#43; already escapes tool names/summaries/results with `html.escapestring` before building `template.html` strings). the deviation reuses this exact convention rather than inventing something new.
 
 all checklist items verified against the diff and surrounding code. summary of what was confirmed:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:22">· 08:22</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed: this is a pre-existing, established pattern in the file (<code>renderTool</code> at line 220+ already escapes tool names/summaries/results with <code>html.EscapeString</code> before building <code>template.HTML</code> strings). The deviation reuses this exact convention rather than inventing something new.</p>
 <p>All checklist items verified against the diff and surrounding code. Summary of what was confirmed:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash sed -n &#39;140,190p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:24">· 08:22</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;140,190p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;140,190p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">		}
@@ -1269,8 +1281,9 @@ func buildUsageView(r usage.Report) *usageView {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash sed -n &#39;1,20p&#39; ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:22:40">· 08:22</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,20p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,20p&#39; ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
 }</pre><pre class="tool-result">package render
@@ -1294,6 +1307,7 @@ func TestMarkdownRendersHeadingAndCode(t *testing.T) {
 	if !strings.Contains(out, &#34;Println&#34;) {
 		t.Errorf(&#34;expected highlighted code in output&#34;)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-12" data-search="all confirmed. here is the review.
 
@@ -1333,7 +1347,7 @@ the implementation matches the brief&#39;s requirements. the one deviation (typi
 the deviation was scrutinized end-to-end: every input composing the two `template.html` fields was traced back to `formattokens`/`formatcost` (digit/`.`/`k`/`m`/`$`/`&lt;` only) and hardcoded literal words, each passed through `html.escapestring` before the cast. the one session-derived value in the whole feature (`usagemodel.model`, sourced from unsanitized transcript `message.model`) was correctly kept as a plain auto-escaped `string` and never touches the `template.html` fields. no transcript/session/user data reaches raw html unescaped. all other brief constraints (opt-in gating, css self-containment, collapsed/expanded content rules, per-turn badge gating, redaction untouched) verified directly against the diff and cross-checked against `internal/usage/usage.go`, `internal/transcript/raw.go`, and the cli call site.
 
 **task quality: approved**">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:23:04">· 08:23</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><p>All confirmed. Here is the review.</p>
 <hr>
 <h2>Spec Compliance: ✅</h2>

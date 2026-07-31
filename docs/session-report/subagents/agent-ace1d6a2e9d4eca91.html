@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 08:10:54">08:10</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:10</span>
+        <span title="last message 2026-07-12 08:12">2026-07-12 08:10 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>19 turns</span>
         <span>general-purpose · agent-ace1d6a2e9d4eca91</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. task-scoped gate.
 
 ## what was requested
@@ -86,7 +88,7 @@ verify specifically (think hard — this is the math/logic core):
 
 ## output format
 follow the reviewer template exactly: spec compliance verdict (✅/❌/⚠️) first, then strengths, then issues (critical/important/minor) with file:line, then assessment with **task quality:** approved | needs fixes. every line a verdict, a finding with file:line, or a check you ran.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:10:54">· 08:10</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. Task-scoped gate.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
@@ -121,8 +123,9 @@ Read the diff file once (commit list + stat + full diff). Do not re-run git. Rea
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:10:57">· 08:10</span><span class="usage-badge">7k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 3: Usage computation
@@ -397,8 +400,9 @@ Read the diff file once (commit list + stat + full diff). Do not re-run git. Rea
 270	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:10:57">· 08:10</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 3 Report: Usage Computation
@@ -523,8 +527,9 @@ Read the diff file once (commit list + stat + full diff). Do not re-run git. Rea
 120	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-08d3928..4140bfb.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:10:59">· 08:10</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-08d3928..4140bfb.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-08d3928..4140bfb.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 08d3928..4140bfb
@@ -775,8 +780,9 @@ Read the diff file once (commit list + stat + full diff). Do not re-run git. Rea
 246	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash find ~/ideaprojects/cc-what-have-i-done/internal/usage -type f | xargs ls -la">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:04">· 08:11</span><span class="usage-badge">4 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/IdeaProjects/cc-what-have-i-done/internal/usage -type f | xargs ls -la</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/IdeaProjects/cc-what-have-i-done/internal/usage -type f | xargs ls -la&#34;,
   &#34;description&#34;: &#34;List files in internal/usage directory&#34;
@@ -787,8 +793,9 @@ Read the diff file once (commit list + stat + full diff). Do not re-run git. Rea
 -rw-r--r--@ 1 [user]  staff  3730 12 Juli 08:07 ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -rn &#34;cachewrite5mmult\|cachewrite1hmult\|cachereadmult\|type price\|func lookup\|pricesasof&#34; internal/usage/*.go | grep -v usage_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:05">· 08:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;cacheWrite5mMult\|cacheWrite1hMult\|cacheReadMult\|type Price\|func Lookup\|PricesAsOf&#34; internal/usage/*.go | grep -v usage_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;cacheWrite5mMult\\|cacheWrite1hMult\\|cacheReadMult\\|type Price\\|func Lookup\\|PricesAsOf\&#34; internal/usage/*.go | grep -v usage_test.go&#34;,
   &#34;description&#34;: &#34;Find pricing constants and Price type definitions&#34;
@@ -809,8 +816,9 @@ internal/usage/pricing.go:26:type Price struct {
 internal/usage/pricing.go:41:func Lookup(modelID string) (Price, bool) {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/pricing.go">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:16">· 08:11</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/pricing.go&#34;
 }</pre><pre class="tool-result">1	// Package usage computes token totals and estimated cost for a rendered
@@ -884,8 +892,9 @@ internal/usage/pricing.go:41:func Lookup(modelID string) (Price, bool) {</pre></
 69	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;opus-4-8\|opus&#34; internal/usage/prices.json | head -20">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:16">· 08:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;opus-4-8\|opus&#34; internal/usage/prices.json | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;opus-4-8\\|opus\&#34; internal/usage/prices.json | head -20&#34;,
   &#34;description&#34;: &#34;Check opus-4-8 pricing in prices.json&#34;
@@ -896,8 +905,9 @@ internal/usage/pricing.go:41:func Lookup(modelID string) (Price, bool) {</pre></
 6:  &#34;claude-opus-4-1&#34;:   { &#34;input&#34;: 15, &#34;output&#34;: 75 },</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="agent verify model package structures match usage.go usage">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:46">· 08:11</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Agent</span><span class="tool-summary">Verify model package structures match usage.go usage</span><a class="agent-link" href="agent-a0d92c339000f1e86.html">transcript ↗</a></summary><div class="tool-body"><div class="agent-prompt"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, read ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go (whichever file(s) define the model package types) and report back, concisely:</p>
 <ol>
 <li>The exact field names and types of model.Turn (specifically: Kind, Model, Usage, Blocks).</li>
@@ -918,8 +928,9 @@ Do NOT Read or tail this file via the shell tool — it is the full subagent JSO
 </div></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash go build ./... 2&gt;&amp;1 &amp;&amp; echo &#34;build_ok&#34; &amp;&amp; go vet ./internal/usage/... 2&gt;&amp;1 &amp;&amp; echo &#34;vet_ok&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:47">· 08:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1 &amp;&amp; echo &#34;BUILD_OK&#34; &amp;&amp; go vet ./internal/usage/... 2&gt;&amp;1 &amp;&amp; echo &#34;VET_OK&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261 \u0026\u0026 echo \&#34;BUILD_OK\&#34; \u0026\u0026 go vet ./internal/usage/... 2\u003e\u00261 \u0026\u0026 echo \&#34;VET_OK\&#34;&#34;,
   &#34;description&#34;: &#34;Build project and vet usage package&#34;
@@ -927,14 +938,16 @@ Do NOT Read or tail this file via the shell tool — it is the full subagent JSO
 VET_OK</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="build and vet both pass, confirming the code compiles cleanly against the model package. i&#39;ll wait for the explore agent&#39;s structural verification.">
-      <div class="turn-role">Claude<span class="usage-badge">8 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:52">· 08:11</span><span class="usage-badge">8 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Build and vet both pass, confirming the code compiles cleanly against the model package. I'll wait for the Explore agent's structural verification.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./internal/usage/... -v 2&gt;&amp;1 | tail -30">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:52">· 08:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/usage/... -v 2&gt;&amp;1 | tail -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/usage/... -v 2\u003e\u00261 | tail -30&#34;,
   &#34;description&#34;: &#34;Run usage package tests to confirm pass and pristine output&#34;
@@ -956,14 +969,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="all 7 tests pass with pristine output, confirming the implementer&#39;s tdd evidence. now waiting for the explore agent&#39;s confirmation of the model package field structures before finalizing the review.">
-      <div class="turn-role">Claude<span class="usage-badge">148 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:56">· 08:11</span><span class="usage-badge">148 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All 7 tests pass with pristine output, confirming the implementer's TDD evidence. Now waiting for the Explore agent's confirmation of the model package field structures before finalizing the review.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash go test ./internal/usage/... -v -run testcomputetotalsandcost 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:11:56">· 08:11</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/usage/... -v -run TestComputeTotalsAndCost 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/usage/... -v -run TestComputeTotalsAndCost 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Focused re-run of the key hand-check test&#34;
@@ -973,8 +988,9 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.242s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash find ~/ideaprojects/cc-what-have-i-done/internal/model -type f -name &#34;*.go&#34; | xargs ls">
-      <div class="turn-role">Claude<span class="usage-badge">8 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:03">· 08:12</span><span class="usage-badge">8 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find ~/IdeaProjects/cc-what-have-i-done/internal/model -type f -name &#34;*.go&#34; | xargs ls</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find ~/IdeaProjects/cc-what-have-i-done/internal/model -type f -name \&#34;*.go\&#34; | xargs ls&#34;,
   &#34;description&#34;: &#34;List model package files&#34;
@@ -982,26 +998,30 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.242s</pre></div></de
 ~/IdeaProjects/cc-what-have-i-done/internal/model/model.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="bash gofmt -l ~/ideaprojects/cc-what-have-i-done/internal/usage/ 2&gt;&amp;1; echo &#34;---exit:$?&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:24">· 08:12</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l ~/IdeaProjects/cc-what-have-i-done/internal/usage/ 2&gt;&amp;1; echo &#34;---exit:$?&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l ~/IdeaProjects/cc-what-have-i-done/internal/usage/ 2\u003e\u00261; echo \&#34;---exit:$?\&#34;&#34;,
   &#34;description&#34;: &#34;Verify gofmt reports no formatting issues in usage package&#34;
 }</pre><pre class="tool-result">---exit:0</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="all checks confirmed: gofmt clean, build and vet pass, all 7 tests pass with pristine output (no flaky retries), and the model package fields (`turn.usage *usage`, `block.tool *toolcall`, `toolcall.subagents []subagent`, `subagent.turns []turn`) exactly match what `usage.go` expects, with correct nil-checks present. the implementation is a verbatim, faithful transcription of the brief&#39;s step 3 code.">
-      <div class="turn-role">Claude<span class="usage-badge">220 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:28">· 08:12</span><span class="usage-badge">220 tok · ~$0.02</span></div>
       <div class="turn-body"><p>All checks confirmed: gofmt clean, build and vet pass, all 7 tests pass with pristine output (no flaky retries), and the model package fields (<code>Turn.Usage *Usage</code>, <code>Block.Tool *ToolCall</code>, <code>ToolCall.Subagents []Subagent</code>, <code>Subagent.Turns []Turn</code>) exactly match what <code>usage.go</code> expects, with correct nil-checks present. The implementation is a verbatim, faithful transcription of the brief's Step 3 code.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="reportfindings ">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:28">· 08:12</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;findings&#34;: []
 }</pre><pre class="tool-result">No findings reported.</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-18" data-search="## spec compliance: ✅
 
@@ -1026,7 +1046,7 @@ none found — critical/important/minor: none.
 the diff is a verbatim, faithful transcription of the brief&#39;s step 3 code with no deviations. math hand-check, subagent-recursion hand-check, sort/nil-handling logic, and independent build/vet/gofmt/test verification all confirm correctness against every stated global constraint.
 
 **task quality: approved**">
-      <div class="turn-role">Claude<span class="usage-badge">1k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:12:43">· 08:12</span><span class="usage-badge">1k tok · ~$0.02</span></div>
       <div class="turn-body"><h2>Spec Compliance: ✅</h2>
 <p>All <code>Report</code>/<code>TokenCounts</code>/<code>ModelUsage</code> shapes, <code>Compute</code> semantics, and the four global constraints (nested-subagent inclusion in totals/per-model, top-level-only per-turn cost, <code>InOut()</code> excluding cache tokens, cache multipliers 1.25×/2×/0.1×, unknown-model nil-cost-but-counted-tokens, <code>TotalCostUSD</code> nil-only-when-nothing-priced, <code>PerTurnCost</code> present-with-nil vs. absent) are implemented exactly as specified in <code>~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</code>.</p>
 <h2>Strengths</h2>

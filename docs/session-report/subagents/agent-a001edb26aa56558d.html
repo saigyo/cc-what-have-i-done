@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 11:24:29">11:24</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 09:24</span>
+        <span title="last message 2026-07-12 11:26">2026-07-12 11:24 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>7 turns</span>
         <span>general-purpose · agent-a001edb26aa56558d</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
 
 ## what was requested
@@ -116,7 +118,7 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 ### assessment
 **task quality:** [approved | needs fixes]
 **reasoning:** [1-2 sentences]">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 11:24:29">· 11:24</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</p>
@@ -163,8 +165,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:24:31">· 11:24</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 2: Load linked agent-session files
@@ -436,8 +439,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 267	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:24:31">· 11:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-2-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 2: Load linked agent-session files — Implementation Report
@@ -634,8 +638,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 192	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-b1bc70e..10aff40.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:24:32">· 11:24</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b1bc70e..10aff40.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b1bc70e..10aff40.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: b1bc70e..HEAD
@@ -954,8 +959,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 314	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.07</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:24:46">· 11:24</span><span class="usage-badge">4k tok · ~$0.07</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -1386,13 +1392,15 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 426	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash gofmt -l internal/model/model.go internal/transcript/parse.go internal/transcript/agents.go internal/transcript/agents_test.go internal/redact/redact.go">
-      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.08</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:25:32">· 11:25</span><span class="usage-badge">4k tok · ~$0.08</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/model/model.go internal/transcript/parse.go internal/transcript/agents.go internal/transcript/agents_test.go internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l internal/model/model.go internal/transcript/parse.go internal/transcript/agents.go internal/transcript/agents_test.go internal/redact/redact.go&#34;,
   &#34;description&#34;: &#34;Check gofmt compliance on changed files (read-only)&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-6" data-search="### spec compliance
 
@@ -1427,7 +1435,7 @@ none.
 ### assessment
 **task quality:** approved
 **reasoning:** all global constraints and interfaces from the brief are implemented correctly and match the brief&#39;s dictated code exactly; the only findings are minor test-coverage gaps around error branches that are largely inherited from the brief&#39;s own design rather than implementer shortcuts, and none of them threaten the correctness of the paths that are exercised.">
-      <div class="turn-role">Claude<span class="usage-badge">5k tok · ~$0.07</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 11:26:22">· 11:26</span><span class="usage-badge">5k tok · ~$0.07</span></div>
       <div class="turn-body"><h3>Spec Compliance</h3>
 <ul>
 <li>✅ <code>model.AgentSession{ID, Description, AgentType, ToolUseID, SpawnDepth, Session}</code> and <code>Session.Agents []AgentSession</code> — added verbatim (model.go:55-64, model.go:32).</li>

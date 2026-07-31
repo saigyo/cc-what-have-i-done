@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation: first whether …</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation: first whether …</span><span class="prompt-time" title="July 12, 2026 at 12:28:16">12:28</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 10:28</span>
+        <span title="last message 2026-07-12 12:30">2026-07-12 12:28 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>17 turns</span>
         <span>general-purpose · agent-a31cf203cf21e4233</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation: first whether it matches its requirements, then whether it is well-built. this is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.
 
 ## what was requested
@@ -118,7 +120,7 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 ### assessment
 **task quality:** [approved | needs fixes]
 **reasoning:** [1-2 sentences]">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 12:28:16">· 12:28</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation: first whether it matches its requirements, then whether it is well-built. This is a task-scoped gate, not a merge review — a broad whole-branch review happens separately after all tasks are complete.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
@@ -167,8 +169,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:28:19">· 12:28</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 5: Subagent pages, links, and wiring
@@ -501,8 +504,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 328	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:28:19">· 12:28</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 report: Subagent pages, links, and wiring
@@ -629,8 +633,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 122	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:28:24">· 12:28</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-b66ed79..b703c81.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: b66ed79..HEAD
@@ -1311,8 +1316,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 676	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash git rev-parse head &amp;&amp; git log --oneline -1">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:09">· 12:29</span><span class="usage-badge">4 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git rev-parse HEAD &amp;&amp; git log --oneline -1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git rev-parse HEAD \u0026\u0026 git log --oneline -1&#34;,
   &#34;description&#34;: &#34;Confirm current HEAD matches diff head commit&#34;
@@ -1320,8 +1326,9 @@ categorize by actual severity. important = task cannot be trusted until fixed. &
 b703c81 feat: subagent transcript pages linked from the report</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;renderturnbody\|rendertool(&#34; -r --include=&#34;*.go&#34; .">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:10">· 12:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTurnBody\|renderTool(&#34; -r --include=&#34;*.go&#34; .</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;renderTurnBody\\|renderTool(\&#34; -r --include=\&#34;*.go\&#34; .&#34;,
   &#34;description&#34;: &#34;Find all call sites of renderTurnBody and renderTool&#34;
@@ -1333,8 +1340,9 @@ internal/render/render.go:338:func renderTool(tc *model.ToolCall, links *agentLi
 internal/render/render.go:365:			b.WriteString(string(renderTurnBody(st, links)))</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash sed -n &#39;1,20p&#39; internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:10">· 12:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;1,20p&#39; internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;1,20p&#39; internal/render/render.go&#34;,
   &#34;description&#34;: &#34;Check render.go imports for html/template&#34;
@@ -1360,8 +1368,9 @@ var assets embed.FS
 // Options configures a render.</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash grep -n &#34;agents\|func session&#34; internal/redact/*.go internal/model/*.go | grep -v &#34;_test.go&#34;">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:14">· 12:29</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;Agents\|func Session&#34; internal/redact/*.go internal/model/*.go | grep -v &#34;_test.go&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;Agents\\|func Session\&#34; internal/redact/*.go internal/model/*.go | grep -v \&#34;_test.go\&#34;&#34;,
   &#34;description&#34;: &#34;Check whether redact.Session processes model.Session.Agents field&#34;
@@ -1372,24 +1381,27 @@ internal/redact/redact.go:60:		s.Agents[i].Description = r.String(s.Agents[i].De
 internal/redact/redact.go:61:		Session(&amp;s.Agents[i].Session, homeDir)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:15">· 12:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l internal/render/render.go internal/render/render_test.go internal/render/render_e2e_test.go cmd/ccwhid/run.go cmd/ccwhid/main.go internal/tui/tui.go&#34;,
   &#34;description&#34;: &#34;Check gofmt cleanliness on touched files (read-only)&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:15">· 12:29</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go vet ./internal/render/... ./cmd/ccwhid/... ./internal/tui/... 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Run go vet on touched packages (read-only diagnostic)&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:29:36">· 12:29</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -1551,8 +1563,9 @@ internal/redact/redact.go:61:		Session(&amp;s.Agents[i].Session, homeDir)</pre><
 157	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash grep -rn &#34;include subagents&#34; --include=&#34;*.go&#34; --include=&#34;*.md&#34; . 2&gt;/dev/null">
-      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.06</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:25">· 12:30</span><span class="usage-badge">4k tok · ~$0.06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -rn &#34;Include subagents&#34; --include=&#34;*.go&#34; --include=&#34;*.md&#34; . 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -rn \&#34;Include subagents\&#34; --include=\&#34;*.go\&#34; --include=\&#34;*.md\&#34; . 2\u003e/dev/null&#34;,
   &#34;description&#34;: &#34;Verify no stale references to old TUI label remain&#34;
@@ -1561,14 +1574,16 @@ docs/superpowers/plans/2026-07-12-subagent-sessions.md:1238:In `internal/tui/tui
 docs/superpowers/plans/2026-07-11-ccwhid.md:2585:		{&#34;Include subagents&#34;, m.sel.IncludeSubagents},</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="no stale references outside plan docs (expected, those are historical planning artifacts, not code). verification complete.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:27">· 12:30</span><span class="usage-badge">3 tok · ~$0.02</span></div>
       <div class="turn-body"><p>No stale references outside plan docs (expected, those are historical planning artifacts, not code). Verification complete.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash grep -n &#34;includesubagents\b&#34; internal/transcript/*.go | grep -v _test.go | head -30">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:28">· 12:30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;IncludeSubagents\b&#34; internal/transcript/*.go | grep -v _test.go | head -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;IncludeSubagents\\b\&#34; internal/transcript/*.go | grep -v _test.go | head -30&#34;,
   &#34;description&#34;: &#34;Check semantics of transcript.Options.IncludeSubagents used by both ParseFile and LoadAgentSessions&#34;
@@ -1577,21 +1592,24 @@ internal/transcript/parse.go:124:			if !opts.IncludeSubagents || sidechainOwner 
 internal/transcript/parse.go:150:		if opts.IncludeSubagents {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="this confirms `loadagentsessions` and `parsefile` are separate concerns sharing the same `options.includesubagents` flag as the brief specified — consistent, no double-gating bug.
 
 all checks complete. findings below.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:31">· 12:30</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>This confirms <code>LoadAgentSessions</code> and <code>ParseFile</code> are separate concerns sharing the same <code>Options.IncludeSubagents</code> flag as the brief specified — consistent, no double-gating bug.</p>
 <p>All checks complete. Findings below.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="reportfindings ">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:31">· 12:30</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;findings&#34;: []
 }</pre><pre class="tool-result">No findings reported.</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-16" data-search="### spec compliance
 
@@ -1627,7 +1645,7 @@ none.
 ### assessment
 **task quality:** approved
 **reasoning:** implementation matches the brief essentially line-for-line, all stated global constraints (page path, asset prefixing, root-agent-set link resolution, dual-source linking, go-side escaping, redaction ordering, cli/tui/readme wiring) were independently verified against the diff and, where relevant, against out-of-diff code (redact.go recursion, call-site grep, gofmt/vet re-run). only cosmetic/perf nits remain.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:30:51">· 12:30</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><h3>Spec Compliance</h3>
 <ul>
 <li>✅ Agent page path exactly <code>subagents/agent-&lt;ID&gt;.html</code> relative to outDir — <code>internal/render/render.go:352-357</code> writes <code>filepath.Join(subDir, &quot;agent-&quot;+a.ID+&quot;.html&quot;)</code>; no <code>subagents/</code> dir created when <code>len(s.Agents)==0</code> (<code>render.go:344-346</code>), verified by <code>TestSiteNoAgentsWritesNoSubagentsDir</code> (<code>render_e2e_test.go:613-621</code>).</li>

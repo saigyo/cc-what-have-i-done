@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are re-reviewing Task 5 (transcript timeline folding) f…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are re-reviewing Task 5 (transcript timeline folding) f…</span><span class="prompt-time" title="July 11, 2026 at 12:22:45">12:22</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:22</span>
+        <span title="last message 2026-07-11 12:24">2026-07-11 12:22 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>7 turns</span>
         <span>general-purpose · agent-a2a5eae2bcbc85447</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are re-reviewing task 5 (transcript timeline folding) for the go cli `ccwhid` after a fix. a prior review found a critical bug: tool calls made inside a subagent never had their results attached because tool_use ids were only registered on the main chain. the fix (commit 41ed5b8) moves tool_use registration into `buildturn` so both main-chain and sidechain tool calls register, and documents a parallel-task attribution limitation. verify the fix is correct and complete, and that nothing regressed.
 
 ## what was requested
@@ -79,7 +81,7 @@ specifically verify:
 4. the parallel-task limitation is documented, not silently ignored.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:22:45">· 12:22</span></div>
       <div class="turn-body"><p>You are re-reviewing Task 5 (transcript timeline folding) for the Go CLI <code>ccwhid</code> after a fix. A prior review found a Critical bug: tool calls made inside a subagent never had their results attached because tool_use ids were only registered on the main chain. The fix (commit 41ed5b8) moves tool_use registration into <code>buildTurn</code> so both main-chain and sidechain tool calls register, and documents a parallel-Task attribution limitation. Verify the fix is correct and complete, and that nothing regressed.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</p>
@@ -102,8 +104,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:47">· 12:22</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 5: Fold records into a Session timeline
@@ -560,8 +563,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 452	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:47">· 12:22</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 Report: Fold records into a Session timeline
@@ -808,8 +812,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 242	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..41ed5b8.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:48">· 12:22</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..41ed5b8.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-5980a02..41ed5b8.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 5980a023146389f893b3a8f2ede8ef6ee80cd1f2..HEAD
@@ -1287,8 +1292,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 473	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash git log --oneline -10 &amp;&amp; echo --- &amp;&amp; git show --stat 41ed5b8 &amp;&amp; echo --- &amp;&amp; cat internal/model/model.go 2&gt;/dev/null | head -100">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.12</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:23:31">· 12:23</span><span class="usage-badge">7k tok · ~$0.12</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -10 &amp;&amp; echo --- &amp;&amp; git show --stat 41ed5b8 &amp;&amp; echo --- &amp;&amp; cat internal/model/model.go 2&gt;/dev/null | head -100</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -10 \u0026\u0026 echo --- \u0026\u0026 git show --stat 41ed5b8 \u0026\u0026 echo --- \u0026\u0026 cat internal/model/model.go 2\u003e/dev/null | head -100&#34;
 }</pre><pre class="tool-result">41ed5b8 fix: attach tool results for tools invoked inside subagents
@@ -1405,8 +1411,9 @@ type Subagent struct {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash go test ./internal/transcript/... -v 2&gt;&amp;1 | tail -40">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:23:52">· 12:23</span><span class="usage-badge">2k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/... -v 2&gt;&amp;1 | tail -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/... -v 2\u003e\u00261 | tail -40&#34;
 }</pre><pre class="tool-result">=== RUN   TestParseBasicTimeline
@@ -1428,6 +1435,7 @@ type Subagent struct {
 PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	(cached)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-6" data-search="## task 5 re-review (fix verification): transcript timeline folding
 
@@ -1475,7 +1483,7 @@ none found at critical or important severity.
 ### assessment
 
 **task quality: approved.** the critical bug (subagent-internal tool results never attached) is genuinely fixed, the new test exercises the exact failure mode and is verified to transition red→green, no double-registration or ordering hazard was introduced, existing tests are unaffected, and the known parallel-task attribution limitation is explicitly documented rather than swept under the rug.">
-      <div class="turn-role">Claude<span class="usage-badge">4k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:24:32">· 12:24</span><span class="usage-badge">4k tok · ~$0.05</span></div>
       <div class="turn-body"><h2>Task 5 Re-Review (fix verification): transcript timeline folding</h2>
 <p><strong>Base:</strong> 5980a02 <strong>Head:</strong> 41ed5b8 (fix commit, on top of 09d5d88 feature commit)</p>
 <h3>Spec Compliance</h3>

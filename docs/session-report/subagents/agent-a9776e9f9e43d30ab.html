@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are applying a Critical correctness fix to Task 5 (tran…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are applying a Critical correctness fix to Task 5 (tran…</span><span class="prompt-time" title="July 11, 2026 at 12:20:32">12:20</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:20</span>
+        <span title="last message 2026-07-11 12:22">2026-07-11 12:20 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>33 turns</span>
         <span>general-purpose · agent-a9776e9f9e43d30ab</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are applying a critical correctness fix to task 5 (transcript folding) in the go cli `ccwhid`. the file `internal/transcript/parse.go` exists (commit 09d5d88). work in ~/ideaprojects/cc-what-have-i-done on branch feat/ccwhid-impl. do not create/switch branches.
 
 ## the bug
@@ -192,7 +194,7 @@ co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;
 append a &#34;## fix: sidechain-internal tool results&#34; section to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md with: the red output (test failing before fix), the green output (passing after), the full `go test ./internal/transcript/` result, and confirmation `go test ./...` is green. the covering test file is internal/transcript/parse_test.go.
 
 reply with only (under 12 lines): status (done/blocked), commit sha&#43;subject, one-line test summary naming the covering file, and confirmation the red→green transition was observed.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:20:32">· 12:20</span></div>
       <div class="turn-body"><p>You are applying a Critical correctness fix to Task 5 (transcript folding) in the Go CLI <code>ccwhid</code>. The file <code>internal/transcript/parse.go</code> exists (commit 09d5d88). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The bug</h2>
 <p><code>toolIndex[b.Tool.ID] = b.Tool</code> registration only happens in the main-chain block. So when a tool_use occurs INSIDE a sidechain (a subagent running Bash/Read/etc.), its id is never registered, and the following tool_result inside that sidechain finds nothing in toolIndex and silently drops the result. Tool calls made by subagents are the common case, so this breaks real transcripts.</p>
@@ -308,8 +310,9 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="bash git branch --show-current &amp;&amp; git status &amp;&amp; git log --oneline -5">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:34">· 12:20</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git branch --show-current &amp;&amp; git status &amp;&amp; git log --oneline -5</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git branch --show-current \u0026\u0026 git status \u0026\u0026 git log --oneline -5&#34;
 }</pre><pre class="tool-result">feat/ccwhid-impl
@@ -322,8 +325,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert
 7b11575 feat: add domain model types</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:35">· 12:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -625,8 +629,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert
 297	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="bash cat ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go | tail -60 &amp;&amp; echo &#34;---model---&#34; &amp;&amp; cat ~/ideaprojects/cc-what-have-i-done/internal/model/*.go | grep -n &#34;subagent\|toolcall\|toolresult&#34; ">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:38">· 12:20</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go | tail -60 &amp;&amp; echo &#34;---MODEL---&#34; &amp;&amp; cat ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -n &#34;Subagent\|ToolCall\|ToolResult&#34; </span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go | tail -60 \u0026\u0026 echo \&#34;---MODEL---\&#34; \u0026\u0026 cat ~/IdeaProjects/cc-what-have-i-done/internal/model/*.go | grep -n \&#34;Subagent\\|ToolCall\\|ToolResult\&#34; &#34;
 }</pre><pre class="tool-result">	}
@@ -701,26 +706,30 @@ func TestParseExcludeSubagents(t *testing.T) {
 106:type Subagent struct {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="good, this matches the plan expectations. now let&#39;s write the fixture and test (edits 3 &amp; 4) first, per tdd.">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:40">· 12:20</span><span class="usage-badge">6 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Good, this matches the plan expectations. Now let's write the fixture and test (Edits 3 &amp; 4) first, per TDD.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/transcript/testdata/subagent_inner_tool.jsonl">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:43">· 12:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/subagent_inner_tool.jsonl</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;do research&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;a1&#34;,&#34;parentUuid&#34;:&#34;u1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;task1&#34;,&#34;name&#34;:&#34;Task&#34;,&#34;input&#34;:{&#34;description&#34;:&#34;research topic&#34;,&#34;prompt&#34;:&#34;go find things&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;assistant&#34;,&#34;uuid&#34;:&#34;s2&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_use&#34;,&#34;id&#34;:&#34;inner1&#34;,&#34;name&#34;:&#34;Bash&#34;,&#34;input&#34;:{&#34;command&#34;:&#34;ls&#34;}}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:02Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;s3&#34;,&#34;isSidechain&#34;:true,&#34;parentUuid&#34;:&#34;s2&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;inner1&#34;,&#34;content&#34;:&#34;file.txt&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:03Z&#34;}</div><div class="diff-add">+ {&#34;type&#34;:&#34;user&#34;,&#34;uuid&#34;:&#34;u2&#34;,&#34;parentUuid&#34;:&#34;a1&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;tool_result&#34;,&#34;tool_use_id&#34;:&#34;task1&#34;,&#34;content&#34;:&#34;done&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:04Z&#34;}</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/transcript/testdata/subagent_inner_tool.jsonl (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash wc -l ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">91 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:46">· 12:20</span><span class="usage-badge">91 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">wc -l ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;wc -l ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go&#34;
 }</pre><pre class="tool-result">      81 ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">132 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:48">· 12:20</span><span class="usage-badge">132 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go&#34;,
   &#34;limit&#34;: 10,
@@ -735,19 +744,22 @@ func TestParseExcludeSubagents(t *testing.T) {
 82	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">648 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:53">· 12:20</span><span class="usage-badge">648 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-del">- 	if len(task.Subagents) != 0 {</div><div class="diff-del">- 		t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if len(task.Subagents) != 0 {</div><div class="diff-add">+ 		t.Errorf(&#34;expected no subagents, got %d&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestParseSubagentInnerToolResult(t *testing.T) {</div><div class="diff-add">+ 	s, err := ParseFile(&#34;testdata/subagent_inner_tool.jsonl&#34;, Options{IncludeSubagents: true})</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	task := s.Turns[1].Blocks[0].Tool</div><div class="diff-add">+ 	if len(task.Subagents) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d subagents, want 1&#34;, len(task.Subagents))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	var inner *model.ToolCall</div><div class="diff-add">+ 	for _, tn := range task.Subagents[0].Turns {</div><div class="diff-add">+ 		for _, bl := range tn.Blocks {</div><div class="diff-add">+ 			if bl.Tool != nil &amp;&amp; bl.Tool.Name == &#34;Bash&#34; {</div><div class="diff-add">+ 				inner = bl.Tool</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if inner == nil {</div><div class="diff-add">+ 		t.Fatal(&#34;inner Bash tool not found in subagent turns&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if inner.Result == nil || inner.Result.Content != &#34;file.txt&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;inner tool result = %+v, want content &#39;file.txt&#39;&#34;, inner.Result)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="now let&#39;s confirm `model` is already imported in the test file, then run the red test.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:57">· 12:20</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's confirm <code>model</code> is already imported in the test file, then run the RED test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash head -15 ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:57">· 12:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">head -15 ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;head -15 ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse_test.go&#34;
 }</pre><pre class="tool-result">package transcript
@@ -767,14 +779,16 @@ func TestParseBasicTimeline(t *testing.T) {
 		t.Errorf(&#34;Title = %q&#34;, s.Title)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="good, model is already imported. now run the red test.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:58">· 12:20</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, model is already imported. Now run the RED test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash go test ./internal/transcript/ -run testparsesubagentinnertoolresult -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:20:59">· 12:20</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -786,37 +800,43 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.278s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="red confirmed — `inner.result` is nil, proving the bug. now applying edit 1 and edit 2.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:03">· 12:21</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>RED confirmed — <code>inner.Result</code> is nil, proving the bug. Now applying Edit 1 and Edit 2.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:05">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		case &#34;tool_use&#34;:</div><div class="diff-del">- 			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: buildToolCall(b)})</div><div class="diff-add">+ 		case &#34;tool_use&#34;:</div><div class="diff-add">+ 			tc := buildToolCall(b)</div><div class="diff-add">+ 			// Register the tool call so a later tool_result (in this turn&#39;s</div><div class="diff-add">+ 			// chain OR inside a sidechain) can be matched back to it by id.</div><div class="diff-add">+ 			toolIndex[tc.ID] = tc</div><div class="diff-add">+ 			turn.Blocks = append(turn.Blocks, model.Block{Type: model.BlockToolUse, Tool: tc})</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">706 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:11">· 12:21</span><span class="usage-badge">706 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		s.Turns = append(s.Turns, *turn)</div><div class="diff-del">- </div><div class="diff-del">- 		// After appending, register any Task tool call as the new sidechain</div><div class="diff-del">- 		// owner and seed its first subagent slot.</div><div class="diff-del">- 		for i := range turn.Blocks {</div><div class="diff-del">- 			b := &amp;s.Turns[len(s.Turns)-1].Blocks[i]</div><div class="diff-del">- 			if b.Tool != nil {</div><div class="diff-del">- 				toolIndex[b.Tool.ID] = b.Tool</div><div class="diff-del">- 				if b.Tool.Name == &#34;Task&#34; &amp;&amp; opts.IncludeSubagents {</div><div class="diff-del">- 					b.Tool.Subagents = append(b.Tool.Subagents, model.Subagent{</div><div class="diff-del">- 						Description: taskDescription(b.Tool),</div><div class="diff-del">- 					})</div><div class="diff-del">- 					lastTask = b.Tool</div><div class="diff-del">- 					sidechainOwner = lastTask</div><div class="diff-del">- 				}</div><div class="diff-del">- 			}</div><div class="diff-del">- 		}</div><div class="diff-add">+ 		s.Turns = append(s.Turns, *turn)</div><div class="diff-add">+ </div><div class="diff-add">+ 		// Seed a subagent slot for each Task tool call and make it the current</div><div class="diff-add">+ 		// sidechain owner. Tool-use ids are already registered in buildTurn.</div><div class="diff-add">+ 		// Note: sidechain records are attributed to the nearest preceding Task</div><div class="diff-add">+ 		// by file order. Sequential Task calls attribute correctly; multiple</div><div class="diff-add">+ 		// Task calls dispatched in parallel from one assistant message cannot be</div><div class="diff-add">+ 		// disambiguated from the raw records and will all attach to the last</div><div class="diff-add">+ 		// one — a known v1 limitation.</div><div class="diff-add">+ 		if opts.IncludeSubagents {</div><div class="diff-add">+ 			for i := range turn.Blocks {</div><div class="diff-add">+ 				tool := turn.Blocks[i].Tool</div><div class="diff-add">+ 				if tool != nil &amp;&amp; tool.Name == &#34;Task&#34; {</div><div class="diff-add">+ 					tool.Subagents = append(tool.Subagents, model.Subagent{</div><div class="diff-add">+ 						Description: taskDescription(tool),</div><div class="diff-add">+ 					})</div><div class="diff-add">+ 					lastTask = tool</div><div class="diff-add">+ 					sidechainOwner = lastTask</div><div class="diff-add">+ 				}</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash go build ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">65 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:13">· 12:21</span><span class="usage-badge">65 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go build ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go build ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="build succeeds, no unused variable errors. now green test.">
-      <div class="turn-role">Claude<span class="usage-badge">8 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:17">· 12:21</span><span class="usage-badge">8 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Build succeeds, no unused variable errors. Now GREEN test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="bash go test ./internal/transcript/ -run testparsesubagentinnertoolresult -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:18">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestParseSubagentInnerToolResult
@@ -825,14 +845,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.281s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="green confirmed. now full package test and full repo test.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:21">· 12:21</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>GREEN confirmed. Now full package test and full repo test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="bash go test ./internal/transcript/ -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:21">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/transcript/ -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/transcript/ -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestParseBasicTimeline
@@ -855,14 +877,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.159s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="all existing tests pass alongside the new one. now full repo test.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:30">· 12:21</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All existing tests pass alongside the new one. Now full repo test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:30">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
@@ -871,14 +895,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)
 ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.161s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="all green across the repo. now let&#39;s commit.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:34">· 12:21</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All green across the repo. Now let's commit.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="bash git status --porcelain">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:34">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --porcelain</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --porcelain&#34;
 }</pre><pre class="tool-result"> M internal/transcript/parse.go
@@ -886,8 +912,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.161s</pre></div
 ?? internal/transcript/testdata/subagent_inner_tool.jsonl</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="bash git add internal/transcript/parse.go internal/transcript/parse_test.go internal/transcript/testdata/subagent_inner_tool.jsonl &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">70 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:42">· 12:21</span><span class="usage-badge">70 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/transcript/parse.go internal/transcript/parse_test.go internal/transcript/testdata/subagent_inner_tool.jsonl &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/transcript/parse.go internal/transcript/parse_test.go internal/transcript/testdata/subagent_inner_tool.jsonl \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: attach tool results for tools invoked inside subagents\n\nRegister tool_use ids in buildTurn so tool_result blocks inside a\nsidechain match their originating ToolCall. Document the parallel-Task\nattribution limitation.\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34; \u0026\u0026 git log --oneline -1&#34;
 }</pre><pre class="tool-result">[feat/ccwhid-impl 41ed5b8] fix: attach tool results for tools invoked inside subagents
@@ -896,14 +923,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.161s</pre></div
 41ed5b8 fix: attach tool results for tools invoked inside subagents</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="now let&#39;s write the report section.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:49">· 12:21</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's write the report section.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:50">· 12:21</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">total 288
@@ -928,8 +957,9 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 -rw-r--r--@  1 [user]  staff   6431 11 Juli 12:13 task-5-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">92 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:51">· 12:21</span><span class="usage-badge">92 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 Report: Fold records into a Session timeline
@@ -1069,23 +1099,27 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 135	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="now appending the fix section to this report.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:21:53">· 12:21</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Now appending the fix section to this report.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:09">· 12:22</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- ## Concerns</div><div class="diff-del">- </div><div class="diff-del">- None. The brief&#39;s code was implemented verbatim and all specified tests</div><div class="diff-del">- (including the two Task 4 regression tests already in the package) pass. No</div><div class="diff-del">- bugs were found in the brief&#39;s logic during implementation or review.</div><div class="diff-add">+ ## Concerns</div><div class="diff-add">+ </div><div class="diff-add">+ None. The brief&#39;s code was implemented verbatim and all specified tests</div><div class="diff-add">+ (including the two Task 4 regression tests already in the package) pass. No</div><div class="diff-add">+ bugs were found in the brief&#39;s logic during implementation or review.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Fix: sidechain-internal tool results</div><div class="diff-add">+ </div><div class="diff-add">+ ### Bug</div><div class="diff-add">+ </div><div class="diff-add">+ `toolIndex[b.Tool.ID] = b.Tool` registration happened only in the main-chain</div><div class="diff-add">+ post-append loop in `Parse`, never inside `buildTurn`. A `tool_use` block</div><div class="diff-add">+ produced *inside* a sidechain (a subagent invoking Bash/Read/etc.) was</div><div class="diff-add">+ therefore never added to `toolIndex`. The matching `tool_result` record</div><div class="diff-add">+ inside that same sidechain looked the id up in `toolIndex`, found nothing,</div><div class="diff-add">+ and silently dropped the result — `ToolCall.Result` stayed `nil`. Since</div><div class="diff-add">+ subagent tool calls are a common real-world case, this broke a large class</div><div class="diff-add">+ of transcripts.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Fix</div><div class="diff-add">+ </div><div class="diff-add">+ Moved id registration into `buildTurn`&#39;s `tool_use` case itself (Edit 1),</div><div class="diff-add">+ so both main-chain and sidechain tool calls register into `toolIndex` at</div><div class="diff-add">+ the moment they&#39;re built. The main-chain post-append loop in `Parse` (Edit</div><div class="diff-add">+ 2) was simplified to only seed a `Subagent` slot for `Task` calls and</div><div class="diff-add">+ update `sidechainOwner`; it no longer needs to touch `toolIndex` since</div><div class="diff-add">+ `buildTurn` already did.</div><div class="diff-add">+ </div><div class="diff-add">+ ### RED — regression test fails before the fix</div><div class="diff-add">+ </div><div class="diff-add">+ New fixture `internal/transcript/testdata/subagent_inner_tool.jsonl` (5</div><div class="diff-add">+ lines: user turn, main-chain assistant `Task` tool_use, sidechain</div><div class="diff-add">+ assistant `Bash` tool_use, sidechain user `tool_result` for the Bash call,</div><div class="diff-add">+ main-chain user `tool_result` closing the Task call) and new test</div><div class="diff-add">+ `TestParseSubagentInnerToolResult` in `internal/transcript/parse_test.go`</div><div class="diff-add">+ were added first, against the pre-fix code:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v</div><div class="diff-add">+ === RUN   TestParseSubagentInnerToolResult</div><div class="diff-add">+     parse_test.go:104: inner tool result = &lt;nil&gt;, want content &#39;file.txt&#39;</div><div class="diff-add">+ --- FAIL: TestParseSubagentInnerToolResult (0.00s)</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ FAIL	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.278s</div><div class="diff-add">+ FAIL</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ This confirms the bug: the inner Bash tool call&#39;s `Result` is `nil` even</div><div class="diff-add">+ though its `tool_result` record is present in the sidechain.</div><div class="diff-add">+ </div><div class="diff-add">+ ### GREEN — after applying the fix</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/transcript/ -run TestParseSubagentInnerToolResult -v</div><div class="diff-add">+ === RUN   TestParseSubagentInnerToolResult</div><div class="diff-add">+ --- PASS: TestParseSubagentInnerToolResult (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.281s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full package suite — no regressions</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./internal/transcript/ -v</div><div class="diff-add">+ === RUN   TestParseBasicTimeline</div><div class="diff-add">+ --- PASS: TestParseBasicTimeline (0.00s)</div><div class="diff-add">+ === RUN   TestParseSubagentAttachment</div><div class="diff-add">+ --- PASS: TestParseSubagentAttachment (0.00s)</div><div class="diff-add">+ === RUN   TestParseExcludeSubagents</div><div class="diff-add">+ --- PASS: TestParseExcludeSubagents (0.00s)</div><div class="diff-add">+ === RUN   TestParseSubagentInnerToolResult</div><div class="diff-add">+ --- PASS: TestParseSubagentInnerToolResult (0.00s)</div><div class="diff-add">+ === RUN   TestDecodeMessageContentString</div><div class="diff-add">+ --- PASS: TestDecodeMessageContentString (0.00s)</div><div class="diff-add">+ === RUN   TestDecodeMessageContentArray</div><div class="diff-add">+ --- PASS: TestDecodeMessageContentArray (0.00s)</div><div class="diff-add">+ === RUN   TestToolResultTextArray</div><div class="diff-add">+ --- PASS: TestToolResultTextArray (0.00s)</div><div class="diff-add">+ === RUN   TestToolResultTextString</div><div class="diff-add">+ --- PASS: TestToolResultTextString (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.159s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full repo suite — green</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ go test ./...</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/transcript	0.161s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Files changed</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/transcript/parse.go` — Edit 1 (register `tc.ID` in `buildTurn`&#39;s</div><div class="diff-add">+   `tool_use` case) and Edit 2 (simplified main-chain post-append loop to</div><div class="diff-add">+   only seed `Task` subagent slots; documented the known parallel-Task</div><div class="diff-add">+   attribution limitation in a comment).</div><div class="diff-add">+ - `internal/transcript/testdata/subagent_inner_tool.jsonl` (new) — 5-line</div><div class="diff-add">+   regression fixture with a tool_use/tool_result pair entirely inside a</div><div class="diff-add">+   sidechain.</div><div class="diff-add">+ - `internal/transcript/parse_test.go` — added</div><div class="diff-add">+   `TestParseSubagentInnerToolResult` (covering test for this fix).</div><div class="diff-add">+ </div><div class="diff-add">+ ### Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `41ed5b8` — &#34;fix: attach tool results for tools invoked inside subagents&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ No `lastTask`/`sidechainOwner` compiler errors arose; both remain assigned</div><div class="diff-add">+ and read exactly as before, so no extra changes were needed there.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="bash git status --porcelain">
-      <div class="turn-role">Claude<span class="usage-badge">106 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:11">· 12:22</span><span class="usage-badge">106 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status --porcelain</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status --porcelain&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-32" data-search="report file is gitignored (per `.superpowers/sdd/.gitignore`), so working tree is clean after the commit — consistent with expectations.
 
@@ -1093,7 +1127,7 @@ status: done
 commit: `41ed5b8` — &#34;fix: attach tool results for tools invoked inside subagents&#34;
 test summary: covering test `testparsesubagentinnertoolresult` in `internal/transcript/parse_test.go`; full `go test ./internal/transcript/` and `go test ./...` both green.
 red→green observed: red — `inner tool result = &lt;nil&gt;, want content &#39;file.txt&#39;` (fail) before the fix; green — pass after applying edits 1 &amp; 2. no unused-variable compiler errors arose from `lasttask`/`sidechainowner`.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:22:16">· 12:22</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Report file is gitignored (per <code>.superpowers/sdd/.gitignore</code>), so working tree is clean after the commit — consistent with expectations.</p>
 <p>Status: DONE
 Commit: <code>41ed5b8</code> — &quot;fix: attach tool results for tools invoked inside subagents&quot;

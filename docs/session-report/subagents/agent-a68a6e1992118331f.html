@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 12:05:39">12:05</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:05</span>
+        <span title="last message 2026-07-11 12:07">2026-07-11 12:05 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>15 turns</span>
         <span>general-purpose · agent-a68a6e1992118331f</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; a broad review happens later.
 
 ## what was requested
@@ -82,7 +84,7 @@ read-only review; do not modify the tree. the implementer already ran tests — 
 named risks worth a focused check: (a) that malformed lines are truly skipped and don&#39;t abort `indexfile`/`scan`; (b) that `findsession` prefix resolution correctly reports ambiguous vs. not-found; (c) that the cwd-capture logic sets projectpath once and the fallback still works when no cwd is present.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:05:39">· 12:05</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad review happens later.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</p>
@@ -107,8 +109,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:05:42">· 12:05</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 3: Session discovery
@@ -463,8 +466,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 350	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:05:42">· 12:05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 3 Report: Session discovery
@@ -717,8 +721,9 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 248	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:05:45">· 12:05</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-7b11575..159ee65.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 7b11575cdfb3d3e6a0eef9a70f30ddaddd199c30..HEAD
@@ -1093,14 +1098,16 @@ Diff file (read once, it is your view of the change): ~/IdeaProjects/cc-what-hav
 370	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="i&#39;ll examine the actual code more closely and run a couple of focused verification tests to check the three named risks (malformed line tolerance, ambiguous prefix handling, and cwd-capture/fallback). i&#39;ll do this via a temporary test file that i&#39;ll remove afterward, leaving the tree clean.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:32">· 12:06</span><span class="usage-badge">4 tok · ~$0.03</span></div>
       <div class="turn-body"><p>I'll examine the actual code more closely and run a couple of focused verification tests to check the three named risks (malformed line tolerance, ambiguous prefix handling, and cwd-capture/fallback). I'll do this via a temporary test file that I'll remove afterward, leaving the tree clean.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash git log --oneline -5 &amp;&amp; git status &amp;&amp; cat go.mod | head -5">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:33">· 12:06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --oneline -5 &amp;&amp; git status &amp;&amp; cat go.mod | head -5</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --oneline -5 \u0026\u0026 git status \u0026\u0026 cat go.mod | head -5&#34;
 }</pre><pre class="tool-result">159ee65 fix: use transcript cwd for authoritative project path
@@ -1117,13 +1124,15 @@ go 1.26
 require github.com/spf13/cobra v1.10.2</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="write ~/ideaprojects/cc-what-have-i-done/internal/discovery/zz_review_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:45">· 12:06</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Write</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-add">+ package discovery</div><div class="diff-add">+ </div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ )</div><div class="diff-add">+ </div><div class="diff-add">+ // Focused review checks — not part of the deliverable, deleted after use.</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_MalformedLinesTolerated(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;aaaa1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`not json at all`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hello&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`,</div><div class="diff-add">+ 		`{&#34;broken json`,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;assistant&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;assistant&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;text&#34;,&#34;text&#34;:&#34;hi&#34;}]},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`,</div><div class="diff-add">+ 		``, // blank line</div><div class="diff-add">+ 	)</div><div class="diff-add">+ 	groups, err := Scan(root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;Scan errored (should tolerate malformed lines): %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups[0].Sessions) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d sessions, want 1&#34;, len(groups[0].Sessions))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	s := groups[0].Sessions[0]</div><div class="diff-add">+ 	if s.MessageCount != 2 {</div><div class="diff-add">+ 		t.Errorf(&#34;MessageCount = %d, want 2 (only valid user/assistant lines counted)&#34;, s.MessageCount)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_FindSessionAmbiguous(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review2&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd2222-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;y&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`)</div><div class="diff-add">+ 	_, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-add">+ 	if err == nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected ambiguous error, got nil&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(err.Error(), &#34;ambiguous&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;error = %q, want mention of ambiguous&#34;, err.Error())</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestReview_FindSessionNotFound(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review3&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	_, err := FindSession(root, &#34;zzzz&#34;)</div><div class="diff-add">+ 	if err == nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected not-found error, got nil&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ // Exact match should win even when a longer sibling ID shares the same prefix.</div><div class="diff-add">+ func TestReview_FindSessionExactMatchWinsOverAmbiguity(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-review4&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;x&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;abcd1111-0000-0000-0000-0000000000001111&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;y&#34;},&#34;timestamp&#34;:&#34;2026-07-11T10:00:01Z&#34;}`)</div><div class="diff-add">+ 	got, err := FindSession(root, &#34;abcd1111-0000-0000-0000-000000000000&#34;)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatalf(&#34;expected exact match to win, got error: %v&#34;, err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div></div><pre class="tool-result">File created successfully at: ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash go test ./internal/discovery/ -run &#39;testreview&#39; -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">104 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:47">· 12:06</span><span class="usage-badge">104 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/discovery/ -run &#39;TestReview&#39; -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/discovery/ -run &#39;TestReview&#39; -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestReview_MalformedLinesTolerated
@@ -1138,21 +1147,24 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.307s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="all four focused checks pass. now removing the temporary test file to leave the tree clean.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:50">· 12:06</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All four focused checks pass. Now removing the temporary test file to leave the tree clean.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash rm ~/ideaprojects/cc-what-have-i-done/internal/discovery/zz_review_test.go &amp;&amp; git status --short &amp;&amp; go build ./... &amp;&amp; echo &#34;clean and builds&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:51">· 12:06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">rm ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go &amp;&amp; git status --short &amp;&amp; go build ./... &amp;&amp; echo &#34;clean and builds&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;rm ~/IdeaProjects/cc-what-have-i-done/internal/discovery/zz_review_test.go \u0026\u0026 git status --short \u0026\u0026 go build ./... \u0026\u0026 echo \&#34;clean and builds\&#34;&#34;
 }</pre><pre class="tool-result">clean and builds</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash git log -2 --format=&#39;%h%n%b%n---&#39; 9def244 159ee65 2&gt;&amp;1 | head -60">
-      <div class="turn-role">Claude<span class="usage-badge">131 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:55">· 12:06</span><span class="usage-badge">131 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -2 --format=&#39;%H%n%B%n---&#39; 9def244 159ee65 2&gt;&amp;1 | head -60</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -2 --format=&#39;%H%n%B%n---&#39; 9def244 159ee65 2\u003e\u00261 | head -60&#34;
 }</pre><pre class="tool-result">159ee6522adfcbfd4824ad4dd48f419ab084fc47
@@ -1172,21 +1184,24 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 ---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="both commits satisfy the trailer constraint. now finalizing the review.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:56">· 12:06</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Both commits satisfy the trailer constraint. Now finalizing the review.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:06:57">· 12:06</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l internal/discovery/*.go; go vet ./internal/discovery/... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="bash find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;cwd&#34; -i 2&gt;/dev/null; echo &#34;---&#34;; cat internal/model/*.go 2&gt;/dev/null | head -150">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:07:18">· 12:07</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;cwd&#34; -i 2&gt;/dev/null; echo &#34;---&#34;; cat internal/model/*.go 2&gt;/dev/null | head -150</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -name \&#34;*.go\&#34; -print | xargs grep -l \&#34;cwd\&#34; -i 2\u003e/dev/null; echo \&#34;---\&#34;; cat internal/model/*.go 2\u003e/dev/null | head -150&#34;
 }</pre><pre class="tool-result">./internal/discovery/discovery.go
@@ -1304,6 +1319,7 @@ type Subagent struct {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="# task 3 review: session discovery
 
 ## spec compliance: ✅
@@ -1340,7 +1356,7 @@ no critical or important issues found.
 **task quality: approved**
 
 the implementation matches the produced api contract exactly, and the controller-directed correctness fix is implemented as designed: transcript `cwd` is authoritative when present, `decodeprojectdir` is used only as a fallback, and this was verified both via the implementer&#39;s own test and my independent focused tests (malformed-line tolerance, ambiguous/not-found/exact-match `findsession` resolution, and the fallback path). no functional defects found; the two minor notes are coverage/documentation suggestions, not correctness problems.">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:07:56">· 12:07</span><span class="usage-badge">6 tok · ~$0.02</span></div>
       <div class="turn-body"><h1>Task 3 Review: Session discovery</h1>
 <h2>Spec Compliance: ✅</h2>
 <p>All items in the &quot;Produced API&quot; contract are present with matching names/signatures/types: <code>EncodeProjectDir(string) string</code>, <code>DecodeProjectDir(string) string</code>, <code>SessionInfo{ID, FilePath, ProjectDir, ProjectPath, Title, FirstPrompt string; ModTime time.Time; MessageCount int; HasSubagents bool}</code>, <code>ProjectGroup{ProjectDir, ProjectPath string; Sessions []SessionInfo}</code>, <code>Scan(root string) ([]ProjectGroup, error)</code>, <code>DefaultRoot() (string, error)</code>, <code>FindSession(root, idOrPrefix string) (SessionInfo, error)</code>. Package path is <code>github.com/saigyo/cc-what-have-i-done/internal/discovery</code> (verified against <code>go.mod</code>). No cross-package imports (stdlib only). Both commits carry the required <code>Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</code> trailer.</p>

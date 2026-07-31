@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, searc…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">In the Go repo at ~/IdeaProjects/cc-what-have-i-done, searc…</span><span class="prompt-time" title="July 12, 2026 at 08:01:13">08:01</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/usage-cost</span>
-        <span>2026-07-12 06:01</span>
+        <span title="session start">2026-07-12 08:01</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>7 turns</span>
         <span>general-purpose · agent-a9362c6415f36d9ba</span>
       </div>
@@ -52,14 +53,16 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="in the go repo at ~/ideaprojects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.turn{} struct literal using positional (unkeyed) field initialization, e.g. `model.turn{turnkind, time.now(), nil}` rather than keyed fields like `model.turn{kind: ..., timestamp: ...}`. the turn struct in internal/model/model.go just had two new fields (model string, usage *usage) appended to it; if any code constructs turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. also check whether internal/model.turn or internal/model.usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. report back: any positional turn literals found (file:line), and a list of all other files that reference model.turn or model.usage. keep the report under 150 words, this is a quick focused check.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 08:01:13">· 08:01</span></div>
       <div class="turn-body"><p>In the Go repo at ~/IdeaProjects/cc-what-have-i-done, search the codebase (all .go files, especially outside internal/transcript) for any places that construct a model.Turn{} struct literal using positional (unkeyed) field initialization, e.g. <code>model.Turn{TurnKind, time.Now(), nil}</code> rather than keyed fields like <code>model.Turn{Kind: ..., Timestamp: ...}</code>. The Turn struct in internal/model/model.go just had two new fields (Model string, Usage *Usage) appended to it; if any code constructs Turn with positional literals, adding fields would silently break it (wrong field assigned) or fail to compile. Also check whether internal/model.Turn or internal/model.Usage are referenced/constructed anywhere else in the codebase (e.g. cmd/, internal/report, internal/render, templates) in a way that might not compile or might need updating given the new fields — this task only touched internal/model/model.go, internal/transcript/raw.go, internal/transcript/parse.go, internal/transcript/parse_test.go. Report back: any positional Turn literals found (file:line), and a list of all other files that reference model.Turn or model.Usage. Keep the report under 150 words, this is a quick focused check.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="bash echo &#34;=== grep for model.turn{ ===&#34; &amp;&amp; grep -rn &#34;model\.turn{&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for turn{ (unqualified, within internal/model or same package) ===&#34; &amp;&amp; grep -rn &#34;turn{&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for model.usage ===&#34; &amp;&amp; grep -rn &#34;model\.usage&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for usage{ ===&#34; &amp;&amp; grep -rn &#34;usage{&#34; --include=&#34;*.go&#34; .">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:16">· 08:01</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== grep for model.Turn{ ===&#34; &amp;&amp; grep -rn &#34;model\.Turn{&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for Turn{ (unqualified, within internal/model or same package) ===&#34; &amp;&amp; grep -rn &#34;Turn{&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for model.Usage ===&#34; &amp;&amp; grep -rn &#34;model\.Usage&#34; --include=&#34;*.go&#34; . &amp;&amp; echo &#34;=== grep for Usage{ ===&#34; &amp;&amp; grep -rn &#34;Usage{&#34; --include=&#34;*.go&#34; .</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;=== grep for model.Turn{ ===\&#34; \u0026\u0026 grep -rn \&#34;model\\.Turn{\&#34; --include=\&#34;*.go\&#34; . \u0026\u0026 echo \&#34;=== grep for Turn{ (unqualified, within internal/model or same package) ===\&#34; \u0026\u0026 grep -rn \&#34;Turn{\&#34; --include=\&#34;*.go\&#34; . \u0026\u0026 echo \&#34;=== grep for model.Usage ===\&#34; \u0026\u0026 grep -rn \&#34;model\\.Usage\&#34; --include=\&#34;*.go\&#34; . \u0026\u0026 echo \&#34;=== grep for Usage{ ===\&#34; \u0026\u0026 grep -rn \&#34;Usage{\&#34; --include=\&#34;*.go\&#34; .&#34;
 }</pre><pre class="tool-result">=== grep for model.Turn{ ===
@@ -83,8 +86,9 @@ internal/transcript/parse_test.go:133:	want := model.Usage{Input: 100, Output: 2
 internal/transcript/parse.go:177:	return id, &amp;model.Usage{</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/redact/redact_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:20">· 08:01</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go&#34;,
   &#34;limit&#34;: 40,
@@ -131,8 +135,9 @@ internal/transcript/parse.go:177:	return id, &amp;model.Usage{</pre></div></deta
 69		Session(s, &#34;~&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:21">· 08:01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;,
   &#34;limit&#34;: 50,
@@ -189,8 +194,9 @@ internal/transcript/parse.go:177:	return id, &amp;model.Usage{</pre></div></deta
 94				}},</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash echo &#34;=== model.go turn/usage struct ===&#34; &amp;&amp; sed -n &#39;1,80p&#39; internal/model/model.go 2&gt;/dev/null | grep -n &#34;type turn\|type usage&#34; -a 15 &amp;&amp; echo &#34;=== all files referencing &#39;model&#39; package for turn/usage broadly (cmd, report, templates) ===&#34; &amp;&amp; grep -rln &#34;model\.turn\|model\.usage&#34; --include=&#34;*.go&#34; ~/ideaprojects/cc-what-have-i-done &amp;&amp; echo &#34;=== check cmd/ and internal/report and internal/render dirs for any turn construction ===&#34; &amp;&amp; grep -rn &#34;turn(&#34; --include=&#34;*.go&#34; ~/ideaprojects/cc-what-have-i-done/cmd ~/ideaprojects/cc-what-have-i-done/internal/report 2&gt;/dev/null">
-      <div class="turn-role">Claude<span class="usage-badge">442 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:26">· 08:01</span><span class="usage-badge">442 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">echo &#34;=== model.go Turn/Usage struct ===&#34; &amp;&amp; sed -n &#39;1,80p&#39; internal/model/model.go 2&gt;/dev/null | grep -n &#34;type Turn\|type Usage&#34; -A 15 &amp;&amp; echo &#34;=== all files referencing &#39;model&#39; package for Turn/Usage broadly (cmd, report, templates) ===&#34; &amp;&amp; grep -rln &#34;model\.Turn\|model\.Usage&#34; --include=&#34;*.go&#34; ~/IdeaProjects/cc-what-have-i-done &amp;&amp; echo &#34;=== check cmd/ and internal/report and internal/render dirs for any Turn construction ===&#34; &amp;&amp; grep -rn &#34;Turn(&#34; --include=&#34;*.go&#34; ~/IdeaProjects/cc-what-have-i-done/cmd ~/IdeaProjects/cc-what-have-i-done/internal/report 2&gt;/dev/null</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;echo \&#34;=== model.go Turn/Usage struct ===\&#34; \u0026\u0026 sed -n &#39;1,80p&#39; internal/model/model.go 2\u003e/dev/null | grep -n \&#34;type Turn\\|type Usage\&#34; -A 15 \u0026\u0026 echo \&#34;=== all files referencing &#39;model&#39; package for Turn/Usage broadly (cmd, report, templates) ===\&#34; \u0026\u0026 grep -rln \&#34;model\\.Turn\\|model\\.Usage\&#34; --include=\&#34;*.go\&#34; ~/IdeaProjects/cc-what-have-i-done \u0026\u0026 echo \&#34;=== check cmd/ and internal/report and internal/render dirs for any Turn construction ===\&#34; \u0026\u0026 grep -rn \&#34;Turn(\&#34; --include=\&#34;*.go\&#34; ~/IdeaProjects/cc-what-have-i-done/cmd ~/IdeaProjects/cc-what-have-i-done/internal/report 2\u003e/dev/null&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 2
@@ -248,8 +254,9 @@ internal/transcript/parse.go:177:	return id, &amp;model.Usage{</pre></div></deta
 === check cmd/ and internal/report and internal/render dirs for any Turn construction ===</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;model\.turn\|model\.usage&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go ~/ideaprojects/cc-what-have-i-done/internal/redact/redact.go">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:29">· 08:01</span><span class="usage-badge">6 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;model\.Turn\|model\.Usage&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;model\\.Turn\\|model\\.Usage\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact.go:61:func redactTurn(r *Redactor, t *model.Turn) {
@@ -259,6 +266,7 @@ internal/transcript/parse.go:177:	return id, &amp;model.Usage{</pre></div></deta
 ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:120:func renderTurnBody(t model.Turn) template.HTML {
 ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go:170:func turnPlainText(t model.Turn) string {</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-6" data-search="no positional (unkeyed) `model.turn{}` literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new `model`/`usage` fields.
 
@@ -273,7 +281,7 @@ files referencing `model.turn` / `model.usage`:
 - `internal/redact/redact_test.go` (keyed `model.turn{{kind: ..., blocks: ...}}` literals, x2)
 
 no `cmd/` or `internal/report` files reference `model.turn`/`model.usage` at all. everything compiles as-is; no code needs updating for the new `model`/`usage` fields.">
-      <div class="turn-role">Claude<span class="usage-badge">501 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 08:01:35">· 08:01</span><span class="usage-badge">501 tok · ~$0.01</span></div>
       <div class="turn-body"><p>No positional (unkeyed) <code>model.Turn{}</code> literals exist anywhere in the codebase — all constructions use keyed fields, so they compile fine with the new <code>Model</code>/<code>Usage</code> fields.</p>
 <p>Positional Turn literals found: none.</p>
 <p>Files referencing <code>model.Turn</code> / <code>model.Usage</code>:</p>

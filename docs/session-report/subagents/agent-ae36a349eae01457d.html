@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are applying the final-review fixes on the Go CLI `ccwh…</a></li>
+      <li class="prompt-day" title="Sunday, July 12, 2026">July 12, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are applying the final-review fixes on the Go CLI `ccwh…</span><span class="prompt-time" title="July 12, 2026 at 12:35:30">12:35</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/subagent-sessions</span>
-        <span>2026-07-12 10:35</span>
+        <span title="last message 2026-07-12 12:37">2026-07-12 12:35 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>33 turns</span>
         <span>general-purpose · agent-ae36a349eae01457d</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Sunday, July 12, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are applying the final-review fixes on the go cli `ccwhid`. work from ~/ideaprojects/cc-what-have-i-done (branch feat/subagent-sessions).
 
 two fixes, one commit:
@@ -126,7 +128,7 @@ commit both changes as one commit, message ending with the trailer:
 append a short fix report (what changed, red/green evidence for the escaping test, commands &#43; output for the verify step) to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md under a heading &#34;## final-review fixes&#34;.
 
 then report back with only: status, commit sha &#43; subject, one-line test summary.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 12, 2026 at 12:35:30">· 12:35</span></div>
       <div class="turn-body"><p>You are applying the final-review fixes on the Go CLI <code>ccwhid</code>. Work from ~/IdeaProjects/cc-what-have-i-done (branch feat/subagent-sessions).</p>
 <p>Two fixes, one commit:</p>
 <h2>Fix 1 (Important — escaping regression)</h2>
@@ -174,14 +176,16 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="i&#39;ll work through these fixes methodically. let me start by examining the current state of the files.">
-      <div class="turn-role">Claude<span class="usage-badge">13 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:35">· 12:35</span><span class="usage-badge">13 tok · ~$0.02</span></div>
       <div class="turn-body"><p>I'll work through these fixes methodically. Let me start by examining the current state of the files.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:35">· 12:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 150
@@ -337,16 +341,18 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 150		Index      int</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="bash grep -n &#34;rendertool&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go | head -20">
-      <div class="turn-role">Claude<span class="usage-badge">130 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:37">· 12:35</span><span class="usage-badge">130 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;renderTool&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;renderTool\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go | head -20&#34;
 }</pre><pre class="tool-result">332:			b.WriteString(renderTool(blk.Tool, links))
 338:func renderTool(tc *model.ToolCall, links *agentLinks) string {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">144 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:39">· 12:35</span><span class="usage-badge">144 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 80,
@@ -412,15 +418,17 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 396	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash grep -n &#34;func rolelabel&#34; ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">197 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:42">· 12:35</span><span class="usage-badge">197 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func roleLabel&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func roleLabel\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">298:func roleLabel(t model.Turn) string {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">145 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:44">· 12:35</span><span class="usage-badge">145 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 20,
@@ -447,8 +455,9 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 317		return &#34;Agent&#34;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">196 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:48">· 12:35</span><span class="usage-badge">196 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -726,27 +735,31 @@ Expected: gofmt silent, vet clean, both packages pass. (No need for the full sui
 273	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="now let me check the current git status and add the regression test first:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:52">· 12:35</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let me check the current git status and add the regression test first:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="bash git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:52">· 12:35</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status&#34;
 }</pre><pre class="tool-result">Auf Branch feat/subagent-sessions
 nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">751 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:35:59">· 12:35</span><span class="usage-badge">751 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</div><div class="diff-del">- 	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}</div><div class="diff-del">- 	v := buildUsageView(r)</div><div class="diff-del">- 	if v.SubLine != &#34;&#34; {</div><div class="diff-del">- 		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {</div><div class="diff-del">- 		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ func TestUsageViewNoSubagentLineWithoutAgents(t *testing.T) {</div><div class="diff-add">+ 	r := usage.Report{HasAnyUsage: true, Total: usage.TokenCounts{Input: 100}, PricesAsOf: &#34;2026-07&#34;}</div><div class="diff-add">+ 	v := buildUsageView(r)</div><div class="diff-add">+ 	if v.SubLine != &#34;&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;SubLine = %q, want empty&#34;, v.SubLine)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(v.Footnote, &#34;sub-agent sessions stored as separate files, and server-tool fees, are excluded&#34;) {</div><div class="diff-add">+ 		t.Errorf(&#34;existing footnote must stay when no agents: %q&#34;, v.Footnote)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSidechainAgentResultSummaryIsEscaped(t *testing.T) {</div><div class="diff-add">+ 	tc := &amp;model.ToolCall{Name: &#34;Task&#34;, Subagents: []model.Subagent{{</div><div class="diff-add">+ 		Description: &#34;d&#34;,</div><div class="diff-add">+ 		Turns: []model.Turn{{</div><div class="diff-add">+ 			Kind:         model.TurnAgentResult,</div><div class="diff-add">+ 			AgentSummary: `Agent &#34;&lt;img src=x onerror=alert(1)&gt;&#34; finished`,</div><div class="diff-add">+ 			Blocks:       []model.Block{{Type: model.BlockText, Text: &#34;x&#34;}},</div><div class="diff-add">+ 		}},</div><div class="diff-add">+ 	}}}</div><div class="diff-add">+ 	out := renderTool(tc, newAgentLinks(nil, &#34;&#34;))</div><div class="diff-add">+ 	if strings.Contains(out, &#34;&lt;img&#34;) {</div><div class="diff-add">+ 		t.Fatal(&#34;agent summary must be HTML-escaped in sidechain rendering&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if !strings.Contains(out, &#34;&amp;lt;img&#34;) {</div><div class="diff-add">+ 		t.Error(&#34;escaped summary not found in output&#34;)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash go test ./internal/render/ -run testsidechainagentresultsummaryisescaped -v">
-      <div class="turn-role">Claude<span class="usage-badge">134 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:02">· 12:36</span><span class="usage-badge">134 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -758,14 +771,16 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/render	0.367s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="now i&#39;ll apply the escaping fix to render.go:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:09">· 12:36</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now I'll apply the escaping fix to render.go:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:12">· 12:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		for _, sub := range tc.Subagents {</div><div class="diff-del">- 			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-del">- 			for _, st := range sub.Turns {</div><div class="diff-del">- 				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-del">- 				b.WriteString(string(renderTurnBody(st, links)))</div><div class="diff-del">- 				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-del">- 			}</div><div class="diff-del">- 			b.WriteString(`&lt;/details&gt;`)</div><div class="diff-del">- 		}</div><div class="diff-add">+ 		for _, sub := range tc.Subagents {</div><div class="diff-add">+ 			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)</div><div class="diff-add">+ 			for _, st := range sub.Turns {</div><div class="diff-add">+ 				b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + html.EscapeString(roleLabel(st)) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ 				b.WriteString(string(renderTurnBody(st, links)))</div><div class="diff-add">+ 				b.WriteString(`&lt;/div&gt;&lt;/article&gt;`)</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			b.WriteString(`&lt;/details&gt;`)</div><div class="diff-add">+ 		}</div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;String to replace not found in file.
 String: 		for _, sub := range tc.Subagents {
 			b.WriteString(`&lt;details class=&#34;subagent&#34;&gt;&lt;summary&gt;subagent: ` + html.EscapeString(sub.Description) + `&lt;/summary&gt;`)
@@ -778,8 +793,9 @@ String: 		for _, sub := range tc.Subagents {
 		}&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">150 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:15">· 12:36</span><span class="usage-badge">150 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;,
   &#34;limit&#34;: 10,
@@ -796,13 +812,15 @@ String: 		for _, sub := range tc.Subagents {
 370		b.WriteString(`&lt;/div&gt;&lt;/details&gt;`)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude<span class="usage-badge">285 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:18">· 12:36</span><span class="usage-badge">285 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ 			b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + html.EscapeString(roleLabel(st)) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash go test ./internal/render/ -run testsidechainagentresultsummaryisescaped -v">
-      <div class="turn-role">Claude<span class="usage-badge">110 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:21">· 12:36</span><span class="usage-badge">110 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestSidechainAgentResultSummaryIsEscaped -v&#34;
 }</pre><pre class="tool-result">=== RUN   TestSidechainAgentResultSummaryIsEscaped
@@ -811,14 +829,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.332s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="now let me update the doc comment in the usage package:">
-      <div class="turn-role">Claude<span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:25">· 12:36</span><span class="usage-badge">12 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me update the doc comment in the usage package:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:26">· 12:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;,
   &#34;limit&#34;: 50
@@ -874,15 +894,17 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.332s</pre></div></d
 50	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash grep -n &#34;func compute&#34; ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude<span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:28">· 12:36</span><span class="usage-badge">123 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func Compute&#34; ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func Compute\&#34; ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">64:func Compute(s model.Session) Report {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude<span class="usage-badge">140 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:30">· 12:36</span><span class="usage-badge">140 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go&#34;,
   &#34;limit&#34;: 15,
@@ -904,33 +926,38 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.332s</pre></div></d
 65		r := Report{PricesAsOf: PricesAsOf, PerTurnCost: map[int]*float64{}}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/usage/usage.go">
-      <div class="turn-role">Claude<span class="usage-badge">292 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:33">· 12:36</span><span class="usage-badge">292 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // Compute aggregates token usage and estimated cost for a session. Totals and</div><div class="diff-del">- // per-model figures include nested subagent turns; per-turn costs are recorded</div><div class="diff-del">- // for top-level turns only.</div><div class="diff-add">+ // Compute aggregates token usage and estimated cost for a session. Totals and</div><div class="diff-add">+ // per-model figures include nested subagent turns and linked agent sessions</div><div class="diff-add">+ // (s.Agents), tracked separately in the Subagents subtotal; per-turn costs are</div><div class="diff-add">+ // recorded for top-level main-session turns only.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/usage/usage.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="now let me verify with gofmt, vet, and tests:">
-      <div class="turn-role">Claude<span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:36">· 12:36</span><span class="usage-badge">11 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me verify with gofmt, vet, and tests:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash gofmt -l . &amp;&amp; echo &#34;gofmt: ok&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:37">· 12:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">gofmt -l . &amp;&amp; echo &#34;gofmt: OK&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;gofmt -l . \u0026\u0026 echo \&#34;gofmt: OK\&#34;&#34;
 }</pre><pre class="tool-result">gofmt: OK</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="bash go vet ./...">
-      <div class="turn-role">Claude<span class="usage-badge">87 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:40">· 12:36</span><span class="usage-badge">87 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go vet ./...</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go vet ./...&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="bash go test ./internal/render/ ./internal/usage/ -v">
-      <div class="turn-role">Claude<span class="usage-badge">101 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:44">· 12:36</span><span class="usage-badge">101 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ ./internal/usage/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ ./internal/usage/ -v&#34;
 }</pre><pre class="tool-result">=== RUN   TestFormatTokens
@@ -999,29 +1026,33 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.265s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="now let me commit both fixes:">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:53">· 12:36</span><span class="usage-badge">9 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><p>Now let me commit both fixes:</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="bash git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:36:54">· 12:36</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/render/render.go internal/render/render_test.go internal/usage/usage.go&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">239 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:37:00">· 12:37</span><span class="usage-badge">239 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nFix escaping regression in sidechain rendering and update Compute doc\n\nFix 1: Escape roleLabel output in renderTool&#39;s sidechain loop. The\nagentRoleLabel function now returns transcript-derived text (\&#34;Agent · \u003cname\u003e\&#34;)\nwhich must be HTML-escaped like all other dynamic content sinks in the function.\n\nFix 2: Update Compute() doc comment to clarify that linked agent sessions\n(s.Agents) are included in totals and tracked in the Subagents subtotal.\n\nCo-Authored-By: Claude Haiku 4.5 \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;
 }</pre><pre class="tool-result">[feat/subagent-sessions 92f3646] Fix escaping regression in sidechain rendering and update Compute doc
  3 files changed, 22 insertions(+), 3 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">162 tok · ~&lt;$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:37:06">· 12:37</span><span class="usage-badge">162 tok · ~&lt;$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 5 report: Subagent pages, links, and wiring
@@ -1148,13 +1179,15 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.265s</pre></div></de
 122	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-30" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">956 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:37:17">· 12:37</span><span class="usage-badge">956 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- ## Commits</div><div class="diff-del">- </div><div class="diff-del">- - `b703c81` — feat: subagent transcript pages linked from the report</div><div class="diff-del">- </div><div class="diff-del">- (Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a</div><div class="diff-del">- different milestone/branch (`feat/usage-cost`) that previously occupied this</div><div class="diff-del">- path — that content is preserved in git history if needed.)</div><div class="diff-add">+ ## Commits</div><div class="diff-add">+ </div><div class="diff-add">+ - `b703c81` — feat: subagent transcript pages linked from the report</div><div class="diff-add">+ </div><div class="diff-add">+ (Note: this file replaces an earlier, unrelated &#34;Task 5&#34; report from a</div><div class="diff-add">+ different milestone/branch (`feat/usage-cost`) that previously occupied this</div><div class="diff-add">+ path — that content is preserved in git history if needed.)</div><div class="diff-add">+ </div><div class="diff-add">+ ## Final-review fixes</div><div class="diff-add">+ </div><div class="diff-add">+ **Fix 1 — Escaping regression in sidechain rendering (security)**</div><div class="diff-add">+ </div><div class="diff-add">+ The `renderTool` function at line 364 in `internal/render/render.go` was writing</div><div class="diff-add">+ the role label raw without HTML escaping:</div><div class="diff-add">+ ```go</div><div class="diff-add">+ b.WriteString(`&lt;article class=&#34;turn turn-` + string(st.Kind) + `&#34;&gt;&lt;div class=&#34;turn-role&#34;&gt;` + roleLabel(st) + `&lt;/div&gt;&lt;div class=&#34;turn-body&#34;&gt;`)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ Since `roleLabel(st)` can now return `agentRoleLabel(t.AgentSummary)` which</div><div class="diff-add">+ embeds transcript-derived text (`Agent · &lt;name&gt;`), the output must be escaped.</div><div class="diff-add">+ </div><div class="diff-add">+ Applied one-line fix: `html.EscapeString(roleLabel(st))`</div><div class="diff-add">+ </div><div class="diff-add">+ **Test evidence:**</div><div class="diff-add">+ </div><div class="diff-add">+ RED (before fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+     render_test.go:285: agent summary must be HTML-escaped in sidechain rendering</div><div class="diff-add">+ --- FAIL: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ GREEN (after fix):</div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+ --- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Fix 2 — Stale doc comment (documentation)**</div><div class="diff-add">+ </div><div class="diff-add">+ Updated the `Compute()` function doc comment in `internal/usage/usage.go` to</div><div class="diff-add">+ clarify that linked agent sessions (s.Agents) are included in totals and</div><div class="diff-add">+ tracked separately in the Subagents subtotal.</div><div class="diff-add">+ </div><div class="diff-add">+ **Verification:**</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ $ gofmt -l .</div><div class="diff-add">+ (silent)</div><div class="diff-add">+ </div><div class="diff-add">+ $ go vet ./...</div><div class="diff-add">+ (clean)</div><div class="diff-add">+ </div><div class="diff-add">+ $ go test ./internal/render/ ./internal/usage/ -v</div><div class="diff-add">+ === RUN   TestFormatTokens</div><div class="diff-add">+ --- PASS: TestFormatTokens (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ === RUN   TestSidechainAgentResultSummaryIsEscaped</div><div class="diff-add">+ --- PASS: TestSidechainAgentResultSummaryIsEscaped (0.00s)</div><div class="diff-add">+ ...</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.555s</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/usage	0.265s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ **Commit:**</div><div class="diff-add">+ </div><div class="diff-add">+ - `92f3646` — Fix escaping regression in sidechain rendering and update Compute doc</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-5-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-31" data-search="bash git log -1 --oneline &amp;&amp; git show --stat head">
-      <div class="turn-role">Claude<span class="usage-badge">301 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:37:22">· 12:37</span><span class="usage-badge">301 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --oneline &amp;&amp; git show --stat HEAD</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -1 --oneline \u0026\u0026 git show --stat HEAD&#34;
 }</pre><pre class="tool-result">92f3646 Fix escaping regression in sidechain rendering and update Compute doc
@@ -1179,12 +1212,13 @@ Date:   Sun Jul 12 12:37:04 2026 +0200
  3 files changed, 22 insertions(+), 3 deletions(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-32" data-search="**status:** all fixes applied and verified.
 
 **commit:** `92f3646` — fix escaping regression in sidechain rendering and update compute doc
 
 **test summary:** regression test `testsidechainagentresultsummaryisescaped` now passes (green); all 28 tests across `internal/render/` and `internal/usage/` pass. verification: gofmt silent, go vet clean, both packages pass.">
-      <div class="turn-role">Claude<span class="usage-badge">137 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 12, 2026 at 12:37:24">· 12:37</span><span class="usage-badge">137 tok · ~$0.01</span></div>
       <div class="turn-body"><p><strong>Status:</strong> All fixes applied and verified.</p>
 <p><strong>Commit:</strong> <code>92f3646</code> — Fix escaping regression in sidechain rendering and update Compute doc</p>
 <p><strong>Test summary:</strong> Regression test <code>TestSidechainAgentResultSummaryIsEscaped</code> now passes (GREEN); all 28 tests across <code>internal/render/</code> and <code>internal/usage/</code> pass. Verification: gofmt silent, go vet clean, both packages pass.</p>

@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are applying an Important correctness fix to the Go CLI…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are applying an Important correctness fix to the Go CLI…</span><span class="prompt-time" title="July 11, 2026 at 12:49:33">12:49</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:49</span>
+        <span title="last message 2026-07-11 12:50">2026-07-11 12:49 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>29 turns</span>
         <span>general-purpose · agent-a0953132c67874c97</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are applying an important correctness fix to the go cli `ccwhid`. work in ~/ideaprojects/cc-what-have-i-done on branch feat/ccwhid-impl. do not create/switch branches.
 
 ## the bug
@@ -171,7 +173,7 @@ co-authored-by: claude opus 4.8 (1m context) &lt;noreply@anthropic.com&gt;
 append a &#34;## fix: rune-safe truncation&#34; section to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md with the red and green output for both focused tests and confirmation `go test ./...` &#43; `go vet ./...` are clean. covering test files: internal/render/render_test.go, internal/discovery/discovery_test.go.
 
 reply with only (under 12 lines): status (done/blocked), commit sha&#43;subject, one-line test summary naming both covering files, confirmation red→green observed for both tests.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:49:33">· 12:49</span></div>
       <div class="turn-body"><p>You are applying an Important correctness fix to the Go CLI <code>ccwhid</code>. Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The bug</h2>
 <p>Two truncation helpers slice strings by byte index (<code>s[:n-1]</code>), which splits multi-byte UTF-8 runes and emits invalid UTF-8 for non-ASCII text (e.g. German umlauts, CJK) longer than the limit — producing garbled <code>�</code> in the report sidebar and session list. Fix both to be rune-safe. Also a doc comment in markdown.go is factually backwards.</p>
@@ -263,8 +265,9 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="bash git branch --show-current &amp;&amp; git status">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:35">· 12:49</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git branch --show-current &amp;&amp; git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git branch --show-current \u0026\u0026 git status&#34;
 }</pre><pre class="tool-result">feat/ccwhid-impl
@@ -272,8 +275,9 @@ Auf Branch feat/ccwhid-impl
 nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:36">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -467,8 +471,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 189	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:36">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
 }</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
@@ -708,8 +713,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 235	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/markdown.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:37">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -792,8 +798,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 78	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:37">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -865,8 +872,9 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 67	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:38">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go&#34;
 }</pre><pre class="tool-result">1	package discovery
@@ -983,34 +991,40 @@ nichts zu committen, Arbeitsverzeichnis unverändert</pre></div></details></div>
 112	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:42">· 12:49</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- 	&#34;path/filepath&#34;</div><div class="diff-del">- 	&#34;strings&#34;</div><div class="diff-del">- 	&#34;testing&#34;</div><div class="diff-del">- 	&#34;time&#34;</div><div class="diff-del">- </div><div class="diff-del">- 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ 	&#34;time&#34;</div><div class="diff-add">+ 	&#34;unicode/utf8&#34;</div><div class="diff-add">+ </div><div class="diff-add">+ 	&#34;github.com/saigyo/cc-what-have-i-done/internal/model&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:44">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestSiteWritesFiles(t *testing.T) {</div><div class="diff-add">+ func TestPreviewRuneSafe(t *testing.T) {</div><div class="diff-add">+ 	s := strings.Repeat(&#34;ä&#34;, 80) // 80 two-byte runes, exceeds n=60</div><div class="diff-add">+ 	got := preview(s, 60)</div><div class="diff-add">+ 	if !utf8.ValidString(got) {</div><div class="diff-add">+ 		t.Errorf(&#34;preview produced invalid UTF-8: %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if []rune(got)[len([]rune(got))-1] != &#39;…&#39; {</div><div class="diff-add">+ 		t.Errorf(&#34;preview should end with ellipsis, got %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestSiteWritesFiles(t *testing.T) {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:45">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- import (</div><div class="diff-del">- 	&#34;os&#34;</div><div class="diff-del">- 	&#34;path/filepath&#34;</div><div class="diff-del">- 	&#34;testing&#34;</div><div class="diff-del">- )</div><div class="diff-add">+ import (</div><div class="diff-add">+ 	&#34;os&#34;</div><div class="diff-add">+ 	&#34;path/filepath&#34;</div><div class="diff-add">+ 	&#34;strings&#34;</div><div class="diff-add">+ 	&#34;testing&#34;</div><div class="diff-add">+ 	&#34;unicode/utf8&#34;</div><div class="diff-add">+ )</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:47">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func TestScanBuildsGroups(t *testing.T) {</div><div class="diff-add">+ func TestTruncateRuneSafe(t *testing.T) {</div><div class="diff-add">+ 	s := strings.Repeat(&#34;ä&#34;, 80)</div><div class="diff-add">+ 	got := truncate(s, 60)</div><div class="diff-add">+ 	if !utf8.ValidString(got) {</div><div class="diff-add">+ 		t.Errorf(&#34;truncate produced invalid UTF-8: %q&#34;, got)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestScanBuildsGroups(t *testing.T) {</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="now run the red tests against the current byte-slicing code.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:49">· 12:49</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Now run the RED tests against the current byte-slicing code.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash go test ./internal/render/ -run testpreviewrunesafe -v 2&gt;&amp;1; echo &#34;---&#34;; go test ./internal/discovery/ -run testtruncaterunesafe -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:49">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestPreviewRuneSafe -v 2&gt;&amp;1; echo &#34;---&#34;; go test ./internal/discovery/ -run TestTruncateRuneSafe -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestPreviewRuneSafe -v 2\u003e\u00261; echo \&#34;---\&#34;; go test ./internal/discovery/ -run TestTruncateRuneSafe -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result tool-result-error">Exit code 1
@@ -1029,29 +1043,34 @@ FAIL	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.246s
 FAIL</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="red confirmed for both. now apply edits 1, 2, and 3.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:53">· 12:49</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>RED confirmed for both. Now apply Edits 1, 2, and 3.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:55">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func preview(s string, n int) string {</div><div class="diff-del">- 	s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))</div><div class="diff-del">- 	if len(s) &lt;= n {</div><div class="diff-del">- 		return s</div><div class="diff-del">- 	}</div><div class="diff-del">- 	return s[:n-1] + &#34;…&#34;</div><div class="diff-del">- }</div><div class="diff-add">+ func preview(s string, n int) string {</div><div class="diff-add">+ 	s = strings.TrimSpace(strings.ReplaceAll(s, &#34;\n&#34;, &#34; &#34;))</div><div class="diff-add">+ 	r := []rune(s)</div><div class="diff-add">+ 	if len(r) &lt;= n {</div><div class="diff-add">+ 		return s</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return string(r[:n-1]) + &#34;…&#34;</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/render.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:57">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- func truncate(s string, n int) string {</div><div class="diff-del">- 	s = strings.TrimSpace(s)</div><div class="diff-del">- 	if len(s) &lt;= n {</div><div class="diff-del">- 		return s</div><div class="diff-del">- 	}</div><div class="diff-del">- 	return s[:n-1] + &#34;…&#34;</div><div class="diff-del">- }</div><div class="diff-add">+ func truncate(s string, n int) string {</div><div class="diff-add">+ 	s = strings.TrimSpace(s)</div><div class="diff-add">+ 	r := []rune(s)</div><div class="diff-add">+ 	if len(r) &lt;= n {</div><div class="diff-add">+ 		return s</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	return string(r[:n-1]) + &#34;…&#34;</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/render/markdown.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:49:59">· 12:49</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // Markdown renders CommonMark+GFM to sanitized-enough HTML. Input is trusted</div><div class="diff-del">- // transcript content (the user&#39;s own session), so we do not strip HTML, but we</div><div class="diff-del">- // do escape code via goldmark&#39;s default renderer.</div><div class="diff-add">+ // Markdown renders CommonMark+GFM to HTML. goldmark runs with its default</div><div class="diff-add">+ // Unsafe=false setting, so any raw HTML embedded in the transcript text is</div><div class="diff-add">+ // stripped (replaced with an HTML comment) rather than passed through — the</div><div class="diff-add">+ // rendered Body is therefore safe to emit as template.HTML.</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/render/ -run testpreviewrunesafe -v 2&gt;&amp;1; echo &#34;---&#34;; go test ./internal/discovery/ -run testtruncaterunesafe -v 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">119 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:00">· 12:50</span><span class="usage-badge">119 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestPreviewRuneSafe -v 2&gt;&amp;1; echo &#34;---&#34;; go test ./internal/discovery/ -run TestTruncateRuneSafe -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestPreviewRuneSafe -v 2\u003e\u00261; echo \&#34;---\&#34;; go test ./internal/discovery/ -run TestTruncateRuneSafe -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestPreviewRuneSafe
@@ -1065,14 +1084,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.272s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="green confirmed. now full suite and vet.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:04">· 12:50</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>GREEN confirmed. Now full suite and vet.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./... 2&gt;&amp;1; echo &#34;exit:$?&#34;; echo &#34;---vet---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;exit:$?&#34;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:05">· 12:50</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1; echo &#34;EXIT:$?&#34;; echo &#34;---VET---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;EXIT:$?&#34;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261; echo \&#34;EXIT:$?\&#34;; echo \&#34;---VET---\&#34;; go vet ./... 2\u003e\u00261; echo \&#34;EXIT:$?\&#34;&#34;
 }</pre><pre class="tool-result">ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)
@@ -1086,14 +1107,16 @@ EXIT:0
 EXIT:0</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="all clean. now commit.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:08">· 12:50</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All clean. Now commit.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash git add internal/render/render.go internal/render/render_test.go internal/render/markdown.go internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:09">· 12:50</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/render/render.go internal/render/render_test.go internal/render/markdown.go internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/render/render.go internal/render/render_test.go internal/render/markdown.go internal/discovery/discovery.go internal/discovery/discovery_test.go \u0026\u0026 git status&#34;
 }</pre><pre class="tool-result">Auf Branch feat/ccwhid-impl
@@ -1106,8 +1129,9 @@ Zum Commit vorgemerkte Änderungen:
 	geändert:       internal/render/render_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">257 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:13">· 12:50</span><span class="usage-badge">257 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: rune-safe truncation for non-ASCII previews\n\nByte-index slicing split multi-byte UTF-8 runes, corrupting sidebar and\nsession-list previews for non-ASCII text. Also correct the Markdown doc\ncomment to reflect goldmark&#39;s safe default (raw HTML stripped).\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;\ngit log -1 --format=&#39;%H %s&#39;&#34;
 }</pre><pre class="tool-result">[feat/ccwhid-impl 6d415b6] fix: rune-safe truncation for non-ASCII previews
@@ -1115,8 +1139,9 @@ Zum Commit vorgemerkte Änderungen:
 6d415b6273a77964da771d395f7b7ccda4a12680 fix: rune-safe truncation for non-ASCII previews</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1; test -f ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md &amp;&amp; echo exists || echo missing">
-      <div class="turn-role">Claude<span class="usage-badge">174 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:20">· 12:50</span><span class="usage-badge">174 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1; test -f ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md &amp;&amp; echo EXISTS || echo MISSING</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261; test -f ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md \u0026\u0026 echo EXISTS || echo MISSING&#34;
 }</pre><pre class="tool-result">total 480
@@ -1149,14 +1174,16 @@ drwxr-xr-x@  3 [user]  staff     96 11 Juli 11:52 ..
 EXISTS</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="task-7-report.md exists. reading it to append properly.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:22">· 12:50</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>task-7-report.md exists. Reading it to append properly.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:23">· 12:50</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md&#34;,
   &#34;limit&#34;: 30
@@ -1192,25 +1219,28 @@ EXISTS</pre></div></details></div>
 30	internal/render/render_test.go:24:16: undefined: DiffHTML</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="good, i&#39;ll append a new section in the same style.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:25">· 12:50</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, I'll append a new section in the same style.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="bash cat &gt;&gt; ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md &lt;&lt; &#39;eof&#39;">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:37">· 12:50</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">cat &gt;&gt; ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md &lt;&lt; &#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;cat \u003e\u003e ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md \u003c\u003c &#39;EOF&#39;\n\n## Fix: rune-safe truncation\n\nBug: `preview` (internal/render/render.go) and `truncate`\n(internal/discovery/discovery.go) sliced strings by byte index (`s[:n-1]`),\nsplitting multi-byte UTF-8 runes and emitting invalid UTF-8 for non-ASCII\ntext (German umlauts, CJK, etc.) longer than the limit. Also fixed a doc\ncomment on `Markdown` in internal/render/markdown.go that incorrectly\nclaimed raw HTML passes through unstripped; goldmark&#39;s default `Unsafe=false`\nsetting actually strips it.\n\nCovering test files:\n- `internal/render/render_test.go` (`TestPreviewRuneSafe`)\n- `internal/discovery/discovery_test.go` (`TestTruncateRuneSafe`)\n\n### RED (against original byte-slicing code)\n\n```\n$ go test ./internal/render/ -run TestPreviewRuneSafe -v\n=== RUN   TestPreviewRuneSafe\n    render_test.go:54: preview produced invalid UTF-8: \&#34;äääääääääääääääääääääääääääää\\xc3…\&#34;\n--- FAIL: TestPreviewRuneSafe (0.00s)\nFAIL\nFAIL\tgithub.com/saigyo/cc-what-have-i-done/internal/render\t0.352s\nFAIL\n\n$ go test ./internal/discovery/ -run TestTruncateRuneSafe -v\n=== RUN   TestTruncateRuneSafe\n    discovery_test.go:52: truncate produced invalid UTF-8: \&#34;äääääääääääääääääääääääääääää\\xc3…\&#34;\n--- FAIL: TestTruncateRuneSafe (0.00s)\nFAIL\nFAIL\tgithub.com/saigyo/cc-what-have-i-done/internal/discovery\t0.246s\nFAIL\n```\n\n### GREEN (after switching to `[]rune` slicing)\n\n```\n$ go test ./internal/render/ -run TestPreviewRuneSafe -v\n=== RUN   TestPreviewRuneSafe\n--- PASS: TestPreviewRuneSafe (0.00s)\nPASS\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/render\t0.293s\n\n$ go test ./internal/discovery/ -run TestTruncateRuneSafe -v\n=== RUN   TestTruncateRuneSafe\n--- PASS: TestTruncateRuneSafe (0.00s)\nPASS\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/discovery\t0.272s\n```\n\n### Full suite + vet (clean)\n\n```\n$ go test ./...\nok  \tgithub.com/saigyo/cc-what-have-i-done/cmd/ccwhid\t(cached)\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/discovery\t0.141s\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/model\t(cached)\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/redact\t(cached)\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/render\t0.246s\nok  \tgithub.com/saigyo/cc-what-have-i-done/internal/transcript\t(cached)\n\n$ go vet ./...\n(no output, exit 0)\n```\n\nCommit: `6d415b6` — \&#34;fix: rune-safe truncation for non-ASCII previews\&#34;\nEOF\necho done&#34;
 }</pre><pre class="tool-result">done</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-28" data-search="status: done
 commit: 6d415b6 &#34;fix: rune-safe truncation for non-ascii previews&#34;
 test summary: added `testpreviewrunesafe` (internal/render/render_test.go) and `testtruncaterunesafe` (internal/discovery/discovery_test.go), verifying rune-safe truncation produces valid utf-8 for repeated &#34;ä&#34; input exceeding the limit.
 red→green confirmed for both: pre-fix runs failed with &#34;produced invalid utf-8&#34; (`...ääää\xc3…`); post-fix (edits to `preview` in internal/render/render.go and `truncate` in internal/discovery/discovery.go, switching to `[]rune` slicing) both passed.
 `go test ./...` and `go vet ./...` both clean/exit 0. markdown.go doc comment corrected. report appended to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-7-report.md.">
-      <div class="turn-role">Claude<span class="usage-badge">434 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:50:43">· 12:50</span><span class="usage-badge">434 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Status: DONE
 Commit: 6d415b6 &quot;fix: rune-safe truncation for non-ASCII previews&quot;
 Test summary: added <code>TestPreviewRuneSafe</code> (internal/render/render_test.go) and <code>TestTruncateRuneSafe</code> (internal/discovery/discovery_test.go), verifying rune-safe truncation produces valid UTF-8 for repeated &quot;ä&quot; input exceeding the limit.

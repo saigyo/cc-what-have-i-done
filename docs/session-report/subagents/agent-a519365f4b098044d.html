@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing one task&#39;s implementation (spec complianc…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing one task&#39;s implementation (spec complianc…</span><span class="prompt-time" title="July 11, 2026 at 12:59:01">12:59</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:59</span>
+        <span title="last message 2026-07-11 13:01">2026-07-11 12:59 (2m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>13 turns</span>
         <span>general-purpose · agent-a519365f4b098044d</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing one task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. task-scoped gate; a broad whole-branch review happens after this. this is the final implementation task: the bubble tea tui and the cobra rune wiring.
 
 ## what was requested
@@ -86,7 +88,7 @@ named risks to check:
 5. **displaylabel:** falls back title → firstprompt → id.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:59:01">· 12:59</span></div>
       <div class="turn-body"><p>You are reviewing one task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. Task-scoped gate; a broad whole-branch review happens after this. This is the final implementation task: the Bubble Tea TUI and the cobra RunE wiring.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</p>
@@ -118,8 +120,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:03">· 12:59</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 9: TUI browser + final dispatch
@@ -555,8 +558,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 431	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:04">· 12:59</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-9-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 9 report: TUI browser + final dispatch
@@ -739,8 +743,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 178	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:08">· 12:59</span><span class="usage-badge">3k tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-fd591f4..777b116.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: fd591f472cef397c4fdae967b347c4f1c9c18bbb..HEAD
@@ -1326,8 +1331,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 581	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash sed -n &#39;150,240p&#39; internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.05</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:36">· 12:59</span><span class="usage-badge">4 tok · ~$0.05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">sed -n &#39;150,240p&#39; internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;sed -n &#39;150,240p&#39; internal/discovery/discovery.go&#34;
 }</pre><pre class="tool-result">				return strings.TrimSpace(b.Text)
@@ -1423,8 +1429,9 @@ func FindSession(root, idOrPrefix string) (SessionInfo, error) {
 		return SessionInfo{}, fmt.Errorf(&#34;no session matching %q&#34;, idOrPrefix)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash ls cmd/ccwhid/ &amp;&amp; grep -n &#34;func resolvesession\|func generate\|func openinbrowser\|errneedtui&#34; cmd/ccwhid/*.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:37">· 12:59</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls cmd/ccwhid/ &amp;&amp; grep -n &#34;func resolveSession\|func generate\|func openInBrowser\|errNeedTUI&#34; cmd/ccwhid/*.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls cmd/ccwhid/ \u0026\u0026 grep -n \&#34;func resolveSession\\|func generate\\|func openInBrowser\\|errNeedTUI\&#34; cmd/ccwhid/*.go&#34;
 }</pre><pre class="tool-result">main_test.go
@@ -1438,8 +1445,9 @@ cmd/ccwhid/run.go:70:func generate(opts *options, si discovery.SessionInfo) (str
 cmd/ccwhid/run.go:109:func openInBrowser(path string) error {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/run.go">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:43">· 12:59</span><span class="usage-badge">6 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/run.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -1569,8 +1577,9 @@ cmd/ccwhid/run.go:109:func openInBrowser(path string) error {</pre></div></detai
 125	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="read ~/ideaprojects/cc-what-have-i-done/cmd/ccwhid/main.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:43">· 12:59</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/cmd/ccwhid/main.go&#34;
 }</pre><pre class="tool-result">1	package main
@@ -1676,8 +1685,9 @@ cmd/ccwhid/run.go:109:func openInBrowser(path string) error {</pre></div></detai
 101	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="bash grep -n &#34;errneedtui&#34; cmd/ccwhid/*.go; echo &#34;---&#34;; grep -n &#34;func test&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2&gt;/dev/null; echo &#34;---vet---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;---build---&#34;; go build ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude<span class="usage-badge">262 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:59:48">· 12:59</span><span class="usage-badge">262 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;errNeedTUI&#34; cmd/ccwhid/*.go; echo &#34;---&#34;; grep -n &#34;func Test&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2&gt;/dev/null; echo &#34;---vet---&#34;; go vet ./... 2&gt;&amp;1; echo &#34;---build---&#34;; go build ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;errNeedTUI\&#34; cmd/ccwhid/*.go; echo \&#34;---\&#34;; grep -n \&#34;func Test\&#34; cmd/ccwhid/run_test.go cmd/ccwhid/main_test.go 2\u003e/dev/null; echo \&#34;---vet---\&#34;; go vet ./... 2\u003e\u00261; echo \&#34;---build---\&#34;; go build ./... 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">cmd/ccwhid/run.go:18:// errNeedTUI signals that no session selector was provided and the caller
@@ -1691,8 +1701,9 @@ cmd/ccwhid/main_test.go:20:func TestRootCmdHelpRuns(t *testing.T) {
 ---build---</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/go.mod">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:00:08">· 13:00</span><span class="usage-badge">2k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/go.mod</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/go.mod&#34;
 }</pre><pre class="tool-result">1	module github.com/saigyo/cc-what-have-i-done
@@ -1732,8 +1743,9 @@ cmd/ccwhid/main_test.go:20:func TestRootCmdHelpRuns(t *testing.T) {
 35	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="bash tmpd=/private/tmp/claude-501/-users-[user]-ideaprojects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:00:17">· 13:00</span><span class="usage-badge">5 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">TMPD=/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;TMPD=/private/tmp/claude-501/-Users-[user]-IdeaProjects-cc-what-have-i-done/41f7e8f4-aaf3-4cc6-b237-7184bd309128/scratchpad/modcheck\nrm -rf \&#34;$TMPD\&#34;\nmkdir -p \&#34;$TMPD\&#34;\ncp -R ~/IdeaProjects/cc-what-have-i-done/* \&#34;$TMPD\&#34;/ 2\u003e/dev/null\ncd \&#34;$TMPD\&#34;\ngo mod tidy 2\u003e\u00261 | tail -20\necho \&#34;---diff go.mod---\&#34;\ndiff ~/IdeaProjects/cc-what-have-i-done/go.mod \&#34;$TMPD/go.mod\&#34;\necho \&#34;---diff go.sum (summary)---\&#34;\ndiff ~/IdeaProjects/cc-what-have-i-done/go.sum \&#34;$TMPD/go.sum\&#34; | head -40\n&#34;
 }</pre><pre class="tool-result">go: downloading golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
@@ -1751,8 +1763,9 @@ cmd/ccwhid/main_test.go:20:func TestRootCmdHelpRuns(t *testing.T) {
 &gt; golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash git log -1 --format=&#39;%h%n%s%n%n%b&#39; 777b116">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:00:48">· 13:00</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log -1 --format=&#39;%H%n%s%n%n%b&#39; 777b116</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log -1 --format=&#39;%H%n%s%n%n%b&#39; 777b116&#34;
 }</pre><pre class="tool-result">777b116eba6d787c9ddcedb2b25b8d3d76192397
@@ -1760,6 +1773,7 @@ feat: add TUI session browser and wire final dispatch
 
 Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-12" data-search="commit trailer confirmed correct. findings below.
 
@@ -1799,7 +1813,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;</pre>
 task quality: **approved**
 
 the implementation is a faithful, verified-correct transcription of the brief&#39;s reference code with no behavioral deviations. all five named risks were checked against the actual diff/build and none materialized: the redact mapping is correct, cursor navigation is bounds-safe and unreachable-degenerate in practice, the type assertion in `run` cannot panic under normal `update` flow, empty-groups is handled explicitly, and `displaylabel`&#39;s fallback order is correct and tested. the only findings are pre-existing/inherited minor tidiness items (go.mod indirect markers, one dead field carried over from the brief, one unused var left from task 8) — none block this task; they&#39;re worth a mention in the whole-branch pass but don&#39;t warrant reopening this task.">
-      <div class="turn-role">Claude<span class="usage-badge">2k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:01:12">· 13:01</span><span class="usage-badge">2k tok · ~$0.04</span></div>
       <div class="turn-body"><p>Commit trailer confirmed correct. Findings below.</p>
 <h2>Spec Compliance</h2>
 <ul>

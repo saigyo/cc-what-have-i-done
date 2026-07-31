@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are reviewing the final task&#39;s implementation (spec com…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are reviewing the final task&#39;s implementation (spec com…</span><span class="prompt-time" title="July 11, 2026 at 13:03:56">13:03</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 11:03</span>
+        <span title="last message 2026-07-11 13:05">2026-07-11 13:03 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>23 turns</span>
         <span>general-purpose · agent-a14e514d14572d3cc</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are reviewing the final task&#39;s implementation (spec compliance &#43; code quality) for the go cli `ccwhid`. a broad whole-branch review happens separately after this.
 
 ## what was requested
@@ -82,7 +84,7 @@ check specifically:
 3. no accidental recreation of readme/license/.gitignore in this diff.
 
 follow the task-reviewer output format: spec compliance (✅/❌/⚠️), strengths, issues (critical/important/minor with file:line), assessment (task quality: approved | needs fixes). your final message is the report.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 13:03:56">· 13:03</span></div>
       <div class="turn-body"><p>You are reviewing the final task's implementation (spec compliance + code quality) for the Go CLI <code>ccwhid</code>. A broad whole-branch review happens separately after this.</p>
 <h2>What Was Requested</h2>
 <p>Read the task brief: ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</p>
@@ -110,8 +112,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:03:59">· 13:03</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-brief.md&#34;
 }</pre><pre class="tool-result">1	### Task 10: End-to-end verification
@@ -214,8 +217,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 98	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:03:59">· 13:03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-10-report.md&#34;
 }</pre><pre class="tool-result">1	# Task 10: End-to-End Verification Report
@@ -363,8 +367,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 143	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb5.diff">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:00">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb5.diff</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/review-19a5d33..6678bb5.diff&#34;
 }</pre><pre class="tool-result">1	# Review package: 19a5d33e723076e058a1b7d43bee24c627e1adda..HEAD
@@ -435,8 +440,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 66	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="bash find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;redacted&#34; | head -20">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.04</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:08">· 13:04</span><span class="usage-badge">3k tok · ~$0.04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -name &#34;*.go&#34; -print | xargs grep -l &#34;REDACTED&#34; | head -20</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -name \&#34;*.go\&#34; -print | xargs grep -l \&#34;REDACTED\&#34; | head -20&#34;
 }</pre><pre class="tool-result">./internal/render/render_e2e_test.go
@@ -444,8 +450,9 @@ Diff file (read once): ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/revie
 ./internal/redact/redact_test.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="bash git show 19a5d33e:internal/redact/redact.go 2&gt;/dev/null | head -100 || find . -path &#34;*redact*&#34; -name &#34;*.go&#34; | xargs -i{} echo {}">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:09">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git show 19a5d33e:internal/redact/redact.go 2&gt;/dev/null | head -100 || find . -path &#34;*redact*&#34; -name &#34;*.go&#34; | xargs -I{} echo {}</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git show 19a5d33e:internal/redact/redact.go 2\u003e/dev/null | head -100 || find . -path \&#34;*redact*\&#34; -name \&#34;*.go\&#34; | xargs -I{} echo {}&#34;
 }</pre><pre class="tool-result">// Package redact scrubs likely secrets and the user&#39;s home path from transcript
@@ -532,8 +539,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 }</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="bash find . -path ./node_modules -prune -o -path &#34;*internal/transcript*&#34; -name &#34;*.go&#34; -print">
-      <div class="turn-role">Claude<span class="usage-badge">466 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:17">· 13:04</span><span class="usage-badge">466 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -path &#34;*internal/transcript*&#34; -name &#34;*.go&#34; -print</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -path \&#34;*internal/transcript*\&#34; -name \&#34;*.go\&#34; -print&#34;
 }</pre><pre class="tool-result">./internal/transcript/raw.go
@@ -542,8 +550,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 ./internal/transcript/parse.go</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="bash find . -path ./node_modules -prune -o -path &#34;*internal/render*&#34; -print">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:17">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">find . -path ./node_modules -prune -o -path &#34;*internal/render*&#34; -print</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;find . -path ./node_modules -prune -o -path \&#34;*internal/render*\&#34; -print&#34;
 }</pre><pre class="tool-result">./internal/render
@@ -557,8 +566,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 ./internal/render/assets/app.js</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/parse.go">
-      <div class="turn-role">Claude<span class="usage-badge">38 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:19">· 13:04</span><span class="usage-badge">38 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/parse.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -868,8 +878,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 305	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/render/render.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:20">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/render/render.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/render/render.go&#34;
 }</pre><pre class="tool-result">1	package render
@@ -1064,8 +1075,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 190	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/transcript/raw.go">
-      <div class="turn-role">Claude<span class="usage-badge">285 tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:24">· 13:04</span><span class="usage-badge">285 tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/transcript/raw.go&#34;
 }</pre><pre class="tool-result">1	package transcript
@@ -1165,8 +1177,9 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 95	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="bash grep -n &#34;func markdown&#34; -a 30 ~/ideaprojects/cc-what-have-i-done/internal/render/markdown.go | head -50">
-      <div class="turn-role">Claude<span class="usage-badge">609 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:32">· 13:04</span><span class="usage-badge">609 tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;func Markdown&#34; -A 30 ~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go | head -50</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;func Markdown\&#34; -A 30 ~/IdeaProjects/cc-what-have-i-done/internal/render/markdown.go | head -50&#34;
 }</pre><pre class="tool-result">24:func Markdown(src string) template.HTML {
@@ -1202,21 +1215,24 @@ func redactTool(r *Redactor, tc *model.ToolCall) {
 54-	}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="bash grep -n &#34;redacted&#34; -r ~/ideaprojects/cc-what-have-i-done/internal/render/render_test.go ~/ideaprojects/cc-what-have-i-done/internal/redact/redact_test.go">
-      <div class="turn-role">Claude<span class="usage-badge">308 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:36">· 13:04</span><span class="usage-badge">308 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;REDACTED&#34; -r ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;REDACTED\&#34; -r ~/IdeaProjects/cc-what-have-i-done/internal/render/render_test.go ~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go&#34;
 }</pre><pre class="tool-result">~/IdeaProjects/cc-what-have-i-done/internal/redact/redact_test.go:23:		if !strings.Contains(got, &#34;[REDACTED:&#34;+c.wantKind+&#34;]&#34;) {</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="good, this pattern is already validated elsewhere. now let me confirm the diff doesn&#39;t touch readme/license/.gitignore, and double check git log for the commit trailer and file list.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:38">· 13:04</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, this pattern is already validated elsewhere. Now let me confirm the diff doesn't touch README/LICENSE/.gitignore, and double check git log for the commit trailer and file list.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="bash git log --format=&#39;%h %s%n%b&#39; -1 6678bb5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git show --stat 6678bb5 &amp;&amp; echo &#34;---diff-check---&#34; &amp;&amp; git diff 19a5d33e723076e058a1b7d43bee24c627e1adda..6678bb5 --stat">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:40">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git log --format=&#39;%H %s%n%b&#39; -1 6678bb5 &amp;&amp; echo &#34;---&#34; &amp;&amp; git show --stat 6678bb5 &amp;&amp; echo &#34;---diff-check---&#34; &amp;&amp; git diff 19a5d33e723076e058a1b7d43bee24c627e1adda..6678bb5 --stat</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git log --format=&#39;%H %s%n%b&#39; -1 6678bb5 \u0026\u0026 echo \&#34;---\&#34; \u0026\u0026 git show --stat 6678bb5 \u0026\u0026 echo \&#34;---diff-check---\&#34; \u0026\u0026 git diff 19a5d33e723076e058a1b7d43bee24c627e1adda..6678bb5 --stat&#34;
 }</pre><pre class="tool-result">6678bb55877f95a4a677c7cfef841cde7e218e7d test: add end-to-end pipeline test; reconcile README
@@ -1238,14 +1254,16 @@ Date:   Sat Jul 11 13:03:01 2026 +0200
  1 file changed, 49 insertions(+)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="confirmed: only the test file was added; commit trailer matches exactly; readme/license/.gitignore untouched. let me do a final focused run of just this new test to verify it actually passes (per instructions, only running the specific test in doubt, not the full suite).">
-      <div class="turn-role">Claude<span class="usage-badge">9 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:42">· 13:04</span><span class="usage-badge">9 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Confirmed: only the test file was added; commit trailer matches exactly; README/LICENSE/.gitignore untouched. Let me do a final focused run of just this new test to verify it actually passes (per instructions, only running the specific test in doubt, not the full suite).</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="bash go test ./internal/render/ -run testendtoendredactedreport -v 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:43">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/render/ -run TestEndToEndRedactedReport -v 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/render/ -run TestEndToEndRedactedReport -v 2\u003e\u00261&#34;
 }</pre><pre class="tool-result">=== RUN   TestEndToEndRedactedReport
@@ -1254,15 +1272,17 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.267s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash grep -n &#34;flag\.&#34; cmd/ccwhid/main.go | head -30">
-      <div class="turn-role">Claude<span class="usage-badge">8 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:50">· 13:04</span><span class="usage-badge">8 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;flag\.&#34; cmd/ccwhid/main.go | head -30</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;flag\\.\&#34; cmd/ccwhid/main.go | head -30&#34;
 }</pre><pre class="tool-result">(Bash completed with no output)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="read ~/ideaprojects/cc-what-have-i-done/readme.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:50">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/README.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/README.md&#34;
 }</pre><pre class="tool-result">1	# ccwhid — cc-what-have-i-done
@@ -1332,8 +1352,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.267s</pre></div></d
 65	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash grep -n &#34;stringvar\|boolvar\|flags()\.&#34; cmd/ccwhid/main.go | head -40">
-      <div class="turn-role">Claude<span class="usage-badge">122 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:56">· 13:04</span><span class="usage-badge">122 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">grep -n &#34;StringVar\|BoolVar\|Flags()\.&#34; cmd/ccwhid/main.go | head -40</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;grep -n \&#34;StringVar\\|BoolVar\\|Flags()\\.\&#34; cmd/ccwhid/main.go | head -40&#34;
 }</pre><pre class="tool-result">40:	f.StringVar(&amp;opts.session, &#34;session&#34;, &#34;&#34;, &#34;session id or unambiguous prefix to render&#34;)
@@ -1347,18 +1368,21 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/render	0.267s</pre></div></d
 48:	f.BoolVar(&amp;opts.open, &#34;open&#34;, false, &#34;open the report in a browser when done&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="readme flags match the cli exactly. everything checks out. this completes the review.">
-      <div class="turn-role">Claude<span class="usage-badge">80 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:58">· 13:04</span><span class="usage-badge">80 tok · ~$0.01</span></div>
       <div class="turn-body"><p>README flags match the CLI exactly. Everything checks out. This completes the review.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="reportfindings ">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:04:58">· 13:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">ReportFindings</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;findings&#34;: []
 }</pre><pre class="tool-result">No findings reported.</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-22" data-search="## task 10 review: end-to-end verification
 
@@ -1385,7 +1409,7 @@ none found — critical, important, and minor: no findings.
 **assessment**
 
 task quality: **approved**">
-      <div class="turn-role">Claude<span class="usage-badge">996 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 13:05:10">· 13:05</span><span class="usage-badge">996 tok · ~$0.02</span></div>
       <div class="turn-body"><h2>Task 10 Review: End-to-End Verification</h2>
 <p><strong>Spec Compliance: ✅</strong></p>
 <p>All binding constraints satisfied:</p>

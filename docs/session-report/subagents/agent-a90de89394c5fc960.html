@@ -9,7 +9,7 @@
 <body>
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">ccwhid</div>
+    <div class="brand">ccwhid <a class="brand-version" href="https://github.com/saigyo/cc-what-have-i-done/">dev build</a></div>
     <input id="filter" type="search" placeholder="Filter turns…" aria-label="Filter turns">
     <button id="toggle-all" class="btn">Expand all</button>
     <button id="toggle-tools" class="btn">Hide tool detail</button>
@@ -20,7 +20,7 @@
   <nav class="sidebar" aria-label="Prompts">
     <div class="sidebar-title">Prompts</div>
     <ol class="prompt-list">
-      <li><a href="#turn-0">You are applying a correctness fix to Task 3 (session disco…</a></li>
+      <li class="prompt-day" title="Saturday, July 11, 2026">July 11, 2026</li><li><a href="#turn-0"><span class="prompt-preview">You are applying a correctness fix to Task 3 (session disco…</span><span class="prompt-time" title="July 11, 2026 at 12:03:42">12:03</span></a></li>
     </ol>
   </nav>
   <main class="content">
@@ -30,7 +30,8 @@
       <div class="meta">
         <span>~/IdeaProjects/cc-what-have-i-done</span>
         <span>⎇ feat/ccwhid-impl</span>
-        <span>2026-07-11 10:03</span>
+        <span title="last message 2026-07-11 12:05">2026-07-11 12:03 (1m)</span>
+        <span>rendered 2026-07-31 22:23</span>
         <span>31 turns</span>
         <span>general-purpose · agent-a90de89394c5fc960</span>
       </div>
@@ -52,6 +53,7 @@
     </details>
     
     
+    <div class="day-sep"><span>Saturday, July 11, 2026</span></div>
     <article class="turn turn-user" id="turn-0" data-search="you are applying a correctness fix to task 3 (session discovery) in the go cli `ccwhid`. the file `internal/discovery/discovery.go` and its test already exist (commit 9def244). work in ~/ideaprojects/cc-what-have-i-done on branch feat/ccwhid-impl. do not create/switch branches.
 
 ## the problem
@@ -135,7 +137,7 @@ confirm the existing `testscanbuildsgroups` still passes: its fixture has no `cw
 append a &#34;## fix: transcript cwd for project path&#34; section to ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md with: what you changed, the covering test command run and its output, and confirmation `go test ./...` is green.
 
 reply with only (under 12 lines): status (done/blocked), commit sha&#43;subject, one-line test summary (name the covering test file), concerns.">
-      <div class="turn-role">You</div>
+      <div class="turn-role">You<span class="turn-time" title="July 11, 2026 at 12:03:42">· 12:03</span></div>
       <div class="turn-body"><p>You are applying a correctness fix to Task 3 (session discovery) in the Go CLI <code>ccwhid</code>. The file <code>internal/discovery/discovery.go</code> and its test already exist (commit 9def244). Work in ~/IdeaProjects/cc-what-have-i-done on branch feat/ccwhid-impl. Do NOT create/switch branches.</p>
 <h2>The problem</h2>
 <p><code>DecodeProjectDir</code> reverses the <code>/</code>→<code>-</code> encoding by replacing every <code>-</code> with <code>/</code>. This is LOSSY when a real path segment contains a hyphen (e.g. the project <code>cc-what-have-i-done</code> lives at <code>~/IdeaProjects/cc-what-have-i-done</code>, encoded as <code>-Users-[user]-IdeaProjects-cc-what-have-i-done</code>; naive decode wrongly yields <code>~/IdeaProjects/cc/what/have/i/done</code>). Claude Code's on-disk directory name is genuinely ambiguous, so decoding alone cannot recover the true path.</p>
@@ -210,8 +212,9 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-1" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">7k tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:03:45">· 12:03</span><span class="usage-badge">7k tok · ~$0.02</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;
 }</pre><pre class="tool-result">1	// Package discovery finds Claude Code session transcripts under
@@ -438,8 +441,9 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 222	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-2" data-search="bash git branch --show-current &amp;&amp; git log --oneline -3">
-      <div class="turn-role">Claude<span class="usage-badge">3k tok · ~$0.03</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:03:49">· 12:03</span><span class="usage-badge">3k tok · ~$0.03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git branch --show-current &amp;&amp; git log --oneline -3</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git branch --show-current \u0026\u0026 git log --oneline -3&#34;,
   &#34;description&#34;: &#34;Check current branch and recent commits&#34;
@@ -449,29 +453,34 @@ Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;
 37ba8bc chore: go mod tidy to correct cobra require metadata</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-3" data-search="good, already on the right branch. now let&#39;s make the code changes.">
-      <div class="turn-role">Claude<span class="usage-badge">6 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:03:50">· 12:03</span><span class="usage-badge">6 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Good, already on the right branch. Now let's make the code changes.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-4" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:03:54">· 12:03</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- // DecodeProjectDir maps a projects dir name back to an absolute path.</div><div class="diff-del">- func DecodeProjectDir(name string) string {</div><div class="diff-del">- 	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)</div><div class="diff-del">- }</div><div class="diff-add">+ // DecodeProjectDir maps a projects dir name back to an absolute path.</div><div class="diff-add">+ //</div><div class="diff-add">+ // This is best-effort and lossy: the encoding used for ~/.claude/projects</div><div class="diff-add">+ // directory names replaces every &#34;/&#34; with &#34;-&#34;, so a decode cannot distinguish</div><div class="diff-add">+ // an original path separator from a literal &#34;-&#34; inside a path segment (e.g.</div><div class="diff-add">+ // &#34;cc-what-have-i-done&#34; decodes to &#34;cc/what/have/i/done&#34;). Callers that need</div><div class="diff-add">+ // the true path should prefer the &#34;cwd&#34; field recorded in transcript records</div><div class="diff-add">+ // and only fall back to this function when no such record is available.</div><div class="diff-add">+ func DecodeProjectDir(name string) string {</div><div class="diff-add">+ 	return strings.ReplaceAll(name, &#34;-&#34;, &#34;/&#34;)</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-5" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">340 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:03:57">· 12:03</span><span class="usage-badge">340 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	Type        string          `json:&#34;type&#34;`</div><div class="diff-del">- 	AiTitle     string          `json:&#34;aiTitle&#34;`</div><div class="diff-del">- 	IsSidechain bool            `json:&#34;isSidechain&#34;`</div><div class="diff-del">- 	Timestamp   string          `json:&#34;timestamp&#34;`</div><div class="diff-del">- 	Message     json.RawMessage `json:&#34;message&#34;`</div><div class="diff-add">+ 	Type        string          `json:&#34;type&#34;`</div><div class="diff-add">+ 	AiTitle     string          `json:&#34;aiTitle&#34;`</div><div class="diff-add">+ 	IsSidechain bool            `json:&#34;isSidechain&#34;`</div><div class="diff-add">+ 	Timestamp   string          `json:&#34;timestamp&#34;`</div><div class="diff-add">+ 	Cwd         string          `json:&#34;cwd&#34;`</div><div class="diff-add">+ 	Message     json.RawMessage `json:&#34;message&#34;`</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-6" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">736 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:03">· 12:04</span><span class="usage-badge">736 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	sc := bufio.NewScanner(f)</div><div class="diff-del">- 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)</div><div class="diff-del">- 	for sc.Scan() {</div><div class="diff-del">- 		var l scanLine</div><div class="diff-del">- 		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {</div><div class="diff-del">- 			continue // tolerate malformed lines</div><div class="diff-del">- 		}</div><div class="diff-del">- 		switch l.Type {</div><div class="diff-del">- 		case &#34;ai-title&#34;:</div><div class="diff-del">- 			if l.AiTitle != &#34;&#34; {</div><div class="diff-del">- 				info.Title = l.AiTitle</div><div class="diff-del">- 			}</div><div class="diff-del">- 		case &#34;user&#34;, &#34;assistant&#34;:</div><div class="diff-del">- 			info.MessageCount++</div><div class="diff-del">- 			if l.IsSidechain {</div><div class="diff-del">- 				info.HasSubagents = true</div><div class="diff-del">- 			}</div><div class="diff-del">- 			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {</div><div class="diff-del">- 				info.FirstPrompt = firstPromptText(l.Message)</div><div class="diff-del">- 			}</div><div class="diff-del">- 		}</div><div class="diff-del">- 	}</div><div class="diff-add">+ 	sc := bufio.NewScanner(f)</div><div class="diff-add">+ 	sc.Buffer(make([]byte, 0, 1024*1024), 16*1024*1024)</div><div class="diff-add">+ 	cwdSet := false</div><div class="diff-add">+ 	for sc.Scan() {</div><div class="diff-add">+ 		var l scanLine</div><div class="diff-add">+ 		if err := json.Unmarshal(sc.Bytes(), &amp;l); err != nil {</div><div class="diff-add">+ 			continue // tolerate malformed lines</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 		switch l.Type {</div><div class="diff-add">+ 		case &#34;ai-title&#34;:</div><div class="diff-add">+ 			if l.AiTitle != &#34;&#34; {</div><div class="diff-add">+ 				info.Title = l.AiTitle</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		case &#34;user&#34;, &#34;assistant&#34;:</div><div class="diff-add">+ 			info.MessageCount++</div><div class="diff-add">+ 			if l.IsSidechain {</div><div class="diff-add">+ 				info.HasSubagents = true</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			if l.Type == &#34;user&#34; &amp;&amp; info.FirstPrompt == &#34;&#34; {</div><div class="diff-add">+ 				info.FirstPrompt = firstPromptText(l.Message)</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 			if !cwdSet &amp;&amp; l.Cwd != &#34;&#34; {</div><div class="diff-add">+ 				info.ProjectPath = l.Cwd</div><div class="diff-add">+ 				cwdSet = true</div><div class="diff-add">+ 			}</div><div class="diff-add">+ 		}</div><div class="diff-add">+ 	}</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-7" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">299 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:06">· 12:04</span><span class="usage-badge">299 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 			groups = append(groups, ProjectGroup{</div><div class="diff-del">- 				ProjectDir:  e.Name(),</div><div class="diff-del">- 				ProjectPath: DecodeProjectDir(e.Name()),</div><div class="diff-del">- 				Sessions:    sessions,</div><div class="diff-del">- 			})</div><div class="diff-add">+ 			groups = append(groups, ProjectGroup{</div><div class="diff-add">+ 				ProjectDir:  e.Name(),</div><div class="diff-add">+ 				ProjectPath: sessions[0].ProjectPath,</div><div class="diff-add">+ 				Sessions:    sessions,</div><div class="diff-add">+ 			})</div></div><pre class="tool-result tool-result-error">&lt;tool_use_error&gt;String to replace not found in file.
 String: 			groups = append(groups, ProjectGroup{
 				ProjectDir:  e.Name(),
@@ -480,8 +489,9 @@ String: 			groups = append(groups, ProjectGroup{
 			})&lt;/tool_use_error&gt;</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-8" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">159 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:08">· 12:04</span><span class="usage-badge">159 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;,
   &#34;limit&#34;: 10,
@@ -498,8 +508,9 @@ String: 			groups = append(groups, ProjectGroup{
 192				continue</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-9" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude<span class="usage-badge">131 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:11">· 12:04</span><span class="usage-badge">131 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go&#34;,
   &#34;limit&#34;: 10,
@@ -516,25 +527,29 @@ String: 			groups = append(groups, ProjectGroup{
 202		}</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-10" data-search="the whitespace looks identical visually — likely a trailing space issue. let me use exact text with surrounding context.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:13">· 12:04</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>The whitespace looks identical visually — likely a trailing space issue. Let me use exact text with surrounding context.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-11" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:15">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 		groups = append(groups, ProjectGroup{</div><div class="diff-del">- 			ProjectDir:  e.Name(),</div><div class="diff-del">- 			ProjectPath: DecodeProjectDir(e.Name()),</div><div class="diff-del">- 			Sessions:    sessions,</div><div class="diff-del">- 		})</div><div class="diff-add">+ 		groups = append(groups, ProjectGroup{</div><div class="diff-add">+ 			ProjectDir:  e.Name(),</div><div class="diff-add">+ 			ProjectPath: sessions[0].ProjectPath,</div><div class="diff-add">+ 			Sessions:    sessions,</div><div class="diff-add">+ 		})</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-12" data-search="now let&#39;s look at the existing test file to add the new test correctly.">
-      <div class="turn-role">Claude<span class="usage-badge">7 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:18">· 12:04</span><span class="usage-badge">7 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's look at the existing test file to add the new test correctly.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-13" data-search="read ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:18">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go&#34;
 }</pre><pre class="tool-result">1	package discovery
@@ -630,25 +645,29 @@ String: 			groups = append(groups, ProjectGroup{
 91	</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-14" data-search="the existing tests match what&#39;s expected. now append the new test.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:20">· 12:04</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>The existing tests match what's expected. Now append the new test.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-15" data-search="edit ~/ideaprojects/cc-what-have-i-done/internal/discovery/discovery_test.go">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:25">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">- 	got, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-del">- 	if err != nil {</div><div class="diff-del">- 		t.Fatal(err)</div><div class="diff-del">- 	}</div><div class="diff-del">- 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-del">- 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-del">- 	}</div><div class="diff-del">- }</div><div class="diff-add">+ 	got, err := FindSession(root, &#34;abcd&#34;)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if got.ID != &#34;abcd1111-0000-0000-0000-000000000000&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ID = %q&#34;, got.ID)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div><div class="diff-add">+ </div><div class="diff-add">+ func TestScanUsesTranscriptCwd(t *testing.T) {</div><div class="diff-add">+ 	root := t.TempDir()</div><div class="diff-add">+ 	// Dir name would decode losslessly-wrong; the transcript cwd is authoritative.</div><div class="diff-add">+ 	proj := filepath.Join(root, &#34;-tmp-proj-with-hyphen&#34;)</div><div class="diff-add">+ 	writeSession(t, proj, &#34;cccc3333-0000-0000-0000-000000000000&#34;,</div><div class="diff-add">+ 		`{&#34;type&#34;:&#34;user&#34;,&#34;message&#34;:{&#34;role&#34;:&#34;user&#34;,&#34;content&#34;:&#34;hi&#34;},&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;,&#34;timestamp&#34;:&#34;2026-07-11T10:00:00Z&#34;}`)</div><div class="diff-add">+ 	groups, err := Scan(root)</div><div class="diff-add">+ 	if err != nil {</div><div class="diff-add">+ 		t.Fatal(err)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if len(groups) != 1 {</div><div class="diff-add">+ 		t.Fatalf(&#34;got %d groups, want 1&#34;, len(groups))</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if groups[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;ProjectPath = %q, want /tmp/proj-with-hyphen (from transcript cwd)&#34;, groups[0].ProjectPath)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ 	if groups[0].Sessions[0].ProjectPath != &#34;/tmp/proj-with-hyphen&#34; {</div><div class="diff-add">+ 		t.Errorf(&#34;session ProjectPath = %q, want the true cwd&#34;, groups[0].Sessions[0].ProjectPath)</div><div class="diff-add">+ 	}</div><div class="diff-add">+ }</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/internal/discovery/discovery_test.go has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-16" data-search="now run the tests.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:27">· 12:04</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now run the tests.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-17" data-search="bash go test ./internal/discovery/ -v">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:27">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./internal/discovery/ -v</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./internal/discovery/ -v&#34;,
   &#34;description&#34;: &#34;Run discovery package tests verbosely&#34;
@@ -664,14 +683,16 @@ PASS
 ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.299s</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-18" data-search="all pass. now full test suite.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:32">· 12:04</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All pass. Now full test suite.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-19" data-search="bash go test ./... 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:32">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">go test ./... 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;go test ./... 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Run full test suite&#34;
@@ -680,14 +701,16 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.157s
 ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-20" data-search="all green. now commit.">
-      <div class="turn-role">Claude<span class="usage-badge">3 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:35">· 12:04</span><span class="usage-badge">3 tok · ~$0.01</span></div>
       <div class="turn-body"><p>All green. Now commit.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-21" data-search="bash git status">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:35">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git status</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git status&#34;,
   &#34;description&#34;: &#34;Check git status before staging&#34;
@@ -701,8 +724,9 @@ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</pre></div></
 keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder &#34;git commit -a&#34;)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-22" data-search="bash git add internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;eof&#39;">
-      <div class="turn-role">Claude<span class="usage-badge">236 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:40">· 12:04</span><span class="usage-badge">236 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">git add internal/discovery/discovery.go internal/discovery/discovery_test.go &amp;&amp; git commit -m &#34;$(cat &lt;&lt;&#39;EOF&#39;</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;git add internal/discovery/discovery.go internal/discovery/discovery_test.go \u0026\u0026 git commit -m \&#34;$(cat \u003c\u003c&#39;EOF&#39;\nfix: use transcript cwd for authoritative project path\n\nDecodeProjectDir is lossy for paths whose segments contain hyphens;\nprefer the true cwd carried in transcript records, decode only as fallback.\n\nCo-Authored-By: Claude Opus 4.8 (1M context) \u003cnoreply@anthropic.com\u003e\nEOF\n)\&#34;&#34;,
   &#34;description&#34;: &#34;Commit the fix&#34;
@@ -710,14 +734,16 @@ keine Änderungen zum Commit vorgemerkt (benutzen Sie &#34;git add&#34; und/oder
  2 files changed, 35 insertions(+), 1 deletion(-)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-23" data-search="now update the report file.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:42">· 12:04</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now update the report file.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-24" data-search="bash ls -la ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:43">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2&gt;&amp;1</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;ls -la ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/ 2\u003e\u00261&#34;,
   &#34;description&#34;: &#34;Check if report directory/file exists&#34;
@@ -736,8 +762,9 @@ drwxr-xr-x@  3 [user]  staff    96 11 Juli 11:52 ..
 -rw-r--r--@  1 [user]  staff  9037 11 Juli 12:02 task-3-report.md</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-25" data-search="read ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
-      <div class="turn-role">Claude<span class="usage-badge">114 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:45">· 12:04</span><span class="usage-badge">114 tok · ~$0.01</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Read</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;file_path&#34;: &#34;~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;,
   &#34;limit&#34;: 30
@@ -773,14 +800,16 @@ drwxr-xr-x@  3 [user]  staff    96 11 Juli 11:52 ..
 30	## Deviation (documented, minimal)</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-26" data-search="now let&#39;s append the new section at the end of the file.">
-      <div class="turn-role">Claude<span class="usage-badge">4 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:47">· 12:04</span><span class="usage-badge">4 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now let's append the new section at the end of the file.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-27" data-search="bash tail -20 ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:47">· 12:04</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Bash</span><span class="tool-summary">tail -20 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><pre class="tool-input">{
   &#34;command&#34;: &#34;tail -20 ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md&#34;,
   &#34;description&#34;: &#34;Preview end of report file&#34;
@@ -806,23 +835,26 @@ drwxr-xr-x@  3 [user]  staff    96 11 Juli 11:52 ..
   not addressed here beyond flagging it.</pre></div></details></div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-28" data-search="now append the new fix section.">
-      <div class="turn-role">Claude<span class="usage-badge">5 tok · ~$0.01</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:04:49">· 12:04</span><span class="usage-badge">5 tok · ~$0.01</span></div>
       <div class="turn-body"><p>Now append the new fix section.</p>
 </div>
     </article>
     
+    
     <article class="turn turn-assistant" id="turn-29" data-search="edit ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md">
-      <div class="turn-role">Claude</div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:05:03">· 12:05</span></div>
       <div class="turn-body"><details class="tool"><summary class="tool-head"><span class="tool-name">Edit</span><span class="tool-summary">~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md</span></summary><div class="tool-body"><div class="diff"><div class="diff-del">-   scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly</div><div class="diff-del">-   recover such names. That is out of scope for Task 3 as literally specified, so it was</div><div class="diff-del">-   not addressed here beyond flagging it.</div><div class="diff-add">+   scheme in a future task, since `DecodeProjectDir` as specified cannot losslessly</div><div class="diff-add">+   recover such names. That is out of scope for Task 3 as literally specified, so it was</div><div class="diff-add">+   not addressed here beyond flagging it.</div><div class="diff-add">+ </div><div class="diff-add">+ ## Fix: transcript cwd for project path</div><div class="diff-add">+ </div><div class="diff-add">+ Addressed the concern flagged above: `DecodeProjectDir` is lossy whenever a real path</div><div class="diff-add">+ segment contains a hyphen (e.g. this repo, `~/IdeaProjects/cc-what-have-i-done`,</div><div class="diff-add">+ naively decodes to `.../cc/what/have/i/done`). Since the on-disk projects directory name</div><div class="diff-add">+ is genuinely ambiguous, decoding alone cannot recover the true path — so the fix instead</div><div class="diff-add">+ sources the true path from the transcript itself.</div><div class="diff-add">+ </div><div class="diff-add">+ ### Changes</div><div class="diff-add">+ </div><div class="diff-add">+ - `internal/discovery/discovery.go`:</div><div class="diff-add">+   - `scanLine` gained a `Cwd string `json:&#34;cwd&#34;`` field — every `user`/`assistant`</div><div class="diff-add">+     transcript record carries the true absolute cwd.</div><div class="diff-add">+   - `indexFile` still seeds `info.ProjectPath` with `DecodeProjectDir(projectDir)` as a</div><div class="diff-add">+     fallback, but now captures the first non-empty `cwd` seen on a `user`/`assistant`</div><div class="diff-add">+     line (via a local `cwdSet` flag) and overwrites `info.ProjectPath` with it, since all</div><div class="diff-add">+     sessions in one project directory share the same true cwd.</div><div class="diff-add">+   - `Scan`&#39;s `ProjectGroup` construction now sets `ProjectPath: sessions[0].ProjectPath`</div><div class="diff-add">+     (the authoritative per-session value set by `indexFile`) instead of re-decoding the</div><div class="diff-add">+     encoded directory name via `DecodeProjectDir(e.Name())`.</div><div class="diff-add">+   - `DecodeProjectDir`&#39;s doc comment now states explicitly that it is best-effort/lossy</div><div class="diff-add">+     for hyphenated path segments and that callers should prefer the transcript `cwd`,</div><div class="diff-add">+     falling back to decode only when no `cwd` record is available.</div><div class="diff-add">+ - `internal/discovery/discovery_test.go`: added `TestScanUsesTranscriptCwd`, which writes</div><div class="diff-add">+   a session under a directory name that would decode incorrectly</div><div class="diff-add">+   (`-tmp-proj-with-hyphen` → naively `/tmp/proj/with/hyphen`) but carries</div><div class="diff-add">+   `&#34;cwd&#34;:&#34;/tmp/proj-with-hyphen&#34;` in its transcript line, and asserts both</div><div class="diff-add">+   `groups[0].ProjectPath` and `groups[0].Sessions[0].ProjectPath` equal the true</div><div class="diff-add">+   `/tmp/proj-with-hyphen`. Existing tests (`TestEncodeDecodeRoundTrip`,</div><div class="diff-add">+   `TestScanBuildsGroups`, `TestFindSessionByPrefix`) were left unchanged and still pass —</div><div class="diff-add">+   `TestScanBuildsGroups`&#39;s fixture has no `cwd` field, so it correctly exercises the</div><div class="diff-add">+   decode fallback path (`-tmp-projA` → `/tmp/projA`).</div><div class="diff-add">+ </div><div class="diff-add">+ ### Covering test run</div><div class="diff-add">+ </div><div class="diff-add">+ Command: `go test ./internal/discovery/ -v`</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ === RUN   TestEncodeDecodeRoundTrip</div><div class="diff-add">+ --- PASS: TestEncodeDecodeRoundTrip (0.00s)</div><div class="diff-add">+ === RUN   TestScanBuildsGroups</div><div class="diff-add">+ --- PASS: TestScanBuildsGroups (0.00s)</div><div class="diff-add">+ === RUN   TestFindSessionByPrefix</div><div class="diff-add">+ --- PASS: TestFindSessionByPrefix (0.00s)</div><div class="diff-add">+ === RUN   TestScanUsesTranscriptCwd</div><div class="diff-add">+ --- PASS: TestScanUsesTranscriptCwd (0.00s)</div><div class="diff-add">+ PASS</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.299s</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Full suite</div><div class="diff-add">+ </div><div class="diff-add">+ `go test ./...` — green:</div><div class="diff-add">+ </div><div class="diff-add">+ ```</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/cmd/ccwhid	(cached)</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/discovery	0.157s</div><div class="diff-add">+ ok  	github.com/saigyo/cc-what-have-i-done/internal/model	(cached)</div><div class="diff-add">+ ```</div><div class="diff-add">+ </div><div class="diff-add">+ ### Commit</div><div class="diff-add">+ </div><div class="diff-add">+ `159ee65` — &#34;fix: use transcript cwd for authoritative project path&#34;</div></div><pre class="tool-result">The file ~/IdeaProjects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md has been updated successfully. (file state is current in your context — no need to Read it back)</pre></div></details></div>
     </article>
+    
     
     <article class="turn turn-assistant" id="turn-30" data-search="status: done
 commit: 159ee65 — &#34;fix: use transcript cwd for authoritative project path&#34;
 test summary: `go test ./internal/discovery/ -v` (covering file: internal/discovery/discovery_test.go) — 4/4 pass, including new testscanusestranscriptcwd; `go test ./...` green across all 3 packages.
 report appended: ~/ideaprojects/cc-what-have-i-done/.superpowers/sdd/task-3-report.md (&#34;fix: transcript cwd for project path&#34; section).
 concerns: none — fix resolves the lossy-decode edge case flagged in the original task-3 report; no regressions.">
-      <div class="turn-role">Claude<span class="usage-badge">376 tok · ~$0.02</span></div>
+      <div class="turn-role">Claude<span class="turn-time" title="July 11, 2026 at 12:05:07">· 12:05</span><span class="usage-badge">376 tok · ~$0.02</span></div>
       <div class="turn-body"><p>Status: DONE
 Commit: 159ee65 — &quot;fix: use transcript cwd for authoritative project path&quot;
 Test summary: <code>go test ./internal/discovery/ -v</code> (covering file: internal/discovery/discovery_test.go) — 4/4 pass, including new TestScanUsesTranscriptCwd; <code>go test ./...</code> green across all 3 packages.

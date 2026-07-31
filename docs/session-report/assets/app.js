@@ -1,6 +1,23 @@
 (function () {
   var filter = document.getElementById('filter');
   var turns = Array.prototype.slice.call(document.querySelectorAll('.turn[data-search]'));
+  var daySeps = Array.prototype.slice.call(document.querySelectorAll('.day-sep'));
+  // A day separator stays visible only while at least one turn before the
+  // next separator survives the filter.
+  function syncDaySeps() {
+    daySeps.forEach(function (sep) {
+      var visible = false;
+      var el = sep.nextElementSibling;
+      while (el && !el.classList.contains('day-sep')) {
+        if (el.classList.contains('turn') && !el.classList.contains('filtered')) {
+          visible = true;
+          break;
+        }
+        el = el.nextElementSibling;
+      }
+      sep.classList.toggle('filtered', !visible);
+    });
+  }
   if (filter) {
     filter.addEventListener('input', function () {
       var q = filter.value.toLowerCase().trim();
@@ -8,6 +25,7 @@
         var hit = q === '' || (t.getAttribute('data-search') || '').indexOf(q) !== -1;
         t.classList.toggle('filtered', !hit);
       });
+      syncDaySeps();
     });
   }
 
@@ -45,4 +63,11 @@
     const link = e.target.closest('a.agent-link');
     if (link) e.stopPropagation();
   }, true);
+
+  // Transcript images render as capped thumbnails; a click toggles full size.
+  document.addEventListener('click', function (e) {
+    if (!(e.target instanceof Element)) return;
+    var img = e.target.closest('img.turn-image');
+    if (img) img.classList.toggle('expanded');
+  });
 })();
