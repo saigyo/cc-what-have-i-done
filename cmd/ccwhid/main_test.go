@@ -63,3 +63,20 @@ func TestLicenseFlagPrintsNotices(t *testing.T) {
 		t.Errorf("expected full notices content (cobra section), got %d bytes", out.Len())
 	}
 }
+
+func TestResolveVersion(t *testing.T) {
+	cases := []struct {
+		name, ldflags, mainVersion, want string
+	}{
+		{"ldflags wins", "0.6.0", "v9.9.9", "0.6.0"},
+		{"module version, v stripped", "dev", "v0.6.0", "0.6.0"},
+		{"devel falls back to dev", "dev", "(devel)", "dev"},
+		{"empty falls back to dev", "dev", "", "dev"},
+		{"pseudo-version passes through", "dev", "v0.6.1-0.20260731120000-abcdef123456", "0.6.1-0.20260731120000-abcdef123456"},
+	}
+	for _, c := range cases {
+		if got := resolveVersion(c.ldflags, c.mainVersion); got != c.want {
+			t.Errorf("%s: resolveVersion(%q, %q) = %q, want %q", c.name, c.ldflags, c.mainVersion, got, c.want)
+		}
+	}
+}

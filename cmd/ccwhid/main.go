@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -14,6 +16,29 @@ import (
 // version is the build version, overridden at release time via
 // -ldflags "-X main.version=…" (GoReleaser). Defaults to "dev" for local builds.
 var version = "dev"
+
+// resolveVersion picks the version to report: the GoReleaser ldflags
+// value when set, else the module version Go stamped into the binary
+// (go install m@vX.Y.Z, or a VCS-derived version), else "dev". The "v"
+// prefix is stripped to match GoReleaser's convention.
+func resolveVersion(ldflags, mainVersion string) string {
+	if ldflags != "dev" {
+		return ldflags
+	}
+	if mainVersion == "" || mainVersion == "(devel)" {
+		return ldflags
+	}
+	return strings.TrimPrefix(mainVersion, "v")
+}
+
+// buildVersion resolves the version for this running binary.
+func buildVersion() string {
+	mv := ""
+	if info, ok := debug.ReadBuildInfo(); ok {
+		mv = info.Main.Version
+	}
+	return resolveVersion(version, mv)
+}
 
 // options holds all CLI flag values.
 type options struct {
@@ -31,6 +56,7 @@ type options struct {
 	usage            bool
 	noImages         bool
 	license          bool
+	version          string
 }
 
 // validate rejects contradictory flag combinations.
@@ -42,14 +68,14 @@ func (o *options) validate() error {
 }
 
 func newRootCmd() *cobra.Command {
-	opts := &options{}
+	opts := &options{version: buildVersion()}
 	cmd := &cobra.Command{
 		Use:   "ccwhid",
 		Short: "Turn a Claude Code session transcript into a browsable HTML report",
 		Long: "ccwhid (cc-what-have-i-done) renders a Claude Code session " +
 			"transcript into a self-contained static HTML report. Run with no " +
 			"flags to browse sessions in an interactive TUI.",
-		Version:      version,
+		Version:      opts.version,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(cmd, opts)
