@@ -111,9 +111,11 @@ func Site(s model.Session, outDir string, opts Options) error {
 		}
 	}
 
+	generatedAt := timeNow().Local().Format(metaTimeLayout)
+
 	writePage := func(path string, sess model.Session, pageTitle string, page pageInfo) error {
 		links := newAgentLinks(s.Agents, page.PagePrefix)
-		data := buildViewModel(sess, pageTitle, opts, page, links)
+		data := buildViewModel(sess, pageTitle, opts, page, links, generatedAt)
 		var buf bytes.Buffer
 		if err := tmpl.Execute(&buf, data); err != nil {
 			return err
@@ -226,7 +228,7 @@ func (dt *dayTracker) newDay(lt time.Time) bool {
 	return true
 }
 
-func buildViewModel(s model.Session, title string, opts Options, page pageInfo, links *agentLinks) viewData {
+func buildViewModel(s model.Session, title string, opts Options, page pageInfo, links *agentLinks, generatedAt string) viewData {
 	d := viewData{
 		Title:     title,
 		Session:   s,
@@ -237,7 +239,7 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 	}
 	d.VersionLabel, d.VersionHref = versionLink(opts.Version)
 	d.SessionSpan, d.SessionSpanTitle = sessionSpan(s.StartedAt, s.EndedAt)
-	d.GeneratedAt = timeNow().Local().Format(metaTimeLayout)
+	d.GeneratedAt = generatedAt
 
 	var rep usage.Report
 	if opts.Usage {

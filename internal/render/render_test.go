@@ -213,7 +213,7 @@ func TestAgentResultTurnRendersAsAgentCard(t *testing.T) {
 		AgentSummary: `Agent "Implement Task 12: Profiles view" finished`,
 		Blocks:       []model.Block{{Type: model.BlockText, Text: "All done."}},
 	}}}
-	d := buildViewModel(s, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(s, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	tv := d.Turns[0]
 	if tv.RoleLabel != "Agent · Implement Task 12: Profiles view" {
 		t.Errorf("RoleLabel = %q", tv.RoleLabel)
@@ -630,7 +630,7 @@ func TestBuildViewModelTimeLabelsAndDayHeaders(t *testing.T) {
 		{Kind: model.TurnAssistant, Timestamp: day1.Add(time.Hour)},
 		{Kind: model.TurnUser, Timestamp: day2},
 	}}
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	turns := d.Turns
 	if len(turns) != 4 {
 		t.Fatalf("got %d turns, want 4", len(turns))
@@ -692,23 +692,18 @@ func TestSiteRendersTimeLabelsAndDaySeparator(t *testing.T) {
 }
 
 func TestBuildViewModelSessionSpanAndGeneratedAt(t *testing.T) {
-	orig := timeNow
-	gen := time.Date(2026, 7, 31, 20, 52, 0, 0, time.Local)
-	timeNow = func() time.Time { return gen.UTC() } // returns UTC; view must localize
-	t.Cleanup(func() { timeNow = orig })
-
 	start := time.Date(2026, 7, 3, 17, 3, 0, 0, time.Local)
 	end := start.Add(3*time.Hour + 12*time.Minute)
 	sess := model.Session{StartedAt: start.UTC(), EndedAt: end.UTC()} // stored as UTC, like real transcripts
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "2026-07-31 20:52")
 	if want := start.Format("2006-01-02 15:04") + " (3h 12m)"; d.SessionSpan != want {
 		t.Errorf("SessionSpan = %q, want local-time %q", d.SessionSpan, want)
 	}
 	if want := "last message " + end.Format("2006-01-02 15:04"); d.SessionSpanTitle != want {
 		t.Errorf("SessionSpanTitle = %q, want %q", d.SessionSpanTitle, want)
 	}
-	if want := gen.Format("2006-01-02 15:04"); d.GeneratedAt != want {
-		t.Errorf("GeneratedAt = %q, want local-time %q", d.GeneratedAt, want)
+	if d.GeneratedAt != "2026-07-31 20:52" {
+		t.Errorf("GeneratedAt = %q, want the value Site passed through", d.GeneratedAt)
 	}
 }
 
@@ -724,7 +719,7 @@ func TestBuildViewModelPromptTimesAndDayDividers(t *testing.T) {
 		{Kind: model.TurnUser}, // no timestamp
 		{Kind: model.TurnUser, Timestamp: day2.Add(time.Hour)},
 	}}
-	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""))
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
 	if len(d.Prompts) != 3 {
 		t.Fatalf("got %d prompts, want 3", len(d.Prompts))
 	}
@@ -788,7 +783,7 @@ func TestSiteRendersPromptTimesAndDividers(t *testing.T) {
 func TestSiteRendersSessionSpanAndRenderTime(t *testing.T) {
 	orig := timeNow
 	gen := time.Date(2026, 7, 31, 20, 52, 0, 0, time.Local)
-	timeNow = func() time.Time { return gen }
+	timeNow = func() time.Time { return gen.UTC() }
 	t.Cleanup(func() { timeNow = orig })
 
 	start := time.Date(2026, 7, 29, 14, 0, 0, 0, time.Local)
