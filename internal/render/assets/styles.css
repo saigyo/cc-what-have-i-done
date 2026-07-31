@@ -47,6 +47,10 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .turn-user { background: var(--user-bg); border-color: var(--accent-soft); }
 .turn-role { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
 .turn-user .turn-role { color: var(--accent); }
+.turn-time { margin-left: .35rem; cursor: default; }
+.day-sep { display: flex; align-items: center; gap: .75rem; color: var(--muted); font-size: .85rem; margin: 1.5rem 0 1rem; }
+.day-sep::before, .day-sep::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+.day-sep.filtered { display: none; }
 .turn-body > :first-child { margin-top: 0; }
 .turn-body > :last-child { margin-bottom: 0; }
 .turn-body pre { background: var(--code-bg); padding: .8rem; border-radius: 8px; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
