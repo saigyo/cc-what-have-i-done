@@ -73,3 +73,38 @@ func timeParts(ts time.Time) (label, title string) {
 	lt := ts.Local()
 	return lt.Format("15:04"), lt.Format("January 2, 2006 at 15:04:05")
 }
+
+// metaTimeLayout is the timestamp format used in the header meta line.
+const metaTimeLayout = "2006-01-02 15:04"
+
+// formatDuration renders d truncated to whole minutes: "3h 12m", "45m".
+func formatDuration(d time.Duration) string {
+	mins := int(d.Minutes())
+	if mins < 60 {
+		return fmt.Sprintf("%dm", mins)
+	}
+	return fmt.Sprintf("%dh %dm", mins/60, mins%60)
+}
+
+// sessionSpan formats the header's session-time span and its hover title
+// from a session's first and last message times, in local time. Cases:
+// zero start → both empty; zero end or sub-minute duration → bare start;
+// same local day → "start (3h 12m)" titled with the last-message time;
+// different days → "start → end" titled with an explanation of the arrow.
+func sessionSpan(start, end time.Time) (span, title string) {
+	if start.IsZero() {
+		return "", ""
+	}
+	ls := start.Local()
+	s := ls.Format(metaTimeLayout)
+	if end.IsZero() || end.Sub(start) < time.Minute {
+		return s, "session start"
+	}
+	le := end.Local()
+	sy, sm, sd := ls.Date()
+	ey, em, ed := le.Date()
+	if sy == ey && sm == em && sd == ed {
+		return s + " (" + formatDuration(end.Sub(start)) + ")", "last message " + le.Format(metaTimeLayout)
+	}
+	return s + " → " + le.Format(metaTimeLayout), "session start → last message"
+}

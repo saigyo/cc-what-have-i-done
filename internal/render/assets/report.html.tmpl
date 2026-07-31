@@ -30,7 +30,8 @@
       <div class="meta">
         <span>{{ .Session.ProjectPath }}</span>
         {{ if .Session.GitBranch }}<span>⎇ {{ .Session.GitBranch }}</span>{{ end }}
-        <span>{{ .StartedAt }}</span>
+        {{ if .SessionSpan }}<span title="{{ .SessionSpanTitle }}">{{ .SessionSpan }}</span>{{ end }}
+        <span>rendered {{ .GeneratedAt }}</span>
         <span>{{ .TurnCount }} turns</span>
         {{ if .Subtitle }}<span>{{ .Subtitle }}</span>{{ end }}
       </div>

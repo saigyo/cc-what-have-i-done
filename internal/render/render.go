@@ -18,6 +18,9 @@ import (
 //go:embed assets/report.html.tmpl assets/styles.css assets/app.js
 var assets embed.FS
 
+// timeNow is stubbed in tests to pin the render timestamp.
+var timeNow = time.Now
+
 // Options configures a render.
 type Options struct {
 	Title    string
@@ -145,18 +148,20 @@ func Site(s model.Session, outDir string, opts Options) error {
 // view models -------------------------------------------------------------
 
 type viewData struct {
-	Title        string
-	Session      model.Session
-	StartedAt    string
-	TurnCount    int
-	Prompts      []promptRef
-	Turns        []turnView
-	Usage        *usageView
-	Base         string
-	BackHref     string
-	Subtitle     string
-	VersionLabel string
-	VersionHref  string
+	Title            string
+	Session          model.Session
+	SessionSpan      string // "2026-07-03 17:03 (3h 12m)" or "… → …"; "" without timestamps
+	SessionSpanTitle string // hover title matching the span's form
+	GeneratedAt      string // render timestamp, always set
+	TurnCount        int
+	Prompts          []promptRef
+	Turns            []turnView
+	Usage            *usageView
+	Base             string
+	BackHref         string
+	Subtitle         string
+	VersionLabel     string
+	VersionHref      string
 }
 
 type promptRef struct {
@@ -231,9 +236,8 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		Subtitle:  page.Subtitle,
 	}
 	d.VersionLabel, d.VersionHref = versionLink(opts.Version)
-	if !s.StartedAt.IsZero() {
-		d.StartedAt = s.StartedAt.Local().Format("2006-01-02 15:04")
-	}
+	d.SessionSpan, d.SessionSpanTitle = sessionSpan(s.StartedAt, s.EndedAt)
+	d.GeneratedAt = timeNow().Local().Format(metaTimeLayout)
 
 	var rep usage.Report
 	if opts.Usage {
