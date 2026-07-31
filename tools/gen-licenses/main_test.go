@@ -99,14 +99,18 @@ func TestLicenseFromGorootBrewLayout(t *testing.T) {
 }
 
 func TestLicenseFromGorootNeitherExists(t *testing.T) {
-	dir := t.TempDir()
-	_, err := licenseFromGoroot(dir)
+	tmpDir := t.TempDir()
+	goroot := filepath.Join(tmpDir, "goroot")
+	if err := os.MkdirAll(goroot, 0o755); err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+	_, err := licenseFromGoroot(goroot)
 	if err == nil {
 		t.Fatal("licenseFromGoroot: expected error, got nil")
 	}
 	errMsg := err.Error()
-	officialPath := filepath.Join(dir, "LICENSE")
-	brewPath := filepath.Join(dir, "..", "LICENSE")
+	officialPath := filepath.Join(goroot, "LICENSE")
+	brewPath := filepath.Join(goroot, "..", "LICENSE")
 	if !strings.Contains(errMsg, officialPath) || !strings.Contains(errMsg, brewPath) {
 		t.Errorf("error message should mention both paths; got: %v", err)
 	}

@@ -105,7 +105,7 @@ func generate(root string) ([]byte, error) {
 		if len(files) == 0 {
 			txt, ok := overrides[p]
 			if !ok {
-				return nil, fmt.Errorf("module %s has no notice files (LICENSE/COPYING/NOTICE) and no override — investigate before shipping", p)
+				return nil, fmt.Errorf("module %s has no notice files (LICENSE/LICENCE/COPYING/NOTICE/PATENTS) and no override — investigate before shipping", p)
 			}
 			b.WriteString(section(p+" "+m.version+" (no license file — see note)", txt))
 			continue
