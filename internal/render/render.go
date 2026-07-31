@@ -400,9 +400,25 @@ func renderTurnBody(t model.Turn, ctx bodyCtx) template.HTML {
 			}
 		case model.BlockToolUse:
 			b.WriteString(renderTool(blk.Tool, ctx))
+		case model.BlockCommand:
+			if blk.Command != nil {
+				b.WriteString(renderCommand(blk.Command))
+			}
 		}
 	}
 	return template.HTML(b.String())
+}
+
+// renderCommand renders a slash-command invocation and its captured output
+// as one block inside the user card.
+func renderCommand(c *model.Command) string {
+	var b strings.Builder
+	b.WriteString(`<div class="command"><code class="command-invocation">` + html.EscapeString(c.Invocation) + `</code>`)
+	if c.Output != "" {
+		b.WriteString(`<pre class="command-output">` + html.EscapeString(StripANSI(c.Output)) + `</pre>`)
+	}
+	b.WriteString(`</div>`)
+	return b.String()
 }
 
 func renderTool(tc *model.ToolCall, ctx bodyCtx) string {
@@ -643,6 +659,10 @@ func turnPlainText(t model.Turn) string {
 			parts = append(parts, "[image]")
 		case model.BlockToolUse:
 			parts = append(parts, blk.Tool.Name, blk.Tool.Summary)
+		case model.BlockCommand:
+			if blk.Command != nil {
+				parts = append(parts, blk.Command.Invocation, blk.Command.Output)
+			}
 		}
 	}
 	// Strip ANSI so previews and the search index carry clean text.

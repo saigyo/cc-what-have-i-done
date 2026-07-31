@@ -812,3 +812,76 @@ func TestSiteRendersSessionSpanAndRenderTime(t *testing.T) {
 		t.Error("rendered timestamp missing from report")
 	}
 }
+
+func TestCommandCardRendersInvocationAndOutput(t *testing.T) {
+	turn := model.Turn{Kind: model.TurnUser, Blocks: []model.Block{{
+		Type:    model.BlockCommand,
+		Command: &model.Command{Invocation: "/model", Output: "Set model to \x1b[1mFable 5\x1b[22m"},
+	}}}
+	got := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
+	if !strings.Contains(got, `<code class="command-invocation">/model</code>`) {
+		t.Errorf("invocation missing: %s", got)
+	}
+	if !strings.Contains(got, `<pre class="command-output">Set model to Fable 5</pre>`) {
+		t.Errorf("output pre missing or ANSI not stripped: %s", got)
+	}
+}
+
+func TestCommandCardWithoutOutputOmitsPre(t *testing.T) {
+	turn := model.Turn{Kind: model.TurnUser, Blocks: []model.Block{{
+		Type:    model.BlockCommand,
+		Command: &model.Command{Invocation: "/clear"},
+	}}}
+	got := string(renderTurnBody(turn, bodyCtx{links: newAgentLinks(nil, "")}))
+	if !strings.Contains(got, `<code class="command-invocation">/clear</code>`) {
+		t.Errorf("invocation missing: %s", got)
+	}
+	if strings.Contains(got, "command-output") {
+		t.Errorf("empty output must omit the pre block: %s", got)
+	}
+}
+
+func TestSiteRendersCommandCardAndCleanPrompt(t *testing.T) {
+	sess := model.Session{Turns: []model.Turn{{
+		Kind: model.TurnUser,
+		Blocks: []model.Block{{
+			Type:    model.BlockCommand,
+			Command: &model.Command{Invocation: "/model", Output: "Set model to Fable 5"},
+		}},
+	}}}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	if !strings.Contains(out, `<code class="command-invocation">/model</code>`) {
+		t.Error("command card missing from report")
+	}
+	if !strings.Contains(out, `<span class="prompt-preview">/model Set model to Fable 5</span>`) {
+		t.Error("sidebar prompt entry not the clean invocation + output text")
+	}
+	if strings.Contains(out, "command-name&gt;") || strings.Contains(out, "&lt;command-name") {
+		t.Error("raw command markup leaked into the report")
+	}
+}
+
+func TestCommandTurnPlainTextIsClean(t *testing.T) {
+	turn := model.Turn{Kind: model.TurnUser, Blocks: []model.Block{{
+		Type:    model.BlockCommand,
+		Command: &model.Command{Invocation: "/model", Output: "Set model to \x1b[1mFable 5\x1b[22m"},
+	}}}
+	plain := turnPlainText(turn)
+	if !strings.HasPrefix(plain, "/model") {
+		t.Errorf("plain text = %q, want to start with the invocation", plain)
+	}
+	if !strings.Contains(plain, "Set model to Fable 5") {
+		t.Errorf("plain text = %q, want ANSI-stripped output included", plain)
+	}
+	if strings.ContainsAny(plain, "<>") {
+		t.Errorf("plain text = %q, must not contain markup", plain)
+	}
+}
