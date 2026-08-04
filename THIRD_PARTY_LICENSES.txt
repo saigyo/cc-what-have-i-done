@@ -1004,7 +1004,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ================================================================================
-github.com/yuin/goldmark v1.8.4 (LICENSE)
+github.com/yuin/goldmark v1.8.5 (LICENSE)
 ================================================================================
 
 MIT License
