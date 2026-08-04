@@ -145,3 +145,11 @@ body.hide-tools .tool-body { display: none; }
 .timeline-bubble { position: absolute; right: 14px; transform: translateY(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .15rem .5rem; font-size: .8rem; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
 .timeline-bubble.visible { opacity: 1; }
 @media (max-width: 760px) { .timeline { display: none; } }
+/* Filter match highlighting (Custom Highlight API). ::highlight() cannot
+   reliably use custom properties, hence literal colors per theme scope. */
+::highlight(filter-match) { background-color: #fde68a; color: #292524; }
+@media (prefers-color-scheme: dark) {
+  ::highlight(filter-match) { background-color: #92400e; color: #fef3c7; }
+}
+:root[data-theme="dark"] ::highlight(filter-match) { background-color: #92400e; color: #fef3c7; }
+:root[data-theme="light"] ::highlight(filter-match) { background-color: #fde68a; color: #292524; }

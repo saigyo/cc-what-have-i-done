@@ -294,4 +294,53 @@
     rebuildCache();
     syncThumb();
   }
+
+  // --- Filter match highlighting ------------------------------------------
+  // Paints every occurrence of the filter query in surviving cards via the
+  // CSS Custom Highlight API (registry entry "filter-match") — no DOM
+  // mutation, so ranges stay valid across <details> toggles and never
+  // interact with the timeline's offset cache. Browsers without support
+  // keep plain filtering.
+  if (typeof CSS !== 'undefined' && CSS.highlights && filter) {
+    var HIGHLIGHT_MIN = 2;
+    var HIGHLIGHT_CAP = 5000;
+    var highlightTimer = null;
+
+    function refreshHighlights() {
+      CSS.highlights.delete('filter-match');
+      var q = filter.value.trim();
+      if (q.length < HIGHLIGHT_MIN) return;
+      // Regex matching keeps indices exact even for characters whose
+      // lowercase form changes string length.
+      var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      var ranges = [];
+      var turnsToScan = document.querySelectorAll('.turn:not(.filtered)');
+      outer:
+      for (var i = 0; i < turnsToScan.length; i++) {
+        var walker = document.createTreeWalker(turnsToScan[i], NodeFilter.SHOW_TEXT);
+        var node;
+        while ((node = walker.nextNode())) {
+          var text = node.textContent;
+          var m;
+          re.lastIndex = 0;
+          while ((m = re.exec(text))) {
+            var r = document.createRange();
+            r.setStart(node, m.index);
+            r.setEnd(node, m.index + m[0].length);
+            ranges.push(r);
+            if (ranges.length >= HIGHLIGHT_CAP) break outer;
+            if (m.index === re.lastIndex) re.lastIndex++; // zero-length guard
+          }
+        }
+      }
+      if (ranges.length) {
+        CSS.highlights.set('filter-match', new Highlight(...ranges));
+      }
+    }
+
+    filter.addEventListener('input', function () {
+      if (highlightTimer) clearTimeout(highlightTimer);
+      highlightTimer = setTimeout(refreshHighlights, 150);
+    });
+  }
 })();
