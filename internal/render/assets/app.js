@@ -234,6 +234,10 @@
         grabOffset = null;
       }
       scrollToPointer(e);
+      // A thumb grab preserves the scroll position, so no scroll event fires;
+      // update the UI directly so the bubble appears as soon as the drag starts.
+      syncThumb();
+      showBubble();
       e.preventDefault();
     });
     timeline.addEventListener('pointermove', function (e) {

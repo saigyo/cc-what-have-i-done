@@ -119,9 +119,11 @@ content (weekday form) copied onto the tick as its `title` tooltip.
 
 ### 4. CSS (`styles.css`)
 
-- `.timeline` — `position: fixed; right: 6px; top: 4.5rem; bottom: 1rem;
+- `.timeline` — `position: fixed; right: 16px; top: 4.5rem; bottom: 1rem;
   z-index: 20;` opacity `.55`, transitioning to `1` on hover and while
-  `.dragging`. `.timeline.hidden { display: none; }`
+  `.dragging`. `.timeline.hidden { display: none; }` The 16 px inset keeps
+  the rail outside the ~15 px native overlay-scrollbar hit strip at the
+  viewport edge, which would otherwise swallow clicks on macOS.
 - `.timeline-track` — full height, 8 px wide, rounded, subtle background
   derived from `var(--border)`.
 - `.timeline-thumb` — full track width, `min-height: 24px`, rounded,
