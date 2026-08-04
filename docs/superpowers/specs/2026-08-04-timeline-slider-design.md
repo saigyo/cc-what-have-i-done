@@ -112,6 +112,14 @@ searched by binary search per scroll frame. The cache stores the
 filtering, expand/collapse-all, tool-card toggles, individual `<details>`
 toggles, and window resizes — anything that changes document height.
 
+**Scroll anchoring.** Every settled scroll frame remembers the topmost
+in-view turn and its viewport offset. When a DOM mutation reflows the
+document (filter typed or cleared, expand/collapse, tool toggles), the
+rebuild re-anchors the view to that turn at its previous offset instead of
+leaving the browser's now-arbitrary scroll position — clearing a filter
+keeps the reader on the turn they had navigated to. If the remembered turn
+is itself filtered out, no re-anchoring happens (browser clamping applies).
+
 **Day ticks.** Rebuilt together with the offset cache: for each
 non-`.filtered` `.day-sep`, a `.timeline-tick` div is placed at
 `sep.offsetTop / scrollHeight` of the track height, with the day-sep's text
