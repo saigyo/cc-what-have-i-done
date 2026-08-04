@@ -348,8 +348,9 @@
       // compositing layer for a single frame (no layout change, the fixed
       // timeline rail is a sibling and unaffected).
       if (mainEl) {
+        var prevTransform = mainEl.style.transform;
         mainEl.style.transform = 'translateZ(0)';
-        requestAnimationFrame(function () { mainEl.style.transform = ''; });
+        requestAnimationFrame(function () { mainEl.style.transform = prevTransform; });
       }
     }
 

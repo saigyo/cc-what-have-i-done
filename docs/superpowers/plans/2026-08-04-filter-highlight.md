@@ -14,7 +14,7 @@
 - Gates on the task: `gofmt -l .` (must print nothing), `go vet ./...`, `go test -race ./...` (assets are embedded, so this rebuilds with the new JS/CSS).
 - Highlight registry name: `filter-match`, styled via `::highlight(filter-match)`.
 - Feature detection: `typeof CSS !== 'undefined' && CSS.highlights`; without support the section does nothing.
-- Minimum query length for highlighting: 2 characters (after `trim()`). Debounce: 150 ms. Range cap: 5000.
+- Minimum query length for highlighting: 2 characters (after `trim()`). Debounce: 250 ms. Range cap: 1500. (Both retuned for WebKit paint cost during the WebKit hardening fixes; the original plan said 150 ms/5000.)
 - Highlight colors (literal, not custom properties): light `background-color: #fde68a; color: #292524;` — dark `background-color: #92400e; color: #fef3c7;` — mirrored across the four existing theme scopes (default, `@media (prefers-color-scheme: dark)`, `:root[data-theme="dark"]`, `:root[data-theme="light"]`).
 
 ---
@@ -42,7 +42,7 @@ Insert immediately before the closing `})();`:
   // keep plain filtering.
   if (typeof CSS !== 'undefined' && CSS.highlights && filter) {
     var HIGHLIGHT_MIN = 2;
-    var HIGHLIGHT_CAP = 5000;
+    var HIGHLIGHT_CAP = 1500;
     var highlightTimer = null;
 
     function refreshHighlights() {
@@ -79,7 +79,7 @@ Insert immediately before the closing `})();`:
 
     filter.addEventListener('input', function () {
       if (highlightTimer) clearTimeout(highlightTimer);
-      highlightTimer = setTimeout(refreshHighlights, 150);
+      highlightTimer = setTimeout(refreshHighlights, 250);
     });
   }
 ```

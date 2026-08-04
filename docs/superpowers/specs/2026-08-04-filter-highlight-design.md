@@ -109,10 +109,11 @@ mirroring the four existing theme scopes (default light, `@media
 
 - No `CSS.highlights` support → feature-detect guard skips everything;
   filtering behaves exactly as today.
-- Query cleared or shorter than 2 characters → highlight registry entry
-  deleted; no highlights linger.
-- Zero surviving cards → step 4 finds no elements; an empty `Highlight` set
-  is registered (or none); no visible effect.
+- Query cleared or shorter than 2 characters → registry entry replaced with
+  an empty `Highlight` (never deleted; see the forced-repaint decision); no
+  highlights linger.
+- Zero surviving cards → step 3 finds no elements; an empty `Highlight` is
+  registered; no visible effect.
 - Cap reached → remaining occurrences unhighlighted; filtering itself is
   unaffected.
 
