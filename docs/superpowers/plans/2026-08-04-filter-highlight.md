@@ -15,6 +15,7 @@
 - Highlight registry name: `filter-match`, styled via `::highlight(filter-match)`.
 - Feature detection: `typeof CSS !== 'undefined' && CSS.highlights`; without support the section does nothing.
 - Minimum query length for highlighting: 2 characters (after `trim()`). Debounce: 250 ms. Range cap: 1500. (Both retuned for WebKit paint cost during the WebKit hardening fixes; the original plan said 150 ms/5000.)
+- WebKit hardening (added during interactive testing): the registry entry is always REPLACED via `set()` (never deleted); after each refresh `<main>` is promoted to a compositing layer for one frame (`transform: translateZ(0)`, prior inline transform restored on the next rAF) because WebKit does not repaint removed highlight ranges; all filter listeners register for both `input` and `search` (Safari-family native clear gestures fire only `search`).
 - Highlight colors (literal, not custom properties): light `background-color: #fde68a; color: #292524;` — dark `background-color: #92400e; color: #fef3c7;` — mirrored across the four existing theme scopes (default, `@media (prefers-color-scheme: dark)`, `:root[data-theme="dark"]`, `:root[data-theme="light"]`).
 
 ---
@@ -42,45 +43,59 @@ Insert immediately before the closing `})();`:
   // keep plain filtering.
   if (typeof CSS !== 'undefined' && CSS.highlights && filter) {
     var HIGHLIGHT_MIN = 2;
-    var HIGHLIGHT_CAP = 1500;
+    var HIGHLIGHT_CAP = 1500; // WebKit visibly freezes painting thousands of ranges
     var highlightTimer = null;
+    var mainEl = document.querySelector('main');
 
     function refreshHighlights() {
-      CSS.highlights.delete('filter-match');
       var q = filter.value.trim();
-      if (q.length < HIGHLIGHT_MIN) return;
-      // Regex matching keeps indices exact even for characters whose
-      // lowercase form changes string length.
-      var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
       var ranges = [];
-      var turnsToScan = document.querySelectorAll('.turn:not(.filtered)');
-      outer:
-      for (var i = 0; i < turnsToScan.length; i++) {
-        var walker = document.createTreeWalker(turnsToScan[i], NodeFilter.SHOW_TEXT);
-        var node;
-        while ((node = walker.nextNode())) {
-          var text = node.textContent;
-          var m;
-          re.lastIndex = 0;
-          while ((m = re.exec(text))) {
-            var r = document.createRange();
-            r.setStart(node, m.index);
-            r.setEnd(node, m.index + m[0].length);
-            ranges.push(r);
-            if (ranges.length >= HIGHLIGHT_CAP) break outer;
-            if (m.index === re.lastIndex) re.lastIndex++; // zero-length guard
+      if (q.length >= HIGHLIGHT_MIN) {
+        // Regex matching keeps indices exact even for characters whose
+        // lowercase form changes string length.
+        var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        var turnsToScan = document.querySelectorAll('.turn:not(.filtered)');
+        outer:
+        for (var i = 0; i < turnsToScan.length; i++) {
+          var walker = document.createTreeWalker(turnsToScan[i], NodeFilter.SHOW_TEXT);
+          var node;
+          while ((node = walker.nextNode())) {
+            var text = node.textContent;
+            var m;
+            re.lastIndex = 0;
+            while ((m = re.exec(text))) {
+              var r = document.createRange();
+              r.setStart(node, m.index);
+              r.setEnd(node, m.index + m[0].length);
+              ranges.push(r);
+              if (ranges.length >= HIGHLIGHT_CAP) break outer;
+              if (m.index === re.lastIndex) re.lastIndex++; // zero-length guard
+            }
           }
         }
       }
-      if (ranges.length) {
-        CSS.highlights.set('filter-match', new Highlight(...ranges));
+      CSS.highlights.set('filter-match', new Highlight(...ranges));
+      // WebKit does not repaint regions whose ranges were removed from the
+      // registry (neither on delete nor on replace) — stale highlights
+      // linger until the text repaints for some other reason. Force one
+      // repaint of the transcript by promoting <main> to its own
+      // compositing layer for a single frame (no layout change, the fixed
+      // timeline rail is a sibling and unaffected).
+      if (mainEl) {
+        var prevTransform = mainEl.style.transform;
+        mainEl.style.transform = 'translateZ(0)';
+        requestAnimationFrame(function () { mainEl.style.transform = prevTransform; });
       }
     }
 
-    filter.addEventListener('input', function () {
+    var scheduleHighlights = function () {
       if (highlightTimer) clearTimeout(highlightTimer);
+      // 250 ms: long enough that fast typing skips intermediate prefixes
+      // ("sh", "shi"), whose huge match counts are what WebKit chokes on.
       highlightTimer = setTimeout(refreshHighlights, 250);
-    });
+    };
+    filter.addEventListener('input', scheduleHighlights);
+    filter.addEventListener('search', scheduleHighlights); // native clear gestures
   }
 ```
 
