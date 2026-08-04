@@ -1,0 +1,124 @@
+# Filter Match Highlighting Design
+
+**Date:** 2026-08-04
+**Status:** Approved for planning
+
+## Goal
+
+While the turn filter is active, highlight every occurrence of the query in
+the cards that survive the filter — including occurrences inside collapsed
+tool-detail sections, so a card that matched on hidden tool output shows its
+highlights the moment it is expanded.
+
+## Decisions (from brainstorming)
+
+- **Highlight everywhere in the card**, including inside collapsed
+  `<details>`. A match on hidden tool output is the reason a card survived;
+  expanding reveals the why.
+- **CSS Custom Highlight API** (`CSS.highlights` +
+  `::highlight(filter-match)`), not `<mark>` wrapping: zero DOM mutation, so
+  nothing to unwrap on query changes, no reflows, and no interaction with the
+  timeline slider's height-keyed offset cache and scroll anchoring.
+- **Feature detection:** browsers without `CSS.highlights` keep today's
+  behavior (filtering without highlights). No polyfill.
+- **Minimum query length 2** for highlighting (the filter itself still works
+  from 1 character); single-character highlights are noise at this document
+  scale.
+- **Range cap 5,000** per refresh as a jank guard; occurrences beyond the cap
+  are simply not highlighted.
+
+## Architecture
+
+Pure client-side presentation. No Go changes, no template changes — the
+`::highlight` pseudo-element needs no extra markup. One new self-contained
+section in `app.js`, one small block in `styles.css`.
+
+### JS behavior (`app.js`)
+
+New section inside the existing IIFE, guarded by feature detection:
+
+```js
+if (typeof CSS !== 'undefined' && CSS.highlights) { … }
+```
+
+Absent support → the section registers nothing and does nothing.
+
+**Trigger.** A dedicated `input` listener on `#filter`, registered after the
+existing filter handler (so it observes post-toggle `.filtered` classes),
+debounced 150 ms with `setTimeout`/`clearTimeout`. The existing filter and
+timeline handlers are not modified.
+
+**Refresh algorithm.** On each debounced fire:
+
+1. `CSS.highlights.delete('filter-match')`.
+2. `q = filter.value.trim()`; if `q.length < 2`, stop.
+3. Build a case-insensitive matcher: escape regex metacharacters in `q`
+   (`q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`), compile with flags `gi`.
+   Regex matching (rather than `toLowerCase()` + `indexOf`) keeps match
+   indices exact for characters whose lowercase form changes string length.
+4. For every `.turn:not(.filtered)` element: iterate its text nodes via
+   `document.createTreeWalker(el, NodeFilter.SHOW_TEXT)`; for each text node,
+   run the regex over `node.textContent`; for each match create a `Range`
+   with `setStart(node, m.index)` / `setEnd(node, m.index + m[0].length)`.
+5. Stop collecting when 5,000 ranges are reached (guard against pathological
+   queries); register what was collected:
+   `CSS.highlights.set('filter-match', new Highlight(...ranges))`.
+
+**Why no other triggers.** The transcript DOM is static after load: text
+nodes never change, so ranges stay valid across `<details>`
+expand/collapse, theme toggles, and scrolling. Card visibility only changes
+through the filter itself, which re-runs the refresh. Registered ranges in
+collapsed details simply paint when the content becomes visible.
+
+**Match granularity.** Matches are found within single text nodes. A query
+spanning a formatting boundary (e.g. half plain, half bold text) still
+filters the card correctly but that occurrence is not highlighted. Accepted
+trade-off; cross-node matching is out of scope.
+
+### CSS (`styles.css`)
+
+`::highlight()` styling supports color and background only, and custom
+properties are unreliable inside it, so the block uses literal colors,
+mirroring the four existing theme scopes (default light, `@media
+(prefers-color-scheme: dark)`, `:root[data-theme="dark"]`,
+`:root[data-theme="light"]`):
+
+- Light: `background-color: #fde68a; color: #292524;` (amber chip, dark text)
+- Dark: `background-color: #92400e; color: #fef3c7;` (burnt amber, light text)
+
+## Error handling
+
+- No `CSS.highlights` support → feature-detect guard skips everything;
+  filtering behaves exactly as today.
+- Query cleared or shorter than 2 characters → highlight registry entry
+  deleted; no highlights linger.
+- Zero surviving cards → step 4 finds no elements; an empty `Highlight` set
+  is registered (or none); no visible effect.
+- Cap reached → remaining occurrences unhighlighted; filtering itself is
+  unaffected.
+
+## Testing
+
+No Go code changes, so no new Go tests; `gofmt`/`vet`/`go test -race ./...`
+still gate the asset embedding. Behavior is verified manually with
+Playwright against a served long report:
+
+1. Type a query with ≥ 2 characters → visible occurrences highlighted in
+   surviving cards; `CSS.highlights.has('filter-match')` is true.
+2. Expand a collapsed tool card in a surviving turn → highlights visible
+   inside the expanded content without re-typing.
+3. Clear the filter → no highlights remain.
+4. Single-character query → cards filter but nothing is highlighted.
+5. Case-insensitivity: query in different case than the text still
+   highlights.
+6. Both themes show readable highlight colors.
+7. Filter → scrub the timeline → clear filter: scroll anchoring still
+   restores the focused card (no regression from this feature).
+
+## Non-goals
+
+- Cross-text-node match highlighting.
+- Highlighting in the sidebar prompt list (the filter does not affect it).
+- `<mark>`-based fallback for browsers without the Custom Highlight API.
+- Multi-term/boolean queries (the filter is a single substring; highlighting
+  mirrors it).
