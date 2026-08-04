@@ -134,3 +134,14 @@ body.hide-tools .tool-body { display: none; }
 @supports (-webkit-hyphens: none) {
   .image-badge-icon { top: -0.09em; font-size: 0.75rem; }
 }
+/* Floating timeline slider */
+.timeline { position: fixed; right: 6px; top: 4.5rem; bottom: 1rem; width: 8px; z-index: 20; opacity: .55; transition: opacity .15s; touch-action: none; }
+.timeline:hover, .timeline.dragging { opacity: 1; }
+.timeline.hidden { display: none; }
+.timeline-track { position: relative; height: 100%; width: 100%; background: var(--border); border-radius: 4px; }
+.timeline-thumb { position: absolute; left: 0; width: 100%; min-height: 24px; background: var(--muted); border-radius: 4px; cursor: grab; }
+.timeline.dragging .timeline-thumb { cursor: grabbing; }
+.timeline-tick { position: absolute; left: 0; width: 100%; height: 1px; background: var(--muted); opacity: .6; pointer-events: none; }
+.timeline-bubble { position: absolute; right: 14px; transform: translateY(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .15rem .5rem; font-size: .8rem; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.timeline-bubble.visible { opacity: 1; }
+@media (max-width: 760px) { .timeline { display: none; } }
