@@ -135,7 +135,7 @@ body.hide-tools .tool-body { display: none; }
   .image-badge-icon { top: -0.09em; font-size: 0.75rem; }
 }
 /* Floating timeline slider */
-.timeline { position: fixed; right: 6px; top: 4.5rem; bottom: 1rem; width: 8px; z-index: 20; opacity: .55; transition: opacity .15s; touch-action: none; }
+.timeline { position: fixed; right: 16px; top: 4.5rem; bottom: 1rem; width: 8px; z-index: 20; opacity: .55; transition: opacity .15s; touch-action: none; }
 .timeline:hover, .timeline.dragging { opacity: 1; }
 .timeline.hidden { display: none; }
 .timeline-track { position: relative; height: 100%; width: 100%; background: var(--border); border-radius: 4px; }
