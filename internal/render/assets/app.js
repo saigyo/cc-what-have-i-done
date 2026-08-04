@@ -313,35 +313,37 @@
     var highlightTimer = null;
 
     function refreshHighlights() {
-      CSS.highlights.delete('filter-match');
       var q = filter.value.trim();
-      if (q.length < HIGHLIGHT_MIN) return;
-      // Regex matching keeps indices exact even for characters whose
-      // lowercase form changes string length.
-      var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
       var ranges = [];
-      var turnsToScan = document.querySelectorAll('.turn:not(.filtered)');
-      outer:
-      for (var i = 0; i < turnsToScan.length; i++) {
-        var walker = document.createTreeWalker(turnsToScan[i], NodeFilter.SHOW_TEXT);
-        var node;
-        while ((node = walker.nextNode())) {
-          var text = node.textContent;
-          var m;
-          re.lastIndex = 0;
-          while ((m = re.exec(text))) {
-            var r = document.createRange();
-            r.setStart(node, m.index);
-            r.setEnd(node, m.index + m[0].length);
-            ranges.push(r);
-            if (ranges.length >= HIGHLIGHT_CAP) break outer;
-            if (m.index === re.lastIndex) re.lastIndex++; // zero-length guard
+      if (q.length >= HIGHLIGHT_MIN) {
+        // Regex matching keeps indices exact even for characters whose
+        // lowercase form changes string length.
+        var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        var turnsToScan = document.querySelectorAll('.turn:not(.filtered)');
+        outer:
+        for (var i = 0; i < turnsToScan.length; i++) {
+          var walker = document.createTreeWalker(turnsToScan[i], NodeFilter.SHOW_TEXT);
+          var node;
+          while ((node = walker.nextNode())) {
+            var text = node.textContent;
+            var m;
+            re.lastIndex = 0;
+            while ((m = re.exec(text))) {
+              var r = document.createRange();
+              r.setStart(node, m.index);
+              r.setEnd(node, m.index + m[0].length);
+              ranges.push(r);
+              if (ranges.length >= HIGHLIGHT_CAP) break outer;
+              if (m.index === re.lastIndex) re.lastIndex++; // zero-length guard
+            }
           }
         }
       }
-      if (ranges.length) {
-        CSS.highlights.set('filter-match', new Highlight(...ranges));
-      }
+      // Always REPLACE the registry entry, never delete it: WebKit fails to
+      // repaint stale highlight regions when an entry is deleted (the stale
+      // paint stays until something else repaints that text), but replacing
+      // the entry via set() invalidates the removed ranges correctly.
+      CSS.highlights.set('filter-match', new Highlight(...ranges));
     }
 
     var scheduleHighlights = function () {

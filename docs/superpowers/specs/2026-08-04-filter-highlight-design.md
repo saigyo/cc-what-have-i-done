@@ -54,19 +54,24 @@ value (Enter key) is a harmless idempotent re-apply.
 
 **Refresh algorithm.** On each debounced fire:
 
-1. `CSS.highlights.delete('filter-match')`.
-2. `q = filter.value.trim()`; if `q.length < 2`, stop.
-3. Build a case-insensitive matcher: escape regex metacharacters in `q`
+1. `q = filter.value.trim()`; ranges are collected only when `q.length >= 2`.
+2. Build a case-insensitive matcher: escape regex metacharacters in `q`
    (`q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`), compile with flags `gi`.
    Regex matching (rather than `toLowerCase()` + `indexOf`) keeps match
    indices exact for characters whose lowercase form changes string length.
-4. For every `.turn:not(.filtered)` element: iterate its text nodes via
+3. For every `.turn:not(.filtered)` element: iterate its text nodes via
    `document.createTreeWalker(el, NodeFilter.SHOW_TEXT)`; for each text node,
    run the regex over `node.textContent`; for each match create a `Range`
    with `setStart(node, m.index)` / `setEnd(node, m.index + m[0].length)`.
-5. Stop collecting when 5,000 ranges are reached (guard against pathological
-   queries); register what was collected:
-   `CSS.highlights.set('filter-match', new Highlight(...ranges))`.
+4. Stop collecting when 5,000 ranges are reached (guard against pathological
+   queries).
+5. ALWAYS replace the registry entry — never delete it:
+   `CSS.highlights.set('filter-match', new Highlight(...ranges))`, with an
+   empty `Highlight` when nothing was collected. WebKit (observed in the
+   DuckDuckGo browser) fails to repaint stale highlight regions when a
+   registry entry is deleted — the old paint lingers until something else
+   repaints that text (e.g. a click) — but replacing the entry via `set()`
+   invalidates removed ranges correctly.
 
 **Why no other triggers.** The transcript DOM is static after load: text
 nodes never change, so ranges stay valid across `<details>`
