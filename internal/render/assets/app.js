@@ -173,6 +173,42 @@
       syncThumb();
     });
 
+    // Monitor DOM-mutating interactions (filter, expand/collapse, tool toggles)
+    // to keep cache, thumb, and ticks in sync. Use requestAnimationFrame to defer
+    // until DOM changes have been applied.
+    var cacheInvalidatePending = false;
+    function scheduleInvalidate() {
+      if (!cacheInvalidatePending) {
+        cacheInvalidatePending = true;
+        requestAnimationFrame(function () {
+          cacheInvalidatePending = false;
+          rebuildCache();
+          syncThumb();
+        });
+      }
+    }
+
+    var filterEl = document.getElementById('filter');
+    var toggleAllBtn = document.getElementById('toggle-all');
+    var toggleToolsBtn = document.getElementById('toggle-tools');
+
+    if (filterEl) {
+      filterEl.addEventListener('input', scheduleInvalidate);
+    }
+    if (toggleAllBtn) {
+      toggleAllBtn.addEventListener('click', scheduleInvalidate);
+    }
+    if (toggleToolsBtn) {
+      toggleToolsBtn.addEventListener('click', scheduleInvalidate);
+    }
+
+    // Listen for individual <details> toggles as well.
+    document.addEventListener('toggle', function (e) {
+      if (e.target instanceof HTMLDetailsElement) {
+        scheduleInvalidate();
+      }
+    });
+
     function scrollToPointer(e) {
       var rect = track.getBoundingClientRect();
       var thumbH = thumb.offsetHeight;
