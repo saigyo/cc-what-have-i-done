@@ -54,12 +54,18 @@
     {{ end }}
     {{ range .Turns }}
     {{ if .DayHeader }}<div class="day-sep"><span>{{ .DayHeader }}</span></div>{{ end }}
-    <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}" data-search="{{ .SearchText }}">
+    <article class="turn turn-{{ .Kind }}" id="turn-{{ .Index }}"{{ if .TimeBubble }} data-time="{{ .TimeBubble }}"{{ end }} data-search="{{ .SearchText }}">
       <div class="turn-role">{{ .RoleLabel }}{{ if .TimeLabel }}<span class="turn-time" title="{{ .TimeTitle }}">· {{ .TimeLabel }}</span>{{ end }}{{ if .Status }}<span class="agent-status">{{ .Status }}</span>{{ end }}{{ if .AgentHref }}<a class="agent-link" href="{{ .AgentHref }}">transcript ↗</a>{{ end }}{{ if .Badge }}<span class="usage-badge">{{ .Badge }}</span>{{ end }}</div>
       <div class="turn-body">{{ .Body }}</div>
     </article>
     {{ end }}
   </main>
+</div>
+<div class="timeline hidden" aria-hidden="true">
+  <div class="timeline-track">
+    <div class="timeline-thumb"></div>
+  </div>
+  <div class="timeline-bubble"></div>
 </div>
 <script src="{{ .Base }}assets/app.js"></script>
 </body>

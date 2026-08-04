@@ -885,3 +885,58 @@ func TestCommandTurnPlainTextIsClean(t *testing.T) {
 		t.Errorf("plain text = %q, must not contain markup", plain)
 	}
 }
+
+func TestBuildViewModelTimeBubble(t *testing.T) {
+	ts := time.Date(2026, 7, 29, 14, 3, 59, 0, time.Local)
+	sess := model.Session{Turns: []model.Turn{
+		{Kind: model.TurnUser, Timestamp: ts.UTC(), // stored as UTC, like real transcripts
+			Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}},
+		{Kind: model.TurnAssistant, // no timestamp
+			Blocks: []model.Block{{Type: model.BlockText, Text: "hello"}}},
+	}}
+	d := buildViewModel(sess, "t", Options{}, pageInfo{}, newAgentLinks(nil, ""), "")
+	if d.Turns[0].TimeBubble != "July 29 · 14:03" {
+		t.Errorf("TimeBubble = %q, want %q", d.Turns[0].TimeBubble, "July 29 · 14:03")
+	}
+	if d.Turns[1].TimeBubble != "" {
+		t.Errorf("timestampless turn TimeBubble = %q, want empty", d.Turns[1].TimeBubble)
+	}
+}
+
+func TestSiteRendersTimelineRailAndDataTime(t *testing.T) {
+	ts := time.Date(2026, 7, 29, 14, 3, 59, 0, time.Local)
+	sess := model.Session{
+		StartedAt: ts,
+		Turns: []model.Turn{
+			{Kind: model.TurnUser, Timestamp: ts,
+				Blocks: []model.Block{{Type: model.BlockText, Text: "hi"}}},
+			{Kind: model.TurnAssistant, // no timestamp: must not carry data-time
+				Blocks: []model.Block{{Type: model.BlockText, Text: "hello"}}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Site(sess, dir, Options{}); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "index.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := string(b)
+	if !strings.Contains(out, `data-time="July 29 · 14:03"`) {
+		t.Error("data-time attribute missing from timestamped turn")
+	}
+	if strings.Contains(out, `id="turn-1" data-time=`) {
+		t.Error("timestampless turn must not carry data-time")
+	}
+	for _, want := range []string{
+		`class="timeline hidden" aria-hidden="true"`,
+		`class="timeline-track"`,
+		`class="timeline-thumb"`,
+		`class="timeline-bubble"`,
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("rail skeleton part %s missing from report", want)
+		}
+	}
+}

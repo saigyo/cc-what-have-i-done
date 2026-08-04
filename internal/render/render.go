@@ -187,6 +187,7 @@ type turnView struct {
 	TimeLabel  string // "15:04" local-time card label; "" when no timestamp
 	TimeTitle  string // hover title, e.g. "July 29, 2026 at 14:03:59"
 	DayHeader  string // "Wednesday, July 29, 2026" on each day's first turn
+	TimeBubble string // "July 29 · 14:03" timeline-bubble label; "" when no timestamp
 }
 
 type usageView struct {
@@ -271,7 +272,9 @@ func buildViewModel(s model.Session, title string, opts Options, page pageInfo, 
 		}
 		tv.TimeLabel, tv.TimeTitle = timeParts(t.Timestamp)
 		if !t.Timestamp.IsZero() {
-			if lt := t.Timestamp.Local(); turnDays.newDay(lt) {
+			lt := t.Timestamp.Local()
+			tv.TimeBubble = lt.Format("January 2 · 15:04")
+			if turnDays.newDay(lt) {
 				tv.DayHeader = lt.Format("Monday, January 2, 2006")
 			}
 		}
