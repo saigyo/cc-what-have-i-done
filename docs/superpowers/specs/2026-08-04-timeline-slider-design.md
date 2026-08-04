@@ -114,8 +114,8 @@ toggles, and window resizes — anything that changes document height.
 
 **Day ticks.** Rebuilt together with the offset cache: for each
 non-`.filtered` `.day-sep`, a `.timeline-tick` div is placed at
-`sep.offsetTop / scrollHeight` of the track height, with the day-sep's
-`title` attribute (weekday form) copied onto the tick as its tooltip.
+`sep.offsetTop / scrollHeight` of the track height, with the day-sep's text
+content (weekday form) copied onto the tick as its `title` tooltip.
 
 ### 4. CSS (`styles.css`)
 
