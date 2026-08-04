@@ -202,12 +202,13 @@
       toggleToolsBtn.addEventListener('click', scheduleInvalidate);
     }
 
-    // Listen for individual <details> toggles as well.
+    // Listen for individual <details> toggles as well. The toggle event does not
+    // bubble (bubbles: false), so use capture phase to intercept at the source.
     document.addEventListener('toggle', function (e) {
       if (e.target instanceof HTMLDetailsElement) {
         scheduleInvalidate();
       }
-    });
+    }, true);
 
     function scrollToPointer(e) {
       var rect = track.getBoundingClientRect();
