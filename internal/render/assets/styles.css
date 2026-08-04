@@ -141,7 +141,7 @@ body.hide-tools .tool-body { display: none; }
 .timeline-track { position: relative; height: 100%; width: 100%; background: var(--border); border-radius: 4px; }
 .timeline-thumb { position: absolute; left: 0; width: 100%; min-height: 24px; background: var(--muted); border-radius: 4px; cursor: grab; }
 .timeline.dragging .timeline-thumb { cursor: grabbing; }
-.timeline-tick { position: absolute; left: 0; width: 100%; height: 1px; background: var(--muted); opacity: .6; pointer-events: none; }
+.timeline-tick { position: absolute; left: 0; width: 100%; height: 1px; background: var(--muted); opacity: .6; }
 .timeline-bubble { position: absolute; right: 14px; transform: translateY(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .15rem .5rem; font-size: .8rem; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
 .timeline-bubble.visible { opacity: 1; }
 @media (max-width: 760px) { .timeline { display: none; } }

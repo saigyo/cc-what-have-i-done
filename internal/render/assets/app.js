@@ -91,6 +91,7 @@
     // changes document height (filter, expand/collapse, tool toggles,
     // resizes) is caught by comparing live scrollHeight against cache.height.
     var cache = { height: -1, tops: [], labels: [] };
+    var grabOffset = null;
 
     function rebuildCache() {
       cache.height = doc.scrollHeight;
@@ -213,7 +214,8 @@
     function scrollToPointer(e) {
       var rect = track.getBoundingClientRect();
       var thumbH = thumb.offsetHeight;
-      var frac = (e.clientY - rect.top - thumbH / 2) / Math.max(1, rect.height - thumbH);
+      var off = grabOffset === null ? thumbH / 2 : grabOffset;
+      var frac = (e.clientY - rect.top - off) / Math.max(1, rect.height - thumbH);
       frac = Math.max(0, Math.min(1, frac));
       window.scrollTo(0, frac * maxScroll());
     }
@@ -223,6 +225,14 @@
       dragging = true;
       timeline.classList.add('dragging');
       timeline.setPointerCapture(e.pointerId);
+      // Calculate grab offset if pointer is over the thumb; otherwise center-jump
+      // behavior when clicking on the track.
+      var thumbRect = thumb.getBoundingClientRect();
+      if (e.clientY >= thumbRect.top && e.clientY <= thumbRect.bottom) {
+        grabOffset = e.clientY - thumbRect.top;
+      } else {
+        grabOffset = null;
+      }
       scrollToPointer(e);
       e.preventDefault();
     });
@@ -233,6 +243,7 @@
       if (!dragging) return;
       dragging = false;
       timeline.classList.remove('dragging');
+      grabOffset = null;
       showBubble(); // restart the fade timer now that the drag has ended
     }
     timeline.addEventListener('pointerup', endDrag);
