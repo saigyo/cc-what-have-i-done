@@ -3,6 +3,7 @@ package render
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -926,8 +927,14 @@ func TestSiteRendersTimelineRailAndDataTime(t *testing.T) {
 	if !strings.Contains(out, `data-time="July 29 · 14:03"`) {
 		t.Error("data-time attribute missing from timestamped turn")
 	}
-	if strings.Contains(out, `id="turn-1" data-time=`) {
-		t.Error("timestampless turn must not carry data-time")
+	// Check the whole opening tag so the assertion holds regardless of
+	// attribute order in the template.
+	turn1 := regexp.MustCompile(`<article[^>]*\bid="turn-1"[^>]*>`).FindString(out)
+	if turn1 == "" {
+		t.Fatal("turn-1 article tag not found in report")
+	}
+	if strings.Contains(turn1, "data-time") {
+		t.Errorf("timestampless turn must not carry data-time, got %s", turn1)
 	}
 	for _, want := range []string{
 		`class="timeline hidden" aria-hidden="true"`,
