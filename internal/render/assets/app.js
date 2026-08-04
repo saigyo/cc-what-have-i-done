@@ -90,18 +90,24 @@
     // Offset cache keyed by the scrollHeight it was built at. Anything that
     // changes document height (filter, expand/collapse, tool toggles,
     // resizes) is caught by comparing live scrollHeight against cache.height.
-    var cache = { height: -1, tops: [], labels: [] };
+    var cache = { height: -1, tops: [], labels: [], els: [] };
     var grabOffset = null;
+    // Topmost in-view turn, remembered every settled frame so that when a DOM
+    // mutation (filter change, expand/collapse) reflows the document, the view
+    // can be re-anchored to the turn the reader was looking at.
+    var anchor = null; // { el, delta: cached top - scrollY }
 
     function rebuildCache() {
       cache.height = doc.scrollHeight;
       cache.tops = [];
       cache.labels = [];
+      cache.els = [];
       var scrollY = window.scrollY;
       document.querySelectorAll('.turn[data-time]').forEach(function (t) {
         if (t.classList.contains('filtered')) return;
         cache.tops.push(t.getBoundingClientRect().top + scrollY);
         cache.labels.push(t.getAttribute('data-time'));
+        cache.els.push(t);
       });
       rebuildTicks(scrollY);
       timeline.classList.toggle('hidden', doc.scrollHeight < 3 * window.innerHeight);
@@ -133,18 +139,40 @@
       bubble.style.top = (top + thumbH / 2) + 'px';
     }
 
-    // Label of the topmost turn in view: the last cached turn starting at or
+    // Index of the topmost turn in view: the last cached turn starting at or
     // above the line just below the sticky topbar (binary search), or the
     // first turn when none has started yet.
-    function currentLabel() {
-      if (!cache.labels.length) return '';
+    function currentIndex() {
+      if (!cache.tops.length) return -1;
       var threshold = window.scrollY + (topbar ? topbar.offsetHeight : 0) + 1;
       var lo = 0, hi = cache.tops.length - 1, best = 0;
       while (lo <= hi) {
         var mid = (lo + hi) >> 1;
         if (cache.tops[mid] <= threshold) { best = mid; lo = mid + 1; } else { hi = mid - 1; }
       }
-      return cache.labels[best];
+      return best;
+    }
+
+    function currentLabel() {
+      var i = currentIndex();
+      return i < 0 ? '' : cache.labels[i];
+    }
+
+    function saveAnchor() {
+      var i = currentIndex();
+      // When nothing is visible (filter matched zero turns), keep the last
+      // good anchor so clearing the filter can still restore the reader's place.
+      if (i >= 0) anchor = { el: cache.els[i], delta: cache.tops[i] - window.scrollY };
+    }
+
+    // After a reflow, put the remembered turn back at its previous viewport
+    // position. Skipped when the turn itself is filtered out (nothing sensible
+    // to anchor to) — the browser's own clamping applies then.
+    function restoreAnchor() {
+      if (!anchor || anchor.el.classList.contains('filtered')) return;
+      var top = anchor.el.getBoundingClientRect().top + window.scrollY;
+      var y = Math.max(0, Math.min(maxScroll(), top - anchor.delta));
+      if (Math.abs(y - window.scrollY) > 1) window.scrollTo(0, y);
     }
 
     function showBubble() {
@@ -160,7 +188,15 @@
 
     function onFrame() {
       rafPending = false;
-      if (doc.scrollHeight !== cache.height) rebuildCache();
+      if (doc.scrollHeight !== cache.height) {
+        // Height changed behind our back (e.g. the browser clamped the scroll
+        // position after a filter shrank the page): rebuild, then re-anchor to
+        // the turn from before the change instead of a now-arbitrary offset.
+        rebuildCache();
+        restoreAnchor();
+      } else {
+        saveAnchor();
+      }
       syncThumb();
       showBubble();
     }
@@ -171,6 +207,7 @@
 
     window.addEventListener('resize', function () {
       rebuildCache();
+      restoreAnchor();
       syncThumb();
     });
 
@@ -184,6 +221,7 @@
         requestAnimationFrame(function () {
           cacheInvalidatePending = false;
           rebuildCache();
+          restoreAnchor();
           syncThumb();
         });
       }
