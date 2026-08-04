@@ -19,14 +19,19 @@
     });
   }
   if (filter) {
-    filter.addEventListener('input', function () {
+    var applyFilter = function () {
       var q = filter.value.toLowerCase().trim();
       turns.forEach(function (t) {
         var hit = q === '' || (t.getAttribute('data-search') || '').indexOf(q) !== -1;
         t.classList.toggle('filtered', !hit);
       });
       syncDaySeps();
-    });
+    };
+    // Safari's native clear gestures (cancel button, Esc) fire only the
+    // 'search' event, not 'input' — listen to both everywhere the filter
+    // drives behavior.
+    filter.addEventListener('input', applyFilter);
+    filter.addEventListener('search', applyFilter);
   }
 
   var toggleAll = document.getElementById('toggle-all');
@@ -233,6 +238,7 @@
 
     if (filterEl) {
       filterEl.addEventListener('input', scheduleInvalidate);
+      filterEl.addEventListener('search', scheduleInvalidate); // native clear gestures
     }
     if (toggleAllBtn) {
       toggleAllBtn.addEventListener('click', scheduleInvalidate);
@@ -338,9 +344,11 @@
       }
     }
 
-    filter.addEventListener('input', function () {
+    var scheduleHighlights = function () {
       if (highlightTimer) clearTimeout(highlightTimer);
       highlightTimer = setTimeout(refreshHighlights, 150);
-    });
+    };
+    filter.addEventListener('input', scheduleHighlights);
+    filter.addEventListener('search', scheduleHighlights); // native clear gestures
   }
 })();

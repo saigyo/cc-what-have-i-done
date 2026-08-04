@@ -43,10 +43,14 @@ if (typeof CSS !== 'undefined' && CSS.highlights) { … }
 
 Absent support → the section registers nothing and does nothing.
 
-**Trigger.** A dedicated `input` listener on `#filter`, registered after the
+**Trigger.** A dedicated listener on `#filter`, registered after the
 existing filter handler (so it observes post-toggle `.filtered` classes),
-debounced 150 ms with `setTimeout`/`clearTimeout`. The existing filter and
-timeline handlers are not modified.
+debounced 150 ms with `setTimeout`/`clearTimeout` — registered for BOTH the
+`input` and the `search` event: Safari's native clear gestures (the cancel
+button and the Esc key) fire only `search`, not `input`. For the same
+reason the existing card-filter handler and the timeline's invalidation
+listener also listen to both events; a `search` fired with an unchanged
+value (Enter key) is a harmless idempotent re-apply.
 
 **Refresh algorithm.** On each debounced fire:
 
