@@ -309,8 +309,9 @@
   // keep plain filtering.
   if (typeof CSS !== 'undefined' && CSS.highlights && filter) {
     var HIGHLIGHT_MIN = 2;
-    var HIGHLIGHT_CAP = 5000;
+    var HIGHLIGHT_CAP = 1500; // WebKit visibly freezes painting thousands of ranges
     var highlightTimer = null;
+    var mainEl = document.querySelector('main');
 
     function refreshHighlights() {
       var q = filter.value.trim();
@@ -339,16 +340,24 @@
           }
         }
       }
-      // Always REPLACE the registry entry, never delete it: WebKit fails to
-      // repaint stale highlight regions when an entry is deleted (the stale
-      // paint stays until something else repaints that text), but replacing
-      // the entry via set() invalidates the removed ranges correctly.
       CSS.highlights.set('filter-match', new Highlight(...ranges));
+      // WebKit does not repaint regions whose ranges were removed from the
+      // registry (neither on delete nor on replace) — stale highlights
+      // linger until the text repaints for some other reason. Force one
+      // repaint of the transcript by promoting <main> to its own
+      // compositing layer for a single frame (no layout change, the fixed
+      // timeline rail is a sibling and unaffected).
+      if (mainEl) {
+        mainEl.style.transform = 'translateZ(0)';
+        requestAnimationFrame(function () { mainEl.style.transform = ''; });
+      }
     }
 
     var scheduleHighlights = function () {
       if (highlightTimer) clearTimeout(highlightTimer);
-      highlightTimer = setTimeout(refreshHighlights, 150);
+      // 250 ms: long enough that fast typing skips intermediate prefixes
+      // ("sh", "shi"), whose huge match counts are what WebKit chokes on.
+      highlightTimer = setTimeout(refreshHighlights, 250);
     };
     filter.addEventListener('input', scheduleHighlights);
     filter.addEventListener('search', scheduleHighlights); // native clear gestures

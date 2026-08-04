@@ -24,8 +24,18 @@ highlights the moment it is expanded.
 - **Minimum query length 2** for highlighting (the filter itself still works
   from 1 character); single-character highlights are noise at this document
   scale.
-- **Range cap 5,000** per refresh as a jank guard; occurrences beyond the cap
-  are simply not highlighted.
+- **Range cap 1,500** per refresh as a jank guard; occurrences beyond the cap
+  are simply not highlighted. (Originally 5,000 — WebKit visibly freezes the
+  main thread painting that many ranges.)
+- **Forced repaint after every refresh:** WebKit does not repaint regions
+  whose ranges were removed from the registry (neither `delete()` nor a
+  `set()` replace invalidates them; observed in the DuckDuckGo browser, where
+  stale highlights lingered until e.g. a click repainted the word). After
+  each `set()`, `<main>` is promoted to its own compositing layer for a
+  single frame (`transform: translateZ(0)`, reset on the next
+  `requestAnimationFrame`), forcing a rerasterization with the current
+  registry state. No layout change; the fixed timeline rail is a sibling of
+  `<main>` and unaffected.
 
 ## Architecture
 
@@ -45,7 +55,9 @@ Absent support → the section registers nothing and does nothing.
 
 **Trigger.** A dedicated listener on `#filter`, registered after the
 existing filter handler (so it observes post-toggle `.filtered` classes),
-debounced 150 ms with `setTimeout`/`clearTimeout` — registered for BOTH the
+debounced 250 ms with `setTimeout`/`clearTimeout` (long enough that fast
+typing skips intermediate prefixes, whose huge match counts are what WebKit
+chokes on) — registered for BOTH the
 `input` and the `search` event: Safari's native clear gestures (the cancel
 button and the Esc key) fire only `search`, not `input`. For the same
 reason the existing card-filter handler and the timeline's invalidation
@@ -63,15 +75,13 @@ value (Enter key) is a harmless idempotent re-apply.
    `document.createTreeWalker(el, NodeFilter.SHOW_TEXT)`; for each text node,
    run the regex over `node.textContent`; for each match create a `Range`
    with `setStart(node, m.index)` / `setEnd(node, m.index + m[0].length)`.
-4. Stop collecting when 5,000 ranges are reached (guard against pathological
-   queries).
+4. Stop collecting when 1,500 ranges are reached (guard against pathological
+   queries and WebKit's paint cost).
 5. ALWAYS replace the registry entry — never delete it:
    `CSS.highlights.set('filter-match', new Highlight(...ranges))`, with an
-   empty `Highlight` when nothing was collected. WebKit (observed in the
-   DuckDuckGo browser) fails to repaint stale highlight regions when a
-   registry entry is deleted — the old paint lingers until something else
-   repaints that text (e.g. a click) — but replacing the entry via `set()`
-   invalidates removed ranges correctly.
+   empty `Highlight` when nothing was collected.
+6. Force the transcript repaint (see the forced-repaint decision above) so
+   removed ranges actually disappear in WebKit.
 
 **Why no other triggers.** The transcript DOM is static after load: text
 nodes never change, so ranges stay valid across `<details>`
