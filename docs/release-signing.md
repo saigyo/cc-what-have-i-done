@@ -1,9 +1,10 @@
 # macOS Release Signing & Notarization
 
 Release builds sign and notarize the darwin binaries when **all five**
-repository secrets below are configured. Without them — including a partial
-set, which is treated as absent — releases build unsigned exactly as before:
-the signing step is skipped, never a failure. Signing runs
+secrets below are configured in the protected `release` environment.
+Without them — including a partial set, which is treated as absent —
+releases build unsigned exactly as before: the signing step is skipped,
+never a failure. Signing runs
 inside goreleaser (cross-platform, keychain-free, via anchore/quill) on the
 regular `ubuntu-latest` release runner.
 
@@ -100,6 +101,15 @@ environment binding is decorative. Updates:
   snapshot verification locally
   (`go run github.com/goreleaser/goreleaser/v2@<version> release --snapshot
   --clean --skip=publish` must still skip signing without secrets).
+- **Go toolchain version + digest** (`GO_VERSION` / `GO_SHA256`): the Go
+  compiler runs inside the secret-bearing `Release` step, so it is
+  installed with the same committed-digest check instead of `setup-go`,
+  and `GOTOOLCHAIN=local` prevents Go from transparently downloading a
+  different toolchain. Bump both values together from
+  <https://go.dev/dl/> (digests are published there; cross-check by
+  hashing an independently downloaded tarball). The version must satisfy
+  the `go` directive in `go.mod`. Module dependencies need no such pin —
+  they are already digest-verified against the committed `go.sum`.
 
 ## Troubleshooting
 

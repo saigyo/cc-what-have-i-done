@@ -72,8 +72,9 @@ secrets:
           MACOS_NOTARY_KEY: ${{ secrets.MACOS_NOTARY_KEY }}
 ```
 
-Unset repository secrets expand to empty strings, which `isEnvSet` treats as
-unset — the same workflow file works with and without secrets.
+Secrets that are not configured (in the `release` environment, see below)
+expand to empty strings, which `isEnvSet` treats as unset — the same
+workflow file works with and without secrets.
 
 Because this job handles the signing credentials, it is exempt from the
 repo's tag-pinning convention: its actions are pinned to immutable commit
@@ -83,7 +84,11 @@ fail-open verification (checksum download failures are skipped), so a
 replaced release asset could run with the keys. Instead a dedicated step
 downloads the `v2.17.1` tarball and verifies it fail-closed against a
 SHA-256 digest committed in the workflow, and only the separate `Release`
-step running the verified binary receives the secrets. Dependabot's
+step running the verified binary receives the secrets. The Go toolchain is
+installed the same way (committed digest, not `setup-go`, whose manifest
+resolution is mutable and digest-free) because goreleaser launches the
+compiler inside the secret-bearing `Release` step, and `GOTOOLCHAIN=local`
+forbids Go from transparently downloading a different toolchain. Dependabot's
 `github-actions` ecosystem keeps the SHA pins fresh via reviewed PRs; the
 goreleaser version + digest pair is bumped deliberately after reviewing its
 release notes. `ci.yml` (no secrets) stays tag-pinned.
