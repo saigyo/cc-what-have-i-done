@@ -86,15 +86,25 @@ SHA-256 digest committed in the workflow, and only the separate `Release`
 step running the verified binary receives the secrets. Dependabot's
 `github-actions` ecosystem keeps the SHA pins fresh via reviewed PRs; the
 goreleaser version + digest pair is bumped deliberately after reviewing its
-release notes. `ci.yml` (no secrets) stays tag-pinned. No other workflow
-changes.
+release notes. `ci.yml` (no secrets) stays tag-pinned.
+
+The job is bound to the protected `release` environment
+(`environment: release`), and the five `MACOS_*` secrets are **environment
+secrets**, not repository secrets: repository secrets are readable by any
+workflow on any ref, so a pushed `v*` tag carrying a modified workflow or
+malicious goreleaser hooks could exfiltrate them. Environment secrets are
+withheld until the environment's protection rules pass — required reviewer
+(Markus) plus a `v*` deployment tag rule — so each release run pauses in
+the Actions UI for approval before the secrets exist in the job. No other
+workflow changes.
 
 ### 3. `docs/release-signing.md` — operator documentation
 
 New file documenting (secrets are created manually by Markus, never by
 tooling):
 
-- **Secrets table** (repository Settings → Secrets and variables → Actions):
+- **Secrets table** (Settings → Environments → release → Environment
+  secrets):
 
   | Secret | Content |
   |---|---|
@@ -156,6 +166,6 @@ tooling):
 1. Export the certificate as `.p12`, base64 it.
 2. Create an App Store Connect Team Key (role: Developer is sufficient for
    notarization), download the `.p8`.
-3. Create the five repository secrets.
+3. Create the five secrets in the `release` environment (Settings → Environments → release).
 4. Cut the next release; run the verification commands on a downloaded
    darwin archive.
