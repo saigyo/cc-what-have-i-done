@@ -107,7 +107,7 @@ Replace that `env:` block with:
           MACOS_NOTARY_KEY: ${{ secrets.MACOS_NOTARY_KEY }}
 ```
 
-Additionally (security hardening, decided with Markus during review): the job handles the signing credentials, so nothing mutable may decide what code runs in it. Pin `actions/checkout` and `actions/setup-go` to immutable commit SHAs with `# vX.Y.Z` comments, and do NOT use `goreleaser/goreleaser-action` — it downloads the goreleaser binary at runtime with fail-open verification (checksum download failures are skipped with a warning). Instead, install goreleaser in a dedicated step that downloads the `v2.17.1` Linux x86_64 tarball and verifies it fail-closed against a SHA-256 digest committed in the workflow (`sha256sum -c`), then run the extracted binary in a separate `Release` step that alone receives the secrets. Bind the job to the protected `release` environment (`environment: release`): the five `MACOS_*` secrets are environment secrets, withheld until the environment's protection rules (required reviewer, `v*` deployment tag rule) pass — repository-level secrets would be readable by any workflow on any ref. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
+Additionally (security hardening, decided with Markus during review): the job handles the signing credentials, so nothing mutable may decide what code runs in it. Pin `actions/checkout` and `actions/setup-go` to immutable commit SHAs with `# vX.Y.Z` comments, and do NOT use `goreleaser/goreleaser-action` — it downloads the goreleaser binary at runtime with fail-open verification (checksum download failures are skipped with a warning). Instead, install goreleaser in a dedicated step that downloads the `v2.17.1` Linux x86_64 tarball and verifies it fail-closed against a SHA-256 digest committed in the workflow (`sha256sum -c`), then run the extracted binary in a separate `Release` step that alone receives the secrets. Install the Go toolchain the same fail-closed way (committed `GO_VERSION`/`GO_SHA256` pair from go.dev/dl, not `setup-go`, whose manifest resolution is mutable and digest-free — goreleaser launches the compiler inside the secret-bearing `Release` step) and set `GOTOOLCHAIN=local` at job level so Go cannot transparently download a different toolchain. Bind the job to the protected `release` environment (`environment: release`): the five `MACOS_*` secrets are environment secrets, withheld until the environment's protection rules (required reviewer, `v*` deployment tag rule) pass — repository-level secrets would be readable by any workflow on any ref. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
 
 - [ ] **Step 6: Sanity-check the workflow YAML parses**
 
@@ -139,9 +139,10 @@ git commit -m "feat(release): sign and notarize darwin binaries via goreleaser"
 # macOS Release Signing & Notarization
 
 Release builds sign and notarize the darwin binaries when **all five**
-repository secrets below are configured. Without them — including a partial
-set, which is treated as absent — releases build unsigned exactly as before:
-the signing step is skipped, never a failure. Signing runs
+secrets below are configured in the protected `release` environment.
+Without them — including a partial set, which is treated as absent —
+releases build unsigned exactly as before: the signing step is skipped,
+never a failure. Signing runs
 inside goreleaser (cross-platform, keychain-free, via anchore/quill) on the
 regular `ubuntu-latest` release runner.
 
@@ -238,6 +239,15 @@ environment binding is decorative. Updates:
   snapshot verification locally
   (`go run github.com/goreleaser/goreleaser/v2@<version> release --snapshot
   --clean --skip=publish` must still skip signing without secrets).
+- **Go toolchain version + digest** (`GO_VERSION` / `GO_SHA256`): the Go
+  compiler runs inside the secret-bearing `Release` step, so it is
+  installed with the same committed-digest check instead of `setup-go`,
+  and `GOTOOLCHAIN=local` prevents Go from transparently downloading a
+  different toolchain. Bump both values together from
+  <https://go.dev/dl/> (digests are published there; cross-check by
+  hashing an independently downloaded tarball). The version must satisfy
+  the `go` directive in `go.mod`. Module dependencies need no such pin —
+  they are already digest-verified against the committed `go.sum`.
 
 ## Troubleshooting
 

@@ -34,15 +34,28 @@ jobs:
     env:
       GORELEASER_VERSION: v2.17.1
       GORELEASER_SHA256: a99bbc7ae0d8d897b07c4c497a9b62f222558804715ef219d1af05a7e417bc80
+      # Go toolchain: installed below with the same fail-closed digest check
+      # (setup-go resolves from a mutable manifest without one, and goreleaser
+      # launches the compiler inside the secret-bearing Release step). Must
+      # satisfy go.mod's `go` directive; GOTOOLCHAIN=local forbids Go from
+      # transparently downloading a different toolchain. Update both values
+      # together from https://go.dev/dl/ (digest published there; cross-check
+      # by hashing an independently downloaded tarball).
+      GO_VERSION: 1.26.7
+      GO_SHA256: ffb5f8de10c62550dfddab66b36b57030721e0a44a3218e9e1181d7b59f121ca
+      GOTOOLCHAIN: local
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version-file: go.mod
-          check-latest: true
+      - name: Install Go (digest-verified, fail-closed)
+        run: |
+          curl -fsSLo "$RUNNER_TEMP/go.tgz" \
+            "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
+          echo "${GO_SHA256}  $RUNNER_TEMP/go.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/go.tgz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/go/bin" >> "$GITHUB_PATH"
 
       - name: Install goreleaser (digest-verified, fail-closed)
         run: |
