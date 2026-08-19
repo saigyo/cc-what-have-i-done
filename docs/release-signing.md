@@ -64,6 +64,20 @@ Note: bare Mach-O binaries cannot be stapled (`stapler staple` requires an
 app bundle, dmg, or pkg). Gatekeeper validates the notarization ticket
 online on first run — this is expected behavior, not a defect.
 
+## Supply-chain pinning
+
+The release job is the only one that sees the signing credentials, so it is
+exempt from the repo's tag-pinning convention: all its actions are pinned to
+immutable commit SHAs (with `# vX.Y.Z` comments) and goreleaser to the exact
+tested version. Updates:
+
+- **Action SHAs**: dependabot's `github-actions` ecosystem proposes bumps
+  weekly (it rewrites the SHA and its version comment); review and merge.
+- **goreleaser version** (`version:` in the workflow): bump deliberately —
+  read the release notes, then re-run the snapshot verification locally
+  (`goreleaser release --snapshot --clean --skip=publish` must still skip
+  signing without secrets) before committing the new version.
+
 ## Troubleshooting
 
 - Notarization failures surface in the goreleaser step of the release
