@@ -122,7 +122,7 @@ tooling):
 ## Testing
 
 - `goreleaser check` must pass on the updated config.
-- `goreleaser release --snapshot --clean --skip=notarize` (local, no
+- `goreleaser release --snapshot --clean --skip=publish` (local, no
   secrets) must still produce all archives — proves the skip path.
 - CI has no new test surface; the existing release workflow is the
   integration test. First real verification happens on the next `v*` tag
