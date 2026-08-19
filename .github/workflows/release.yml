@@ -10,6 +10,13 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    # The five MACOS_* signing secrets live in the 'release' environment,
+    # not as repository secrets: environment secrets are withheld until the
+    # environment's protection rules pass (required reviewer + v* tag rule),
+    # so a rogue workflow on another ref — or a pushed v* tag that nobody
+    # approves — never sees them. Each release run pauses in the Actions UI
+    # until the reviewer approves.
+    environment: release
     # This job handles the macOS signing credentials, so nothing mutable may
     # decide what code runs here: actions are pinned to immutable commit
     # SHAs (dependabot's github-actions ecosystem refreshes SHA pins and

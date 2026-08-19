@@ -4,7 +4,7 @@
 
 **Goal:** Release builds sign and notarize the darwin binaries via goreleaser's built-in cross-platform notarization, skipping cleanly when signing secrets are absent.
 
-**Architecture:** A `notarize.macos` block in `.goreleaser.yaml` (backed by anchore/quill, pure Go) signs and notarizes both darwin binaries after build and before archiving, gated on all five `MACOS_*` secrets being set (`isEnvSet` AND-chain). The release workflow stays on `ubuntu-latest` and only passes five repository secrets into the goreleaser step's env. A new operator doc explains secret creation and post-release verification.
+**Architecture:** A `notarize.macos` block in `.goreleaser.yaml` (backed by anchore/quill, pure Go) signs and notarizes both darwin binaries after build and before archiving, gated on all five `MACOS_*` secrets being set (`isEnvSet` AND-chain). The release workflow stays on `ubuntu-latest`; the five secrets live in the protected `release` environment (required reviewer, `v*` tag rule) and flow only into the `Release` step. A new operator doc explains secret creation and post-release verification.
 
 **Tech Stack:** goreleaser v2 (OSS), GitHub Actions, App Store Connect API key.
 
@@ -107,7 +107,7 @@ Replace that `env:` block with:
           MACOS_NOTARY_KEY: ${{ secrets.MACOS_NOTARY_KEY }}
 ```
 
-Additionally (security hardening, decided with Markus during review): the job handles the signing credentials, so nothing mutable may decide what code runs in it. Pin `actions/checkout` and `actions/setup-go` to immutable commit SHAs with `# vX.Y.Z` comments, and do NOT use `goreleaser/goreleaser-action` — it downloads the goreleaser binary at runtime with fail-open verification (checksum download failures are skipped with a warning). Instead, install goreleaser in a dedicated step that downloads the `v2.17.1` Linux x86_64 tarball and verifies it fail-closed against a SHA-256 digest committed in the workflow (`sha256sum -c`), then run the extracted binary in a separate `Release` step that alone receives the secrets. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
+Additionally (security hardening, decided with Markus during review): the job handles the signing credentials, so nothing mutable may decide what code runs in it. Pin `actions/checkout` and `actions/setup-go` to immutable commit SHAs with `# vX.Y.Z` comments, and do NOT use `goreleaser/goreleaser-action` — it downloads the goreleaser binary at runtime with fail-open verification (checksum download failures are skipped with a warning). Instead, install goreleaser in a dedicated step that downloads the `v2.17.1` Linux x86_64 tarball and verifies it fail-closed against a SHA-256 digest committed in the workflow (`sha256sum -c`), then run the extracted binary in a separate `Release` step that alone receives the secrets. Bind the job to the protected `release` environment (`environment: release`): the five `MACOS_*` secrets are environment secrets, withheld until the environment's protection rules (required reviewer, `v*` deployment tag rule) pass — repository-level secrets would be readable by any workflow on any ref. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
 
 - [ ] **Step 6: Sanity-check the workflow YAML parses**
 
@@ -148,9 +148,18 @@ regular `ubuntu-latest` release runner.
 Certificate: `Developer ID Application: Markus Ackermann (5JHYPBANQ4)`
 (Team ID `5JHYPBANQ4`).
 
-## Required repository secrets
+## Required secrets (environment `release`)
 
-Create these under **Settings → Secrets and variables → Actions**:
+The secrets live in the protected **`release` environment**, not as
+repository secrets: repository secrets are readable by any workflow on any
+ref, so a pushed `v*` tag carrying a modified workflow or malicious
+goreleaser hooks could exfiltrate them. Environment secrets are withheld
+until the environment's protection rules pass — the `release` environment
+requires a review approval and only deploys from `v*` tags, so each release
+run pauses in the Actions UI until approved.
+
+Create these under **Settings → Environments → release → Environment
+secrets**:
 
 | Secret | Content |
 |---|---|
@@ -201,6 +210,34 @@ Expected: `accepted` with `source=Notarized Developer ID`.
 Note: bare Mach-O binaries cannot be stapled (`stapler staple` requires an
 app bundle, dmg, or pkg). Gatekeeper validates the notarization ticket
 online on first run — this is expected behavior, not a defect.
+
+## Supply-chain pinning
+
+The release job is the only one that sees the signing credentials, so it is
+exempt from the repo's tag-pinning convention: its actions are pinned to
+immutable commit SHAs (with `# vX.Y.Z` comments), and goreleaser is
+installed by a dedicated workflow step that verifies the downloaded tarball
+fail-closed against a SHA-256 digest committed in the workflow.
+`goreleaser-action` is deliberately not used: it fetches the binary at
+runtime with fail-open verification (checksum download failures are skipped
+with a warning), which would let a replaced release asset run with the
+keys. Only the separate `Release` step receives the secrets, and only after
+the `release` environment's protection rules (required reviewer, `v*` tag
+rule) have passed. The environment itself is configured under
+**Settings → Environments → release**; if it is ever recreated, restore the
+required-reviewer rule and the `v*` deployment tag rule — without them the
+environment binding is decorative. Updates:
+
+- **Action SHAs**: dependabot's `github-actions` ecosystem proposes bumps
+  weekly (it rewrites the SHA and its version comment); review and merge.
+- **goreleaser version + digest** (`GORELEASER_VERSION` /
+  `GORELEASER_SHA256` in the workflow): bump deliberately — read the
+  release notes, take the new `goreleaser_Linux_x86_64.tar.gz` digest from
+  the release's `checksums.txt` AND cross-check it by hashing an
+  independently downloaded tarball, update both values, then re-run the
+  snapshot verification locally
+  (`go run github.com/goreleaser/goreleaser/v2@<version> release --snapshot
+  --clean --skip=publish` must still skip signing without secrets).
 
 ## Troubleshooting
 

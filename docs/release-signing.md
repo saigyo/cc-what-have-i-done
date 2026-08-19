@@ -10,9 +10,18 @@ regular `ubuntu-latest` release runner.
 Certificate: `Developer ID Application: Markus Ackermann (5JHYPBANQ4)`
 (Team ID `5JHYPBANQ4`).
 
-## Required repository secrets
+## Required secrets (environment `release`)
 
-Create these under **Settings → Secrets and variables → Actions**:
+The secrets live in the protected **`release` environment**, not as
+repository secrets: repository secrets are readable by any workflow on any
+ref, so a pushed `v*` tag carrying a modified workflow or malicious
+goreleaser hooks could exfiltrate them. Environment secrets are withheld
+until the environment's protection rules pass — the `release` environment
+requires a review approval and only deploys from `v*` tags, so each release
+run pauses in the Actions UI until approved.
+
+Create these under **Settings → Environments → release → Environment
+secrets**:
 
 | Secret | Content |
 |---|---|
@@ -74,7 +83,12 @@ fail-closed against a SHA-256 digest committed in the workflow.
 `goreleaser-action` is deliberately not used: it fetches the binary at
 runtime with fail-open verification (checksum download failures are skipped
 with a warning), which would let a replaced release asset run with the
-keys. Only the separate `Release` step receives the secrets. Updates:
+keys. Only the separate `Release` step receives the secrets, and only after
+the `release` environment's protection rules (required reviewer, `v*` tag
+rule) have passed. The environment itself is configured under
+**Settings → Environments → release**; if it is ever recreated, restore the
+required-reviewer rule and the `v*` deployment tag rule — without them the
+environment binding is decorative. Updates:
 
 - **Action SHAs**: dependabot's `github-actions` ecosystem proposes bumps
   weekly (it rewrites the SHA and its version comment); review and merge.
