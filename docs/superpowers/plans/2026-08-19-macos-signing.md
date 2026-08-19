@@ -107,7 +107,7 @@ Replace that `env:` block with:
           MACOS_NOTARY_KEY: ${{ secrets.MACOS_NOTARY_KEY }}
 ```
 
-No other change to the workflow file: trigger, permissions, runner (`ubuntu-latest`), checkout, and setup-go steps stay byte-identical.
+Additionally (security hardening, decided with Markus during review): pin every action in this job to an immutable commit SHA with a `# vX.Y.Z` comment (`actions/checkout`, `actions/setup-go`, `goreleaser/goreleaser-action`) and pin `version:` to the exact tested goreleaser release (`v2.17.1`) — the job handles the signing credentials, so a moved upstream tag must not receive them. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
 
 - [ ] **Step 6: Sanity-check the workflow YAML parses**
 
