@@ -10,13 +10,23 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    # This job handles the macOS signing credentials, so every action is
-    # pinned to an immutable commit SHA (a moved tag must not receive the
-    # secrets) and goreleaser to the exact tested version. Dependabot's
-    # github-actions ecosystem updates SHA pins (and their version comments)
-    # via reviewed PRs; bump the goreleaser version deliberately after
-    # reviewing its release notes and re-running the snapshot verification
-    # in docs/release-signing.md.
+    # This job handles the macOS signing credentials, so nothing mutable may
+    # decide what code runs here: actions are pinned to immutable commit
+    # SHAs (dependabot's github-actions ecosystem refreshes SHA pins and
+    # their version comments via reviewed PRs), and the goreleaser binary is
+    # verified against a digest committed below before it sees any secret.
+    # goreleaser-action is deliberately NOT used: it fetches the binary at
+    # runtime with fail-open verification (skipped checksums on download
+    # failure), which would let a replaced release asset run with the keys.
+    #
+    # To update goreleaser: review its release notes, take the new
+    # goreleaser_Linux_x86_64.tar.gz digest from the release's
+    # checksums.txt, cross-check it by hashing an independently downloaded
+    # tarball, update both values below, and re-run the snapshot
+    # verification in docs/release-signing.md.
+    env:
+      GORELEASER_VERSION: v2.17.1
+      GORELEASER_SHA256: a99bbc7ae0d8d897b07c4c497a9b62f222558804715ef219d1af05a7e417bc80
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,11 +37,16 @@ jobs:
           go-version-file: go.mod
           check-latest: true
 
-      - uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-        with:
-          distribution: goreleaser
-          version: "v2.17.1"
-          args: release --clean
+      - name: Install goreleaser (digest-verified, fail-closed)
+        run: |
+          curl -fsSLo "$RUNNER_TEMP/goreleaser.tgz" \
+            "https://github.com/goreleaser/goreleaser/releases/download/${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz"
+          echo "${GORELEASER_SHA256}  $RUNNER_TEMP/goreleaser.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/goreleaser-bin"
+          tar -xzf "$RUNNER_TEMP/goreleaser.tgz" -C "$RUNNER_TEMP/goreleaser-bin" goreleaser
+
+      - name: Release
+        run: '"$RUNNER_TEMP/goreleaser-bin/goreleaser" release --clean'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MACOS_SIGN_P12: ${{ secrets.MACOS_SIGN_P12 }}
