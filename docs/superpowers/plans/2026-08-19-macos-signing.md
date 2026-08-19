@@ -17,7 +17,7 @@
 - The release workflow must succeed when the secrets are absent or only partially configured: signing is skipped, never a failure (`enabled` AND-chains `isEnvSet` over all five secrets; goreleaser's `isEnvSet` returns true only for set AND non-empty, and GitHub Actions expands unset secrets to empty strings).
 - Secret names exactly: `MACOS_SIGN_P12`, `MACOS_SIGN_PASSWORD`, `MACOS_NOTARY_ISSUER_ID`, `MACOS_NOTARY_KEY_ID`, `MACOS_NOTARY_KEY`.
 - Runner stays `ubuntu-latest`; no macOS runner, no keychain scripts.
-- goreleaser is not installed locally: invoke it as `go run github.com/goreleaser/goreleaser/v2@latest <args>` (first run downloads modules; that is expected and may take a few minutes).
+- goreleaser is not installed locally: invoke it as `go run github.com/goreleaser/goreleaser/v2@v2.17.1 <args>` — the exact version the release workflow pins, so local validation exercises the same schema and notary implementation (first run downloads modules; that is expected and may take a few minutes).
 - Go gates for the repo still apply before any commit that touches Go-adjacent files (none here, but run them once at the end anyway): `gofmt -l . && go vet ./... && go test -race ./...`.
 
 ---
@@ -37,7 +37,7 @@
 Run from the repo root:
 
 ```bash
-go run github.com/goreleaser/goreleaser/v2@latest check
+go run github.com/goreleaser/goreleaser/v2@v2.17.1 check
 ```
 
 Expected: `1 configuration file(s) validated` and exit code 0. (First invocation downloads goreleaser modules; allow a few minutes.)
@@ -67,7 +67,7 @@ Do not touch `builds`, `archives`, `checksum`, `changelog`, or `release` section
 - [ ] **Step 3: Validate the changed config**
 
 ```bash
-go run github.com/goreleaser/goreleaser/v2@latest check
+go run github.com/goreleaser/goreleaser/v2@v2.17.1 check
 ```
 
 Expected: still valid, exit code 0. If it reports an unknown field, the block is misplaced or mis-indented — `notarize` must be a top-level key.
@@ -77,7 +77,7 @@ Expected: still valid, exit code 0. If it reports an unknown field, the block is
 Run WITHOUT any of the MACOS_* env vars set:
 
 ```bash
-go run github.com/goreleaser/goreleaser/v2@latest release --snapshot --clean --skip=publish
+go run github.com/goreleaser/goreleaser/v2@v2.17.1 release --snapshot --clean --skip=publish
 ```
 
 Expected: exit code 0; `dist/` contains all six platform builds and the archives `cc-what-have-i-done_*_darwin_amd64.tar.gz` and `..._darwin_arm64.tar.gz`; the log shows the notarize step skipped (no signing attempted, no error). Afterwards remove the build output:
@@ -107,7 +107,7 @@ Replace that `env:` block with:
           MACOS_NOTARY_KEY: ${{ secrets.MACOS_NOTARY_KEY }}
 ```
 
-Additionally (security hardening, decided with Markus during review): pin every action in this job to an immutable commit SHA with a `# vX.Y.Z` comment (`actions/checkout`, `actions/setup-go`, `goreleaser/goreleaser-action`) and pin `version:` to the exact tested goreleaser release (`v2.17.1`) — the job handles the signing credentials, so a moved upstream tag must not receive them. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
+Additionally (security hardening, decided with Markus during review): the job handles the signing credentials, so nothing mutable may decide what code runs in it. Pin `actions/checkout` and `actions/setup-go` to immutable commit SHAs with `# vX.Y.Z` comments, and do NOT use `goreleaser/goreleaser-action` — it downloads the goreleaser binary at runtime with fail-open verification (checksum download failures are skipped with a warning). Instead, install goreleaser in a dedicated step that downloads the `v2.17.1` Linux x86_64 tarball and verifies it fail-closed against a SHA-256 digest committed in the workflow (`sha256sum -c`), then run the extracted binary in a separate `Release` step that alone receives the secrets. Trigger, permissions, and runner (`ubuntu-latest`) stay unchanged; `ci.yml` keeps the repo's tag-pinning convention.
 
 - [ ] **Step 6: Sanity-check the workflow YAML parses**
 

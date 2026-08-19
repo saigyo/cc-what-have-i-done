@@ -67,16 +67,25 @@ online on first run — this is expected behavior, not a defect.
 ## Supply-chain pinning
 
 The release job is the only one that sees the signing credentials, so it is
-exempt from the repo's tag-pinning convention: all its actions are pinned to
-immutable commit SHAs (with `# vX.Y.Z` comments) and goreleaser to the exact
-tested version. Updates:
+exempt from the repo's tag-pinning convention: its actions are pinned to
+immutable commit SHAs (with `# vX.Y.Z` comments), and goreleaser is
+installed by a dedicated workflow step that verifies the downloaded tarball
+fail-closed against a SHA-256 digest committed in the workflow.
+`goreleaser-action` is deliberately not used: it fetches the binary at
+runtime with fail-open verification (checksum download failures are skipped
+with a warning), which would let a replaced release asset run with the
+keys. Only the separate `Release` step receives the secrets. Updates:
 
 - **Action SHAs**: dependabot's `github-actions` ecosystem proposes bumps
   weekly (it rewrites the SHA and its version comment); review and merge.
-- **goreleaser version** (`version:` in the workflow): bump deliberately —
-  read the release notes, then re-run the snapshot verification locally
-  (`goreleaser release --snapshot --clean --skip=publish` must still skip
-  signing without secrets) before committing the new version.
+- **goreleaser version + digest** (`GORELEASER_VERSION` /
+  `GORELEASER_SHA256` in the workflow): bump deliberately — read the
+  release notes, take the new `goreleaser_Linux_x86_64.tar.gz` digest from
+  the release's `checksums.txt` AND cross-check it by hashing an
+  independently downloaded tarball, update both values, then re-run the
+  snapshot verification locally
+  (`go run github.com/goreleaser/goreleaser/v2@<version> release --snapshot
+  --clean --skip=publish` must still skip signing without secrets).
 
 ## Troubleshooting
 

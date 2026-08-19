@@ -76,13 +76,18 @@ Unset repository secrets expand to empty strings, which `isEnvSet` treats as
 unset — the same workflow file works with and without secrets.
 
 Because this job handles the signing credentials, it is exempt from the
-repo's tag-pinning convention: all its actions are pinned to immutable
-commit SHAs (with `# vX.Y.Z` comments) and goreleaser to the exact tested
-version (`v2.17.1`), so a moved upstream tag cannot receive the secrets.
-Dependabot's `github-actions` ecosystem keeps the SHA pins fresh via
-reviewed PRs; the goreleaser version is bumped deliberately after reviewing
-its release notes. `ci.yml` (no secrets) stays tag-pinned. No other
-workflow changes.
+repo's tag-pinning convention: its actions are pinned to immutable commit
+SHAs (with `# vX.Y.Z` comments), and the goreleaser binary is NOT installed
+via `goreleaser-action` — that action fetches the binary at runtime with
+fail-open verification (checksum download failures are skipped), so a
+replaced release asset could run with the keys. Instead a dedicated step
+downloads the `v2.17.1` tarball and verifies it fail-closed against a
+SHA-256 digest committed in the workflow, and only the separate `Release`
+step running the verified binary receives the secrets. Dependabot's
+`github-actions` ecosystem keeps the SHA pins fresh via reviewed PRs; the
+goreleaser version + digest pair is bumped deliberately after reviewing its
+release notes. `ci.yml` (no secrets) stays tag-pinned. No other workflow
+changes.
 
 ### 3. `docs/release-signing.md` — operator documentation
 
