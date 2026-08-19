@@ -38,6 +38,7 @@ Only addition to the file; everything else stays as is:
 notarize:
   macos:
     - enabled: '{{ and (isEnvSet "MACOS_SIGN_P12") (isEnvSet "MACOS_SIGN_PASSWORD") (isEnvSet "MACOS_NOTARY_ISSUER_ID") (isEnvSet "MACOS_NOTARY_KEY_ID") (isEnvSet "MACOS_NOTARY_KEY") }}'
+      ids: [ccwhid]
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"
@@ -128,9 +129,11 @@ tooling):
 - CI has no new test surface; the existing release workflow is the
   integration test. First real verification happens on the next `v*` tag
   after Markus adds the secrets, using the verification commands above.
-- Notarization adds ~1–5 min to the release job (`wait: true`, capped at
-  20m). If Apple rejects a submission the release fails visibly instead of
-  shipping unsigned binaries — intended.
+- Notarization adds ~1–5 min per darwin binary to the release job
+  (`wait: true`, capped at 20m per submission; the two binaries are
+  processed sequentially, so worst case ~40m total). If Apple rejects a
+  submission the release fails visibly instead of shipping unsigned
+  binaries — intended.
 
 ## Manual steps for Markus (after merge)
 

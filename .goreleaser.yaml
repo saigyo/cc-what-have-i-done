@@ -40,6 +40,9 @@ checksum:
 notarize:
   macos:
     - enabled: '{{ and (isEnvSet "MACOS_SIGN_P12") (isEnvSet "MACOS_SIGN_PASSWORD") (isEnvSet "MACOS_NOTARY_ISSUER_ID") (isEnvSet "MACOS_NOTARY_KEY_ID") (isEnvSet "MACOS_NOTARY_KEY") }}'
+      # ids defaults to the PROJECT name (cc-what-have-i-done), which matches
+      # no build — must name the build ID explicitly or nothing gets signed.
+      ids: [ccwhid]
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"

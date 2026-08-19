@@ -72,6 +72,8 @@ online on first run — this is expected behavior, not a defect.
     --key AuthKey_<KEYID>.p8
   ```
 
-- Notarization waits synchronously (`wait: true`) with a 20-minute cap;
-  Apple typically takes 1–5 minutes. A rejected submission fails the
-  release rather than shipping unsigned binaries — intended.
+- Notarization waits synchronously (`wait: true`) with a 20-minute cap
+  **per submission**; the two darwin binaries are processed sequentially, so
+  the stage can take up to ~40 minutes in the worst case. Apple typically
+  takes 1–5 minutes each. A rejected submission fails the release rather
+  than shipping unsigned binaries — intended.
