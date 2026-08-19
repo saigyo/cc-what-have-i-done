@@ -20,7 +20,7 @@ Create these under **Settings → Secrets and variables → Actions**:
 | `MACOS_SIGN_PASSWORD` | password chosen for the `.p12` export |
 | `MACOS_NOTARY_ISSUER_ID` | Issuer UUID (App Store Connect → Users and Access → Integrations → Team Keys) |
 | `MACOS_NOTARY_KEY_ID` | Key ID of the Team Key |
-| `MACOS_NOTARY_KEY` | contents of the downloaded `AuthKey_<KEYID>.p8` file (PEM text) |
+| `MACOS_NOTARY_KEY` | base64 of the downloaded `AuthKey_<KEYID>.p8` file |
 
 ## Exporting the certificate (local, one-time)
 
@@ -42,7 +42,12 @@ Create these under **Settings → Secrets and variables → Actions**:
 2. Generate a key with the **Developer** role. Note the **Issuer ID**
    (`MACOS_NOTARY_ISSUER_ID`) and the **Key ID** (`MACOS_NOTARY_KEY_ID`).
 3. Download the `AuthKey_<KEYID>.p8` file — Apple offers the download only
-   once. Paste its full PEM content as `MACOS_NOTARY_KEY`.
+   once. Base64-encode it for the `MACOS_NOTARY_KEY` secret — quill treats
+   the value as a file path or base64, so raw PEM text fails:
+
+   ```bash
+   base64 -i AuthKey_<KEYID>.p8 | pbcopy
+   ```
 
 ## Verifying a released binary
 
@@ -75,5 +80,12 @@ online on first run — this is expected behavior, not a defect.
 - Notarization waits synchronously (`wait: true`) with a 20-minute cap
   **per submission**; the two darwin binaries are processed sequentially, so
   the stage can take up to ~40 minutes in the worst case. Apple typically
-  takes 1–5 minutes each. A rejected submission fails the release rather
-  than shipping unsigned binaries — intended.
+  takes 1–5 minutes each.
+- A submission Apple **rejects** (or marks invalid) fails the release. A
+  submission still pending when the 20-minute cap expires does **not**:
+  goreleaser logs `notarize timeout` and continues, so such a release can
+  ship before notarization completed. If Apple accepts afterwards, the
+  online Gatekeeper check succeeds anyway (nothing is stapled); if Apple
+  rejects afterwards, the binary stays unnotarized. After any release whose
+  notarize stage logged a timeout, run the verification commands above and
+  re-cut the release if they fail.

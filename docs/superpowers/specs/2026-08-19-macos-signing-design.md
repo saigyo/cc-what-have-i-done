@@ -89,7 +89,7 @@ tooling):
   | `MACOS_SIGN_PASSWORD` | password chosen for the `.p12` export |
   | `MACOS_NOTARY_ISSUER_ID` | Issuer UUID (App Store Connect → Users and Access → Integrations → Team Keys) |
   | `MACOS_NOTARY_KEY_ID` | Key ID of the Team Key |
-  | `MACOS_NOTARY_KEY` | contents of the downloaded `AuthKey_<KEYID>.p8` (PEM text) |
+  | `MACOS_NOTARY_KEY` | base64 of the downloaded `AuthKey_<KEYID>.p8` file |
 
 - **Local export steps**: export `Developer ID Application: Markus Ackermann
   (5JHYPBANQ4)` (Team ID `5JHYPBANQ4`) plus private key from the login
@@ -133,7 +133,10 @@ tooling):
   (`wait: true`, capped at 20m per submission; the two binaries are
   processed sequentially, so worst case ~40m total). If Apple rejects a
   submission the release fails visibly instead of shipping unsigned
-  binaries — intended.
+  binaries. A submission still pending at the 20m cap does NOT fail the
+  release — goreleaser logs `notarize timeout` and continues — so a
+  timed-out release must be verified (and re-cut if Apple later rejects);
+  the operator doc describes this.
 
 ## Manual steps for Markus (after merge)
 
