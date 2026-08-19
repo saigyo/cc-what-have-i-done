@@ -4,7 +4,7 @@
 
 **Goal:** Release builds sign and notarize the darwin binaries via goreleaser's built-in cross-platform notarization, skipping cleanly when signing secrets are absent.
 
-**Architecture:** A `notarize.macos` block in `.goreleaser.yaml` (backed by anchore/quill, pure Go) signs and notarizes both darwin binaries after build and before archiving, gated on `isEnvSet "MACOS_SIGN_P12"`. The release workflow stays on `ubuntu-latest` and only passes five repository secrets into the goreleaser step's env. A new operator doc explains secret creation and post-release verification.
+**Architecture:** A `notarize.macos` block in `.goreleaser.yaml` (backed by anchore/quill, pure Go) signs and notarizes both darwin binaries after build and before archiving, gated on all five `MACOS_*` secrets being set (`isEnvSet` AND-chain). The release workflow stays on `ubuntu-latest` and only passes five repository secrets into the goreleaser step's env. A new operator doc explains secret creation and post-release verification.
 
 **Tech Stack:** goreleaser v2 (OSS), GitHub Actions, App Store Connect API key.
 
@@ -14,7 +14,7 @@
 
 - No secrets committed, echoed, or logged; no `set -x` in any signing-related step (this design has no shell signing steps at all).
 - No changes to Linux/Windows build or archive configuration in `.goreleaser.yaml`.
-- The release workflow must succeed when the secrets are absent: signing is skipped, never a failure (`enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'`; goreleaser's `isEnvSet` returns true only for set AND non-empty, and GitHub Actions expands unset secrets to empty strings).
+- The release workflow must succeed when the secrets are absent or only partially configured: signing is skipped, never a failure (`enabled` AND-chains `isEnvSet` over all five secrets; goreleaser's `isEnvSet` returns true only for set AND non-empty, and GitHub Actions expands unset secrets to empty strings).
 - Secret names exactly: `MACOS_SIGN_P12`, `MACOS_SIGN_PASSWORD`, `MACOS_NOTARY_ISSUER_ID`, `MACOS_NOTARY_KEY_ID`, `MACOS_NOTARY_KEY`.
 - Runner stays `ubuntu-latest`; no macOS runner, no keychain scripts.
 - goreleaser is not installed locally: invoke it as `go run github.com/goreleaser/goreleaser/v2@latest <args>` (first run downloads modules; that is expected and may take a few minutes).
@@ -49,7 +49,7 @@ Insert between the `checksum:` section and the `changelog:` section (top-level k
 ```yaml
 notarize:
   macos:
-    - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
+    - enabled: '{{ and (isEnvSet "MACOS_SIGN_P12") (isEnvSet "MACOS_SIGN_PASSWORD") (isEnvSet "MACOS_NOTARY_ISSUER_ID") (isEnvSet "MACOS_NOTARY_KEY_ID") (isEnvSet "MACOS_NOTARY_KEY") }}'
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"

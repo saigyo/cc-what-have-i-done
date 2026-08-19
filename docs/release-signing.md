@@ -1,8 +1,9 @@
 # macOS Release Signing & Notarization
 
-Release builds sign and notarize the darwin binaries when the repository
-secrets below are configured. Without them, releases build unsigned exactly
-as before — the signing step is skipped, never a failure. Signing runs
+Release builds sign and notarize the darwin binaries when **all five**
+repository secrets below are configured. Without them — including a partial
+set, which is treated as absent — releases build unsigned exactly as before:
+the signing step is skipped, never a failure. Signing runs
 inside goreleaser (cross-platform, keychain-free, via anchore/quill) on the
 regular `ubuntu-latest` release runner.
 

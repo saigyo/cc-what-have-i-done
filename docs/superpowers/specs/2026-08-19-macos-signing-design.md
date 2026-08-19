@@ -37,7 +37,7 @@ Only addition to the file; everything else stays as is:
 ```yaml
 notarize:
   macos:
-    - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
+    - enabled: '{{ and (isEnvSet "MACOS_SIGN_P12") (isEnvSet "MACOS_SIGN_PASSWORD") (isEnvSet "MACOS_NOTARY_ISSUER_ID") (isEnvSet "MACOS_NOTARY_KEY_ID") (isEnvSet "MACOS_NOTARY_KEY") }}'
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"
@@ -51,9 +51,10 @@ notarize:
 
 goreleaser runs this after build and before archiving: both darwin binaries
 are signed (hardened runtime + timestamp, quill defaults) and notarized, and
-the existing tar.gz archives contain the signed binaries. `enabled` is
-templated on `isEnvSet "MACOS_SIGN_P12"`, so any environment without the
-secret builds exactly as today.
+the existing tar.gz archives contain the signed binaries. `enabled` requires
+all five `MACOS_*` secrets to be set: an environment without them — or with
+only a partial set, which could otherwise ship signed-but-unnotarized
+binaries — builds exactly as today.
 
 ### 2. `.github/workflows/release.yml` — pass secrets through
 
