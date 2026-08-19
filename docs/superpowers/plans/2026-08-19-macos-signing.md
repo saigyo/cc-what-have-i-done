@@ -50,6 +50,7 @@ Insert between the `checksum:` section and the `changelog:` section (top-level k
 notarize:
   macos:
     - enabled: '{{ and (isEnvSet "MACOS_SIGN_P12") (isEnvSet "MACOS_SIGN_PASSWORD") (isEnvSet "MACOS_NOTARY_ISSUER_ID") (isEnvSet "MACOS_NOTARY_KEY_ID") (isEnvSet "MACOS_NOTARY_KEY") }}'
+      ids: [ccwhid]
       sign:
         certificate: "{{ .Env.MACOS_SIGN_P12 }}"
         password: "{{ .Env.MACOS_SIGN_PASSWORD }}"
@@ -208,9 +209,11 @@ online on first run — this is expected behavior, not a defect.
     --key AuthKey_<KEYID>.p8
   ```
 
-- Notarization waits synchronously (`wait: true`) with a 20-minute cap;
-  Apple typically takes 1–5 minutes. A rejected submission fails the
-  release rather than shipping unsigned binaries — intended.
+- Notarization waits synchronously (`wait: true`) with a 20-minute cap
+  **per submission**; the two darwin binaries are processed sequentially, so
+  the stage can take up to ~40 minutes in the worst case. Apple typically
+  takes 1–5 minutes each. A rejected submission fails the release rather
+  than shipping unsigned binaries — intended.
 ````
 
 - [ ] **Step 2: Verify secret-name consistency between doc, config, and workflow**
